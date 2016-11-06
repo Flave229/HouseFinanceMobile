@@ -100,7 +100,7 @@ public class BillListAdapter extends RecyclerView.Adapter<BillListAdapter.CardVi
         {
             cvh.cardDate.setText(_cards.get(i).cardDesc);
             cvh.cardAmount.setText("£" + _cards.get(i).cardAmount);
-            cvh.cardObject.setCardBackgroundColor(Color.WHITE);
+            cvh.cardObject.setCardBackgroundColor(Color.parseColor("#fafafa"));
         }
 
         cvh.cardImage.setImageResource(_cards.get(i).cardImage);

@@ -29,21 +29,23 @@ public class BillsFragment extends Fragment {
     ArrayList<BillListObject> cards;
     SwipeRefreshLayout swipeRefreshLayout;
 
-    private Runnable runnable = new Runnable() {
+    private Runnable contactWebsite = new Runnable() {
         @Override
         public void run() {
 
             GlobalObjects._service.contactWebsite();
+            // After calling the website, allow 3 seconds before we update the list. Can be reduced if needed
+            _handler.postDelayed(Populate, 1000);
+        }
+    };
 
-            cards = GlobalObjects.GetBills();
+    private Runnable Populate = new Runnable() {
+        @Override
+        public void run() {
+            adapter.addAll(cards);
+            adapter.notifyItemRangeInserted(0, cards.size());
 
-            if (GlobalObjects.GetBills() != null) {
-                if (adapter.getItemCount() != GlobalObjects.GetBills().size()) {
-                    adapter.addAll(GlobalObjects.GetBills());
-                    adapter.notifyItemRangeInserted(0, GlobalObjects.GetBills().size());
-                }
-            }
-            _handler.post(updateList);
+            _handler.postDelayed(updateList, 500);
         }
     };
 
@@ -52,21 +54,17 @@ public class BillsFragment extends Fragment {
         public void run() {
 
             if (GlobalObjects.GetBills() != null) {
-
                 cards = GlobalObjects.GetBills();
-                if (adapter.getItemCount() != GlobalObjects.GetBills().size()) {
-                    if (adapter.getItemCount() != GlobalObjects.GetBills().size()) {
-                        adapter.addAll(cards);
-                        adapter.notifyItemRangeInserted(0, GlobalObjects.GetBills().size());
-                    }
-                    _handler.postDelayed(updateList, 100);
+                if (adapter.getItemCount() != cards.size()) {
+                    _handler.post(contactWebsite);
                 } else {
+
                     swipeRefreshLayout.setRefreshing(false);
                 }
             }
             else
             {
-                _handler.postDelayed(updateList, 100);
+                _handler.post(contactWebsite);
             }
         }
     };
@@ -92,7 +90,16 @@ public class BillsFragment extends Fragment {
         _handler = new Handler();
         rv = (RecyclerView) view.findViewById(R.id.recycler_view);
         rv.setHasFixedSize(true);
-        cards = new ArrayList<>();
+
+        if(GlobalObjects.GetBills() != null)
+        {
+            cards = GlobalObjects.GetBills();
+        }
+        else
+        {
+            cards = new ArrayList<>();
+        }
+
 
         if(rv != null) {
             adapter = new BillListAdapter(cards);
@@ -103,7 +110,7 @@ public class BillsFragment extends Fragment {
         swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
-                _handler.post(runnable);
+                _handler.post(updateList);
             }
         });
 
