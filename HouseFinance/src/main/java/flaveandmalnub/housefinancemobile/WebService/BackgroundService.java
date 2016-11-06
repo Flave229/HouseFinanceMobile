@@ -14,6 +14,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -134,21 +135,19 @@ public class BackgroundService extends Service {
         @Override
         protected void onPostExecute(JSONObject result)
         {
-            websiteResult(result);
+             websiteResult(result);
         }
 
         private JSONObject downloadUrl(String weburl) throws IOException
         {
             InputStream is = null;
             // Changed to 1MB buffer length. Previous was way too small
-            byte[] len = new byte[9216];
             boolean failed = true;
             JSONObject jsonObject;
             URL url = new URL(weburl);
             HttpURLConnection conn = (HttpURLConnection) url.openConnection();
 
             // Might need this at some point
-            while(failed) {
                 try {
                     url = new URL(weburl);
                     conn = (HttpURLConnection) url.openConnection();
@@ -162,7 +161,7 @@ public class BackgroundService extends Service {
                     //Toast.makeText(getBaseContext(), "The response is: " + String.valueOf(response), Toast.LENGTH_LONG).show();
                     is = conn.getInputStream();
 
-                    jsonObject = new JSONObject(readIt(is, len));
+                    jsonObject = new JSONObject(readIt(is));
 
                     failed = false;
                     return jsonObject;
@@ -176,17 +175,38 @@ public class BackgroundService extends Service {
                     if (is != null)
                         is.close();
                 }
-            }
             return null;
         }
 
-        public String readIt(InputStream input, byte[] len) throws IOException, UnsupportedEncodingException
+        public String readIt(InputStream input)
         {
-            Reader reader = null;
-            reader = new InputStreamReader(input, "UTF-8");
-            char[] buffer = new char[len.length];
-            reader.read(buffer);
-            return new String(buffer);
+            BufferedReader reader = null;
+            StringBuffer response = new StringBuffer();
+
+            try{
+                reader = new BufferedReader(new InputStreamReader(input));
+                String line = "";
+                while((line = reader.readLine()) != null)
+                {
+                    response.append(line);
+                }
+            }catch (IOException e)
+            {
+                e.printStackTrace();
+            }
+            finally {
+                if(reader != null)
+                {
+                    try{
+                        reader.close();
+                    }catch (IOException e)
+                    {
+                        e.printStackTrace();
+                    }
+
+                }
+            }
+            return response.toString();
         }
     }
 
