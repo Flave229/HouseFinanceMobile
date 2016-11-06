@@ -11,8 +11,8 @@ import android.view.ViewGroup;
 import java.util.ArrayList;
 
 import flaveandmalnub.housefinancemobile.R;
-import flaveandmalnub.housefinancemobile.UserInterface.List.BillListAdapter;
-import flaveandmalnub.housefinancemobile.UserInterface.List.BillListObject;
+import flaveandmalnub.housefinancemobile.UserInterface.Lists.BillList.BillListAdapter;
+import flaveandmalnub.housefinancemobile.UserInterface.Lists.BillList.BillListObject;
 
 /**
  * Created by Josh on 24/09/2016.

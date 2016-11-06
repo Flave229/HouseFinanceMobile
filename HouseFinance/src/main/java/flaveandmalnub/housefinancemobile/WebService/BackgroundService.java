@@ -18,15 +18,15 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.io.Reader;
-import java.io.UnsupportedEncodingException;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.ArrayList;
 
 import flaveandmalnub.housefinancemobile.GlobalObjects;
-import flaveandmalnub.housefinancemobile.UserInterface.List.BillListObject;
-import flaveandmalnub.housefinancemobile.UserInterface.List.BillListObjectPeople;
+import flaveandmalnub.housefinancemobile.UserInterface.Lists.BillList.BillListObject;
+import flaveandmalnub.housefinancemobile.UserInterface.Lists.BillList.BillListObjectPeople;
+import flaveandmalnub.housefinancemobile.UserInterface.Lists.ShoppingList.ShoppingListObject;
+import flaveandmalnub.housefinancemobile.UserInterface.Lists.ShoppingList.ShoppingListPeople;
 
 /**
  * Created by Josh on 24/09/2016.
@@ -51,7 +51,7 @@ public class BackgroundService extends Service {
     }
 
 
-    public void contactWebsite()
+    public void contactWebsiteBills()
     {
         GlobalObjects.downloading = true;
         ConnectivityManager connMgr = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
@@ -61,7 +61,7 @@ public class BackgroundService extends Service {
         if(networkInfo != null && networkInfo.isConnected())
         {
             //Toast.makeText(getBaseContext(), "Obtaining list of bills", Toast.LENGTH_LONG).show();
-            new DownloadJsonString().execute("http://saltavenue.azurewebsites.net/api/"+ authToken + "/RequestBillList");
+            new DownloadJsonString().execute("http://saltavenue.azurewebsites.net/api/"+ authToken + "/RequestBillList", "Bills");
             GlobalObjects.downloading = false;
         }
         else
@@ -71,60 +71,133 @@ public class BackgroundService extends Service {
         }
     }
 
-    public void websiteResult(JSONObject result)
+    public void contactWebsiteShoppingItems()
     {
-        ArrayList<BillListObject> _bills = new ArrayList<>();
-        ArrayList<BillListObjectPeople> _people = new ArrayList<>();
-        BillListObject bill;
-        BillListObjectPeople person;
-            try {
-                JSONArray array = result.getJSONArray("BillList");
+        GlobalObjects.downloading = true;
+        ConnectivityManager connMgr = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo networkInfo = connMgr.getActiveNetworkInfo();
+        String authToken = "D2DB7539-634F-47C4-818D-59AD03C592E3";
 
-                ArrayList<JSONObject> allObjects = new ArrayList<>();
-                ArrayList<JSONObject> allPeopleObjects = new ArrayList<>();
+        if(networkInfo != null && networkInfo.isConnected())
+        {
+            //Toast.makeText(getBaseContext(), "Obtaining list of bills", Toast.LENGTH_LONG).show();
+            new DownloadJsonString().execute("http://saltavenue.azurewebsites.net/api/"+ authToken + "/RequestShoppingList", "Shopping");
+            GlobalObjects.downloading = false;
+        }
+        else
+        {
+            Toast.makeText(getBaseContext(), "No internet connection", Toast.LENGTH_SHORT).show();
+            GlobalObjects.downloading = false;
+        }
+    }
 
-                for(int i = 0; i < array.length(); i++)
-                {
-                    allObjects.add(array.getJSONObject(i));
-                }
+    public void websiteResult(JSONObject result, String type)
+    {
+        switch (type)
+        {
+            case "Bills":
+                ArrayList<BillListObject> _bills = new ArrayList<>();
+                ArrayList<BillListObjectPeople> _people = new ArrayList<>();
+                BillListObject bill;
+                BillListObjectPeople person;
+                try {
+                    JSONArray array = result.getJSONArray("BillList");
 
-                for(int k = 0; k < allObjects.size(); k++)
-                {
-                    JSONArray peopleArray = allObjects.get(k).getJSONArray("People");
-                    for(int j = 0; j < peopleArray.length(); j++)
+                    ArrayList<JSONObject> allObjects = new ArrayList<>();
+                    ArrayList<JSONObject> allPeopleObjects = new ArrayList<>();
+
+                    for(int i = 0; i < array.length(); i++)
                     {
-                        allPeopleObjects.add(peopleArray.getJSONObject(j));
+                        allObjects.add(array.getJSONObject(i));
                     }
 
-                    bill = new BillListObject(allObjects.get(k), allPeopleObjects.get(k));
-                    _bills.add(bill);
+                    for(int k = 0; k < allObjects.size(); k++)
+                    {
+                        JSONArray peopleArray = allObjects.get(k).getJSONArray("People");
+                        for(int j = 0; j < peopleArray.length(); j++)
+                        {
+                            allPeopleObjects.add(peopleArray.getJSONObject(j));
+                        }
 
-                    person = bill.people;
-                    _people.add(person);
+                        bill = new BillListObject(allObjects.get(k), allPeopleObjects.get(k));
+                        _bills.add(bill);
 
+                        person = bill.people;
+                        _people.add(person);
+
+                    }
+                    GlobalObjects.SetBills(_bills);
+                    GlobalObjects.SetBillPeopleList(_people);
+
+                    GlobalObjects.downloading = false;
+
+                } catch (JSONException je) {
+                    je.printStackTrace();
+                    GlobalObjects.downloading = false;
+                } catch(Exception e) {
+                    Toast.makeText(getBaseContext(), e.getMessage(), Toast.LENGTH_LONG).show();
+                    GlobalObjects.downloading = false;
                 }
-                GlobalObjects.SetBills(_bills);
-                GlobalObjects.SetBillPeopleList(_people);
+                break;
 
-                GlobalObjects.downloading = false;
+            case "Shopping":
+                ArrayList<ShoppingListObject> items = new ArrayList<>();
+                ArrayList<ShoppingListPeople> shoppingPeople = new ArrayList<>();
+                ShoppingListObject item;
+                ShoppingListPeople shoppingPerson;
+                try {
+                    JSONArray array = result.getJSONArray("ShoppingList");
 
-            } catch (JSONException je) {
-                je.printStackTrace();
-                GlobalObjects.downloading = false;
-            } catch(Exception e) {
-                Toast.makeText(getBaseContext(), e.getMessage(), Toast.LENGTH_LONG).show();
-                GlobalObjects.downloading = false;
-            }
+                    ArrayList<JSONObject> allObjects = new ArrayList<>();
+                    ArrayList<JSONObject> allPeopleObjects = new ArrayList<>();
+
+                    for(int i = 0; i < array.length(); i++)
+                    {
+                        allObjects.add(array.getJSONObject(i));
+                    }
+
+                    for(int k = 0; k < allObjects.size(); k++)
+                    {
+                        /*JSONArray peopleArray = allObjects.get(k).getJSONArray("AddedForImages");
+                        for(int j = 0; j < peopleArray.length(); j++)
+                        {
+                            allPeopleObjects.add(peopleArray.getJSONObject(j));
+                        }*/
+
+                        item = new ShoppingListObject(allObjects.get(k));
+                        items.add(item);
+
+                        //shoppingPerson = item.people;
+                        //shoppingPeople.add(shoppingPerson);
+
+                    }
+                    GlobalObjects.SetShoppingItems(items);
+                    GlobalObjects.SetShoppingPeopleList(shoppingPeople);
+
+                    GlobalObjects.downloading = false;
+
+                } catch (JSONException je) {
+                    je.printStackTrace();
+                    GlobalObjects.downloading = false;
+                } catch(Exception e) {
+                    Toast.makeText(getBaseContext(), e.getMessage(), Toast.LENGTH_LONG).show();
+                    GlobalObjects.downloading = false;
+                }
+                break;
+        }
+
         //Toast.makeText(getBaseContext(), result, Toast.LENGTH_SHORT).show();
     }
 
     private class DownloadJsonString extends AsyncTask<String, Void, JSONObject>
     {
+        String type = "";
         @Override
         protected JSONObject doInBackground(String... urls)
         {
             try
             {
+                type = urls[1];
                 return downloadUrl(urls[0]);
             } catch(IOException e)
             {
@@ -135,7 +208,17 @@ public class BackgroundService extends Service {
         @Override
         protected void onPostExecute(JSONObject result)
         {
-             websiteResult(result);
+            switch (type)
+            {
+                case "Bills":
+                    websiteResult(result, type);
+                    break;
+
+                case "Shopping":
+                    websiteResult(result, type);
+                    break;
+            }
+
         }
 
         private JSONObject downloadUrl(String weburl) throws IOException

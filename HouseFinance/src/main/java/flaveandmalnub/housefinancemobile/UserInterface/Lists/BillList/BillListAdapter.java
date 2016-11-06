@@ -1,4 +1,4 @@
-package flaveandmalnub.housefinancemobile.UserInterface.List;
+package flaveandmalnub.housefinancemobile.UserInterface.Lists.BillList;
 
 import android.content.Intent;
 import android.graphics.Color;
@@ -79,9 +79,6 @@ public class BillListAdapter extends RecyclerView.Adapter<BillListAdapter.CardVi
     @Override
     public void onBindViewHolder(CardViewHolder cvh, int i)
     {
-        Date date = new Date();
-        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
-
         cvh.cardName.setText(_cards.get(i).cardName);
 
         if(_cards.get(i).paid)

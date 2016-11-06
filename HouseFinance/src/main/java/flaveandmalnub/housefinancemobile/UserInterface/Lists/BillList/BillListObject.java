@@ -1,4 +1,4 @@
-package flaveandmalnub.housefinancemobile.UserInterface.List;
+package flaveandmalnub.housefinancemobile.UserInterface.Lists.BillList;
 
 
 import org.json.JSONArray;

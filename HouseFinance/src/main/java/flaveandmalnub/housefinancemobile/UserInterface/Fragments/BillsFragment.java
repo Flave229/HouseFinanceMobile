@@ -14,8 +14,8 @@ import java.util.ArrayList;
 
 import flaveandmalnub.housefinancemobile.GlobalObjects;
 import flaveandmalnub.housefinancemobile.R;
-import flaveandmalnub.housefinancemobile.UserInterface.List.BillListAdapter;
-import flaveandmalnub.housefinancemobile.UserInterface.List.BillListObject;
+import flaveandmalnub.housefinancemobile.UserInterface.Lists.BillList.BillListAdapter;
+import flaveandmalnub.housefinancemobile.UserInterface.Lists.BillList.BillListObject;
 
 /**
  * Created by Josh on 24/09/2016.
@@ -33,7 +33,7 @@ public class BillsFragment extends Fragment {
         @Override
         public void run() {
 
-            GlobalObjects._service.contactWebsite();
+            GlobalObjects._service.contactWebsiteBills();
             // After calling the website, allow 3 seconds before we update the list. Can be reduced if needed
             _handler.postDelayed(Populate, 1000);
         }
@@ -91,7 +91,7 @@ public class BillsFragment extends Fragment {
         rv = (RecyclerView) view.findViewById(R.id.recycler_view);
         rv.setHasFixedSize(true);
 
-        if(GlobalObjects.GetBills() != null)
+        if(GlobalObjects.GetBills() != null && GlobalObjects.GetBills().size() != 0)
         {
             cards = GlobalObjects.GetBills();
         }
