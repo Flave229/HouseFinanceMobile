@@ -82,6 +82,13 @@ public class MainActivity extends AppCompatActivity {
         _handler = null;
     }
 
+    @Override
+    public void onBackPressed() {
+        // End the app process after pressing back
+        finish();
+        Runtime.getRuntime().exit(0);
+    }
+
     private ServiceConnection _connection = new ServiceConnection() {
         @Override
         public void onServiceConnected(ComponentName name, IBinder service) {

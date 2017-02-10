@@ -36,7 +36,7 @@ public class BillsFragment extends Fragment {
 
             GlobalObjects._service.contactWebsiteBills();
             // After calling the website, allow 3 seconds before we update the list. Can be reduced if needed
-            _handler.postDelayed(Populate, 1000);
+            _handler.postDelayed(Populate, 3000);
         }
     };
 
@@ -117,7 +117,7 @@ public class BillsFragment extends Fragment {
         swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
-                _handler.post(updateList);
+                _handler.post(contactWebsite);
             }
         });
 

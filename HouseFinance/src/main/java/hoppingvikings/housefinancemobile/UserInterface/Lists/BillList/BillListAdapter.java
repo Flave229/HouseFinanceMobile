@@ -120,6 +120,8 @@ public class BillListAdapter extends RecyclerView.Adapter<BillListAdapter.CardVi
     public void addAll(ArrayList<BillListObject> bills)
     {
         if(_cards != null) {
+            _cards.clear();
+            notifyDataSetChanged();
             _cards.addAll(bills);
         }
     }

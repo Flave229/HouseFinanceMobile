@@ -133,7 +133,7 @@ public class BackgroundService extends Service {
                     je.printStackTrace();
                     GlobalObjects.downloading = false;
                 } catch(Exception e) {
-                    Toast.makeText(getBaseContext(), e.getMessage(), Toast.LENGTH_LONG).show();
+                    Toast.makeText(getBaseContext(), "Error occurred while downloading bills. Retrying...", Toast.LENGTH_SHORT).show();
                     GlobalObjects.downloading = false;
                 }
                 break;
@@ -178,7 +178,7 @@ public class BackgroundService extends Service {
                     je.printStackTrace();
                     GlobalObjects.downloading = false;
                 } catch(Exception e) {
-                    Toast.makeText(getBaseContext(), e.getMessage(), Toast.LENGTH_LONG).show();
+                    Toast.makeText(getBaseContext(), "Error occurred while downloading shopping list. Retrying...", Toast.LENGTH_SHORT).show();
                     GlobalObjects.downloading = false;
                 }
                 break;
