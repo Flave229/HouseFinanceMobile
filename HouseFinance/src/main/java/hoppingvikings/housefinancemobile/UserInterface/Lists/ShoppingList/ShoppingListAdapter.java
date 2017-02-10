@@ -100,6 +100,8 @@ public class ShoppingListAdapter extends RecyclerView.Adapter<ShoppingListAdapte
     public void addAll(ArrayList<ShoppingListObject> items)
     {
         if(_shoppingItems != null) {
+            _shoppingItems.clear();
+            notifyDataSetChanged();
             _shoppingItems.addAll(items);
         }
     }

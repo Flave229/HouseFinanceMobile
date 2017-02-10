@@ -36,7 +36,7 @@ public class ShoppingListFragment extends Fragment {
 
             GlobalObjects._service.contactWebsiteShoppingItems();
             // After calling the website, allow 3 seconds before we update the list. Can be reduced if needed
-            _handler.postDelayed(Populate, 1000);
+            _handler.postDelayed(Populate, 3000);
         }
     };
 
@@ -89,7 +89,7 @@ public class ShoppingListFragment extends Fragment {
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
+    public View onCreateView(LayoutInflater inflater, final ViewGroup container, Bundle savedInstanceState)
     {
         View view = inflater.inflate(R.layout.fragment_blank, container, false);
         swipeRefreshLayout = (SwipeRefreshLayout) view.findViewById(R.id.swipeRefresh);
@@ -118,7 +118,7 @@ public class ShoppingListFragment extends Fragment {
         swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
-                _handler.post(updateList);
+                _handler.post(contactWebsite);
             }
         });
 
