@@ -15,6 +15,7 @@ import java.util.ArrayList;
 import flaveandmalnub.housefinancemobile.GlobalObjects;
 import flaveandmalnub.housefinancemobile.R;
 import flaveandmalnub.housefinancemobile.UserInterface.Lists.BillList.BillListObject;
+import flaveandmalnub.housefinancemobile.UserInterface.Lists.ListItemDivider;
 import flaveandmalnub.housefinancemobile.UserInterface.Lists.ShoppingList.ShoppingListAdapter;
 import flaveandmalnub.housefinancemobile.UserInterface.Lists.ShoppingList.ShoppingListObject;
 
@@ -54,18 +55,25 @@ public class ShoppingListFragment extends Fragment {
         @Override
         public void run() {
 
-            if (GlobalObjects.GetShoppingItems() != null) {
-                items = GlobalObjects.GetShoppingItems();
-                if (adapter.getItemCount() != items.size()) {
-                    _handler.post(contactWebsite);
-                } else {
+            if(!GlobalObjects.downloading)
+            {
+                if (GlobalObjects.GetShoppingItems() != null) {
+                    items = GlobalObjects.GetShoppingItems();
+                    if (adapter.getItemCount() != items.size()) {
+                        _handler.post(contactWebsite);
+                    } else {
 
-                    swipeRefreshLayout.setRefreshing(false);
+                        swipeRefreshLayout.setRefreshing(false);
+                    }
+                }
+                else
+                {
+                    _handler.post(contactWebsite);
                 }
             }
             else
             {
-                _handler.post(contactWebsite);
+                _handler.postDelayed(this, 3000);
             }
         }
     };
@@ -105,6 +113,7 @@ public class ShoppingListFragment extends Fragment {
             adapter = new ShoppingListAdapter(items);
             rv.setAdapter(adapter);
             rv.setLayoutManager(new LinearLayoutManager(getActivity()));
+            rv.addItemDecoration(new ListItemDivider(getContext()));
         }
 
         swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {

@@ -8,6 +8,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import java.text.SimpleDateFormat;
@@ -25,7 +26,7 @@ public class BillListAdapter extends RecyclerView.Adapter<BillListAdapter.CardVi
     public static class CardViewHolder extends RecyclerView.ViewHolder
     {
         View view;
-        CardView cardObject;
+        LinearLayout cardObject;
         TextView cardName;
         TextView cardDate;
         TextView cardAmount;
@@ -37,7 +38,7 @@ public class BillListAdapter extends RecyclerView.Adapter<BillListAdapter.CardVi
         {
             super(v);
             view = v;
-            cardObject = (CardView) v.findViewById(R.id.general_card);
+            cardObject = (LinearLayout) v.findViewById(R.id.general_card);
             cardName = (TextView)v.findViewById(R.id.item_name);
             cardDate = (TextView)v.findViewById(R.id.item_date);
             cardAmount = (TextView)v.findViewById(R.id.item_amount);
@@ -83,13 +84,13 @@ public class BillListAdapter extends RecyclerView.Adapter<BillListAdapter.CardVi
 
         if(_cards.get(i).paid)
         {
-            cvh.cardObject.setCardBackgroundColor(Color.GREEN);
+            cvh.cardObject.setBackgroundResource(R.color.bill_paid);
             cvh.cardAmount.setText("PAID");
             cvh.cardDate.setText(_cards.get(i).cardDesc);
         }
         else if(_cards.get(i).overdue)
         {
-            cvh.cardObject.setCardBackgroundColor(Color.parseColor("#E77471"));
+            cvh.cardObject.setBackgroundResource(R.color.bill_overdue);
             cvh.cardDate.setText(_cards.get(i).cardDesc + " OVERDUE");
             cvh.cardAmount.setText("£" + _cards.get(i).cardAmount);
         }
@@ -97,7 +98,7 @@ public class BillListAdapter extends RecyclerView.Adapter<BillListAdapter.CardVi
         {
             cvh.cardDate.setText(_cards.get(i).cardDesc);
             cvh.cardAmount.setText("£" + _cards.get(i).cardAmount);
-            cvh.cardObject.setCardBackgroundColor(Color.parseColor("#fafafa"));
+            cvh.cardObject.setBackgroundColor(Color.WHITE);
         }
 
         cvh.cardImage.setImageResource(_cards.get(i).cardImage);

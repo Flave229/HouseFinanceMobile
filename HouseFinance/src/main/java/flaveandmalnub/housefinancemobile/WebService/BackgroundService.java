@@ -61,8 +61,7 @@ public class BackgroundService extends Service {
         if(networkInfo != null && networkInfo.isConnected())
         {
             //Toast.makeText(getBaseContext(), "Obtaining list of bills", Toast.LENGTH_LONG).show();
-            new DownloadJsonString().execute("http://saltavenue.azurewebsites.net/api/"+ authToken + "/RequestBillList", "Bills");
-            GlobalObjects.downloading = false;
+            new DownloadJsonString().execute("https://saltavenue.azurewebsites.net/api/"+ authToken + "/RequestBillList", "Bills");
         }
         else
         {
@@ -81,8 +80,7 @@ public class BackgroundService extends Service {
         if(networkInfo != null && networkInfo.isConnected())
         {
             //Toast.makeText(getBaseContext(), "Obtaining list of bills", Toast.LENGTH_LONG).show();
-            new DownloadJsonString().execute("http://saltavenue.azurewebsites.net/api/"+ authToken + "/RequestShoppingList", "Shopping");
-            GlobalObjects.downloading = false;
+            new DownloadJsonString().execute("https://saltavenue.azurewebsites.net/api/"+ authToken + "/RequestShoppingList", "Shopping");
         }
         else
         {
@@ -223,40 +221,29 @@ public class BackgroundService extends Service {
 
         private JSONObject downloadUrl(String weburl) throws IOException
         {
-            InputStream is = null;
             // Changed to 1MB buffer length. Previous was way too small
-            boolean failed = true;
             JSONObject jsonObject;
             URL url = new URL(weburl);
             HttpURLConnection conn = (HttpURLConnection) url.openConnection();
 
             // Might need this at some point
                 try {
-                    url = new URL(weburl);
-                    conn = (HttpURLConnection) url.openConnection();
                     conn.setReadTimeout(10000);
                     conn.setConnectTimeout(15000);
                     conn.setRequestMethod("GET");
                     conn.setDoInput(true);
 
-                    conn.connect();
                     int response = conn.getResponseCode();
                     //Toast.makeText(getBaseContext(), "The response is: " + String.valueOf(response), Toast.LENGTH_LONG).show();
-                    is = conn.getInputStream();
 
-                    jsonObject = new JSONObject(readIt(is));
+                    jsonObject = new JSONObject(readIt(conn.getInputStream()));
 
-                    failed = false;
                     return jsonObject;
                 } catch (JSONException e) {
-
                     conn.disconnect();
-                    is.close();
-                    failed = true;
-
-                } finally {
-                    if (is != null)
-                        is.close();
+                }
+            finally {
+                    conn.disconnect();
                 }
             return null;
         }
@@ -264,7 +251,7 @@ public class BackgroundService extends Service {
         public String readIt(InputStream input)
         {
             BufferedReader reader = null;
-            StringBuffer response = new StringBuffer();
+            StringBuilder response = new StringBuilder();
 
             try{
                 reader = new BufferedReader(new InputStreamReader(input));

@@ -16,6 +16,7 @@ import flaveandmalnub.housefinancemobile.GlobalObjects;
 import flaveandmalnub.housefinancemobile.R;
 import flaveandmalnub.housefinancemobile.UserInterface.Lists.BillList.BillListAdapter;
 import flaveandmalnub.housefinancemobile.UserInterface.Lists.BillList.BillListObject;
+import flaveandmalnub.housefinancemobile.UserInterface.Lists.ListItemDivider;
 
 /**
  * Created by Josh on 24/09/2016.
@@ -53,18 +54,23 @@ public class BillsFragment extends Fragment {
         @Override
         public void run() {
 
-            if (GlobalObjects.GetBills() != null) {
-                cards = GlobalObjects.GetBills();
-                if (adapter.getItemCount() != cards.size()) {
-                    _handler.post(contactWebsite);
-                } else {
+            if(!GlobalObjects.downloading) {
+                if (GlobalObjects.GetBills() != null) {
+                    cards = GlobalObjects.GetBills();
+                    if (adapter.getItemCount() != cards.size()) {
+                        _handler.post(contactWebsite);
+                    } else {
 
-                    swipeRefreshLayout.setRefreshing(false);
+                        swipeRefreshLayout.setRefreshing(false);
+                    }
+                } else {
+                    _handler.post(contactWebsite);
                 }
             }
             else
             {
-                _handler.post(contactWebsite);
+                // If we are already trying to talk to the website, wait 3 seconds before trying again
+                _handler.postDelayed(this, 3000);
             }
         }
     };
@@ -105,6 +111,7 @@ public class BillsFragment extends Fragment {
             adapter = new BillListAdapter(cards);
             rv.setAdapter(adapter);
             rv.setLayoutManager(new LinearLayoutManager(getActivity()));
+            rv.addItemDecoration(new ListItemDivider(getContext()));
         }
 
         swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {

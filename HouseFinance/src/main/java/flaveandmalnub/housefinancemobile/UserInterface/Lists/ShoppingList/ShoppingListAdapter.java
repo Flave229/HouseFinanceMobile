@@ -9,6 +9,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import java.util.ArrayList;
@@ -23,7 +24,7 @@ import flaveandmalnub.housefinancemobile.UserInterface.DisplayMessageActivity;
 public class ShoppingListAdapter extends RecyclerView.Adapter<ShoppingListAdapter.CardViewHolder> {
     public static class CardViewHolder extends RecyclerView.ViewHolder {
         View view;
-        CardView cardView;
+        LinearLayout cardView;
         TextView shoppingItemName;
         TextView addedDate;
         ImageView addedBy1;
@@ -34,7 +35,7 @@ public class ShoppingListAdapter extends RecyclerView.Adapter<ShoppingListAdapte
         public CardViewHolder(View v) {
             super(v);
             view = v;
-            cardView = (CardView) v.findViewById(R.id.shoppingItemCard);
+            cardView = (LinearLayout) v.findViewById(R.id.shoppingItemCard);
             shoppingItemName = (TextView) v.findViewById(R.id.shoppingItemName);
             addedDate = (TextView) v.findViewById(R.id.addedDate);
             addedBy1 = (ImageView) v.findViewById(R.id.addedBy);
@@ -79,11 +80,11 @@ public class ShoppingListAdapter extends RecyclerView.Adapter<ShoppingListAdapte
 
         if(_shoppingItems.get(i).done)
         {
-            cvh.cardView.setCardBackgroundColor(Color.GREEN);
+            cvh.cardView.setBackgroundResource(R.color.bill_paid);
         }
         else
         {
-            cvh.cardView.setCardBackgroundColor(Color.parseColor("#fafafa"));
+            cvh.cardView.setBackgroundColor(Color.WHITE);
         }
 
         cvh.addedBy1.setImageResource(_shoppingItems.get(i).addedBy);
