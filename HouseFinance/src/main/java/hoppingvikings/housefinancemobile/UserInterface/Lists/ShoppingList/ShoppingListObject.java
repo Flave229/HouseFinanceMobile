@@ -1,4 +1,4 @@
-package flaveandmalnub.housefinancemobile.UserInterface.Lists.ShoppingList;
+package hoppingvikings.housefinancemobile.UserInterface.Lists.ShoppingList;
 
 import org.json.JSONArray;
 import org.json.JSONException;

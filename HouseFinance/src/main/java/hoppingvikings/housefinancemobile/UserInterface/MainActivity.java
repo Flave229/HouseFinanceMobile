@@ -1,4 +1,4 @@
-package flaveandmalnub.housefinancemobile.UserInterface;
+package hoppingvikings.housefinancemobile.UserInterface;
 
 import android.app.ActivityManager;
 import android.content.ComponentName;
@@ -14,9 +14,9 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 
-import flaveandmalnub.housefinancemobile.GlobalObjects;
-import flaveandmalnub.housefinancemobile.R;
-import flaveandmalnub.housefinancemobile.WebService.BackgroundService;
+import hoppingvikings.housefinancemobile.GlobalObjects;
+import hoppingvikings.housefinancemobile.R;
+import hoppingvikings.housefinancemobile.WebService.BackgroundService;
 
 public class MainActivity extends AppCompatActivity {
 

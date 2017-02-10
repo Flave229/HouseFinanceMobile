@@ -1,4 +1,4 @@
-package flaveandmalnub.housefinancemobile.WebService;
+package hoppingvikings.housefinancemobile.WebService;
 
 import android.app.Service;
 import android.content.Context;
@@ -22,11 +22,11 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.ArrayList;
 
-import flaveandmalnub.housefinancemobile.GlobalObjects;
-import flaveandmalnub.housefinancemobile.UserInterface.Lists.BillList.BillListObject;
-import flaveandmalnub.housefinancemobile.UserInterface.Lists.BillList.BillListObjectPeople;
-import flaveandmalnub.housefinancemobile.UserInterface.Lists.ShoppingList.ShoppingListObject;
-import flaveandmalnub.housefinancemobile.UserInterface.Lists.ShoppingList.ShoppingListPeople;
+import hoppingvikings.housefinancemobile.GlobalObjects;
+import hoppingvikings.housefinancemobile.UserInterface.Lists.BillList.BillListObject;
+import hoppingvikings.housefinancemobile.UserInterface.Lists.BillList.BillListObjectPeople;
+import hoppingvikings.housefinancemobile.UserInterface.Lists.ShoppingList.ShoppingListObject;
+import hoppingvikings.housefinancemobile.UserInterface.Lists.ShoppingList.ShoppingListPeople;
 
 /**
  * Created by Josh on 24/09/2016.

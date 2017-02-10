@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="flaveandmalnub.housefinancemobile"
+    package="hoppingvikings.housefinancemobile"
     android:versionCode="4"
     android:versionName="00.03.00">
 
@@ -15,11 +15,11 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
 
-        <service android:name=".WebService.BackgroundService"
+        <service android:name="hoppingvikings.housefinancemobile.WebService.BackgroundService"
             android:exported="false"
             android:stopWithTask="true"/>
 
-        <activity android:name=".UserInterface.MainActivity">
+        <activity android:name="hoppingvikings.housefinancemobile.UserInterface.MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -27,7 +27,7 @@
             </intent-filter>
         </activity>
 
-        <activity android:name=".UserInterface.DisplayMessageActivity"
+        <activity android:name="hoppingvikings.housefinancemobile.UserInterface.DisplayMessageActivity"
             android:label="Display Message">
         </activity>
     </application>

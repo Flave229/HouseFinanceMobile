@@ -1,9 +1,7 @@
-package flaveandmalnub.housefinancemobile.UserInterface.Lists.ShoppingList;
+package hoppingvikings.housefinancemobile.UserInterface.Lists.ShoppingList;
 
 import android.content.Intent;
 import android.graphics.Color;
-import android.provider.ContactsContract;
-import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -14,8 +12,8 @@ import android.widget.TextView;
 
 import java.util.ArrayList;
 
-import flaveandmalnub.housefinancemobile.R;
-import flaveandmalnub.housefinancemobile.UserInterface.DisplayMessageActivity;
+import hoppingvikings.housefinancemobile.R;
+import hoppingvikings.housefinancemobile.UserInterface.DisplayMessageActivity;
 
 /**
  * Created by Josh on 06/11/2016.

@@ -1,12 +1,12 @@
-package flaveandmalnub.housefinancemobile;
+package hoppingvikings.housefinancemobile;
 
 import java.util.ArrayList;
 
-import flaveandmalnub.housefinancemobile.UserInterface.Lists.BillList.BillListObject;
-import flaveandmalnub.housefinancemobile.UserInterface.Lists.BillList.BillListObjectPeople;
-import flaveandmalnub.housefinancemobile.UserInterface.Lists.ShoppingList.ShoppingListObject;
-import flaveandmalnub.housefinancemobile.UserInterface.Lists.ShoppingList.ShoppingListPeople;
-import flaveandmalnub.housefinancemobile.WebService.BackgroundService;
+import hoppingvikings.housefinancemobile.UserInterface.Lists.BillList.BillListObject;
+import hoppingvikings.housefinancemobile.UserInterface.Lists.BillList.BillListObjectPeople;
+import hoppingvikings.housefinancemobile.UserInterface.Lists.ShoppingList.ShoppingListObject;
+import hoppingvikings.housefinancemobile.UserInterface.Lists.ShoppingList.ShoppingListPeople;
+import hoppingvikings.housefinancemobile.WebService.BackgroundService;
 
 /**
  * Created by Josh on 25/09/2016.

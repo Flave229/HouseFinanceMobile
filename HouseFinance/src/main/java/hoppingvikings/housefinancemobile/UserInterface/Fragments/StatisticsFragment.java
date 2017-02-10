@@ -1,4 +1,4 @@
-package flaveandmalnub.housefinancemobile.UserInterface.Fragments;
+package hoppingvikings.housefinancemobile.UserInterface.Fragments;
 
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -10,9 +10,9 @@ import android.view.ViewGroup;
 
 import java.util.ArrayList;
 
-import flaveandmalnub.housefinancemobile.R;
-import flaveandmalnub.housefinancemobile.UserInterface.Lists.BillList.BillListAdapter;
-import flaveandmalnub.housefinancemobile.UserInterface.Lists.BillList.BillListObject;
+import hoppingvikings.housefinancemobile.R;
+import hoppingvikings.housefinancemobile.UserInterface.Lists.BillList.BillListAdapter;
+import hoppingvikings.housefinancemobile.UserInterface.Lists.BillList.BillListObject;
 
 /**
  * Created by Josh on 24/09/2016.

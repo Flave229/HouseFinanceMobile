@@ -1,4 +1,4 @@
-package flaveandmalnub.housefinancemobile.UserInterface;
+package hoppingvikings.housefinancemobile.UserInterface;
 
 import android.content.Context;
 import android.support.v4.app.Fragment;
@@ -8,10 +8,10 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.TextView;
 
-import flaveandmalnub.housefinancemobile.R;
-import flaveandmalnub.housefinancemobile.UserInterface.Fragments.BillsFragment;
-import flaveandmalnub.housefinancemobile.UserInterface.Fragments.ShoppingListFragment;
-import flaveandmalnub.housefinancemobile.UserInterface.Fragments.StatisticsFragment;
+import hoppingvikings.housefinancemobile.R;
+import hoppingvikings.housefinancemobile.UserInterface.Fragments.BillsFragment;
+import hoppingvikings.housefinancemobile.UserInterface.Fragments.ShoppingListFragment;
+import hoppingvikings.housefinancemobile.UserInterface.Fragments.StatisticsFragment;
 
 /**
  * Created by Josh on 24/09/2016.

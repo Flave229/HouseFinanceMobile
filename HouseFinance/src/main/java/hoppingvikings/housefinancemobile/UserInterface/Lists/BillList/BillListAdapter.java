@@ -1,8 +1,7 @@
-package flaveandmalnub.housefinancemobile.UserInterface.Lists.BillList;
+package hoppingvikings.housefinancemobile.UserInterface.Lists.BillList;
 
 import android.content.Intent;
 import android.graphics.Color;
-import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -11,12 +10,10 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Date;
 
-import flaveandmalnub.housefinancemobile.R;
-import flaveandmalnub.housefinancemobile.UserInterface.DisplayMessageActivity;
+import hoppingvikings.housefinancemobile.R;
+import hoppingvikings.housefinancemobile.UserInterface.DisplayMessageActivity;
 
 
 /**

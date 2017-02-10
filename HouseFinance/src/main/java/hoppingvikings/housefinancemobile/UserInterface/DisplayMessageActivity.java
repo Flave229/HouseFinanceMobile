@@ -1,4 +1,4 @@
-package flaveandmalnub.housefinancemobile.UserInterface;
+package hoppingvikings.housefinancemobile.UserInterface;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -8,7 +8,7 @@ import android.view.Menu;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
-import flaveandmalnub.housefinancemobile.R;
+import hoppingvikings.housefinancemobile.R;
 
 public class DisplayMessageActivity extends AppCompatActivity {
 

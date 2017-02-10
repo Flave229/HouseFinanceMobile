@@ -1,4 +1,4 @@
-package flaveandmalnub.housefinancemobile.UserInterface.Lists;
+package hoppingvikings.housefinancemobile.UserInterface.Lists;
 
 import android.content.Context;
 import android.graphics.Canvas;
@@ -6,7 +6,7 @@ import android.graphics.drawable.Drawable;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
 
-import flaveandmalnub.housefinancemobile.R;
+import hoppingvikings.housefinancemobile.R;
 
 /**
  * Created by Josh on 10/02/2017.
