@@ -12,22 +12,7 @@
             android:focusable="true"
             android:background="?android:attr/selectableItemBackground">
 
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:id="@+id/shoppingItemName"
-                android:layout_alignParentTop="true"
-                android:textSize="20sp"
-                android:textColor="#000"
-                android:text="Shopping Item"/>
 
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:id="@+id/addedDate"
-                android:layout_below="@id/shoppingItemName"
-                android:textColor="@color/app_text_secondary_colour_def"
-                android:text="01/01/2016"/>
 
             <LinearLayout
                 android:layout_width="wrap_content"
@@ -36,15 +21,7 @@
                 android:layout_marginTop="40dp"
                 android:orientation="horizontal"
                 android:id="@+id/addedByLayout">
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Added By:"/>
-                <ImageView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:id="@+id/addedBy"
-                    android:contentDescription="generic card image" />
+
             </LinearLayout>
 
             <LinearLayout
@@ -55,25 +32,7 @@
                 android:layout_marginTop="10dp"
                 android:orientation="horizontal"
                 android:id="@+id/addedForLayout">
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Added For:"/>
-                <ImageView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:id="@+id/addedFor1"
-                    android:contentDescription="generic card image" />
-                <ImageView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:id="@+id/addedFor2"
-                    android:contentDescription="generic card image" />
-                <ImageView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:id="@+id/addedFor3"
-                    android:contentDescription="generic card image" />
+
             </LinearLayout>
 
         </RelativeLayout>

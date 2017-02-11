@@ -12,28 +12,6 @@
             android:focusable="true"
             android:background="?android:attr/selectableItemBackground">
 
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:id="@+id/item_name"
-                android:layout_alignParentTop="true"
-                android:textSize="20sp"
-                android:textColor="#000"/>
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:id="@+id/item_date"
-                android:layout_below="@id/item_name"
-                android:textColor="@color/app_text_secondary_colour_def"/>
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:id="@+id/item_amount"
-                android:layout_alignParentRight="true"
-                android:textColor="@color/app_text_secondary_colour_def"
-                android:layout_marginLeft="50dp"/>
 
             <LinearLayout
                 android:layout_width="wrap_content"
@@ -41,21 +19,7 @@
                 android:layout_alignParentRight="true"
                 android:layout_marginTop="30dp"
                 android:orientation="horizontal">
-                <ImageView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:id="@+id/card_image"
-                    android:contentDescription="generic card image" />
-                <ImageView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:id="@+id/card_image_2"
-                    android:contentDescription="generic card image" />
-                <ImageView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:id="@+id/card_image_3"
-                    android:contentDescription="generic card image" />
+
             </LinearLayout>
 
         </RelativeLayout>

@@ -69,7 +69,7 @@ public class BillListAdapter extends RecyclerView.Adapter<BillListAdapter.CardVi
     @Override
     public CardViewHolder onCreateViewHolder(ViewGroup viewGroup, int i)
     {
-        View v = LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.general_list_item, viewGroup, false);
+        View v = LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.listitem_bill, viewGroup, false);
         CardViewHolder cvh = new CardViewHolder(v);
         return cvh;
     }
