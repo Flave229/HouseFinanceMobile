@@ -15,25 +15,18 @@ public class DisplayMessageActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_display_message);
+        setContentView(R.layout.activity_addnewbill);
         Toolbar appToolbar = (Toolbar) findViewById(R.id.appToolbar);
+
+        appToolbar.setTitle("Enter new bill");
         setSupportActionBar(appToolbar);
 
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
-        Intent intent = getIntent();
-        String message = intent.getStringExtra(MainActivity.EXTRA_MESSAGE);
-        TextView tv = new TextView(this);
-        tv.setTextSize(40);
-        tv.setText(message);
-
-        ViewGroup layout = (ViewGroup) findViewById(R.id.activity_display_message);
-        layout.addView(tv);
     }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.additemmenu, menu);
+        getMenuInflater().inflate(R.menu.billentrytoolbar, menu);
         return super.onCreateOptionsMenu(menu);
     }
 }
