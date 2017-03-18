@@ -102,7 +102,7 @@
                 android:layout_marginLeft="16dp"
                 android:layout_marginStart="16dp"
                 android:layout_marginTop="24dp"
-                android:text="Due (yyyy-mm-dd):"
+                android:text="Due (dd-mm-yyyy):"
                 android:textSize="16sp"
                 app:layout_constraintLeft_toLeftOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/BillAmountEntry" />
