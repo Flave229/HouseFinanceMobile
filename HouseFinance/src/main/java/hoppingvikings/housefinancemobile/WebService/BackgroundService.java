@@ -8,6 +8,7 @@ import android.net.NetworkInfo;
 import android.os.AsyncTask;
 import android.os.Binder;
 import android.os.IBinder;
+import android.util.Log;
 import android.widget.Toast;
 
 import org.json.JSONArray;
@@ -18,6 +19,7 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.io.OutputStreamWriter;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.ArrayList;
@@ -62,6 +64,26 @@ public class BackgroundService extends Service {
         {
             //Toast.makeText(getBaseContext(), "Obtaining list of bills", Toast.LENGTH_LONG).show();
             new DownloadJsonString().execute("https://saltavenue.azurewebsites.net/api/"+ authToken + "/RequestBillList", "Bills");
+        }
+        else
+        {
+            Toast.makeText(getBaseContext(), "No internet connection", Toast.LENGTH_SHORT).show();
+            GlobalObjects.downloading = false;
+        }
+    }
+
+    public void UploadNewBill(JSONObject newBill)
+    {
+        String newBillString = newBill.toString();
+        GlobalObjects.downloading = true;
+
+        ConnectivityManager connMgr = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo networkInfo = connMgr.getActiveNetworkInfo();
+        String authToken = "D2DB7539-634F-47C4-818D-59AD03C592E3";
+
+        if(networkInfo!= null && networkInfo.isConnected())
+        {
+            new UploadBillJson().execute(newBillString, "https://saltavenue.azurewebsites.net/api/"+ authToken + "/AddBillItem");
         }
         else
         {
@@ -277,6 +299,69 @@ public class BackgroundService extends Service {
                 }
             }
             return response.toString();
+        }
+    }
+
+    private class UploadBillJson extends AsyncTask<String, Void, Boolean>
+    {
+        @Override
+        protected Boolean doInBackground(String... params) {
+
+            try {
+                return UploadJsonObject(params[0], params[1]);
+            }
+            catch (IOException e)
+            {
+                return false;
+            }
+        }
+
+        @Override
+        protected void onPostExecute(Boolean aBoolean) {
+            if(aBoolean)
+            {
+
+            }
+            else
+            {
+
+            }
+        }
+
+        private boolean UploadJsonObject(String newBillJsonString, String weburl) throws IOException
+        {
+            URL url = new URL(weburl);
+
+            HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+
+            try {
+                connection.setRequestMethod("POST");
+                connection.setConnectTimeout(15000);
+                connection.setDoOutput(true);
+                connection.setRequestProperty("Accept", "application/json");
+                connection.setRequestProperty("Content-Type", "application/json");
+
+                OutputStreamWriter wr = new OutputStreamWriter(connection.getOutputStream());
+                wr.write(newBillJsonString);
+                wr.flush();
+
+                BufferedReader serverAnswer = new BufferedReader(new InputStreamReader(connection.getInputStream()));
+                String line;
+                while ((line = serverAnswer.readLine()) != null)
+                {
+                    System.out.println("Line: " + line);
+                }
+
+                wr.close();
+
+                serverAnswer.close();
+            } catch (Exception e)
+            {
+                Log.e("Error", "Problem Sending Bill: " + e.getMessage());
+                return false;
+            }
+
+            return true;
         }
     }
 

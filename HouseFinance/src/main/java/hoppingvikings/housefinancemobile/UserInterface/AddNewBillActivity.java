@@ -4,9 +4,12 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.design.widget.CoordinatorLayout;
+import android.support.design.widget.Snackbar;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -15,6 +18,15 @@ import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.RadioButton;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.text.DecimalFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+
+import hoppingvikings.housefinancemobile.GlobalObjects;
 import hoppingvikings.housefinancemobile.R;
 
 /**
@@ -35,6 +47,18 @@ public class AddNewBillActivity extends AppCompatActivity {
     RadioButton regularRadio;
     RadioButton recurRadio;
 
+    String billName;
+    Number billAmount;
+    Date billDueDate;
+
+    boolean forDavid;
+    boolean forVikki;
+    boolean forJosh;
+
+    boolean recurring;
+
+    CoordinatorLayout layout;
+
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -42,6 +66,8 @@ public class AddNewBillActivity extends AppCompatActivity {
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.appToolbar);
         setSupportActionBar(toolbar);
+
+        layout = (CoordinatorLayout) findViewById(R.id.coordlayout);
 
         submitButton = (Button) findViewById(R.id.submitBill);
         billNameEntry = (EditText) findViewById(R.id.BillNameEntry);
@@ -83,7 +109,44 @@ public class AddNewBillActivity extends AppCompatActivity {
                     @Override
                     public void onClick(DialogInterface dialogInterface, int i) {
                         confirmCancel.dismiss();
-                        finish();
+
+                        billName = billNameEntry.getText().toString();
+                        try {
+                            billAmount = DecimalFormat.getInstance().parse(billAmountEntry.getText().toString());
+                            billDueDate = new SimpleDateFormat("yyyy-MM-dd").parse(billDueDateEntry.getText().toString());
+                        } catch (ParseException pe)
+                        {
+                            Log.d("Error", "Parse Error: " + pe.getMessage());
+                        }
+
+                        forDavid = davidCheck.isChecked();
+                        forVikki = vikkiCheck.isChecked();
+                        forJosh = joshCheck.isChecked();
+
+                        recurring = recurRadio.isChecked();
+
+                        JSONObject newBill = new JSONObject();
+
+                        try {
+                            newBill.put("Name", billName);
+                            newBill.put("DateDue", new SimpleDateFormat("yyyy-MM-dd").format(billDueDate));
+                            newBill.put("AmountDue", billAmount.doubleValue());
+
+                            newBill.put("David", forDavid);
+                            newBill.put("Vikki", forVikki);
+                            newBill.put("Josh", forJosh);
+
+                            if(recurring)
+                                newBill.put("Recurring", true);
+                            else
+                                newBill.put("Single", true);
+
+
+                            GlobalObjects._service.UploadNewBill(newBill);
+                        } catch (JSONException je)
+                        {
+                            Snackbar.make(layout, "Failed to create Json", Snackbar.LENGTH_LONG).show();
+                        }
                     }
                 });
 
