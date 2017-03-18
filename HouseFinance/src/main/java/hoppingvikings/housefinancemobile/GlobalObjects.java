@@ -14,11 +14,11 @@ import hoppingvikings.housefinancemobile.WebService.BackgroundService;
 
 public class GlobalObjects{
 
-    static ArrayList<BillListObject> _bills;
-    static ArrayList<BillListObjectPeople> _billsPeople;
+    static ArrayList<BillListObject> _bills = new ArrayList<>();
+    static ArrayList<BillListObjectPeople> _billsPeople = new ArrayList<>();
 
-    static ArrayList<ShoppingListObject> _shoppingItems;
-    static ArrayList<ShoppingListPeople> _shoppingPeople;
+    static ArrayList<ShoppingListObject> _shoppingItems = new ArrayList<>();
+    static ArrayList<ShoppingListPeople> _shoppingPeople = new ArrayList<>();
 
     public static BackgroundService _service;
     public static boolean _bound = false;
@@ -27,7 +27,8 @@ public class GlobalObjects{
 
     public static void SetBills(ArrayList<BillListObject> bills)
     {
-        _bills = bills;
+        _bills.clear();
+        _bills.addAll(bills);
     }
 
     public static ArrayList<BillListObject> GetBills()
@@ -48,7 +49,8 @@ public class GlobalObjects{
 
     public static void SetBillPeopleList(ArrayList<BillListObjectPeople> people)
     {
-        _billsPeople = people;
+        _billsPeople.clear();
+        _billsPeople.addAll(people);
     }
 
     public static BillListObjectPeople GetPersonFromID(String id)
@@ -65,7 +67,8 @@ public class GlobalObjects{
 
     public static void SetShoppingItems(ArrayList<ShoppingListObject> items)
     {
-        _shoppingItems = items;
+        _shoppingItems.clear();
+        _shoppingItems.addAll(items);
     }
 
     public static ArrayList<ShoppingListObject> GetShoppingItems()
@@ -88,6 +91,7 @@ public class GlobalObjects{
 
     public static void SetShoppingPeopleList(ArrayList<ShoppingListPeople> people)
     {
-        _shoppingPeople = people;
+        _shoppingPeople.clear();
+        _shoppingPeople.addAll(people);
     }
 }

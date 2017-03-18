@@ -18,6 +18,7 @@ import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.RadioButton;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -99,7 +100,7 @@ public class AddNewBillActivity extends AppCompatActivity {
 
         submitButton.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View view) {
+            public void onClick(final View view) {
                 final AlertDialog confirmCancel = new AlertDialog.Builder(AddNewBillActivity.this).create();
 
                 confirmCancel.setTitle("Submit bill entry?");
@@ -110,13 +111,32 @@ public class AddNewBillActivity extends AppCompatActivity {
                     public void onClick(DialogInterface dialogInterface, int i) {
                         confirmCancel.dismiss();
 
-                        billName = billNameEntry.getText().toString();
+                        if(billNameEntry.getText().length() > 0)
+                            billName = billNameEntry.getText().toString();
+                        else {
+                            Snackbar.make(layout, "Please enter a valid Bill name", Snackbar.LENGTH_LONG).show();
+                            return;
+                        }
+
                         try {
-                            billAmount = DecimalFormat.getInstance().parse(billAmountEntry.getText().toString());
-                            billDueDate = new SimpleDateFormat("yyyy-MM-dd").parse(billDueDateEntry.getText().toString());
+                            if(billAmountEntry.getText().length() > 0)
+                                billAmount = DecimalFormat.getInstance().parse(billAmountEntry.getText().toString());
+                            else {
+                                Snackbar.make(layout, "Please enter a valid Bill amount", Snackbar.LENGTH_LONG).show();
+                                return;
+                            }
+
+                            if(billDueDateEntry.getText().length() > 0)
+                                billDueDate = new SimpleDateFormat("dd-MM-yyyy").parse(billDueDateEntry.getText().toString());
+                            else {
+                                Snackbar.make(layout, "Please enter a valid Bill due date", Snackbar.LENGTH_LONG).show();
+                                return;
+                            }
                         } catch (ParseException pe)
                         {
                             Log.d("Error", "Parse Error: " + pe.getMessage());
+                            Snackbar.make(layout, "Parsing Error: " + pe.getMessage(), Snackbar.LENGTH_LONG).show();
+                            return;
                         }
 
                         forDavid = davidCheck.isChecked();
@@ -125,27 +145,65 @@ public class AddNewBillActivity extends AppCompatActivity {
 
                         recurring = recurRadio.isChecked();
 
+                        billNameEntry.setEnabled(false);
+                        billAmountEntry.setEnabled(false);
+                        billDueDateEntry.setEnabled(false);
+                        submitButton.setEnabled(false);
+
+                        davidCheck.setEnabled(false);
+                        vikkiCheck.setEnabled(false);
+                        joshCheck.setEnabled(false);
+
                         JSONObject newBill = new JSONObject();
 
                         try {
                             newBill.put("Name", billName);
-                            newBill.put("DateDue", new SimpleDateFormat("yyyy-MM-dd").format(billDueDate));
-                            newBill.put("AmountDue", billAmount.doubleValue());
+                            newBill.put("AmountOwed", billAmount.doubleValue());
+                            newBill.put("Due", new SimpleDateFormat("yyyy-MM-dd").format(billDueDate));
 
-                            newBill.put("David", forDavid);
-                            newBill.put("Vikki", forVikki);
-                            newBill.put("Josh", forJosh);
+                            JSONArray people = new JSONArray();
+
+                            if(forDavid)
+                                people.put("e9636bbb-8b54-49b9-9fa2-9477c303032f");
+
+                            if(forVikki)
+                                people.put("25c15fb4-b5d5-47d9-917b-c572b1119e65");
+
+                            if(forJosh)
+                                people.put("f97a50c9-8451-4537-bccb-e89ba5ade95a");
+
+                            /*JSONObject david = new JSONObject();
+                            JSONObject vikki = new JSONObject();
+                            JSONObject josh = new JSONObject();
+
+                            david.put("Id","");
+                            david.put("ForDavid", forDavid);
+
+                            vikki.put("Id", "");
+                            vikki.put("ForVikki", forVikki);
+
+                            josh.put("Id", "");
+                            josh.put("ForJosh", forJosh);
+
+                            people.put(david);
+                            people.put(vikki);
+                            people.put(josh);*/
+
+                            newBill.put("People", people);
 
                             if(recurring)
-                                newBill.put("Recurring", true);
+                                newBill.put("RecurringType", 1);
                             else
-                                newBill.put("Single", true);
+                                newBill.put("RecurringType", 0);
 
 
                             GlobalObjects._service.UploadNewBill(newBill);
+                            finish();
+
                         } catch (JSONException je)
                         {
                             Snackbar.make(layout, "Failed to create Json", Snackbar.LENGTH_LONG).show();
+                            finish();
                         }
                     }
                 });

@@ -15,10 +15,13 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.BufferedOutputStream;
 import java.io.BufferedReader;
+import java.io.BufferedWriter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.net.HttpURLConnection;
 import java.net.URL;
@@ -320,11 +323,11 @@ public class BackgroundService extends Service {
         protected void onPostExecute(Boolean aBoolean) {
             if(aBoolean)
             {
-
+                Toast.makeText(getApplicationContext(), "Successfully added the bill!", Toast.LENGTH_LONG).show();
             }
             else
             {
-
+                Toast.makeText(getApplicationContext(), "Failed to add the bill", Toast.LENGTH_LONG).show();
             }
         }
 
@@ -338,27 +341,32 @@ public class BackgroundService extends Service {
                 connection.setRequestMethod("POST");
                 connection.setConnectTimeout(15000);
                 connection.setDoOutput(true);
-                connection.setRequestProperty("Accept", "application/json");
-                connection.setRequestProperty("Content-Type", "application/json");
+                connection.setChunkedStreamingMode(0);
 
-                OutputStreamWriter wr = new OutputStreamWriter(connection.getOutputStream());
-                wr.write(newBillJsonString);
-                wr.flush();
+                OutputStream out = new BufferedOutputStream(connection.getOutputStream());
+                BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(out, "UTF-8"));
+
+                writer.write(newBillJsonString);
+                writer.flush();
+                writer.close();
+
+                out.close();
 
                 BufferedReader serverAnswer = new BufferedReader(new InputStreamReader(connection.getInputStream()));
                 String line;
                 while ((line = serverAnswer.readLine()) != null)
                 {
-                    System.out.println("Line: " + line);
+                    System.out.println("Feedback: " + line);
                 }
-
-                wr.close();
 
                 serverAnswer.close();
             } catch (Exception e)
             {
                 Log.e("Error", "Problem Sending Bill: " + e.getMessage());
                 return false;
+            }
+            finally {
+                connection.disconnect();
             }
 
             return true;

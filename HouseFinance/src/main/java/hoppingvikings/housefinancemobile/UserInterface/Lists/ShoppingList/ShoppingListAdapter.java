@@ -51,7 +51,7 @@ public class ShoppingListAdapter extends RecyclerView.Adapter<ShoppingListAdapte
     ArrayList<ShoppingListObject> _shoppingItems = new ArrayList<>();
 
     public ShoppingListAdapter(ArrayList<ShoppingListObject> items) {
-        _shoppingItems = items;
+        _shoppingItems.addAll(items);
     }
 
     @Override

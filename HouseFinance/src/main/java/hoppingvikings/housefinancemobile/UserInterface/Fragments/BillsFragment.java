@@ -54,7 +54,16 @@ public class BillsFragment extends Fragment {
 
             if(!GlobalObjects.downloading) {
                 if (GlobalObjects.GetBills() != null) {
-                    cards = GlobalObjects.GetBills();
+                    if(cards != null)
+                    {
+                        cards.clear();
+                        cards.addAll(GlobalObjects.GetBills());
+                    }
+                    else
+                    {
+                        cards = new ArrayList<>();
+                        cards.addAll(GlobalObjects.GetBills());
+                    }
                     if (adapter.getItemCount() != cards.size()) {
                         _handler.post(contactWebsite);
                     } else {
@@ -97,7 +106,8 @@ public class BillsFragment extends Fragment {
 
         if(GlobalObjects.GetBills() != null && GlobalObjects.GetBills().size() != 0)
         {
-            cards = GlobalObjects.GetBills();
+            cards = new ArrayList<>();
+            cards.addAll(GlobalObjects.GetBills());
         }
         else
         {
