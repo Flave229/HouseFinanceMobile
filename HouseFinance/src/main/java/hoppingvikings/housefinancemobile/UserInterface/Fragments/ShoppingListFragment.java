@@ -127,6 +127,9 @@ public class ShoppingListFragment extends Fragment {
                 android.R.color.holo_orange_light,
                 android.R.color.holo_red_light);
 
+        swipeRefreshLayout.setRefreshing(true);
+        _handler.postDelayed(contactWebsite, 200);
+
         return view;
     }
 }

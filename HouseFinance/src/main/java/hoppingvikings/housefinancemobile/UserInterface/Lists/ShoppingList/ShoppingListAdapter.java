@@ -43,7 +43,6 @@ public class ShoppingListAdapter extends RecyclerView.Adapter<ShoppingListAdapte
             view.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    view.getContext().startActivity(new Intent(view.getContext(), DisplayMessageActivity.class));
                 }
             });
         }
@@ -101,8 +100,10 @@ public class ShoppingListAdapter extends RecyclerView.Adapter<ShoppingListAdapte
     {
         if(_shoppingItems != null) {
             _shoppingItems.clear();
-            notifyDataSetChanged();
             _shoppingItems.addAll(items);
+
+            notifyItemRangeRemoved(0, _shoppingItems.size());
+            notifyItemRangeInserted(0, items.size());
         }
     }
 }

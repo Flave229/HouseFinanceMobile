@@ -7,4 +7,5 @@
     <color name="bill_paid">#00e676</color>
     <color name="bill_overdue">#e57373</color>
     <color name="tab_underline">#e32929</color>
+    <color name="foreground_material_dark">#b5b4b4</color>
 </resources>

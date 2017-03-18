@@ -45,7 +45,6 @@ public class BillListAdapter extends RecyclerView.Adapter<BillListAdapter.CardVi
             view.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    view.getContext().startActivity(new Intent(view.getContext(), DisplayMessageActivity.class));
                 }
             });
         }
@@ -117,12 +116,14 @@ public class BillListAdapter extends RecyclerView.Adapter<BillListAdapter.CardVi
         }
     }
 
-    public void addAll(ArrayList<BillListObject> bills)
+    public void AddAll(ArrayList<BillListObject> bills)
     {
         if(_cards != null) {
             _cards.clear();
-            notifyDataSetChanged();
             _cards.addAll(bills);
+            notifyItemRangeRemoved(0, _cards.size());
+            notifyItemRangeInserted(0, bills.size());
+
         }
     }
 }

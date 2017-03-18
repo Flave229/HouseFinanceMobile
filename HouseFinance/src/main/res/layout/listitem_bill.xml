@@ -4,13 +4,14 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:orientation="vertical" android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:id="@+id/general_card">
+    android:id="@+id/general_card"
+    android:focusable="true"
+    android:clickable="true">
 
     <android.support.constraint.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:id="@+id/card_layout"
-        android:focusable="true"
         android:background="?android:attr/selectableItemBackground">
 
         <TextView

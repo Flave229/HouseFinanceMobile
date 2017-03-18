@@ -43,9 +43,7 @@ public class BillsFragment extends Fragment {
     private Runnable Populate = new Runnable() {
         @Override
         public void run() {
-            adapter.addAll(cards);
-            adapter.notifyItemRangeInserted(0, cards.size());
-
+            adapter.AddAll(cards);
             _handler.postDelayed(updateList, 500);
         }
     };
@@ -125,6 +123,9 @@ public class BillsFragment extends Fragment {
                 android.R.color.holo_green_light,
                 android.R.color.holo_orange_light,
                 android.R.color.holo_red_light);
+
+        swipeRefreshLayout.setRefreshing(true);
+        _handler.postDelayed(contactWebsite, 200);
 
         //_handler.postDelayed(runnable, 1000);
         return view;

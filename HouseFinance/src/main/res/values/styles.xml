@@ -5,6 +5,7 @@
         <!-- Customize your theme here. -->
         <item name="android:windowActionBar">false</item>
         <item name="colorAccent">@color/appAccentColour</item>
+        <item name="android:colorForeground">@color/foreground_material_dark</item>
     </style>
 
     <style name="CustomTabLayout" parent="Widget.Design.TabLayout">
