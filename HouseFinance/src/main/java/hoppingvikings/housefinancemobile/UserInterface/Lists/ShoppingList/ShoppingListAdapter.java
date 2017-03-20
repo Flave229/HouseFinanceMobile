@@ -99,11 +99,12 @@ public class ShoppingListAdapter extends RecyclerView.Adapter<ShoppingListAdapte
     public void addAll(ArrayList<ShoppingListObject> items)
     {
         if(_shoppingItems != null) {
+            int oldsize = _shoppingItems.size();
             _shoppingItems.clear();
             _shoppingItems.addAll(items);
 
-            notifyItemRangeRemoved(0, _shoppingItems.size());
-            notifyItemRangeInserted(0, items.size());
+            notifyItemRangeRemoved(0, oldsize);
+            notifyItemRangeInserted(0, _shoppingItems.size());
         }
     }
 }

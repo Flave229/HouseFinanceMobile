@@ -39,7 +39,10 @@ public class AddNewBillActivity extends AppCompatActivity {
     Button submitButton;
     EditText billNameEntry;
     EditText billAmountEntry;
-    EditText billDueDateEntry;
+
+    EditText billDueDateDayEntry;
+    EditText billDueDateMonthEntry;
+    EditText billDueDateYearEntry;
 
     CheckBox davidCheck;
     CheckBox vikkiCheck;
@@ -73,7 +76,9 @@ public class AddNewBillActivity extends AppCompatActivity {
         submitButton = (Button) findViewById(R.id.submitBill);
         billNameEntry = (EditText) findViewById(R.id.BillNameEntry);
         billAmountEntry = (EditText) findViewById(R.id.BillAmountEntry);
-        billDueDateEntry = (EditText) findViewById(R.id.BillDueEntry);
+        billDueDateDayEntry = (EditText) findViewById(R.id.BillDueDayEntry);
+        billDueDateMonthEntry = (EditText) findViewById(R.id.BillDueMonthEntry);
+        billDueDateYearEntry = (EditText) findViewById(R.id.BillDueYearEntry);
 
         davidCheck = (CheckBox) findViewById(R.id.CheckBoxDavid);
         vikkiCheck = (CheckBox) findViewById(R.id.CheckBoxVikki);
@@ -126,12 +131,40 @@ public class AddNewBillActivity extends AppCompatActivity {
                                 return;
                             }
 
-                            if(billDueDateEntry.getText().length() > 0)
-                                billDueDate = new SimpleDateFormat("dd-MM-yyyy").parse(billDueDateEntry.getText().toString());
-                            else {
-                                Snackbar.make(layout, "Please enter a valid Bill due date", Snackbar.LENGTH_LONG).show();
+                            if(billDueDateDayEntry.getText().length() > 0
+                                    && (Integer.parseInt(billDueDateDayEntry.getText().toString()) > 0
+                                    && Integer.parseInt(billDueDateDayEntry.getText().toString()) <= 31))
+                            {
+                                if(billDueDateMonthEntry.getText().length() > 0
+                                        && (Integer.parseInt(billDueDateMonthEntry.getText().toString()) > 0
+                                        && Integer.parseInt(billDueDateMonthEntry.getText().toString()) <= 12))
+                                {
+                                    if(billDueDateYearEntry.getText().length() > 0
+                                            && (Integer.parseInt(billDueDateYearEntry.getText().toString()) > 1970
+                                            && Integer.parseInt(billDueDateYearEntry.getText().toString()) < 3000))
+                                    {
+                                        billDueDate = new SimpleDateFormat("dd-MM-yyyy").parse(billDueDateDayEntry.getText().toString()
+                                                + "-" + billDueDateMonthEntry.getText().toString()
+                                                + "-" + billDueDateYearEntry.getText().toString());
+                                    }
+                                    else
+                                    {
+                                        Snackbar.make(layout, "Please enter a valid Year (1970-3000)", Snackbar.LENGTH_LONG).show();
+                                        return;
+                                    }
+                                }
+                                else
+                                {
+                                    Snackbar.make(layout, "Please enter a valid Month (1-12)", Snackbar.LENGTH_LONG).show();
+                                    return;
+                                }
+                            }
+                            else
+                            {
+                                Snackbar.make(layout, "Please enter a valid Day (1-31)", Snackbar.LENGTH_LONG).show();
                                 return;
                             }
+
                         } catch (ParseException pe)
                         {
                             Log.d("Error", "Parse Error: " + pe.getMessage());
@@ -143,11 +176,19 @@ public class AddNewBillActivity extends AppCompatActivity {
                         forVikki = vikkiCheck.isChecked();
                         forJosh = joshCheck.isChecked();
 
+                        if(!forDavid && !forVikki && !forJosh)
+                        {
+                            Snackbar.make(layout, "Please select at least one person for this bill", Snackbar.LENGTH_LONG).show();
+                            return;
+                        }
+
                         recurring = recurRadio.isChecked();
 
                         billNameEntry.setEnabled(false);
                         billAmountEntry.setEnabled(false);
-                        billDueDateEntry.setEnabled(false);
+                        billDueDateDayEntry.setEnabled(false);
+                        billDueDateMonthEntry.setEnabled(false);
+                        billDueDateYearEntry.setEnabled(false);
                         submitButton.setEnabled(false);
 
                         davidCheck.setEnabled(false);

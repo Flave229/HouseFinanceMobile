@@ -111,10 +111,12 @@ public class BillListAdapter extends RecyclerView.Adapter<BillListAdapter.CardVi
     public void AddAll(ArrayList<BillListObject> bills)
     {
         if(_cards != null) {
+            int oldsize = _cards.size();
+
             _cards.clear();
             _cards.addAll(bills);
-            notifyItemRangeRemoved(0, _cards.size());
-            notifyItemRangeInserted(0, bills.size());
+            notifyItemRangeRemoved(0, oldsize);
+            notifyItemRangeInserted(0, _cards.size());
 
         }
     }
