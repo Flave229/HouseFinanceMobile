@@ -2,6 +2,8 @@ package hoppingvikings.housefinancemobile.UserInterface.Fragments;
 
 import android.os.Bundle;
 import android.os.Handler;
+import android.support.design.widget.CoordinatorLayout;
+import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
@@ -17,13 +19,15 @@ import hoppingvikings.housefinancemobile.R;
 import hoppingvikings.housefinancemobile.UserInterface.Lists.ListItemDivider;
 import hoppingvikings.housefinancemobile.UserInterface.Lists.ShoppingList.ShoppingListAdapter;
 import hoppingvikings.housefinancemobile.UserInterface.Lists.ShoppingList.ShoppingListObject;
+import hoppingvikings.housefinancemobile.WebService.DownloadCallback;
 
 /**
  * Created by Josh on 24/09/2016.
  */
 
-public class ShoppingListFragment extends Fragment {
+public class ShoppingListFragment extends Fragment implements DownloadCallback {
 
+    CoordinatorLayout layout;
     Handler _handler;
     RecyclerView rv;
     ShoppingListAdapter adapter;
@@ -33,20 +37,7 @@ public class ShoppingListFragment extends Fragment {
     private Runnable contactWebsite = new Runnable() {
         @Override
         public void run() {
-
-            GlobalObjects._service.contactWebsiteShoppingItems();
-            // After calling the website, allow 3 seconds before we update the list. Can be reduced if needed
-            _handler.postDelayed(Populate, 3000);
-        }
-    };
-
-    private Runnable Populate = new Runnable() {
-        @Override
-        public void run() {
-            adapter.addAll(items);
-            adapter.notifyItemRangeInserted(0, items.size());
-
-            _handler.postDelayed(updateList, 500);
+            GlobalObjects._service.contactWebsiteShoppingItems(ShoppingListFragment.this);
         }
     };
 
@@ -57,7 +48,18 @@ public class ShoppingListFragment extends Fragment {
             if(!GlobalObjects.downloading)
             {
                 if (GlobalObjects.GetShoppingItems() != null) {
-                    items = GlobalObjects.GetShoppingItems();
+                    if(items != null)
+                    {
+                        items.clear();
+                        items.addAll(GlobalObjects.GetShoppingItems());
+                        adapter.addAll(items);
+                    }
+                    else
+                    {
+                        items = new ArrayList<>();
+                        items.addAll(GlobalObjects.GetShoppingItems());
+                        adapter.addAll(items);
+                    }
                     if (adapter.getItemCount() != items.size()) {
                         _handler.post(contactWebsite);
                     } else {
@@ -93,6 +95,7 @@ public class ShoppingListFragment extends Fragment {
     {
         View view = inflater.inflate(R.layout.fragment_blank, container, false);
         swipeRefreshLayout = (SwipeRefreshLayout) view.findViewById(R.id.swipeRefresh);
+        layout = (CoordinatorLayout)view.findViewById(R.id.coordlayout);
         _handler = new Handler();
 
         rv = (RecyclerView) view.findViewById(R.id.recycler_view);
@@ -131,5 +134,18 @@ public class ShoppingListFragment extends Fragment {
         _handler.postDelayed(contactWebsite, 200);
 
         return view;
+    }
+
+    @Override
+    public void OnSuccessfulDownload() {
+        // After calling the website, allow 3 seconds before we update the list. Can be reduced if needed
+        _handler.postDelayed(updateList, 1000);
+    }
+
+    @Override
+    public void OnFailedDownload(String failReason) {
+        Snackbar.make(layout, failReason + ". Retrying...", Snackbar.LENGTH_LONG).show();
+        _handler.removeCallbacksAndMessages(null);
+        _handler.postDelayed(contactWebsite, 500);
     }
 }

@@ -17,6 +17,7 @@ import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.RadioButton;
+import android.widget.Toast;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -29,12 +30,13 @@ import java.util.Date;
 
 import hoppingvikings.housefinancemobile.GlobalObjects;
 import hoppingvikings.housefinancemobile.R;
+import hoppingvikings.housefinancemobile.WebService.UploadCallback;
 
 /**
  * Created by Josh on 11/02/2017.
  */
 
-public class AddNewBillActivity extends AppCompatActivity {
+public class AddNewBillActivity extends AppCompatActivity implements UploadCallback {
 
     Button submitButton;
     EditText billNameEntry;
@@ -119,7 +121,7 @@ public class AddNewBillActivity extends AppCompatActivity {
                         if(billNameEntry.getText().length() > 0)
                             billName = billNameEntry.getText().toString();
                         else {
-                            Snackbar.make(layout, "Please enter a valid Bill name", Snackbar.LENGTH_LONG).show();
+                            billNameEntry.setError("Please enter a valid Bill name");
                             return;
                         }
 
@@ -127,7 +129,7 @@ public class AddNewBillActivity extends AppCompatActivity {
                             if(billAmountEntry.getText().length() > 0)
                                 billAmount = DecimalFormat.getInstance().parse(billAmountEntry.getText().toString());
                             else {
-                                Snackbar.make(layout, "Please enter a valid Bill amount", Snackbar.LENGTH_LONG).show();
+                                billAmountEntry.setError("Please enter a valid Bill amount");
                                 return;
                             }
 
@@ -149,19 +151,19 @@ public class AddNewBillActivity extends AppCompatActivity {
                                     }
                                     else
                                     {
-                                        Snackbar.make(layout, "Please enter a valid Year (1970-3000)", Snackbar.LENGTH_LONG).show();
+                                        billDueDateYearEntry.setError("Please enter a valid year (1970-3000)");
                                         return;
                                     }
                                 }
                                 else
                                 {
-                                    Snackbar.make(layout, "Please enter a valid Month (1-12)", Snackbar.LENGTH_LONG).show();
+                                    billDueDateMonthEntry.setError("Please enter a valid month (1-12)");
                                     return;
                                 }
                             }
                             else
                             {
-                                Snackbar.make(layout, "Please enter a valid Day (1-31)", Snackbar.LENGTH_LONG).show();
+                                billDueDateDayEntry.setError("Please enter a valid day (1-31)");
                                 return;
                             }
 
@@ -194,6 +196,8 @@ public class AddNewBillActivity extends AppCompatActivity {
                         davidCheck.setEnabled(false);
                         vikkiCheck.setEnabled(false);
                         joshCheck.setEnabled(false);
+                        recurRadio.setEnabled(false);
+                        regularRadio.setEnabled(false);
 
                         JSONObject newBill = new JSONObject();
 
@@ -238,13 +242,12 @@ public class AddNewBillActivity extends AppCompatActivity {
                                 newBill.put("RecurringType", 0);
 
 
-                            GlobalObjects._service.UploadNewBill(newBill);
-                            finish();
+                            GlobalObjects._service.UploadNewBill(newBill, AddNewBillActivity.this);
 
                         } catch (JSONException je)
                         {
                             Snackbar.make(layout, "Failed to create Json", Snackbar.LENGTH_LONG).show();
-                            finish();
+                            ReenableElements();
                         }
                     }
                 });
@@ -324,7 +327,34 @@ public class AddNewBillActivity extends AppCompatActivity {
             default:
                 return super.onOptionsItemSelected(item);
         }
+    }
 
+    private void ReenableElements()
+    {
+        billNameEntry.setEnabled(true);
+        billAmountEntry.setEnabled(true);
+        billDueDateDayEntry.setEnabled(true);
+        billDueDateMonthEntry.setEnabled(true);
+        billDueDateYearEntry.setEnabled(true);
+        submitButton.setEnabled(true);
 
+        davidCheck.setEnabled(true);
+        vikkiCheck.setEnabled(true);
+        joshCheck.setEnabled(true);
+
+        recurRadio.setEnabled(true);
+        regularRadio.setEnabled(true);
+    }
+
+    @Override
+    public void OnSuccessfulUpload() {
+        Toast.makeText(getApplicationContext(), "Bill successfully uploaded", Toast.LENGTH_LONG).show();
+        finish();
+    }
+
+    @Override
+    public void OnFailedUpload(String failReason) {
+        Snackbar.make(layout, failReason, Snackbar.LENGTH_LONG).show();
+        ReenableElements();
     }
 }

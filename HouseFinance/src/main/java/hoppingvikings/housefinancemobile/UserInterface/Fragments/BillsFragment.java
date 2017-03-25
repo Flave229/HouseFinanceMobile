@@ -2,6 +2,8 @@ package hoppingvikings.housefinancemobile.UserInterface.Fragments;
 
 import android.os.Bundle;
 import android.os.Handler;
+import android.support.design.widget.CoordinatorLayout;
+import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
@@ -17,13 +19,15 @@ import hoppingvikings.housefinancemobile.R;
 import hoppingvikings.housefinancemobile.UserInterface.Lists.BillList.BillListAdapter;
 import hoppingvikings.housefinancemobile.UserInterface.Lists.BillList.BillListObject;
 import hoppingvikings.housefinancemobile.UserInterface.Lists.ListItemDivider;
+import hoppingvikings.housefinancemobile.WebService.DownloadCallback;
 
 /**
  * Created by Josh on 24/09/2016.
  */
 
-public class BillsFragment extends Fragment {
+public class BillsFragment extends Fragment implements DownloadCallback {
 
+    CoordinatorLayout layout;
     Handler _handler;
     RecyclerView rv;
     BillListAdapter adapter;
@@ -33,18 +37,7 @@ public class BillsFragment extends Fragment {
     private Runnable contactWebsite = new Runnable() {
         @Override
         public void run() {
-
-            GlobalObjects._service.contactWebsiteBills();
-            // After calling the website, allow 3 seconds before we update the list. Can be reduced if needed
-            _handler.postDelayed(Populate, 3000);
-        }
-    };
-
-    private Runnable Populate = new Runnable() {
-        @Override
-        public void run() {
-            adapter.AddAll(cards);
-            _handler.postDelayed(updateList, 500);
+            GlobalObjects._service.contactWebsiteBills(BillsFragment.this);
         }
     };
 
@@ -58,11 +51,13 @@ public class BillsFragment extends Fragment {
                     {
                         cards.clear();
                         cards.addAll(GlobalObjects.GetBills());
+                        adapter.AddAll(cards);
                     }
                     else
                     {
                         cards = new ArrayList<>();
                         cards.addAll(GlobalObjects.GetBills());
+                        adapter.AddAll(cards);
                     }
                     if (adapter.getItemCount() != cards.size()) {
                         _handler.post(contactWebsite);
@@ -99,6 +94,7 @@ public class BillsFragment extends Fragment {
         View view = inflater.inflate(R.layout.fragment_blank, container, false);
 
         swipeRefreshLayout = (SwipeRefreshLayout) view.findViewById(R.id.swipeRefresh);
+        layout = (CoordinatorLayout)view.findViewById(R.id.coordlayout);
 
         _handler = new Handler();
         rv = (RecyclerView) view.findViewById(R.id.recycler_view);
@@ -139,5 +135,18 @@ public class BillsFragment extends Fragment {
 
         //_handler.postDelayed(runnable, 1000);
         return view;
+    }
+
+    @Override
+    public void OnSuccessfulDownload() {
+        // After calling the website, allow 3 seconds before we update the list. Can be reduced if needed
+        _handler.postDelayed(updateList, 1000);
+    }
+
+    @Override
+    public void OnFailedDownload(String failReason) {
+        Snackbar.make(layout, failReason + ". Retrying...", Snackbar.LENGTH_LONG).show();
+        _handler.removeCallbacksAndMessages(null);
+        _handler.postDelayed(contactWebsite, 500);
     }
 }

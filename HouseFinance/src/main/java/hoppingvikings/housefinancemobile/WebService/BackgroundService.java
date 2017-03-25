@@ -39,6 +39,10 @@ import hoppingvikings.housefinancemobile.UserInterface.Lists.ShoppingList.Shoppi
 
 public class BackgroundService extends Service {
 
+    DownloadCallback _billListOwner;
+    DownloadCallback _shoppingListOwner;
+    UploadCallback _uploadOwner;
+
     private final IBinder _binder = new LocalBinder();
 
     public class LocalBinder extends Binder
@@ -56,8 +60,9 @@ public class BackgroundService extends Service {
     }
 
 
-    public void contactWebsiteBills()
+    public void contactWebsiteBills(DownloadCallback owner)
     {
+        _billListOwner = owner;
         GlobalObjects.downloading = true;
         ConnectivityManager connMgr = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
         NetworkInfo networkInfo = connMgr.getActiveNetworkInfo();
@@ -70,13 +75,14 @@ public class BackgroundService extends Service {
         }
         else
         {
-            Toast.makeText(getBaseContext(), "No internet connection", Toast.LENGTH_SHORT).show();
             GlobalObjects.downloading = false;
+            _billListOwner.OnFailedDownload("No internet connection");
         }
     }
 
-    public void UploadNewBill(JSONObject newBill)
+    public void UploadNewBill(JSONObject newBill, UploadCallback owner)
     {
+        _uploadOwner = owner;
         String newBillString = newBill.toString();
         GlobalObjects.downloading = true;
 
@@ -90,13 +96,14 @@ public class BackgroundService extends Service {
         }
         else
         {
-            Toast.makeText(getBaseContext(), "No internet connection", Toast.LENGTH_SHORT).show();
             GlobalObjects.downloading = false;
+            _uploadOwner.OnFailedUpload("No internet connection");
         }
     }
 
-    public void contactWebsiteShoppingItems()
+    public void contactWebsiteShoppingItems(DownloadCallback owner)
     {
+        _shoppingListOwner = owner;
         GlobalObjects.downloading = true;
         ConnectivityManager connMgr = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
         NetworkInfo networkInfo = connMgr.getActiveNetworkInfo();
@@ -109,8 +116,8 @@ public class BackgroundService extends Service {
         }
         else
         {
-            Toast.makeText(getBaseContext(), "No internet connection", Toast.LENGTH_SHORT).show();
             GlobalObjects.downloading = false;
+            _shoppingListOwner.OnFailedDownload("No internet connection");
         }
     }
 
@@ -154,12 +161,15 @@ public class BackgroundService extends Service {
 
                     GlobalObjects.downloading = false;
 
+                    _billListOwner.OnSuccessfulDownload();
+
                 } catch (JSONException je) {
                     je.printStackTrace();
                     GlobalObjects.downloading = false;
+                    _billListOwner.OnFailedDownload("Failed to parse Bill list");
                 } catch(Exception e) {
-                    Toast.makeText(getBaseContext(), "Error occurred while downloading bills. Retrying...", Toast.LENGTH_SHORT).show();
                     GlobalObjects.downloading = false;
+                    _billListOwner.OnFailedDownload("Unknown Error in Bill list download");
                 }
                 break;
 
@@ -198,13 +208,15 @@ public class BackgroundService extends Service {
                     GlobalObjects.SetShoppingPeopleList(shoppingPeople);
 
                     GlobalObjects.downloading = false;
+                    _shoppingListOwner.OnSuccessfulDownload();
 
                 } catch (JSONException je) {
                     je.printStackTrace();
                     GlobalObjects.downloading = false;
+                    _shoppingListOwner.OnFailedDownload("Failed to parse Shopping list");
                 } catch(Exception e) {
-                    Toast.makeText(getBaseContext(), "Error occurred while downloading shopping list. Retrying...", Toast.LENGTH_SHORT).show();
                     GlobalObjects.downloading = false;
+                    _shoppingListOwner.OnFailedDownload("Unknown Error in Shopping List download");
                 }
                 break;
         }
@@ -323,11 +335,11 @@ public class BackgroundService extends Service {
         protected void onPostExecute(Boolean aBoolean) {
             if(aBoolean)
             {
-                Toast.makeText(getApplicationContext(), "Successfully added the bill!", Toast.LENGTH_LONG).show();
+                _uploadOwner.OnSuccessfulUpload();
             }
             else
             {
-                Toast.makeText(getApplicationContext(), "Failed to add the bill", Toast.LENGTH_LONG).show();
+                _uploadOwner.OnFailedUpload("Failed to upload new Bill. Please try again");
             }
         }
 
