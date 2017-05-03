@@ -37,34 +37,19 @@ import hoppingvikings.housefinancemobile.UserInterface.Lists.ShoppingList.Shoppi
  * Created by Josh on 24/09/2016.
  */
 
-public class BackgroundService extends Service {
+public class BackgroundService {
 
     DownloadCallback _billListOwner;
     DownloadCallback _shoppingListOwner;
     UploadCallback _uploadOwner;
 
-    private final IBinder _binder = new LocalBinder();
-
-    public class LocalBinder extends Binder
-    {
-        public BackgroundService getService()
-        {
-            return BackgroundService.this;
-        }
-    }
-
-    @Override
-    public IBinder onBind(Intent intent)
-    {
-        return _binder;
-    }
 
 
-    public void contactWebsiteBills(DownloadCallback owner)
+    public void contactWebsiteBills(Context context, DownloadCallback owner)
     {
         _billListOwner = owner;
         GlobalObjects.downloading = true;
-        ConnectivityManager connMgr = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+        ConnectivityManager connMgr = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
         NetworkInfo networkInfo = connMgr.getActiveNetworkInfo();
         String authToken = "D2DB7539-634F-47C4-818D-59AD03C592E3";
 
@@ -80,13 +65,13 @@ public class BackgroundService extends Service {
         }
     }
 
-    public void UploadNewBill(JSONObject newBill, UploadCallback owner)
+    public void UploadNewBill(Context context, JSONObject newBill, UploadCallback owner)
     {
         _uploadOwner = owner;
         String newBillString = newBill.toString();
         GlobalObjects.downloading = true;
 
-        ConnectivityManager connMgr = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+        ConnectivityManager connMgr = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
         NetworkInfo networkInfo = connMgr.getActiveNetworkInfo();
         String authToken = "D2DB7539-634F-47C4-818D-59AD03C592E3";
 
@@ -101,11 +86,32 @@ public class BackgroundService extends Service {
         }
     }
 
-    public void contactWebsiteShoppingItems(DownloadCallback owner)
+    public void UploadNewShoppingItem(Context context, JSONObject newItem, UploadCallback owner)
+    {
+        _uploadOwner = owner;
+        String newItemString = newItem.toString();
+        GlobalObjects.downloading = true;
+
+        ConnectivityManager connMgr = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo networkInfo = connMgr.getActiveNetworkInfo();
+        String authToken = "D2DB7539-634F-47C4-818D-59AD03C592E3";
+
+        if(networkInfo != null && networkInfo.isConnected())
+        {
+            new UploadShoppingItemJson().execute(newItemString, "https://saltavenue.azurewebsites.net/api/"+ authToken + "/AddShoppingItem");
+        }
+        else
+        {
+            GlobalObjects.downloading = false;
+            _uploadOwner.OnFailedUpload("No Internet Connection");
+        }
+    }
+
+    public void contactWebsiteShoppingItems(Context context, DownloadCallback owner)
     {
         _shoppingListOwner = owner;
         GlobalObjects.downloading = true;
-        ConnectivityManager connMgr = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+        ConnectivityManager connMgr = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
         NetworkInfo networkInfo = connMgr.getActiveNetworkInfo();
         String authToken = "D2DB7539-634F-47C4-818D-59AD03C592E3";
 
@@ -345,6 +351,7 @@ public class BackgroundService extends Service {
 
         private boolean UploadJsonObject(String newBillJsonString, String weburl) throws IOException
         {
+            JSONObject returnJson;
             URL url = new URL(weburl);
 
             HttpURLConnection connection = (HttpURLConnection) url.openConnection();
@@ -366,15 +373,107 @@ public class BackgroundService extends Service {
 
                 BufferedReader serverAnswer = new BufferedReader(new InputStreamReader(connection.getInputStream()));
                 String line;
+                String returnmessage = "";
                 while ((line = serverAnswer.readLine()) != null)
                 {
-                    System.out.println("Feedback: " + line);
+                    returnmessage += line;
                 }
 
                 serverAnswer.close();
+
+                returnJson = new JSONObject(returnmessage);
+
+                if(returnJson.has("HasError"))
+                {
+                    if(returnJson.getBoolean("HasError"))
+                    {
+                        Log.e("Error", "Problem Sending Item");
+                        return false;
+                    }
+                }
             } catch (Exception e)
             {
                 Log.e("Error", "Problem Sending Bill: " + e.getMessage());
+                return false;
+            }
+            finally {
+                connection.disconnect();
+            }
+
+            return true;
+        }
+    }
+
+    private class UploadShoppingItemJson extends AsyncTask<String, Void, Boolean>
+    {
+        @Override
+        protected Boolean doInBackground(String... params) {
+
+            try {
+                return UploadJsonObject(params[0], params[1]);
+            } catch (IOException e)
+            {
+                return false;
+            }
+        }
+
+        @Override
+        protected void onPostExecute(Boolean aBoolean) {
+            if(aBoolean)
+            {
+                _uploadOwner.OnSuccessfulUpload();
+            }
+            else
+            {
+                _uploadOwner.OnFailedUpload("Failed to upload new Item. Please try again");
+            }
+        }
+
+        private boolean UploadJsonObject(String newItemJsonString, String weburl) throws IOException
+        {
+            JSONObject returnJson;
+            URL url = new URL(weburl);
+
+            HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+
+            try {
+                connection.setRequestMethod("POST");
+                connection.setConnectTimeout(15000);
+                connection.setDoOutput(true);
+                connection.setChunkedStreamingMode(0);
+
+                OutputStream out = new BufferedOutputStream(connection.getOutputStream());
+                BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(out, "UTF-8"));
+
+                writer.write(newItemJsonString);
+                writer.flush();
+                writer.close();
+
+                out.close();
+
+                BufferedReader serverAnswer = new BufferedReader(new InputStreamReader(connection.getInputStream()));
+                String line;
+                String returnmessage = "";
+                while ((line = serverAnswer.readLine()) != null)
+                {
+                    returnmessage += line;
+                }
+
+                serverAnswer.close();
+
+                returnJson = new JSONObject(returnmessage);
+
+               if(returnJson.has("HasError"))
+               {
+                   if(returnJson.getBoolean("HasError"))
+                   {
+                       Log.e("Error", "Problem Sending Item");
+                       return false;
+                   }
+               }
+            } catch (Exception e)
+            {
+                Log.e("Error", "Problem Sending Item: " + e.getMessage());
                 return false;
             }
             finally {

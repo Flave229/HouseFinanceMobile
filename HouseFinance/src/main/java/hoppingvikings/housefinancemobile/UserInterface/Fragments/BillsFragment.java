@@ -1,8 +1,10 @@
 package hoppingvikings.housefinancemobile.UserInterface.Fragments;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.design.widget.CoordinatorLayout;
+import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.support.v4.widget.SwipeRefreshLayout;
@@ -16,6 +18,7 @@ import java.util.ArrayList;
 
 import hoppingvikings.housefinancemobile.GlobalObjects;
 import hoppingvikings.housefinancemobile.R;
+import hoppingvikings.housefinancemobile.UserInterface.AddNewBillActivity;
 import hoppingvikings.housefinancemobile.UserInterface.Lists.BillList.BillListAdapter;
 import hoppingvikings.housefinancemobile.UserInterface.Lists.BillList.BillListObject;
 import hoppingvikings.housefinancemobile.UserInterface.Lists.ListItemDivider;
@@ -33,11 +36,12 @@ public class BillsFragment extends Fragment implements DownloadCallback {
     BillListAdapter adapter;
     ArrayList<BillListObject> cards;
     SwipeRefreshLayout swipeRefreshLayout;
+    FloatingActionButton addItemButton;
 
     private Runnable contactWebsite = new Runnable() {
         @Override
         public void run() {
-            GlobalObjects._service.contactWebsiteBills(BillsFragment.this);
+            GlobalObjects._service.contactWebsiteBills(getContext(), BillsFragment.this);
         }
     };
 
@@ -95,6 +99,7 @@ public class BillsFragment extends Fragment implements DownloadCallback {
 
         swipeRefreshLayout = (SwipeRefreshLayout) view.findViewById(R.id.swipeRefresh);
         layout = (CoordinatorLayout)view.findViewById(R.id.coordlayout);
+        addItemButton = (FloatingActionButton) view.findViewById(R.id.addItem);
 
         _handler = new Handler();
         rv = (RecyclerView) view.findViewById(R.id.recycler_view);
@@ -110,6 +115,13 @@ public class BillsFragment extends Fragment implements DownloadCallback {
             cards = new ArrayList<>();
         }
 
+        addItemButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent addBill = new Intent(getContext(), AddNewBillActivity.class);
+                startActivity(addBill);
+            }
+        });
 
         if(rv != null) {
             adapter = new BillListAdapter(cards);

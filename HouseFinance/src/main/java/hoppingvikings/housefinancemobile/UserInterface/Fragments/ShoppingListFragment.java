@@ -1,8 +1,10 @@
 package hoppingvikings.housefinancemobile.UserInterface.Fragments;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.design.widget.CoordinatorLayout;
+import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.support.v4.widget.SwipeRefreshLayout;
@@ -16,6 +18,7 @@ import java.util.ArrayList;
 
 import hoppingvikings.housefinancemobile.GlobalObjects;
 import hoppingvikings.housefinancemobile.R;
+import hoppingvikings.housefinancemobile.UserInterface.AddNewShoppingItemActivity;
 import hoppingvikings.housefinancemobile.UserInterface.Lists.ListItemDivider;
 import hoppingvikings.housefinancemobile.UserInterface.Lists.ShoppingList.ShoppingListAdapter;
 import hoppingvikings.housefinancemobile.UserInterface.Lists.ShoppingList.ShoppingListObject;
@@ -33,11 +36,12 @@ public class ShoppingListFragment extends Fragment implements DownloadCallback {
     ShoppingListAdapter adapter;
     ArrayList<ShoppingListObject> items;
     SwipeRefreshLayout swipeRefreshLayout;
+    FloatingActionButton addItemButton;
 
     private Runnable contactWebsite = new Runnable() {
         @Override
         public void run() {
-            GlobalObjects._service.contactWebsiteShoppingItems(ShoppingListFragment.this);
+            GlobalObjects._service.contactWebsiteShoppingItems(getContext(), ShoppingListFragment.this);
         }
     };
 
@@ -97,6 +101,7 @@ public class ShoppingListFragment extends Fragment implements DownloadCallback {
         swipeRefreshLayout = (SwipeRefreshLayout) view.findViewById(R.id.swipeRefresh);
         layout = (CoordinatorLayout)view.findViewById(R.id.coordlayout);
         _handler = new Handler();
+        addItemButton = (FloatingActionButton)view.findViewById(R.id.addItem);
 
         rv = (RecyclerView) view.findViewById(R.id.recycler_view);
         rv.setHasFixedSize(true);
@@ -132,6 +137,14 @@ public class ShoppingListFragment extends Fragment implements DownloadCallback {
 
         swipeRefreshLayout.setRefreshing(true);
         _handler.postDelayed(contactWebsite, 200);
+
+        addItemButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent addItem = new Intent(getContext(), AddNewShoppingItemActivity.class);
+                startActivity(addItem);
+            }
+        });
 
         return view;
     }

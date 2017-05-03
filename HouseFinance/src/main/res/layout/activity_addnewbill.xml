@@ -279,7 +279,8 @@
         android:layout_height="50dp"
         android:background="#555"
         android:layout_gravity="bottom"
-        android:id="@+id/relativeLayout">
+        android:id="@+id/relativeLayout"
+        app:layout_dodgeInsetEdges="bottom">
 
         <Button
             android:id="@+id/submitBill"

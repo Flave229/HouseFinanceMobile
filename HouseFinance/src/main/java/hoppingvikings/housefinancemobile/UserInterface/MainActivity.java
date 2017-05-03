@@ -47,10 +47,8 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        Intent intent = new Intent(this, BackgroundService.class);
-        bindService(intent, _connection, Context.BIND_AUTO_CREATE);
-
         _handler = new Handler();
+        GlobalObjects._service = new BackgroundService();
         //_handler.post(runnable);
 
         Toolbar appToolbar = (Toolbar) findViewById(R.id.appToolbar);
@@ -74,11 +72,6 @@ public class MainActivity extends AppCompatActivity {
     public void onDestroy()
     {
         super.onDestroy();
-        if(GlobalObjects._bound)
-        {
-            unbindService(_connection);
-            GlobalObjects._bound = false;
-        }
         _handler.removeCallbacksAndMessages(runnable);
         _handler = null;
     }
@@ -90,31 +83,16 @@ public class MainActivity extends AppCompatActivity {
         Runtime.getRuntime().exit(0);
     }
 
-    private ServiceConnection _connection = new ServiceConnection() {
-        @Override
-        public void onServiceConnected(ComponentName name, IBinder service) {
-            BackgroundService.LocalBinder binder = (BackgroundService.LocalBinder) service;
-            GlobalObjects._service = binder.getService();
-            GlobalObjects._bound = true;
-            //Toast.makeText(getBaseContext(), "Service Connected", Toast.LENGTH_LONG).show();
-        }
-
-        @Override
-        public void onServiceDisconnected(ComponentName name) {
-            GlobalObjects._bound = false;
-        }
-    };
-
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.additemmenu, menu);
+        //getMenuInflater().inflate(R.menu.additemmenu, menu);
         return super.onCreateOptionsMenu(menu);
     }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
 
-        switch (item.getItemId())
+        /*switch (item.getItemId())
         {
             case R.id.action_add:
                 Intent addBill = new Intent(this, AddNewBillActivity.class);
@@ -123,9 +101,9 @@ public class MainActivity extends AppCompatActivity {
 
             default:
                 return super.onOptionsItemSelected(item);
-        }
+        }*/
 
-
+        return false;
     }
 
     private boolean isMyServiceRunning(Class<?> serviceClass)

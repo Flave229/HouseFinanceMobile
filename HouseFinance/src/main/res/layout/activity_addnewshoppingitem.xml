@@ -1,0 +1,187 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.design.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/coordlayout">
+
+    <android.support.v7.widget.Toolbar
+        android:id="@id/appToolbar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="?attr/colorPrimary"
+        android:elevation="4dp"
+        android:theme="@style/ThemeOverlay.AppCompat.ActionBar"
+        android:title="Add Shopping Item" />
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginTop="56dp"
+        android:layout_marginBottom="50dp"
+        android:fillViewport="true"
+        android:scrollbarStyle="insideOverlay">
+
+        <android.support.constraint.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/nameLabel"
+                android:layout_marginLeft="16dp"
+                android:layout_marginTop="16dp"
+                android:text="Name:"
+                android:textSize="16sp"
+                app:layout_constraintLeft_toLeftOf="parent"
+                app:layout_constraintTop_toBottomOf="parent"/>
+
+            <EditText
+                android:id="@+id/ShoppingItemNameEntry"
+                style="@style/Widget.AppCompat.EditText"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="16dp"
+                android:layout_marginLeft="16dp"
+                android:layout_marginRight="16dp"
+                android:layout_marginStart="16dp"
+                android:layout_marginTop="8dp"
+                android:hint="Enter Item Name..."
+                android:textColorHint="#88ffffff"
+                android:inputType="text|textCapWords"
+                android:maxLines="1"
+                android:padding="4dp"
+                android:textColor="#fff"
+                android:textSize="24sp"
+                app:layout_constraintLeft_toLeftOf="parent"
+                app:layout_constraintRight_toRightOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/nameLabel" />
+
+            <TextView
+                android:id="@+id/addedByLabel"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="16dp"
+                android:text="Added By: "
+                android:textSize="16sp"
+                android:layout_marginLeft="16dp"
+                app:layout_constraintLeft_toLeftOf="parent"
+                android:layout_marginBottom="8dp"
+                android:layout_marginTop="32dp"
+                app:layout_constraintVertical_bias="0.6"
+                app:layout_constraintTop_toBottomOf="@+id/ShoppingItemNameEntry"
+                app:layout_constraintBottom_toTopOf="@+id/davidRadio"
+                app:layout_constraintVertical_chainStyle="packed" />
+
+            <RadioButton
+                android:id="@+id/davidRadio"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:checked="false"
+                android:text="David Smith"
+                app:layout_constraintBottom_toTopOf="@+id/vikkiRadio"
+                app:layout_constraintTop_toBottomOf="@+id/addedByLabel"
+                app:layout_constraintLeft_toLeftOf="@+id/addedByLabel"
+                android:layout_marginLeft="0dp"
+                android:layout_marginBottom="8dp" />
+
+            <RadioButton
+                android:id="@+id/vikkiRadio"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:checked="false"
+                android:text="Victoria Walters"
+                app:layout_constraintBottom_toTopOf="@+id/joshRadio"
+                app:layout_constraintTop_toBottomOf="@+id/davidRadio"
+                app:layout_constraintLeft_toLeftOf="@+id/davidRadio"
+                android:layout_marginLeft="-8dp"
+                android:layout_marginBottom="8dp" />
+
+            <RadioButton
+                android:id="@+id/joshRadio"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:checked="false"
+                android:text="Joshua Marshall"
+                app:layout_constraintTop_toBottomOf="@+id/vikkiRadio"
+                app:layout_constraintLeft_toLeftOf="@+id/vikkiRadio"
+                android:layout_marginLeft="0dp"
+                android:layout_marginBottom="8dp"
+                app:layout_constraintBottom_toTopOf="@+id/whoLabel" />
+
+            <TextView
+                android:id="@+id/whoLabel"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Who is this for?"
+                android:textSize="16sp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/nameLabel"
+                app:layout_constraintVertical_chainStyle="spread_inside"
+                android:layout_marginLeft="16dp"
+                app:layout_constraintLeft_toLeftOf="parent"
+                app:layout_constraintVertical_bias="0.07999998"
+                android:layout_marginBottom="8dp"
+                android:layout_marginTop="32dp" />
+
+            <CheckBox
+                android:id="@+id/CheckBoxDavid"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:checked="true"
+                android:text="David Smith"
+                app:layout_constraintBottom_toTopOf="@+id/CheckBoxVikki"
+                app:layout_constraintTop_toBottomOf="@+id/whoLabel"
+                app:layout_constraintLeft_toLeftOf="@+id/whoLabel"
+                android:layout_marginLeft="0dp"
+                android:layout_marginBottom="8dp"
+                android:layout_marginTop="8dp" />
+
+            <CheckBox
+                android:id="@+id/CheckBoxVikki"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:checked="true"
+                android:text="Victoria Walters"
+                app:layout_constraintBottom_toTopOf="@+id/CheckBoxJosh"
+                app:layout_constraintTop_toBottomOf="@+id/CheckBoxDavid"
+                app:layout_constraintLeft_toLeftOf="@+id/CheckBoxDavid"
+                android:layout_marginLeft="-8dp"
+                android:layout_marginBottom="8dp" />
+
+            <CheckBox
+                android:id="@+id/CheckBoxJosh"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:checked="true"
+                android:text="Joshua Marshall"
+                app:layout_constraintTop_toBottomOf="@+id/CheckBoxVikki"
+                app:layout_constraintLeft_toLeftOf="@+id/CheckBoxVikki"
+                android:layout_marginLeft="0dp"
+                android:layout_marginBottom="8dp"
+                app:layout_constraintBottom_toTopOf="@+id/addedByLabel" />
+        </android.support.constraint.ConstraintLayout>
+
+
+    </ScrollView>
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:background="#555"
+        android:layout_gravity="bottom"
+        android:id="@+id/relativeLayout"
+        app:layout_dodgeInsetEdges="bottom">
+
+        <Button
+            android:id="@+id/submitItem"
+            style="@style/Widget.AppCompat.Button.Borderless"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentStart="true"
+            android:layout_alignParentTop="true"
+            android:text="Submit" />
+    </RelativeLayout>
+</android.support.design.widget.CoordinatorLayout>
