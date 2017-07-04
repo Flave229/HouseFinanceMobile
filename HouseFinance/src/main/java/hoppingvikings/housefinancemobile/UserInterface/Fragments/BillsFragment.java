@@ -124,7 +124,7 @@ public class BillsFragment extends Fragment implements DownloadCallback {
         });
 
         if(rv != null) {
-            adapter = new BillListAdapter(cards);
+            adapter = new BillListAdapter(cards, getContext());
             rv.setAdapter(adapter);
             rv.setLayoutManager(new LinearLayoutManager(getActivity()));
             rv.addItemDecoration(new ListItemDivider(getContext()));

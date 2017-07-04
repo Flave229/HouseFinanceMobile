@@ -140,7 +140,6 @@ public class BackgroundService {
                     JSONArray array = result.getJSONArray("BillList");
 
                     ArrayList<JSONObject> allObjects = new ArrayList<>();
-                    ArrayList<JSONObject> allPeopleObjects = new ArrayList<>();
 
                     for(int i = 0; i < array.length(); i++)
                     {
@@ -149,17 +148,18 @@ public class BackgroundService {
 
                     for(int k = 0; k < allObjects.size(); k++)
                     {
+                        ArrayList<JSONObject> allPeopleObjects = new ArrayList<>();
                         JSONArray peopleArray = allObjects.get(k).getJSONArray("People");
                         for(int j = 0; j < peopleArray.length(); j++)
                         {
                             allPeopleObjects.add(peopleArray.getJSONObject(j));
                         }
 
-                        bill = new BillListObject(allObjects.get(k), allPeopleObjects.get(k));
+                        bill = new BillListObject(allObjects.get(k), allPeopleObjects);
                         _bills.add(bill);
 
-                        person = bill.people;
-                        _people.add(person);
+                        //person = bill.;
+                        //_people.add(person);
 
                     }
                     GlobalObjects.SetBills(_bills);
@@ -271,8 +271,8 @@ public class BackgroundService {
 
             // Might need this at some point
                 try {
-                    conn.setReadTimeout(10000);
-                    conn.setConnectTimeout(15000);
+                    conn.setReadTimeout(30000);
+                    conn.setConnectTimeout(45000);
                     conn.setRequestMethod("GET");
                     conn.setDoInput(true);
 

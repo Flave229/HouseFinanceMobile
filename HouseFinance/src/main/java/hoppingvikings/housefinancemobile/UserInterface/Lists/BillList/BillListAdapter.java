@@ -1,8 +1,11 @@
 package hoppingvikings.housefinancemobile.UserInterface.Lists.BillList;
 
+import android.content.Context;
 import android.content.Intent;
+import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -10,8 +13,11 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import com.bumptech.glide.Glide;
+
 import java.util.ArrayList;
 
+import hoppingvikings.housefinancemobile.BitmapCache;
 import hoppingvikings.housefinancemobile.R;
 import hoppingvikings.housefinancemobile.UserInterface.DisplayMessageActivity;
 
@@ -51,9 +57,14 @@ public class BillListAdapter extends RecyclerView.Adapter<BillListAdapter.CardVi
     }
 
     ArrayList<BillListObject> _cards = new ArrayList<>();
+    Context _context;
+    BitmapCache imgCache;
 
-    public BillListAdapter(ArrayList<BillListObject> cards){
+    public BillListAdapter(ArrayList<BillListObject> cards, Context context){
         _cards.addAll(cards);
+        _context = context;
+        long maxMem = (Runtime.getRuntime().maxMemory() / 1024 / 1024);
+        imgCache = new BitmapCache((maxMem / 4L) * 1024L * 1024L, _context);
     }
 
     @Override
@@ -97,9 +108,96 @@ public class BillListAdapter extends RecyclerView.Adapter<BillListAdapter.CardVi
             cvh.cardObject.setBackgroundColor(Color.WHITE);
         }
 
-        cvh.cardImage.setImageResource(_cards.get(i).cardImage);
-        cvh.cardImage2.setImageResource(_cards.get(i).cardImage);
-        cvh.cardImage3.setImageResource(_cards.get(i).cardImage);
+        try {
+            switch (_cards.get(i).people.size())
+            {
+                case 1:
+                    imgCache.PutBitmap(_cards.get(i).people.get(0).URL, _cards.get(i).people.get(0).URL, cvh.cardImage);
+
+                    if(_cards.get(i).people.get(0).Paid)
+                    {
+                        cvh.cardImage.setAlpha(1.0f);
+                    }
+                    else
+                    {
+                        cvh.cardImage.setAlpha(0.5f);
+                    }
+
+                    cvh.cardImage2.setVisibility(View.GONE);
+                    cvh.cardImage3.setVisibility(View.GONE);
+                    break;
+
+                case 2:
+                    imgCache.PutBitmap(_cards.get(i).people.get(0).URL, _cards.get(i).people.get(0).URL, cvh.cardImage);
+                    imgCache.PutBitmap(_cards.get(i).people.get(1).URL, _cards.get(i).people.get(1).URL, cvh.cardImage2);
+                    if(_cards.get(i).people.get(0).Paid)
+                    {
+                        cvh.cardImage.setAlpha(1.0f);
+                    }
+                    else
+                    {
+                        cvh.cardImage.setAlpha(0.5f);
+                    }
+
+                    if(_cards.get(i).people.get(1).Paid)
+                    {
+                        cvh.cardImage2.setAlpha(1.0f);
+                    }
+                    else
+                    {
+                        cvh.cardImage2.setAlpha(0.5f);
+                    }
+
+                    cvh.cardImage2.setVisibility(View.VISIBLE);
+                    cvh.cardImage3.setVisibility(View.GONE);
+                    break;
+
+                case 3:
+                    imgCache.PutBitmap(_cards.get(i).people.get(0).URL, _cards.get(i).people.get(0).URL, cvh.cardImage);
+                    imgCache.PutBitmap(_cards.get(i).people.get(1).URL, _cards.get(i).people.get(1).URL, cvh.cardImage2);
+                    imgCache.PutBitmap(_cards.get(i).people.get(2).URL, _cards.get(i).people.get(2).URL, cvh.cardImage3);
+
+                    if(_cards.get(i).people.get(0).Paid)
+                    {
+                        cvh.cardImage.setAlpha(1.0f);
+                    }
+                    else
+                    {
+                        cvh.cardImage.setAlpha(0.5f);
+                    }
+
+                    if(_cards.get(i).people.get(1).Paid)
+                    {
+                        cvh.cardImage2.setAlpha(1.0f);
+                    }
+                    else
+                    {
+                        cvh.cardImage2.setAlpha(0.5f);
+                    }
+
+                    if(_cards.get(i).people.get(2).Paid)
+                    {
+                        cvh.cardImage3.setAlpha(1.0f);
+                    }
+                    else
+                    {
+                        cvh.cardImage3.setAlpha(0.5f);
+                    }
+
+                    cvh.cardImage2.setVisibility(View.VISIBLE);
+                    cvh.cardImage3.setVisibility(View.VISIBLE);
+                    break;
+            }
+        } catch (Exception e)
+        {
+            Log.v("Img Load Error: ", e.getMessage());
+        }
+
+
+
+        //cvh.cardImage.setImageBitmap(Glide.with(_context).load(_cards.get(i).people.get(0).URL).asBitmap());
+        //cvh.cardImage2.setImageResource(_cards.get(i).cardImage);
+        //cvh.cardImage3.setImageResource(_cards.get(i).cardImage);
     }
 
     @Override

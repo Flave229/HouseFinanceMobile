@@ -46,7 +46,7 @@ public class StatisticsFragment extends Fragment {
         }
 
         if(rv != null) {
-            BillListAdapter adapter = new BillListAdapter(cards);
+            BillListAdapter adapter = new BillListAdapter(cards, getContext());
             rv.setAdapter(adapter);
 
             LinearLayoutManager llm = new LinearLayoutManager(getActivity());
