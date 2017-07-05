@@ -1,6 +1,8 @@
 package hoppingvikings.housefinancemobile.UserInterface.Fragments;
 
 import android.os.Bundle;
+import android.support.design.widget.FloatingActionButton;
+import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -36,22 +38,8 @@ public class StatisticsFragment extends Fragment {
     {
         View view = inflater.inflate(R.layout.fragment_blank, container, false);
 
-        RecyclerView rv = (RecyclerView) view.findViewById(R.id.recycler_view);
-        rv.setHasFixedSize(true);
-        ArrayList<BillListObject> cards = new ArrayList<>();
-
-        for(int i = 1; i < 100; i++)
-        {
-           // cards.add(new BillListObject("Card " + i, "This is card " + i, "£0.00", android.R.drawable.ic_menu_camera));
-        }
-
-        if(rv != null) {
-            BillListAdapter adapter = new BillListAdapter(cards, getContext());
-            rv.setAdapter(adapter);
-
-            LinearLayoutManager llm = new LinearLayoutManager(getActivity());
-            rv.setLayoutManager(llm);
-        }
+        ((FloatingActionButton)view.findViewById(R.id.addItem)).hide();
+        Snackbar.make(view.findViewById(R.id.coordlayout), "Coming never", Snackbar.LENGTH_INDEFINITE).show();
         return view;
     }
 }

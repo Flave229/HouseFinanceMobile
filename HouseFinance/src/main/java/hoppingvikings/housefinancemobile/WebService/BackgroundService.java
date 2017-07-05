@@ -197,13 +197,8 @@ public class BackgroundService {
 
                     for(int k = 0; k < allObjects.size(); k++)
                     {
-                        /*JSONArray peopleArray = allObjects.get(k).getJSONArray("AddedForImages");
-                        for(int j = 0; j < peopleArray.length(); j++)
-                        {
-                            allPeopleObjects.add(peopleArray.getJSONObject(j));
-                        }*/
-
-                        item = new ShoppingListObject(allObjects.get(k));
+                        JSONArray peopleArray = allObjects.get(k).getJSONArray("AddedForImages");
+                        item = new ShoppingListObject(allObjects.get(k), peopleArray);
                         items.add(item);
 
                         //shoppingPerson = item.people;

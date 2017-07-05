@@ -24,6 +24,9 @@ import hoppingvikings.housefinancemobile.UserInterface.Lists.ShoppingList.Shoppi
 import hoppingvikings.housefinancemobile.UserInterface.Lists.ShoppingList.ShoppingListObject;
 import hoppingvikings.housefinancemobile.WebService.DownloadCallback;
 
+import static android.app.Activity.RESULT_CANCELED;
+import static android.app.Activity.RESULT_OK;
+
 /**
  * Created by Josh on 24/09/2016.
  */
@@ -117,7 +120,7 @@ public class ShoppingListFragment extends Fragment implements DownloadCallback {
 
         if(rv != null)
         {
-            adapter = new ShoppingListAdapter(items);
+            adapter = new ShoppingListAdapter(items, getContext());
             rv.setAdapter(adapter);
             rv.setLayoutManager(new LinearLayoutManager(getActivity()));
             rv.addItemDecoration(new ListItemDivider(getContext()));
@@ -142,11 +145,28 @@ public class ShoppingListFragment extends Fragment implements DownloadCallback {
             @Override
             public void onClick(View v) {
                 Intent addItem = new Intent(getContext(), AddNewShoppingItemActivity.class);
-                startActivity(addItem);
+                startActivityForResult(addItem, 0);
             }
         });
 
         return view;
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        switch (resultCode)
+        {
+            case RESULT_OK:
+                swipeRefreshLayout.setRefreshing(true);
+                _handler.removeCallbacksAndMessages(null);
+                _handler.postDelayed(contactWebsite, 200);
+                break;
+
+            case RESULT_CANCELED:
+
+                break;
+        }
     }
 
     @Override

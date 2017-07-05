@@ -1,8 +1,10 @@
 package hoppingvikings.housefinancemobile.UserInterface.Lists.ShoppingList;
 
+import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -12,6 +14,7 @@ import android.widget.TextView;
 
 import java.util.ArrayList;
 
+import hoppingvikings.housefinancemobile.BitmapCache;
 import hoppingvikings.housefinancemobile.R;
 import hoppingvikings.housefinancemobile.UserInterface.DisplayMessageActivity;
 
@@ -49,9 +52,14 @@ public class ShoppingListAdapter extends RecyclerView.Adapter<ShoppingListAdapte
     }
 
     ArrayList<ShoppingListObject> _shoppingItems = new ArrayList<>();
+    private Context _context;
+    BitmapCache imgCache;
 
-    public ShoppingListAdapter(ArrayList<ShoppingListObject> items) {
+    public ShoppingListAdapter(ArrayList<ShoppingListObject> items, Context context) {
         _shoppingItems.addAll(items);
+        _context = context;
+        long maxMem = (Runtime.getRuntime().maxMemory() / 1024 / 1024);
+        imgCache = new BitmapCache((maxMem / 4L) * 1024L * 1024L, _context);
     }
 
     @Override
@@ -84,10 +92,30 @@ public class ShoppingListAdapter extends RecyclerView.Adapter<ShoppingListAdapte
             cvh.cardView.setBackgroundColor(Color.WHITE);
         }
 
-        cvh.addedBy1.setImageResource(_shoppingItems.get(i).addedBy);
-        cvh.addedFor1.setImageResource(_shoppingItems.get(i).addedFor1);
-        cvh.addedFor2.setImageResource(_shoppingItems.get(i).addedFor2);
-        cvh.addedFor3.setImageResource(_shoppingItems.get(i).addedFor3);
+        try {
+            imgCache.PutBitmap(_shoppingItems.get(i).addedBy, _shoppingItems.get(i).addedBy, cvh.addedBy1);
+
+            imgCache.PutBitmap(_shoppingItems.get(i).addedForImage1, _shoppingItems.get(i).addedForImage1, cvh.addedFor1);
+
+            if (_shoppingItems.get(i).addedForImage2.isEmpty()) {
+                cvh.addedFor2.setVisibility(View.GONE);
+            } else
+            {
+                cvh.addedFor2.setVisibility(View.VISIBLE);
+                imgCache.PutBitmap(_shoppingItems.get(i).addedForImage2, _shoppingItems.get(i).addedForImage2, cvh.addedFor2);
+            }
+
+            if (_shoppingItems.get(i).addedForImage3.isEmpty()) {
+                cvh.addedFor3.setVisibility(View.GONE);
+            } else
+            {
+                cvh.addedFor3.setVisibility(View.VISIBLE);
+                imgCache.PutBitmap(_shoppingItems.get(i).addedForImage3, _shoppingItems.get(i).addedForImage3, cvh.addedFor3);
+            }
+        } catch (Exception e)
+        {
+            Log.v("Error: ", e.getMessage());
+        }
     }
 
     @Override

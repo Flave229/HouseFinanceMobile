@@ -14,31 +14,42 @@ public class ShoppingListObject {
     public String ID = "";
     public String itemName = "";
     public String addedDate = "";
-    public int addedBy = 0;
-    public int addedFor1 = 0;
-    public int addedFor2 = 0;
-    public int addedFor3 = 0;
+    public String addedBy = "";
     public boolean done = false;
-    public ShoppingListPeople people = null;
+    public String addedForImage1 = "";
+    public String addedForImage2 = "";
+    public String addedForImage3 = "";
 
-    public JSONObject originalJson = null;
-    public JSONArray imagesJsonArr = null;
-    public ArrayList<JSONObject> imageJsonObjs;
-
-    public ShoppingListObject(JSONObject object)
+    public ShoppingListObject(JSONObject object, JSONArray addedForImages)
     {
         try
         {
             ID = object.getString("Id");
             itemName = object.getString("Name");
             addedDate = object.getString("AddedOn");
-            addedBy = android.R.drawable.ic_menu_camera;
-            addedFor1 = android.R.drawable.ic_menu_camera;
-            addedFor2 = android.R.drawable.ic_menu_camera;
-            addedFor3 = android.R.drawable.ic_menu_camera;
+            addedBy = object.getString("AddedByImage");
             done = object.getBoolean("Purchased");
 
-            //people = new ShoppingListPeople(peopleObject, ID);
+            switch (addedForImages.length())
+            {
+                case 1:
+                    addedForImage1 = addedForImages.getString(0);
+                    addedForImage2 = "";
+                    addedForImage3 = "";
+                    break;
+
+                case 2:
+                    addedForImage1 = addedForImages.getString(0);
+                    addedForImage2 = addedForImages.getString(1);
+                    addedForImage3 = "";
+                    break;
+
+                case 3:
+                    addedForImage1 = addedForImages.getString(0);
+                    addedForImage2 = addedForImages.getString(1);
+                    addedForImage3 = addedForImages.getString(2);
+                    break;
+            }
 
         }catch (JSONException e)
         {

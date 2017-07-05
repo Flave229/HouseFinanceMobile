@@ -281,6 +281,7 @@ public class AddNewBillActivity extends AppCompatActivity implements UploadCallb
             @Override
             public void onClick(DialogInterface dialogInterface, int i) {
                 confirmCancel.dismiss();
+                setResult(RESULT_CANCELED);
                 AddNewBillActivity.super.onBackPressed();
             }
         });
@@ -310,6 +311,7 @@ public class AddNewBillActivity extends AppCompatActivity implements UploadCallb
                     @Override
                     public void onClick(DialogInterface dialogInterface, int i) {
                         confirmCancel.dismiss();
+                        setResult(RESULT_CANCELED);
                         finish();
                     }
                 });
@@ -349,6 +351,7 @@ public class AddNewBillActivity extends AppCompatActivity implements UploadCallb
     @Override
     public void OnSuccessfulUpload() {
         Toast.makeText(getApplicationContext(), "Bill successfully uploaded", Toast.LENGTH_LONG).show();
+        setResult(RESULT_OK);
         finish();
     }
 

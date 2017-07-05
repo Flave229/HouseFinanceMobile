@@ -225,6 +225,7 @@ public class AddNewShoppingItemActivity extends AppCompatActivity implements Upl
             @Override
             public void onClick(DialogInterface dialogInterface, int i) {
                 confirmCancel.dismiss();
+                setResult(RESULT_CANCELED);
                 AddNewShoppingItemActivity.super.onBackPressed();
             }
         });
@@ -254,6 +255,7 @@ public class AddNewShoppingItemActivity extends AppCompatActivity implements Upl
                     @Override
                     public void onClick(DialogInterface dialogInterface, int i) {
                         confirmCancel.dismiss();
+                        setResult(RESULT_CANCELED);
                         finish();
                     }
                 });
@@ -296,6 +298,7 @@ public class AddNewShoppingItemActivity extends AppCompatActivity implements Upl
     @Override
     public void OnSuccessfulUpload() {
         Toast.makeText(getApplicationContext(), "Item successfully added", Toast.LENGTH_LONG).show();
+        setResult(RESULT_OK);
         finish();
     }
 }

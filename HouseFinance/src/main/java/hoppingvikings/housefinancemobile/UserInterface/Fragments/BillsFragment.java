@@ -24,6 +24,9 @@ import hoppingvikings.housefinancemobile.UserInterface.Lists.BillList.BillListOb
 import hoppingvikings.housefinancemobile.UserInterface.Lists.ListItemDivider;
 import hoppingvikings.housefinancemobile.WebService.DownloadCallback;
 
+import static android.app.Activity.RESULT_CANCELED;
+import static android.app.Activity.RESULT_OK;
+
 /**
  * Created by Josh on 24/09/2016.
  */
@@ -119,7 +122,7 @@ public class BillsFragment extends Fragment implements DownloadCallback {
             @Override
             public void onClick(View v) {
                 Intent addBill = new Intent(getContext(), AddNewBillActivity.class);
-                startActivity(addBill);
+                startActivityForResult(addBill, 0);
             }
         });
 
@@ -147,6 +150,23 @@ public class BillsFragment extends Fragment implements DownloadCallback {
 
         //_handler.postDelayed(runnable, 1000);
         return view;
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        switch (resultCode)
+        {
+            case RESULT_OK:
+                _handler.removeCallbacksAndMessages(null);
+                swipeRefreshLayout.setRefreshing(true);
+                _handler.postDelayed(contactWebsite, 200);
+                break;
+
+            case RESULT_CANCELED:
+
+                break;
+        }
     }
 
     @Override
