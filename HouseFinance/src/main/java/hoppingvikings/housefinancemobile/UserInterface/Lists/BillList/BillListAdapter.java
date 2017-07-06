@@ -26,6 +26,19 @@ import hoppingvikings.housefinancemobile.UserInterface.DisplayMessageActivity;
  * Created by Josh on 17/09/2016.
  */
 public class BillListAdapter extends RecyclerView.Adapter<BillListAdapter.CardViewHolder> {
+
+    private static BillClickedListener _listener;
+
+    public interface BillClickedListener
+    {
+        void onBillClick(View itemView, int pos);
+    }
+
+    public void setOnBillClickListener(BillClickedListener listener)
+    {
+        _listener = listener;
+    }
+
     public static class CardViewHolder extends RecyclerView.ViewHolder
     {
         View view;
@@ -51,6 +64,14 @@ public class BillListAdapter extends RecyclerView.Adapter<BillListAdapter.CardVi
             view.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
+                    if(_listener != null)
+                    {
+                        int pos = getAdapterPosition();
+                        if(pos != RecyclerView.NO_POSITION)
+                        {
+                            _listener.onBillClick(view, pos);
+                        }
+                    }
                 }
             });
         }
@@ -217,5 +238,10 @@ public class BillListAdapter extends RecyclerView.Adapter<BillListAdapter.CardVi
             notifyItemRangeInserted(0, _cards.size());
 
         }
+    }
+
+    public BillListObject GetItem(int pos)
+    {
+        return _cards.get(pos);
     }
 }

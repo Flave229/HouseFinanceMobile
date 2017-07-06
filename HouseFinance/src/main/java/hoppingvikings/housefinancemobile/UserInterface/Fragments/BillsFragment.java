@@ -22,6 +22,7 @@ import hoppingvikings.housefinancemobile.UserInterface.AddNewBillActivity;
 import hoppingvikings.housefinancemobile.UserInterface.Lists.BillList.BillListAdapter;
 import hoppingvikings.housefinancemobile.UserInterface.Lists.BillList.BillListObject;
 import hoppingvikings.housefinancemobile.UserInterface.Lists.ListItemDivider;
+import hoppingvikings.housefinancemobile.UserInterface.ViewBillDetailsActivity;
 import hoppingvikings.housefinancemobile.WebService.DownloadCallback;
 
 import static android.app.Activity.RESULT_CANCELED;
@@ -132,6 +133,17 @@ public class BillsFragment extends Fragment implements DownloadCallback {
             rv.setLayoutManager(new LinearLayoutManager(getActivity()));
             rv.addItemDecoration(new ListItemDivider(getContext()));
         }
+
+        adapter.setOnBillClickListener(new BillListAdapter.BillClickedListener() {
+            @Override
+            public void onBillClick(View itemView, int pos) {
+                BillListObject bill = adapter.GetItem(pos);
+
+                Intent viewBillDetails = new Intent(getContext(), ViewBillDetailsActivity.class);
+                viewBillDetails.putExtra("bill_id", bill.ID);
+                startActivity(viewBillDetails);
+            }
+        });
 
         swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override

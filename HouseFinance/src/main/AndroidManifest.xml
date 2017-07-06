@@ -1,12 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="hoppingvikings.housefinancemobile"
-    android:versionCode="12"
-    android:versionName="00.10.00">
+    android:versionCode="13"
+    android:versionName="00.11.00">
 
     <uses-permission android:name="android.permission.INTERNET"/>
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
-
 
     <application
         android:allowBackup="true"
@@ -33,6 +32,9 @@
 
         <activity android:name=".UserInterface.AddNewShoppingItemActivity"
             android:label="Add Shopping Item"/>
+
+        <activity android:name=".UserInterface.ViewBillDetailsActivity"
+            android:label="Bill Details"/>
     </application>
 
 </manifest>

@@ -30,6 +30,7 @@ import java.util.ArrayList;
 import hoppingvikings.housefinancemobile.GlobalObjects;
 import hoppingvikings.housefinancemobile.UserInterface.Lists.BillList.BillListObject;
 import hoppingvikings.housefinancemobile.UserInterface.Lists.BillList.BillListObjectPeople;
+import hoppingvikings.housefinancemobile.UserInterface.Lists.BillList.BillObjectDetailed;
 import hoppingvikings.housefinancemobile.UserInterface.Lists.ShoppingList.ShoppingListObject;
 import hoppingvikings.housefinancemobile.UserInterface.Lists.ShoppingList.ShoppingListPeople;
 
@@ -40,6 +41,7 @@ import hoppingvikings.housefinancemobile.UserInterface.Lists.ShoppingList.Shoppi
 public class BackgroundService {
 
     DownloadCallback _billListOwner;
+    DownloadDetailsCallback _billDetailsOwner;
     DownloadCallback _shoppingListOwner;
     UploadCallback _uploadOwner;
 
@@ -62,6 +64,25 @@ public class BackgroundService {
         {
             GlobalObjects.downloading = false;
             _billListOwner.OnFailedDownload("No internet connection");
+        }
+    }
+
+    public void RequestBillDetails(Context context, DownloadDetailsCallback owner, String billID)
+    {
+        _billDetailsOwner = owner;
+        GlobalObjects.downloading = true;
+        ConnectivityManager connMgr = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo networkInfo = connMgr.getActiveNetworkInfo();
+        String authToken = "D2DB7539-634F-47C4-818D-59AD03C592E3";
+
+        if(networkInfo != null && networkInfo.isConnected())
+        {
+            new DownloadJsonString().execute("https://saltavenue.azurewebsites.net/api/" + authToken + "/RequestBillDetails/" + billID, "BillDetails");
+        }
+        else
+        {
+            GlobalObjects.downloading = false;
+            _billDetailsOwner.OnDownloadFailed("No Internet Connection");
         }
     }
 
@@ -220,6 +241,30 @@ public class BackgroundService {
                     _shoppingListOwner.OnFailedDownload("Unknown Error in Shopping List download");
                 }
                 break;
+
+            case "BillDetails":
+                BillObjectDetailed detailedBill = null;
+                JSONArray paymentsArray;
+
+                try {
+                    paymentsArray = result.getJSONArray("Payments");
+                    detailedBill = new BillObjectDetailed(result, paymentsArray);
+                } catch (JSONException e)
+                {
+                    e.printStackTrace();
+                    GlobalObjects.downloading = false;
+                    _billDetailsOwner.OnDownloadFailed("Failed to parse Detailed Bill");
+                }
+                catch (Exception e)
+                {
+                    e.printStackTrace();
+                    GlobalObjects.downloading = false;
+                    _billDetailsOwner.OnDownloadFailed("Unknown error in Detailed Bill Download");
+                }
+
+                GlobalObjects.downloading = false;
+                _billDetailsOwner.OnDownloadSuccessful(detailedBill);
+                break;
         }
 
         //Toast.makeText(getBaseContext(), result, Toast.LENGTH_SHORT).show();
@@ -244,17 +289,7 @@ public class BackgroundService {
         @Override
         protected void onPostExecute(JSONObject result)
         {
-            switch (type)
-            {
-                case "Bills":
-                    websiteResult(result, type);
-                    break;
-
-                case "Shopping":
-                    websiteResult(result, type);
-                    break;
-            }
-
+            websiteResult(result, type);
         }
 
         private JSONObject downloadUrl(String weburl) throws IOException

@@ -111,7 +111,8 @@ public class ShoppingListFragment extends Fragment implements DownloadCallback {
 
         if(GlobalObjects.GetShoppingItems() != null && GlobalObjects.GetShoppingItems().size() != 0)
         {
-            items = GlobalObjects.GetShoppingItems();
+            items = new ArrayList<>();
+            items.addAll(GlobalObjects.GetShoppingItems());
         }
         else
         {
