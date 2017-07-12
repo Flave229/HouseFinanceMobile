@@ -115,6 +115,12 @@ public class AddNewShoppingItemActivity extends AppCompatActivity implements Upl
         submitButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+
+                if(!ValidateFields())
+                {
+                    return;
+                }
+
                 final AlertDialog confirmCancel = new AlertDialog.Builder(AddNewShoppingItemActivity.this).create();
 
                 confirmCancel.setTitle("Submit Item?");
@@ -131,33 +137,6 @@ public class AddNewShoppingItemActivity extends AppCompatActivity implements Upl
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         confirmCancel.dismiss();
-
-                        if(shoppingItemNameEntry.getText().length() > 0) {
-                            itemName = shoppingItemNameEntry.getText().toString();
-                        } else {
-                            shoppingItemNameEntry.setError("Please enter a valid Item name");
-                            return;
-                        }
-
-                        forDavid = davidCheck.isChecked();
-                        forVikki = vikkiCheck.isChecked();
-                        forJosh = joshCheck.isChecked();
-
-                        if(!forDavid && !forVikki && !forJosh)
-                        {
-                            Snackbar.make(layout, "Please select at least one person for this item", Snackbar.LENGTH_LONG).show();
-                            return;
-                        }
-
-                        fromDavid = davidRadio.isChecked();
-                        fromVikki = vikkiRadio.isChecked();
-                        fromJosh = joshRadio.isChecked();
-
-                        if(!fromDavid && !fromVikki && !fromJosh)
-                        {
-                            Snackbar.make(layout, "Please select who is adding the item", Snackbar.LENGTH_LONG).show();
-                            return;
-                        }
 
                         shoppingItemNameEntry.setEnabled(false);
                         submitButton.setEnabled(false);
@@ -300,5 +279,37 @@ public class AddNewShoppingItemActivity extends AppCompatActivity implements Upl
         Toast.makeText(getApplicationContext(), "Item successfully added", Toast.LENGTH_LONG).show();
         setResult(RESULT_OK);
         finish();
+    }
+
+    private boolean ValidateFields()
+    {
+        if(shoppingItemNameEntry.getText().length() > 0) {
+            itemName = shoppingItemNameEntry.getText().toString();
+        } else {
+            shoppingItemNameEntry.setError("Please enter a valid Item name");
+            return false;
+        }
+
+        forDavid = davidCheck.isChecked();
+        forVikki = vikkiCheck.isChecked();
+        forJosh = joshCheck.isChecked();
+
+        if(!forDavid && !forVikki && !forJosh)
+        {
+            Snackbar.make(layout, "Please select at least one person for this item", Snackbar.LENGTH_LONG).show();
+            return false;
+        }
+
+        fromDavid = davidRadio.isChecked();
+        fromVikki = vikkiRadio.isChecked();
+        fromJosh = joshRadio.isChecked();
+
+        if(!fromDavid && !fromJosh)
+        {
+            Snackbar.make(layout, "Please select who is adding the item", Snackbar.LENGTH_LONG).show();
+            return false;
+        }
+
+        return true;
     }
 }

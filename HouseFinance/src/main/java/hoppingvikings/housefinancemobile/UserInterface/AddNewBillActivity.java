@@ -1,21 +1,28 @@
 package hoppingvikings.housefinancemobile.UserInterface;
 
+import android.app.DatePickerDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.Snackbar;
+import android.support.design.widget.TextInputEditText;
+import android.support.design.widget.TextInputLayout;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.text.InputType;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.CheckBox;
+import android.widget.DatePicker;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.RadioButton;
 import android.widget.Toast;
 
@@ -26,7 +33,10 @@ import org.json.JSONObject;
 import java.text.DecimalFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.Date;
+import java.util.GregorianCalendar;
+import java.util.Locale;
 
 import hoppingvikings.housefinancemobile.GlobalObjects;
 import hoppingvikings.housefinancemobile.R;
@@ -39,12 +49,14 @@ import hoppingvikings.housefinancemobile.WebService.UploadCallback;
 public class AddNewBillActivity extends AppCompatActivity implements UploadCallback {
 
     Button submitButton;
-    EditText billNameEntry;
-    EditText billAmountEntry;
+    TextInputLayout billNameEntry;
+    TextInputEditText billNameEntryText;
+    TextInputLayout billAmountEntry;
+    TextInputEditText billAmountEntryText;
 
-    EditText billDueDateDayEntry;
-    EditText billDueDateMonthEntry;
-    EditText billDueDateYearEntry;
+    TextInputLayout billDueDateEntry;
+    TextInputEditText billDueDateEntryText;
+    ImageView calendarImage;
 
     CheckBox davidCheck;
     CheckBox vikkiCheck;
@@ -76,14 +88,18 @@ public class AddNewBillActivity extends AppCompatActivity implements UploadCallb
         layout = (CoordinatorLayout) findViewById(R.id.coordlayout);
 
         submitButton = (Button) findViewById(R.id.submitBill);
-        billNameEntry = (EditText) findViewById(R.id.BillNameEntry);
-        billAmountEntry = (EditText) findViewById(R.id.BillAmountEntry);
-        billDueDateDayEntry = (EditText) findViewById(R.id.BillDueDayEntry);
-        billDueDateMonthEntry = (EditText) findViewById(R.id.BillDueMonthEntry);
-        billDueDateYearEntry = (EditText) findViewById(R.id.BillDueYearEntry);
+        billNameEntry = (TextInputLayout) findViewById(R.id.BillNameEntry);
+        billNameEntryText = (TextInputEditText) findViewById(R.id.BillNameEntryText);
+        billAmountEntry = (TextInputLayout) findViewById(R.id.BillAmountEntry);
+        billAmountEntryText = (TextInputEditText) findViewById(R.id.BillAmountEntryText);
+        billDueDateEntry = (TextInputLayout) findViewById(R.id.billDueDateEntry);
+        billDueDateEntryText = (TextInputEditText) findViewById(R.id.billDueDateEntryText);
+        billDueDateEntryText.setInputType(InputType.TYPE_NULL);
+        calendarImage = (ImageView) findViewById(R.id.calendarImage);
 
         davidCheck = (CheckBox) findViewById(R.id.CheckBoxDavid);
         vikkiCheck = (CheckBox) findViewById(R.id.CheckBoxVikki);
+        vikkiCheck.setChecked(false);
         joshCheck = (CheckBox) findViewById(R.id.CheckBoxJosh);
 
         regularRadio = (RadioButton) findViewById(R.id.BillTypeRegular);
@@ -105,9 +121,51 @@ public class AddNewBillActivity extends AppCompatActivity implements UploadCallb
             }
         });
 
+        final Calendar myCalendar = Calendar.getInstance(Locale.ENGLISH);
+        final DatePickerDialog.OnDateSetListener date = new DatePickerDialog.OnDateSetListener() {
+            @Override
+            public void onDateSet(DatePicker view, int year, int month, int dayOfMonth) {
+
+                GregorianCalendar gc = new GregorianCalendar();
+                gc.setFirstDayOfWeek(Calendar.MONDAY);
+                gc.set(Calendar.MONTH, view.getMonth());
+                gc.set(Calendar.DAY_OF_MONTH, view.getDayOfMonth());
+                gc.set(Calendar.YEAR, view.getYear());
+
+                String format = "dd-MM-yyyy";
+                SimpleDateFormat sdf = new SimpleDateFormat(format, Locale.UK);
+                billDueDateEntryText.setText(sdf.format(gc.getTime()));
+                billDueDateEntry.setError(null);
+            }
+        };
+
+        billDueDateEntryText.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                new DatePickerDialog(AddNewBillActivity.this, date,
+                        myCalendar.get(Calendar.YEAR),
+                        myCalendar.get(Calendar.MONTH),
+                        myCalendar.get(Calendar.DAY_OF_MONTH)).show();
+            }
+        });
+
+        calendarImage.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                new DatePickerDialog(AddNewBillActivity.this, date,
+                        myCalendar.get(Calendar.YEAR),
+                        myCalendar.get(Calendar.MONTH),
+                        myCalendar.get(Calendar.DAY_OF_MONTH)).show();
+            }
+        });
+
         submitButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(final View view) {
+                if(!ValidateFields()) {
+                    return;
+                }
                 final AlertDialog confirmCancel = new AlertDialog.Builder(AddNewBillActivity.this).create();
 
                 confirmCancel.setTitle("Submit bill entry?");
@@ -118,79 +176,11 @@ public class AddNewBillActivity extends AppCompatActivity implements UploadCallb
                     public void onClick(DialogInterface dialogInterface, int i) {
                         confirmCancel.dismiss();
 
-                        if(billNameEntry.getText().length() > 0)
-                            billName = billNameEntry.getText().toString();
-                        else {
-                            billNameEntry.setError("Please enter a valid Bill name");
-                            return;
-                        }
-
-                        try {
-                            if(billAmountEntry.getText().length() > 0)
-                                billAmount = DecimalFormat.getInstance().parse(billAmountEntry.getText().toString());
-                            else {
-                                billAmountEntry.setError("Please enter a valid Bill amount");
-                                return;
-                            }
-
-                            if(billDueDateDayEntry.getText().length() > 0
-                                    && (Integer.parseInt(billDueDateDayEntry.getText().toString()) > 0
-                                    && Integer.parseInt(billDueDateDayEntry.getText().toString()) <= 31))
-                            {
-                                if(billDueDateMonthEntry.getText().length() > 0
-                                        && (Integer.parseInt(billDueDateMonthEntry.getText().toString()) > 0
-                                        && Integer.parseInt(billDueDateMonthEntry.getText().toString()) <= 12))
-                                {
-                                    if(billDueDateYearEntry.getText().length() > 0
-                                            && (Integer.parseInt(billDueDateYearEntry.getText().toString()) > 1970
-                                            && Integer.parseInt(billDueDateYearEntry.getText().toString()) < 3000))
-                                    {
-                                        billDueDate = new SimpleDateFormat("dd-MM-yyyy").parse(billDueDateDayEntry.getText().toString()
-                                                + "-" + billDueDateMonthEntry.getText().toString()
-                                                + "-" + billDueDateYearEntry.getText().toString());
-                                    }
-                                    else
-                                    {
-                                        billDueDateYearEntry.setError("Please enter a valid year (1970-3000)");
-                                        return;
-                                    }
-                                }
-                                else
-                                {
-                                    billDueDateMonthEntry.setError("Please enter a valid month (1-12)");
-                                    return;
-                                }
-                            }
-                            else
-                            {
-                                billDueDateDayEntry.setError("Please enter a valid day (1-31)");
-                                return;
-                            }
-
-                        } catch (ParseException pe)
-                        {
-                            Log.d("Error", "Parse Error: " + pe.getMessage());
-                            Snackbar.make(layout, "Parsing Error: " + pe.getMessage(), Snackbar.LENGTH_LONG).show();
-                            return;
-                        }
-
-                        forDavid = davidCheck.isChecked();
-                        forVikki = vikkiCheck.isChecked();
-                        forJosh = joshCheck.isChecked();
-
-                        if(!forDavid && !forVikki && !forJosh)
-                        {
-                            Snackbar.make(layout, "Please select at least one person for this bill", Snackbar.LENGTH_LONG).show();
-                            return;
-                        }
-
                         recurring = recurRadio.isChecked();
 
                         billNameEntry.setEnabled(false);
                         billAmountEntry.setEnabled(false);
-                        billDueDateDayEntry.setEnabled(false);
-                        billDueDateMonthEntry.setEnabled(false);
-                        billDueDateYearEntry.setEnabled(false);
+                        billAmountEntryText.setEnabled(false);
                         submitButton.setEnabled(false);
 
                         davidCheck.setEnabled(false);
@@ -217,22 +207,22 @@ public class AddNewBillActivity extends AppCompatActivity implements UploadCallb
                             if(forJosh)
                                 people.put("f97a50c9-8451-4537-bccb-e89ba5ade95a");
 
-                            /*JSONObject david = new JSONObject();
-                            JSONObject vikki = new JSONObject();
-                            JSONObject josh = new JSONObject();
+                        /*JSONObject david = new JSONObject();
+                        JSONObject vikki = new JSONObject();
+                        JSONObject josh = new JSONObject();
 
-                            david.put("Id","");
-                            david.put("ForDavid", forDavid);
+                        david.put("Id","");
+                        david.put("ForDavid", forDavid);
 
-                            vikki.put("Id", "");
-                            vikki.put("ForVikki", forVikki);
+                        vikki.put("Id", "");
+                        vikki.put("ForVikki", forVikki);
 
-                            josh.put("Id", "");
-                            josh.put("ForJosh", forJosh);
+                        josh.put("Id", "");
+                        josh.put("ForJosh", forJosh);
 
-                            people.put(david);
-                            people.put(vikki);
-                            people.put(josh);*/
+                        people.put(david);
+                        people.put(vikki);
+                        people.put(josh);*/
 
                             newBill.put("People", people);
 
@@ -335,9 +325,7 @@ public class AddNewBillActivity extends AppCompatActivity implements UploadCallb
     {
         billNameEntry.setEnabled(true);
         billAmountEntry.setEnabled(true);
-        billDueDateDayEntry.setEnabled(true);
-        billDueDateMonthEntry.setEnabled(true);
-        billDueDateYearEntry.setEnabled(true);
+        billAmountEntryText.setEnabled(true);
         submitButton.setEnabled(true);
 
         davidCheck.setEnabled(true);
@@ -346,6 +334,60 @@ public class AddNewBillActivity extends AppCompatActivity implements UploadCallb
 
         recurRadio.setEnabled(true);
         regularRadio.setEnabled(true);
+    }
+
+    private boolean ValidateFields()
+    {
+        if(billNameEntryText.getText().length() > 0) {
+            billName = billNameEntryText.getText().toString();
+            billNameEntry.setError(null);
+        }
+        else {
+            billNameEntryText.requestFocus();
+            billNameEntry.setError("Please enter a valid Bill name");
+            return false;
+        }
+
+        try {
+            if(billAmountEntryText.getText().length() > 0) {
+                billAmount = DecimalFormat.getInstance().parse(billAmountEntryText.getText().toString());
+                billAmountEntry.setError(null);
+            }
+            else {
+                billAmountEntryText.requestFocus();
+                billAmountEntry.setError("Please enter a valid Bill amount");
+                return false;
+            }
+
+            if(billDueDateEntryText.getText().length() > 0)
+            {
+                billDueDate = new SimpleDateFormat("dd-MM-yyyy").parse(billDueDateEntryText.getText().toString());
+                billDueDateEntry.setError(null);
+            }
+            else
+            {
+                billDueDateEntry.setError("Please enter a valid Date");
+                return false;
+            }
+
+        } catch (ParseException pe)
+        {
+            Log.d("Error", "Parse Error: " + pe.getMessage());
+            Snackbar.make(layout, "Parsing Error: " + pe.getMessage(), Snackbar.LENGTH_LONG).show();
+            return false;
+        }
+
+        forDavid = davidCheck.isChecked();
+        forVikki = vikkiCheck.isChecked();
+        forJosh = joshCheck.isChecked();
+
+        if(!forDavid && !forJosh)
+        {
+            Snackbar.make(layout, "Please select at least one person for this bill", Snackbar.LENGTH_LONG).show();
+            return false;
+        }
+
+        return true;
     }
 
     @Override
@@ -360,4 +402,6 @@ public class AddNewBillActivity extends AppCompatActivity implements UploadCallb
         Snackbar.make(layout, failReason, Snackbar.LENGTH_LONG).show();
         ReenableElements();
     }
+
+
 }

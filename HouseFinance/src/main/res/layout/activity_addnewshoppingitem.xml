@@ -69,9 +69,7 @@
                 app:layout_constraintLeft_toLeftOf="parent"
                 android:layout_marginBottom="8dp"
                 android:layout_marginTop="32dp"
-                app:layout_constraintVertical_bias="0.6"
                 app:layout_constraintTop_toBottomOf="@+id/ShoppingItemNameEntry"
-                app:layout_constraintBottom_toTopOf="@+id/davidRadio"
                 app:layout_constraintVertical_chainStyle="packed" />
 
             <RadioButton
@@ -80,11 +78,9 @@
                 android:layout_height="wrap_content"
                 android:checked="false"
                 android:text="David Smith"
-                app:layout_constraintBottom_toTopOf="@+id/vikkiRadio"
                 app:layout_constraintTop_toBottomOf="@+id/addedByLabel"
                 app:layout_constraintLeft_toLeftOf="@+id/addedByLabel"
-                android:layout_marginLeft="0dp"
-                android:layout_marginBottom="8dp" />
+                android:layout_marginTop="8dp"/>
 
             <RadioButton
                 android:id="@+id/vikkiRadio"
@@ -92,11 +88,10 @@
                 android:layout_height="wrap_content"
                 android:checked="false"
                 android:text="Victoria Walters"
-                app:layout_constraintBottom_toTopOf="@+id/joshRadio"
                 app:layout_constraintTop_toBottomOf="@+id/davidRadio"
                 app:layout_constraintLeft_toLeftOf="@+id/davidRadio"
-                android:layout_marginLeft="-8dp"
-                android:layout_marginBottom="8dp" />
+                android:visibility="gone"
+                android:layout_marginTop="8dp"/>
 
             <RadioButton
                 android:id="@+id/joshRadio"
@@ -106,9 +101,8 @@
                 android:text="Joshua Marshall"
                 app:layout_constraintTop_toBottomOf="@+id/vikkiRadio"
                 app:layout_constraintLeft_toLeftOf="@+id/vikkiRadio"
-                android:layout_marginLeft="0dp"
-                android:layout_marginBottom="8dp"
-                app:layout_constraintBottom_toTopOf="@+id/whoLabel" />
+                android:layout_marginTop="8dp"
+                android:layout_marginLeft="0dp"/>
 
             <TextView
                 android:id="@+id/whoLabel"
@@ -116,8 +110,7 @@
                 android:layout_height="wrap_content"
                 android:text="Who is this for?"
                 android:textSize="16sp"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/nameLabel"
+                app:layout_constraintTop_toBottomOf="@+id/joshRadio"
                 app:layout_constraintVertical_chainStyle="spread_inside"
                 android:layout_marginLeft="16dp"
                 app:layout_constraintLeft_toLeftOf="parent"
@@ -131,24 +124,22 @@
                 android:layout_height="wrap_content"
                 android:checked="true"
                 android:text="David Smith"
-                app:layout_constraintBottom_toTopOf="@+id/CheckBoxVikki"
-                app:layout_constraintTop_toBottomOf="@+id/whoLabel"
-                app:layout_constraintLeft_toLeftOf="@+id/whoLabel"
-                android:layout_marginLeft="0dp"
                 android:layout_marginBottom="8dp"
-                android:layout_marginTop="8dp" />
+                android:layout_marginTop="8dp"
+                app:layout_constraintTop_toBottomOf="@+id/whoLabel"
+                app:layout_constraintLeft_toLeftOf="@id/whoLabel"
+                app:layout_constraintVertical_chainStyle="packed" />
 
             <CheckBox
                 android:id="@+id/CheckBoxVikki"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:checked="true"
+                android:checked="false"
                 android:text="Victoria Walters"
-                app:layout_constraintBottom_toTopOf="@+id/CheckBoxJosh"
+                android:layout_marginBottom="8dp"
                 app:layout_constraintTop_toBottomOf="@+id/CheckBoxDavid"
                 app:layout_constraintLeft_toLeftOf="@+id/CheckBoxDavid"
-                android:layout_marginLeft="-8dp"
-                android:layout_marginBottom="8dp" />
+                android:visibility="gone"/>
 
             <CheckBox
                 android:id="@+id/CheckBoxJosh"
@@ -156,11 +147,9 @@
                 android:layout_height="wrap_content"
                 android:checked="true"
                 android:text="Joshua Marshall"
+                android:layout_marginTop="8dp"
                 app:layout_constraintTop_toBottomOf="@+id/CheckBoxVikki"
-                app:layout_constraintLeft_toLeftOf="@+id/CheckBoxVikki"
-                android:layout_marginLeft="0dp"
-                android:layout_marginBottom="8dp"
-                app:layout_constraintBottom_toTopOf="@+id/addedByLabel" />
+                app:layout_constraintLeft_toLeftOf="@+id/CheckBoxVikki"/>
         </android.support.constraint.ConstraintLayout>
 
 

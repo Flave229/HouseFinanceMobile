@@ -178,8 +178,17 @@ public class ShoppingListFragment extends Fragment implements DownloadCallback {
 
     @Override
     public void OnFailedDownload(String failReason) {
-        Snackbar.make(layout, failReason + ". Retrying...", Snackbar.LENGTH_LONG).show();
         _handler.removeCallbacksAndMessages(null);
-        _handler.postDelayed(contactWebsite, 500);
+
+        if(!failReason.equals("No internet connection"))
+        {
+            Snackbar.make(layout, failReason + ". Retrying...", Snackbar.LENGTH_LONG).show();
+            _handler.postDelayed(contactWebsite, 500);
+        }
+        else
+        {
+            Snackbar.make(layout, failReason, Snackbar.LENGTH_LONG).show();
+            swipeRefreshLayout.setRefreshing(false);
+        }
     }
 }
