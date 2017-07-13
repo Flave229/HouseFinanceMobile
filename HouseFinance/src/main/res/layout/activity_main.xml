@@ -28,15 +28,15 @@
             android:background="?attr/colorPrimary"
             android:elevation="6dp"
             android:minHeight="?attr/actionBarSize"
-            app:tabIndicatorColor="#fff"
-            app:tabMode="fixed"/>
+            app:tabIndicatorColor="@color/tab_underline"
+            app:tabMode="fixed" />
 
         <android.support.v4.view.ViewPager
             android:id="@+id/viewpager"
             android:layout_width="match_parent"
             android:layout_height="0dp"
             android:layout_weight="1"
-            android:background="@android:color/white"/>
+            android:background="#eee"/>
 
     </LinearLayout>
 
@@ -47,6 +47,7 @@
         android:layout_gravity="bottom|end"
         android:layout_margin="16dp"
         android:src="@drawable/ic_create_white_24dp"
+        app:backgroundTint="@color/colorAccent"
         app:fabSize="normal" />
 
     <android.support.design.widget.FloatingActionButton
@@ -56,5 +57,6 @@
         android:layout_gravity="bottom|end"
         android:layout_margin="16dp"
         android:src="@drawable/ic_add_shopping_cart_white_24dp"
+        app:backgroundTint="@color/colorAccent"
         app:fabSize="normal" />
 </android.support.design.widget.CoordinatorLayout>
