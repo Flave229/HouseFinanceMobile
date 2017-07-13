@@ -8,6 +8,7 @@ import android.content.ServiceConnection;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.IBinder;
+import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.TabLayout;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
@@ -23,21 +24,21 @@ public class MainActivity extends AppCompatActivity {
 
     SimpleFragmentPagerAdapter adapter;
     TabLayout tabLayout;
+    public FloatingActionButton addBillFab;
+    public FloatingActionButton addShoppingItemFab;
     private Handler _handler;
 
-    private Runnable runnable = new Runnable() {
+    private Runnable showBillButton = new Runnable() {
         @Override
         public void run() {
-            if(GlobalObjects._service != null)
-            {
-                //GlobalObjects._service.contactWebsite();
-            }
-            else
-            {
-                if(_handler != null) {
-                    //_handler.post(runnable);
-                }
-            }
+           addBillFab.show();
+        }
+    };
+
+    private Runnable showShoppingButton = new Runnable() {
+        @Override
+        public void run() {
+            addShoppingItemFab.show();
         }
     };
 
@@ -50,6 +51,9 @@ public class MainActivity extends AppCompatActivity {
         _handler = new Handler();
         GlobalObjects._service = new BackgroundService();
         //_handler.post(runnable);
+        addBillFab = (FloatingActionButton) findViewById(R.id.addBill);
+        addShoppingItemFab = (FloatingActionButton) findViewById(R.id.addShoppingItem);
+        addShoppingItemFab.hide();
 
         Toolbar appToolbar = (Toolbar) findViewById(R.id.appToolbar);
         setSupportActionBar(appToolbar);
@@ -57,6 +61,43 @@ public class MainActivity extends AppCompatActivity {
         ViewPager viewPager = (ViewPager)findViewById(R.id.viewpager);
         adapter = new SimpleFragmentPagerAdapter(getSupportFragmentManager(), this);
         viewPager.setAdapter(adapter);
+        viewPager.setOffscreenPageLimit(3);
+
+        viewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
+            @Override
+            public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
+            }
+
+            @Override
+            public void onPageSelected(int position) {
+                switch (position)
+                {
+                    case 0:
+                        // Bills
+                        //addBillFab.show();
+                        addShoppingItemFab.hide();
+                        _handler.postDelayed(showBillButton, 200);
+                        break;
+
+                    case 1:
+                        // shopping
+                        //addShoppingItemFab.show();
+                        addBillFab.hide();
+                        _handler.postDelayed(showShoppingButton, 200);
+                        break;
+
+                    case 2:
+                        // stats
+
+                        break;
+                }
+
+            }
+
+            @Override
+            public void onPageScrollStateChanged(int state) {
+            }
+        });
 
         tabLayout = (TabLayout) findViewById(R.id.tabs);
         tabLayout.setupWithViewPager(viewPager);
@@ -72,7 +113,7 @@ public class MainActivity extends AppCompatActivity {
     public void onDestroy()
     {
         super.onDestroy();
-        _handler.removeCallbacksAndMessages(runnable);
+        //_handler.removeCallbacksAndMessages(runnable);
         _handler = null;
     }
 

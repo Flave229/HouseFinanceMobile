@@ -1,5 +1,6 @@
 package hoppingvikings.housefinancemobile.UserInterface.Fragments;
 
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
@@ -22,6 +23,7 @@ import hoppingvikings.housefinancemobile.UserInterface.AddNewBillActivity;
 import hoppingvikings.housefinancemobile.UserInterface.Lists.BillList.BillListAdapter;
 import hoppingvikings.housefinancemobile.UserInterface.Lists.BillList.BillListObject;
 import hoppingvikings.housefinancemobile.UserInterface.Lists.ListItemDivider;
+import hoppingvikings.housefinancemobile.UserInterface.MainActivity;
 import hoppingvikings.housefinancemobile.UserInterface.ViewBillDetailsActivity;
 import hoppingvikings.housefinancemobile.WebService.DownloadCallback;
 
@@ -41,6 +43,7 @@ public class BillsFragment extends Fragment implements DownloadCallback {
     ArrayList<BillListObject> cards;
     SwipeRefreshLayout swipeRefreshLayout;
     FloatingActionButton addItemButton;
+    MainActivity activity;
 
     private Runnable contactWebsite = new Runnable() {
         @Override
@@ -99,6 +102,7 @@ public class BillsFragment extends Fragment implements DownloadCallback {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
     {
+        activity = ((MainActivity)getActivity());
         View view = inflater.inflate(R.layout.fragment_blank, container, false);
 
         swipeRefreshLayout = (SwipeRefreshLayout) view.findViewById(R.id.swipeRefresh);
@@ -119,7 +123,7 @@ public class BillsFragment extends Fragment implements DownloadCallback {
             cards = new ArrayList<>();
         }
 
-        addItemButton.setOnClickListener(new View.OnClickListener() {
+        activity.addBillFab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Intent addBill = new Intent(getContext(), AddNewBillActivity.class);

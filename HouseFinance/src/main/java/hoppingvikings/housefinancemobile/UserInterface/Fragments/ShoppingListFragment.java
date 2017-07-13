@@ -22,6 +22,7 @@ import hoppingvikings.housefinancemobile.UserInterface.AddNewShoppingItemActivit
 import hoppingvikings.housefinancemobile.UserInterface.Lists.ListItemDivider;
 import hoppingvikings.housefinancemobile.UserInterface.Lists.ShoppingList.ShoppingListAdapter;
 import hoppingvikings.housefinancemobile.UserInterface.Lists.ShoppingList.ShoppingListObject;
+import hoppingvikings.housefinancemobile.UserInterface.MainActivity;
 import hoppingvikings.housefinancemobile.WebService.DownloadCallback;
 
 import static android.app.Activity.RESULT_CANCELED;
@@ -40,6 +41,8 @@ public class ShoppingListFragment extends Fragment implements DownloadCallback {
     ArrayList<ShoppingListObject> items;
     SwipeRefreshLayout swipeRefreshLayout;
     FloatingActionButton addItemButton;
+
+    MainActivity activity;
 
     private Runnable contactWebsite = new Runnable() {
         @Override
@@ -100,6 +103,7 @@ public class ShoppingListFragment extends Fragment implements DownloadCallback {
     @Override
     public View onCreateView(LayoutInflater inflater, final ViewGroup container, Bundle savedInstanceState)
     {
+        activity = ((MainActivity)getActivity());
         View view = inflater.inflate(R.layout.fragment_blank, container, false);
         swipeRefreshLayout = (SwipeRefreshLayout) view.findViewById(R.id.swipeRefresh);
         layout = (CoordinatorLayout)view.findViewById(R.id.coordlayout);
@@ -142,7 +146,7 @@ public class ShoppingListFragment extends Fragment implements DownloadCallback {
         swipeRefreshLayout.setRefreshing(true);
         _handler.postDelayed(contactWebsite, 200);
 
-        addItemButton.setOnClickListener(new View.OnClickListener() {
+        activity.addShoppingItemFab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Intent addItem = new Intent(getContext(), AddNewShoppingItemActivity.class);

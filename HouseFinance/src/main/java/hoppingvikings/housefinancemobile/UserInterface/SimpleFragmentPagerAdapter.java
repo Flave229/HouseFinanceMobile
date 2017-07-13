@@ -18,8 +18,8 @@ import hoppingvikings.housefinancemobile.UserInterface.Fragments.StatisticsFragm
  */
 
 public class SimpleFragmentPagerAdapter extends FragmentPagerAdapter {
-    final int PAGE_COUNT = 3;
-    private String tabTitles[] = new String[] {"BILLS", "SHOPPING", "STATISTICS"};
+    final int PAGE_COUNT = 2;
+    private String tabTitles[] = new String[] {"BILLS", "SHOPPING"};
     private Context context;
 
     public SimpleFragmentPagerAdapter(FragmentManager fm, Context context)
