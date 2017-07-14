@@ -1,6 +1,5 @@
 package hoppingvikings.housefinancemobile.UserInterface.Fragments;
 
-import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
@@ -48,7 +47,7 @@ public class BillsFragment extends Fragment implements DownloadCallback {
     private Runnable contactWebsite = new Runnable() {
         @Override
         public void run() {
-            GlobalObjects._service.contactWebsiteBills(getContext(), BillsFragment.this);
+            GlobalObjects.webHandler.contactWebsiteBills(getContext(), BillsFragment.this);
         }
     };
 

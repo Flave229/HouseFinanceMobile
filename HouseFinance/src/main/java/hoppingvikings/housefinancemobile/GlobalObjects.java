@@ -6,7 +6,7 @@ import hoppingvikings.housefinancemobile.UserInterface.Lists.BillList.BillListOb
 import hoppingvikings.housefinancemobile.UserInterface.Lists.BillList.BillListObjectPeople;
 import hoppingvikings.housefinancemobile.UserInterface.Lists.ShoppingList.ShoppingListObject;
 import hoppingvikings.housefinancemobile.UserInterface.Lists.ShoppingList.ShoppingListPeople;
-import hoppingvikings.housefinancemobile.WebService.BackgroundService;
+import hoppingvikings.housefinancemobile.WebService.WebHandler;
 
 /**
  * Created by Josh on 25/09/2016.
@@ -20,7 +20,8 @@ public class GlobalObjects{
     static ArrayList<ShoppingListObject> _shoppingItems = new ArrayList<>();
     static ArrayList<ShoppingListPeople> _shoppingPeople = new ArrayList<>();
 
-    public static BackgroundService _service;
+    public static WebHandler webHandler;
+    public static BackgroundService backgroundService;
     public static boolean _bound = false;
 
     public static boolean downloading = false;
@@ -93,5 +94,10 @@ public class GlobalObjects{
     {
         _shoppingPeople.clear();
         _shoppingPeople.addAll(people);
+    }
+
+    public static void ShowNotif(String text, String subtext, int notifid)
+    {
+        AppServiceBinder._service.ShowNotification(text, subtext, notifid);
     }
 }

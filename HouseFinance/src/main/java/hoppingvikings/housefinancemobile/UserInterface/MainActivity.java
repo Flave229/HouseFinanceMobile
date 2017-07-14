@@ -2,7 +2,6 @@ package hoppingvikings.housefinancemobile.UserInterface;
 
 import android.app.ActivityManager;
 import android.content.ComponentName;
-import android.content.Context;
 import android.content.Intent;
 import android.content.ServiceConnection;
 import android.os.Bundle;
@@ -16,9 +15,10 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 
+import hoppingvikings.housefinancemobile.BackgroundService;
 import hoppingvikings.housefinancemobile.GlobalObjects;
 import hoppingvikings.housefinancemobile.R;
-import hoppingvikings.housefinancemobile.WebService.BackgroundService;
+import hoppingvikings.housefinancemobile.WebService.WebHandler;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -49,7 +49,7 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         _handler = new Handler();
-        GlobalObjects._service = new BackgroundService();
+        GlobalObjects.webHandler = new WebHandler();
         //_handler.post(runnable);
         addBillFab = (FloatingActionButton) findViewById(R.id.addBill);
         addShoppingItemFab = (FloatingActionButton) findViewById(R.id.addShoppingItem);
@@ -121,7 +121,7 @@ public class MainActivity extends AppCompatActivity {
     public void onBackPressed() {
         // End the app process after pressing back
         finish();
-        Runtime.getRuntime().exit(0);
+        //Runtime.getRuntime().exit(0);
     }
 
     @Override

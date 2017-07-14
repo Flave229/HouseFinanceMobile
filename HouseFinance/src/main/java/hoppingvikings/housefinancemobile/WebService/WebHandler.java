@@ -38,7 +38,7 @@ import hoppingvikings.housefinancemobile.UserInterface.Lists.ShoppingList.Shoppi
  * Created by Josh on 24/09/2016.
  */
 
-public class BackgroundService {
+public class WebHandler {
 
     DownloadCallback _billListOwner;
     DownloadDetailsCallback _billDetailsOwner;

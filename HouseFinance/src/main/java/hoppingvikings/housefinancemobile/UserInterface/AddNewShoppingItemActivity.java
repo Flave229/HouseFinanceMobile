@@ -7,7 +7,6 @@ import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.util.AsyncListUtil;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -173,7 +172,7 @@ public class AddNewShoppingItemActivity extends AppCompatActivity implements Upl
 
                             newItem.put("ItemFor", people);
 
-                            GlobalObjects._service.UploadNewShoppingItem(getApplicationContext(), newItem, AddNewShoppingItemActivity.this);
+                            GlobalObjects.webHandler.UploadNewShoppingItem(getApplicationContext(), newItem, AddNewShoppingItemActivity.this);
                         } catch (JSONException je)
                         {
                             Snackbar.make(layout, "Failed to create Json", Snackbar.LENGTH_LONG).show();

@@ -23,6 +23,18 @@ import hoppingvikings.housefinancemobile.UserInterface.DisplayMessageActivity;
  */
 
 public class ShoppingListAdapter extends RecyclerView.Adapter<ShoppingListAdapter.CardViewHolder> {
+    private static ShoppingItemClickedListener _listener;
+
+    public interface ShoppingItemClickedListener
+    {
+        void onShoppingItemClick(View itemView, int pos);
+    }
+
+    public void setOnShoppingItemClickListener(ShoppingItemClickedListener listener)
+    {
+        _listener = listener;
+    }
+
     public static class CardViewHolder extends RecyclerView.ViewHolder {
         View view;
         LinearLayout cardView;
@@ -43,9 +55,18 @@ public class ShoppingListAdapter extends RecyclerView.Adapter<ShoppingListAdapte
             addedFor1 = (ImageView) v.findViewById(R.id.addedFor1);
             addedFor2 = (ImageView) v.findViewById(R.id.addedFor2);
             addedFor3 = (ImageView) v.findViewById(R.id.addedFor3);
+
             view.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
+                    if(_listener != null)
+                    {
+                        int pos = getAdapterPosition();
+                        if(pos != RecyclerView.NO_POSITION)
+                        {
+                            _listener.onShoppingItemClick(view, pos);
+                        }
+                    }
                 }
             });
         }
@@ -134,5 +155,10 @@ public class ShoppingListAdapter extends RecyclerView.Adapter<ShoppingListAdapte
             notifyItemRangeRemoved(0, oldsize);
             notifyItemRangeInserted(0, _shoppingItems.size());
         }
+    }
+
+    public ShoppingListObject GetItem(int pos)
+    {
+        return _shoppingItems.get(pos);
     }
 }

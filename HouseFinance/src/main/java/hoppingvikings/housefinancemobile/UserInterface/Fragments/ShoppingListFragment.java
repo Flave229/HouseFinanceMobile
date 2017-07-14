@@ -1,5 +1,6 @@
 package hoppingvikings.housefinancemobile.UserInterface.Fragments;
 
+import android.app.NotificationManager;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
@@ -7,6 +8,7 @@ import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.NotificationCompat;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -47,7 +49,7 @@ public class ShoppingListFragment extends Fragment implements DownloadCallback {
     private Runnable contactWebsite = new Runnable() {
         @Override
         public void run() {
-            GlobalObjects._service.contactWebsiteShoppingItems(getContext(), ShoppingListFragment.this);
+            GlobalObjects.webHandler.contactWebsiteShoppingItems(getContext(), ShoppingListFragment.this);
         }
     };
 
@@ -130,6 +132,14 @@ public class ShoppingListFragment extends Fragment implements DownloadCallback {
             rv.setLayoutManager(new LinearLayoutManager(getActivity()));
             rv.addItemDecoration(new ListItemDivider(getContext()));
         }
+
+        adapter.setOnShoppingItemClickListener(new ShoppingListAdapter.ShoppingItemClickedListener() {
+            @Override
+            public void onShoppingItemClick(View itemView, int pos) {
+                ShoppingListObject item = adapter.GetItem(pos);
+                GlobalObjects.ShowNotif("Don't forget to buy " + item.itemName + "!", "Reminder", pos);
+            }
+        });
 
         swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override

@@ -21,7 +21,6 @@ import org.json.JSONObject;
 import hoppingvikings.housefinancemobile.GlobalObjects;
 import hoppingvikings.housefinancemobile.R;
 import hoppingvikings.housefinancemobile.UserInterface.Lists.BillList.BillObjectDetailed;
-import hoppingvikings.housefinancemobile.WebService.DownloadCallback;
 import hoppingvikings.housefinancemobile.WebService.DownloadDetailsCallback;
 
 /**
@@ -44,7 +43,7 @@ public class ViewBillDetailsActivity extends AppCompatActivity implements Downlo
     private Runnable contactWebsite = new Runnable() {
         @Override
         public void run() {
-            GlobalObjects._service.RequestBillDetails(ViewBillDetailsActivity.this, ViewBillDetailsActivity.this, billID);
+            GlobalObjects.webHandler.RequestBillDetails(ViewBillDetailsActivity.this, ViewBillDetailsActivity.this, billID);
         }
     };
 
