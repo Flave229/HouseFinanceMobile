@@ -126,25 +126,21 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        //getMenuInflater().inflate(R.menu.additemmenu, menu);
+        getMenuInflater().inflate(R.menu.additemmenu, menu);
         return super.onCreateOptionsMenu(menu);
     }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-
-        /*switch (item.getItemId())
+        switch (item.getItemId())
         {
-            case R.id.action_add:
-                Intent addBill = new Intent(this, AddNewBillActivity.class);
-                startActivity(addBill);
+            case R.id.action_end:
+                Runtime.getRuntime().exit(0);
                 return true;
 
             default:
                 return super.onOptionsItemSelected(item);
-        }*/
-
-        return false;
+        }
     }
 
     private boolean isMyServiceRunning(Class<?> serviceClass)

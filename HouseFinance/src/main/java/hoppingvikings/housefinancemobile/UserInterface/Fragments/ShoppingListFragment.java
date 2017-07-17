@@ -113,7 +113,7 @@ public class ShoppingListFragment extends Fragment implements DownloadCallback {
         addItemButton = (FloatingActionButton)view.findViewById(R.id.addItem);
 
         rv = (RecyclerView) view.findViewById(R.id.recycler_view);
-        rv.setHasFixedSize(true);
+        rv.setHasFixedSize(false);
 
         if(GlobalObjects.GetShoppingItems() != null && GlobalObjects.GetShoppingItems().size() != 0)
         {
@@ -131,6 +131,7 @@ public class ShoppingListFragment extends Fragment implements DownloadCallback {
             rv.setAdapter(adapter);
             rv.setLayoutManager(new LinearLayoutManager(getActivity()));
             rv.addItemDecoration(new ListItemDivider(getContext()));
+            rv.setItemViewCacheSize(20);
         }
 
         adapter.setOnShoppingItemClickListener(new ShoppingListAdapter.ShoppingItemClickedListener() {
