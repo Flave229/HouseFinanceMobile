@@ -49,7 +49,7 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         _handler = new Handler();
-        GlobalObjects.webHandler = new WebHandler();
+
         //_handler.post(runnable);
         addBillFab = (FloatingActionButton) findViewById(R.id.addBill);
         addShoppingItemFab = (FloatingActionButton) findViewById(R.id.addShoppingItem);

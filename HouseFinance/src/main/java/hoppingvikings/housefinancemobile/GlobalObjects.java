@@ -1,5 +1,11 @@
 package hoppingvikings.housefinancemobile;
 
+import android.app.Notification;
+import android.app.NotificationManager;
+import android.content.Context;
+import android.content.Intent;
+import android.support.v4.app.NotificationCompat;
+
 import java.util.ArrayList;
 
 import hoppingvikings.housefinancemobile.UserInterface.Lists.BillList.BillListObject;
@@ -7,6 +13,8 @@ import hoppingvikings.housefinancemobile.UserInterface.Lists.BillList.BillListOb
 import hoppingvikings.housefinancemobile.UserInterface.Lists.ShoppingList.ShoppingListObject;
 import hoppingvikings.housefinancemobile.UserInterface.Lists.ShoppingList.ShoppingListPeople;
 import hoppingvikings.housefinancemobile.WebService.WebHandler;
+
+import static android.content.Context.NOTIFICATION_SERVICE;
 
 /**
  * Created by Josh on 25/09/2016.
@@ -96,7 +104,7 @@ public class GlobalObjects{
         _shoppingPeople.addAll(people);
     }
 
-    public static void ShowNotif(String text, String subtext, int notifid)
+    public static void ShowNotif(Context context, String text, String subtext, int notifid)
     {
         AppServiceBinder._service.ShowNotification(text, subtext, notifid);
     }

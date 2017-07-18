@@ -2,4 +2,12 @@
     <string name="app_name">House Finance Mobile</string>
     <string name="edit_message">Enter a message</string>
     <string name="button_send">Send</string>
+
+    <string name="shortcutShortLabelBill">Add bill</string>
+    <string name="shortcutLongLabelBill">Add a new bill to the list</string>
+    <string name="shortcutDisabledMessageBill">Cannot add new bill right now</string>
+
+    <string name="shortcutShortLabelShopping">Add shopping item</string>
+    <string name="shortcutLongLabelShopping">Add a new shopping item to the list</string>
+    <string name="shortcutDisabledMessageShopping">Cannot add new shopping item right now</string>
 </resources>

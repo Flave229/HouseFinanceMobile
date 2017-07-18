@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<shortcuts xmlns:android="http://schemas.android.com/apk/res/android">
+    <shortcut
+        android:shortcutId="AddBill"
+        android:enabled="true"
+        android:icon="@drawable/ic_shortcut_create"
+        android:shortcutShortLabel="@string/shortcutShortLabelBill"
+        android:shortcutLongLabel="@string/shortcutLongLabelBill"
+        android:shortcutDisabledMessage="@string/shortcutDisabledMessageBill">
+        <intent
+            android:action="android.intent.action.VIEW"
+            android:targetPackage="hoppingvikings.housefinancemobile"
+            android:targetClass="hoppingvikings.housefinancemobile.UserInterface.MainActivity"/>
+        <intent
+            android:action="android.intent.action.VIEW"
+            android:targetPackage="hoppingvikings.housefinancemobile"
+            android:targetClass="hoppingvikings.housefinancemobile.UserInterface.AddNewBillActivity"/>
+    </shortcut>
+
+    <shortcut
+        android:shortcutId="AddShoppingItem"
+        android:enabled="true"
+        android:icon="@drawable/ic_shortcut_add_shopping_cart"
+        android:shortcutShortLabel="@string/shortcutShortLabelShopping"
+        android:shortcutLongLabel="@string/shortcutLongLabelShopping"
+        android:shortcutDisabledMessage="@string/shortcutDisabledMessageShopping">
+        <intent
+            android:action="android.intent.action.VIEW"
+            android:targetPackage="hoppingvikings.housefinancemobile"
+            android:targetClass="hoppingvikings.housefinancemobile.UserInterface.MainActivity"/>
+        <intent
+            android:action="android.intent.action.VIEW"
+            android:targetPackage="hoppingvikings.housefinancemobile"
+            android:targetClass="hoppingvikings.housefinancemobile.UserInterface.AddNewShoppingItemActivity"/>
+    </shortcut>
+</shortcuts>

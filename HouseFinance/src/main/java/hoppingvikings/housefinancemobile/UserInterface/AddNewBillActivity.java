@@ -38,6 +38,7 @@ import java.util.Locale;
 import hoppingvikings.housefinancemobile.GlobalObjects;
 import hoppingvikings.housefinancemobile.R;
 import hoppingvikings.housefinancemobile.WebService.UploadCallback;
+import hoppingvikings.housefinancemobile.WebService.WebHandler;
 
 /**
  * Created by Josh on 11/02/2017.
