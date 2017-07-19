@@ -54,11 +54,9 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:hint="Bill Name *"
-                    android:textSize="24sp"
                     android:textColorHint="#88ffffff"
                     android:inputType="text|textCapWords"
                     android:maxLines="1"
-                    android:padding="4dp"
                     android:textColor="#fff"/>
             </android.support.design.widget.TextInputLayout>
 
@@ -85,9 +83,7 @@
                     android:textColorHint="#88ffffff"
                     android:inputType="numberDecimal"
                     android:maxLines="1"
-                    android:padding="4dp"
-                    android:textColor="#fff"
-                    android:textSize="24sp"/>
+                    android:textColor="#fff"/>
             </android.support.design.widget.TextInputLayout>
 
             <TextView
@@ -122,9 +118,7 @@
                     android:layout_height="wrap_content"
                     android:hint="Due Date (DD-MM-YYYY)*"
                     android:inputType="date"
-                    android:padding="4dp"
                     android:textColorHint="#88ffffff"
-                    android:textSize="24sp"
                     android:focusable="false"/>
 
             </android.support.design.widget.TextInputLayout>

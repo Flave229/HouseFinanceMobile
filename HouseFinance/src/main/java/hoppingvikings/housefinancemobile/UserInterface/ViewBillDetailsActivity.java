@@ -1,13 +1,17 @@
 package hoppingvikings.housefinancemobile.UserInterface;
 
+import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.annotation.Nullable;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.LinearLayout;
 import android.widget.TableLayout;
@@ -38,6 +42,7 @@ public class ViewBillDetailsActivity extends AppCompatActivity implements Downlo
     String billID = "";
 
     LinearLayout tableContainer;
+    FloatingActionButton addPayment;
 
     BillObjectDetailed _currentBill = null;
     private Runnable contactWebsite = new Runnable() {
@@ -56,6 +61,18 @@ public class ViewBillDetailsActivity extends AppCompatActivity implements Downlo
         totalPaidText = (TextView) findViewById(R.id.totalPaid);
         dueDateText = (TextView) findViewById(R.id.billDueDate);
         tableContainer = (LinearLayout) findViewById(R.id.tableContainer);
+        addPayment = (FloatingActionButton) findViewById(R.id.addPaymentButton);
+        addPayment.hide();
+
+        addPayment.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent i = new Intent(ViewBillDetailsActivity.this, AddPaymentActivity.class);
+                i.putExtra("bill_id", billID);
+                i.putExtra("bill_name", _currentBill.name);
+                startActivityForResult(i, 0);
+            }
+        });
 
         if(getIntent() != null)
         {
@@ -93,6 +110,11 @@ public class ViewBillDetailsActivity extends AppCompatActivity implements Downlo
         return table;
     }
 
+    private void ClearTable()
+    {
+        tableContainer.removeAllViews();
+    }
+
     private void AddRow(TableLayout table, String header, String value)
     {
         TableRow row = new TableRow(this);
@@ -118,6 +140,20 @@ public class ViewBillDetailsActivity extends AppCompatActivity implements Downlo
 
         // Add the row
         table.addView(row, new TableLayout.LayoutParams(TableLayout.LayoutParams.MATCH_PARENT, TableLayout.LayoutParams.WRAP_CONTENT));
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId())
+        {
+            case android.R.id.home:
+                onBackPressed();
+                return true;
+
+            default:
+                return super.onOptionsItemSelected(item);
+
+        }
     }
 
     @Override
@@ -151,7 +187,25 @@ public class ViewBillDetailsActivity extends AppCompatActivity implements Downlo
         else
         {
             table = this.CreateNewTable("No Payments Found");
-            //this.AddRow(table, "Press the button below to add a payment!", "");
+            this.AddRow(table, "Press the button below to add a payment!", "");
+        }
+
+        addPayment.show();
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        switch (resultCode)
+        {
+            case RESULT_OK:
+                ClearTable();
+                _handler.postDelayed(contactWebsite, 100);
+                break;
+
+            case RESULT_CANCELED:
+
+                break;
         }
     }
 }

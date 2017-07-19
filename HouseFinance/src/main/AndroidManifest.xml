@@ -42,6 +42,9 @@
 
         <activity android:name=".UserInterface.ViewBillDetailsActivity"
             android:label="Bill Details"/>
+
+        <activity android:name=".UserInterface.AddPaymentActivity"
+            android:label="Add Payment"/>
     </application>
 
 </manifest>

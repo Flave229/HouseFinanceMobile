@@ -86,6 +86,27 @@ public class WebHandler {
         }
     }
 
+    public void UploadNewPayment(Context context, JSONObject newPayment, String billid, UploadCallback owner)
+    {
+        _uploadOwner = owner;
+        String newPaymentString = newPayment.toString();
+        GlobalObjects.downloading = true;
+
+        ConnectivityManager connMgr = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo networkInfo = connMgr.getActiveNetworkInfo();
+        String authToken = "D2DB7539-634F-47C4-818D-59AD03C592E3";
+
+        if(networkInfo!= null && networkInfo.isConnected())
+        {
+            new UploadPaymentJson().execute(newPaymentString, "https://saltavenue.azurewebsites.net/api/"+ authToken + "/AddPayment");
+        }
+        else
+        {
+            GlobalObjects.downloading = false;
+            _uploadOwner.OnFailedUpload("No internet connection");
+        }
+    }
+
     public void UploadNewBill(Context context, JSONObject newBill, UploadCallback owner)
     {
         _uploadOwner = owner;
@@ -514,4 +535,84 @@ public class WebHandler {
         }
     }
 
+    private class UploadPaymentJson extends AsyncTask<String, Void, Boolean>
+    {
+        @Override
+        protected Boolean doInBackground(String... params) {
+
+            try {
+                return UploadJsonObject(params[0], params[1]);
+            }
+            catch (IOException e)
+            {
+                return false;
+            }
+        }
+
+        @Override
+        protected void onPostExecute(Boolean aBoolean) {
+            if(aBoolean)
+            {
+                _uploadOwner.OnSuccessfulUpload();
+            }
+            else
+            {
+                _uploadOwner.OnFailedUpload("Failed to upload payment. Please try again");
+            }
+        }
+
+        private boolean UploadJsonObject(String newBillJsonString, String weburl) throws IOException
+        {
+            JSONObject returnJson;
+            URL url = new URL(weburl);
+
+            HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+
+            try {
+                connection.setRequestMethod("POST");
+                connection.setConnectTimeout(15000);
+                connection.setDoOutput(true);
+                connection.setChunkedStreamingMode(0);
+
+                OutputStream out = new BufferedOutputStream(connection.getOutputStream());
+                BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(out, "UTF-8"));
+
+                writer.write(newBillJsonString);
+                writer.flush();
+                writer.close();
+
+                out.close();
+
+                BufferedReader serverAnswer = new BufferedReader(new InputStreamReader(connection.getInputStream()));
+                String line;
+                String returnmessage = "";
+                while ((line = serverAnswer.readLine()) != null)
+                {
+                    returnmessage += line;
+                }
+
+                serverAnswer.close();
+
+                returnJson = new JSONObject(returnmessage);
+
+                if(returnJson.has("HasError"))
+                {
+                    if(returnJson.getBoolean("HasError"))
+                    {
+                        Log.e("Error", "Problem Sending Item");
+                        return false;
+                    }
+                }
+            } catch (Exception e)
+            {
+                Log.e("Error", "Problem Sending payment: " + e.getMessage());
+                return false;
+            }
+            finally {
+                connection.disconnect();
+            }
+
+            return true;
+        }
+    }
 }
