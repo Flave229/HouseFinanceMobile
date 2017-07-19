@@ -143,12 +143,23 @@ public class ViewBillDetailsActivity extends AppCompatActivity implements Downlo
     }
 
     @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.viewdetailsmenu, menu);
+        return super.onCreateOptionsMenu(menu);
+    }
+
+    @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId())
         {
             case android.R.id.home:
                 onBackPressed();
                 return true;
+
+            case R.id.delete_bill:
+                //todo Add code to delete bill when ready
+                return true;
+
 
             default:
                 return super.onOptionsItemSelected(item);
