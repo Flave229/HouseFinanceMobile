@@ -54,7 +54,6 @@ public class AddNewBillActivity extends AppCompatActivity implements UploadCallb
 
     TextInputLayout billDueDateEntry;
     TextInputEditText billDueDateEntryText;
-    ImageView calendarImage;
 
     CheckBox davidCheck;
     CheckBox vikkiCheck;
@@ -93,7 +92,6 @@ public class AddNewBillActivity extends AppCompatActivity implements UploadCallb
         billDueDateEntry = (TextInputLayout) findViewById(R.id.billDueDateEntry);
         billDueDateEntryText = (TextInputEditText) findViewById(R.id.billDueDateEntryText);
         billDueDateEntryText.setInputType(InputType.TYPE_NULL);
-        calendarImage = (ImageView) findViewById(R.id.calendarImage);
 
         davidCheck = (CheckBox) findViewById(R.id.CheckBoxDavid);
         vikkiCheck = (CheckBox) findViewById(R.id.CheckBoxVikki);
@@ -141,16 +139,6 @@ public class AddNewBillActivity extends AppCompatActivity implements UploadCallb
             @Override
             public void onClick(View v) {
 
-                new DatePickerDialog(AddNewBillActivity.this, date,
-                        myCalendar.get(Calendar.YEAR),
-                        myCalendar.get(Calendar.MONTH),
-                        myCalendar.get(Calendar.DAY_OF_MONTH)).show();
-            }
-        });
-
-        calendarImage.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
                 new DatePickerDialog(AddNewBillActivity.this, date,
                         myCalendar.get(Calendar.YEAR),
                         myCalendar.get(Calendar.MONTH),

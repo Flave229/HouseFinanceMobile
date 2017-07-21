@@ -15,6 +15,7 @@ public class BillListObject {
     public String cardName = "";
     public String cardDesc = "";
     public String cardAmount = "";
+    public String totalAmount = "";
     public int cardImage = 0;
     public ArrayList<BillListObjectPeople> people = null;
     public boolean paid = false;
@@ -31,6 +32,7 @@ public class BillListObject {
             cardName = jsonObject.getString("Name");
             cardDesc = jsonObject.getString("DateDue");
             cardAmount = jsonObject.getString("AmountDue");
+            totalAmount = jsonObject.getString("TotalAmount");
             cardImage = android.R.drawable.ic_menu_camera;
             paid = jsonObject.getBoolean("Paid");
             overdue = jsonObject.getBoolean("Overdue");

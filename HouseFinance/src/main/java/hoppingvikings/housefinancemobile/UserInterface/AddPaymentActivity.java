@@ -59,6 +59,7 @@ public class AddPaymentActivity extends AppCompatActivity implements UploadCallb
     Date paymentDate;
 
     String billid;
+    String suggestedPayment;
 
     boolean forDavid;
     boolean forJosh;
@@ -80,6 +81,11 @@ public class AddPaymentActivity extends AppCompatActivity implements UploadCallb
             billid = i.getStringExtra("bill_id");
         }
 
+        if(i.hasExtra("suggested_amount"))
+        {
+            suggestedPayment = i.getStringExtra("suggested_amount");
+        }
+
         layout = (CoordinatorLayout) findViewById(R.id.coordlayout);
 
         submitButton = (Button) findViewById(R.id.submitBill);
@@ -92,6 +98,12 @@ public class AddPaymentActivity extends AppCompatActivity implements UploadCallb
 
         paymentAmountEntry = (TextInputLayout) findViewById(R.id.paymentAmountEntry);
         paymentAmountEntryText = (TextInputEditText) findViewById(R.id.paymentAmountEntryText);
+
+        if(suggestedPayment != null && suggestedPayment.length() > 0)
+        {
+            paymentAmountEntryText.setText(suggestedPayment);
+            paymentAmountEntryText.setSelection(paymentAmountEntryText.length());
+        }
 
         paymentDateEntry = (TextInputLayout) findViewById(R.id.paymentDateEntry);
         paymentDateEntryText = (TextInputEditText) findViewById(R.id.paymentDateEntryText);

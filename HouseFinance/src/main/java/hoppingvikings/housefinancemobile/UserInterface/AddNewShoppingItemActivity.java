@@ -5,6 +5,8 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.Snackbar;
+import android.support.design.widget.TextInputEditText;
+import android.support.design.widget.TextInputLayout;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
@@ -36,7 +38,8 @@ import hoppingvikings.housefinancemobile.WebService.WebHandler;
 public class AddNewShoppingItemActivity extends AppCompatActivity implements UploadCallback {
 
     Button submitButton;
-    EditText shoppingItemNameEntry;
+    TextInputLayout itemNameLayout;
+    TextInputEditText shoppingItemNameEntry;
 
     CheckBox davidCheck;
     CheckBox vikkiCheck;
@@ -69,7 +72,8 @@ public class AddNewShoppingItemActivity extends AppCompatActivity implements Upl
 
         submitButton = (Button) findViewById(R.id.submitItem);
 
-        shoppingItemNameEntry = (EditText) findViewById(R.id.ShoppingItemNameEntry);
+        itemNameLayout = (TextInputLayout) findViewById(R.id.itemNameLayout);
+        shoppingItemNameEntry = (TextInputEditText) findViewById(R.id.ShoppingItemNameEntry);
 
         davidCheck = (CheckBox) findViewById(R.id.CheckBoxDavid);
         vikkiCheck = (CheckBox) findViewById(R.id.CheckBoxVikki);
@@ -285,8 +289,9 @@ public class AddNewShoppingItemActivity extends AppCompatActivity implements Upl
     {
         if(shoppingItemNameEntry.getText().length() > 0) {
             itemName = shoppingItemNameEntry.getText().toString();
+            itemNameLayout.setError(null);
         } else {
-            shoppingItemNameEntry.setError("Please enter a valid Item name");
+            itemNameLayout.setError("Please enter a valid Item name");
             return false;
         }
 

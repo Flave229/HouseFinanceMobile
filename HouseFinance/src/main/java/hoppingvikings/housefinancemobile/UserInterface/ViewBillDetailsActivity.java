@@ -22,8 +22,11 @@ import android.widget.Toast;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.util.Locale;
+
 import hoppingvikings.housefinancemobile.GlobalObjects;
 import hoppingvikings.housefinancemobile.R;
+import hoppingvikings.housefinancemobile.UserInterface.Lists.BillList.BillListObject;
 import hoppingvikings.housefinancemobile.UserInterface.Lists.BillList.BillObjectDetailed;
 import hoppingvikings.housefinancemobile.WebService.DownloadDetailsCallback;
 
@@ -67,9 +70,11 @@ public class ViewBillDetailsActivity extends AppCompatActivity implements Downlo
         addPayment.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                BillListObject bill = GlobalObjects.GetBillFromID(_currentBill.id);
                 Intent i = new Intent(ViewBillDetailsActivity.this, AddPaymentActivity.class);
                 i.putExtra("bill_id", billID);
                 i.putExtra("bill_name", _currentBill.name);
+                i.putExtra("suggested_amount", String.format(Locale.getDefault(), "%.2f", Double.valueOf(bill.totalAmount) / bill.people.size()));
                 startActivityForResult(i, 0);
             }
         });
