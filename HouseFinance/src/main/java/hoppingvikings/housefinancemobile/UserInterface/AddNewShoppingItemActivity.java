@@ -24,6 +24,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 
 import hoppingvikings.housefinancemobile.GlobalObjects;
@@ -38,6 +39,7 @@ import hoppingvikings.housefinancemobile.WebService.WebHandler;
 public class AddNewShoppingItemActivity extends AppCompatActivity implements UploadCallback {
 
     Button submitButton;
+    Button addToCartButton;
     TextInputLayout itemNameLayout;
     TextInputEditText shoppingItemNameEntry;
 
@@ -61,6 +63,14 @@ public class AddNewShoppingItemActivity extends AppCompatActivity implements Upl
 
     CoordinatorLayout layout;
 
+    ArrayList<String> _shoppingItems;
+
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        outState.putStringArrayList("shopping_items", _shoppingItems);
+        super.onSaveInstanceState(outState);
+    }
+
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -71,6 +81,8 @@ public class AddNewShoppingItemActivity extends AppCompatActivity implements Upl
         layout = (CoordinatorLayout) findViewById(R.id.coordlayout);
 
         submitButton = (Button) findViewById(R.id.submitItem);
+        addToCartButton = (Button) findViewById(R.id.addToList);
+        _shoppingItems = new ArrayList<>();
 
         itemNameLayout = (TextInputLayout) findViewById(R.id.itemNameLayout);
         shoppingItemNameEntry = (TextInputEditText) findViewById(R.id.ShoppingItemNameEntry);
@@ -187,6 +199,52 @@ public class AddNewShoppingItemActivity extends AppCompatActivity implements Upl
                 });
 
                 confirmCancel.show();
+            }
+        });
+
+        addToCartButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if(!ValidateFields())
+                {
+                    return;
+                }
+
+                JSONObject newItem = new JSONObject();
+
+                try{
+                    newItem.put("Name", itemName);
+                    newItem.put("Added", new SimpleDateFormat("yyyy-MM-dd").format(new Date()));
+
+                    if(fromDavid)
+                        newItem.put("AddedBy", "e9636bbb-8b54-49b9-9fa2-9477c303032f");
+                    else if(fromVikki)
+                        newItem.put("AddedBy", "25c15fb4-b5d5-47d9-917b-c572b1119e65");
+                    else if(fromJosh)
+                        newItem.put("AddedBy", "f97a50c9-8451-4537-bccb-e89ba5ade95a");
+
+                    JSONArray people = new JSONArray();
+
+                    if(forDavid)
+                        people.put("e9636bbb-8b54-49b9-9fa2-9477c303032f");
+
+                    if(forVikki)
+                        people.put("25c15fb4-b5d5-47d9-917b-c572b1119e65");
+
+                    if(forJosh)
+                        people.put("f97a50c9-8451-4537-bccb-e89ba5ade95a");
+
+                    newItem.put("ItemFor", people);
+
+                    _shoppingItems.add(newItem.toString());
+                    Toast.makeText(getApplicationContext(), "Item added to cart", Toast.LENGTH_SHORT).show();
+                    //GlobalObjects.webHandler.UploadNewShoppingItem(getApplicationContext(), newItem, AddNewShoppingItemActivity.this);
+                } catch (JSONException je)
+                {
+                    Snackbar.make(layout, "Failed to create Json", Snackbar.LENGTH_LONG).show();
+                    ReenableElements();
+                }
+
             }
         });
     }
