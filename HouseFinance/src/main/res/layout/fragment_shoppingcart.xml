@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.design.widget.CoordinatorLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:id="@+id/coordlayout">
+
+    <android.support.v7.widget.RecyclerView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:id="@+id/cartList"
+        tools:listitem="@layout/listitem_shoppingcartitem">
+
+    </android.support.v7.widget.RecyclerView>
+
+    <TextView
+        android:id="@+id/cartEmptyText"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:layout_margin="16dp"
+        android:gravity="center"
+        android:textSize="16sp"
+        android:text="You have nothing in your shopping cart!\nGo back to add items"
+        android:visibility="gone"/>
+
+</android.support.design.widget.CoordinatorLayout>
