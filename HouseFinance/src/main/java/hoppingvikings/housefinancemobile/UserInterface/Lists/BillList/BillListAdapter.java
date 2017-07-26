@@ -16,6 +16,7 @@ import android.widget.TextView;
 import com.bumptech.glide.Glide;
 
 import java.util.ArrayList;
+import java.util.Locale;
 
 import hoppingvikings.housefinancemobile.BitmapCache;
 import hoppingvikings.housefinancemobile.R;
@@ -120,12 +121,12 @@ public class BillListAdapter extends RecyclerView.Adapter<BillListAdapter.CardVi
         {
             cvh.cardObject.setBackgroundResource(R.color.bill_overdue);
             cvh.cardDate.setText(_cards.get(i).cardDesc + " OVERDUE");
-            cvh.cardAmount.setText("£" + _cards.get(i).cardAmount);
+            cvh.cardAmount.setText("£" + String.format(Locale.getDefault(), "%.2f", Double.valueOf(_cards.get(i).cardAmount)));
         }
         else
         {
             cvh.cardDate.setText(_cards.get(i).cardDesc);
-            cvh.cardAmount.setText("£" + _cards.get(i).cardAmount);
+            cvh.cardAmount.setText("£" + String.format(Locale.getDefault(), "%.2f", Double.valueOf(_cards.get(i).cardAmount)));
             cvh.cardObject.setBackgroundColor(Color.WHITE);
         }
 

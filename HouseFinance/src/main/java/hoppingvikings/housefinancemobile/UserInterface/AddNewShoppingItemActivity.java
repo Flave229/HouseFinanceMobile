@@ -18,6 +18,7 @@ import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.FrameLayout;
+import android.widget.ProgressBar;
 import android.widget.RadioButton;
 import android.widget.Toast;
 
@@ -52,6 +53,9 @@ public class AddNewShoppingItemActivity extends AppCompatActivity implements Upl
 
     ButtonPressedCallback _owner;
 
+    ProgressBar uploadProgress;
+    public int progress;
+
     @Override
     protected void onSaveInstanceState(Bundle outState) {
         outState.putStringArrayList("shopping_items", _shoppingItems);
@@ -63,6 +67,7 @@ public class AddNewShoppingItemActivity extends AppCompatActivity implements Upl
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_addnewshoppingitem);
         _fragmentContainer = (FrameLayout) findViewById(R.id.fragment_container);
+        uploadProgress = (ProgressBar) findViewById(R.id.uploadProgress);
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.appToolbar);
         setSupportActionBar(toolbar);
@@ -187,8 +192,30 @@ public class AddNewShoppingItemActivity extends AppCompatActivity implements Upl
 
     @Override
     public void OnSuccessfulUpload() {
+        uploadProgress.setVisibility(View.VISIBLE);
+        uploadProgress.setProgress(uploadProgress.getProgress() + progress);
+        if(_shoppingItems.size() > 0)
+        {
+            _shoppingItems.remove(0);
+        }
+
+        if(_shoppingItems.size() > 0)
+        {
+            UploadNextItem();
+            return;
+        }
         Toast.makeText(getApplicationContext(), "Item successfully added", Toast.LENGTH_LONG).show();
         setResult(RESULT_OK);
         finish();
+    }
+
+    public void UploadNextItem()
+    {
+        try {
+            GlobalObjects.webHandler.UploadNewShoppingItem(this, new JSONObject(_shoppingItems.get(0)), this);
+        } catch (Exception e)
+        {
+
+        }
     }
 }

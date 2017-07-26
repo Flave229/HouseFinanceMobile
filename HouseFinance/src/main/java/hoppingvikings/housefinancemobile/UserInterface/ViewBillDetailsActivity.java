@@ -149,7 +149,7 @@ public class ViewBillDetailsActivity extends AppCompatActivity implements Downlo
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.viewdetailsmenu, menu);
+        //getMenuInflater().inflate(R.menu.viewdetailsmenu, menu);
         return super.onCreateOptionsMenu(menu);
     }
 
@@ -183,8 +183,8 @@ public class ViewBillDetailsActivity extends AppCompatActivity implements Downlo
         _currentBill = billObjectDetailed;
         getSupportActionBar().setTitle("Bill Details");
         getSupportActionBar().setSubtitle(_currentBill.name);
-        this.billAmountText.setText("£" + String.valueOf(_currentBill.amountDue));
-        this.totalPaidText.setText("£" + String.valueOf(_currentBill.amountPaid));
+        this.billAmountText.setText("£" + String.format(Locale.getDefault(), "%.2f", Double.valueOf(_currentBill.amountDue)));
+        this.totalPaidText.setText("£" + String.format(Locale.getDefault(), "%.2f", Double.valueOf(_currentBill.amountPaid)));
         this.dueDateText.setText(_currentBill.dateDue);
 
         if(billObjectDetailed.paymentDetails.size() > 0)
@@ -203,10 +203,10 @@ public class ViewBillDetailsActivity extends AppCompatActivity implements Downlo
         else
         {
             table = this.CreateNewTable("No Payments Found");
-            this.AddRow(table, "Press the button below to add a payment!", "");
+            //this.AddRow(table, "Press the button below to add a payment!", "");
         }
 
-        addPayment.show();
+        //addPayment.show();
     }
 
     @Override

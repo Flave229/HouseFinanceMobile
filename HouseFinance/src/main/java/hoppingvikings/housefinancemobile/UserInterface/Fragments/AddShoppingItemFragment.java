@@ -293,6 +293,7 @@ public class AddShoppingItemFragment extends Fragment implements ButtonPressedCa
 
             _activity._shoppingItems.add(newItem.toString());
             Toast.makeText(getContext(), "Item added to cart", Toast.LENGTH_SHORT).show();
+            _activity.getSupportActionBar().setSubtitle("Items in cart: " + String.valueOf(_activity._shoppingItems.size()));
 
             _activity.submitButton.setText("View Cart");
             //GlobalObjects.webHandler.UploadNewShoppingItem(getApplicationContext(), newItem, AddNewShoppingItemActivity.this);
