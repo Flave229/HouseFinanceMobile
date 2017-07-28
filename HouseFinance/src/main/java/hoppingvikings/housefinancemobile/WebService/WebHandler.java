@@ -606,11 +606,11 @@ public class WebHandler {
 
                 returnJson = new JSONObject(returnmessage);
 
-                if(returnJson.has("HasError"))
+                if(returnJson.has("hasError"))
                 {
-                    if(returnJson.getBoolean("HasError"))
+                    if(returnJson.getBoolean("hasError"))
                     {
-                        Log.e("Error", "Problem Sending Item");
+                        Log.e("Error", returnJson.getJSONObject("error").getString("message"));
                         return false;
                     }
                 }
