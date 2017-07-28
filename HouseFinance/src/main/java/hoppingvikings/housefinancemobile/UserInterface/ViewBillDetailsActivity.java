@@ -191,9 +191,9 @@ public class ViewBillDetailsActivity extends AppCompatActivity implements Downlo
         {
             for (JSONObject paymentInfo: billObjectDetailed.paymentDetails) {
                 try {
-                    table = this.CreateNewTable(paymentInfo.getString("PersonName"));
-                    this.AddRow(table, "Date Paid", paymentInfo.getString("DatePaid"));
-                    this.AddRow(table, "Amount Paid", "£" + String.valueOf(paymentInfo.getDouble("AmountPaid")));
+                    table = this.CreateNewTable(paymentInfo.getString("personName"));
+                    this.AddRow(table, "Date Paid", paymentInfo.getString("datePaid"));
+                    this.AddRow(table, "Amount Paid", "£" + String.valueOf(paymentInfo.getDouble("amountPaid")));
                 } catch (JSONException e)
                 {
                     Log.v("Error payment info: ", e.getMessage());
@@ -203,10 +203,10 @@ public class ViewBillDetailsActivity extends AppCompatActivity implements Downlo
         else
         {
             table = this.CreateNewTable("No Payments Found");
-            //this.AddRow(table, "Press the button below to add a payment!", "");
+            this.AddRow(table, "Press the button below to add a payment!", "");
         }
 
-        //addPayment.show();
+        addPayment.show();
     }
 
     @Override

@@ -1,28 +1,20 @@
 package hoppingvikings.housefinancemobile.WebService;
 
-import android.app.Service;
 import android.content.Context;
-import android.content.Intent;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.AsyncTask;
-import android.os.Binder;
-import android.os.IBinder;
 import android.util.Log;
-import android.widget.Toast;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.io.BufferedOutputStream;
 import java.io.BufferedReader;
-import java.io.BufferedWriter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
-import java.io.OutputStreamWriter;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.ArrayList;
@@ -44,7 +36,7 @@ public class WebHandler {
     DownloadDetailsCallback _billDetailsOwner;
     DownloadCallback _shoppingListOwner;
     UploadCallback _uploadOwner;
-
+    String authToken = "Token D2DB7539-634F-47C4-818D-59AD03C592E3";
 
 
     public void contactWebsiteBills(Context context, DownloadCallback owner)
@@ -53,12 +45,11 @@ public class WebHandler {
         GlobalObjects.downloading = true;
         ConnectivityManager connMgr = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
         NetworkInfo networkInfo = connMgr.getActiveNetworkInfo();
-        String authToken = "D2DB7539-634F-47C4-818D-59AD03C592E3";
 
         if(networkInfo != null && networkInfo.isConnected())
         {
             //Toast.makeText(getBaseContext(), "Obtaining list of bills", Toast.LENGTH_LONG).show();
-            new DownloadJsonString().execute("https://saltavenue.azurewebsites.net/api/"+ authToken + "/RequestBillList", "Bills");
+            new DownloadJsonString().execute("http://house.flave.co.uk/api/Bills/", "Bills");
         }
         else
         {
@@ -73,11 +64,10 @@ public class WebHandler {
         GlobalObjects.downloading = true;
         ConnectivityManager connMgr = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
         NetworkInfo networkInfo = connMgr.getActiveNetworkInfo();
-        String authToken = "D2DB7539-634F-47C4-818D-59AD03C592E3";
 
         if(networkInfo != null && networkInfo.isConnected())
         {
-            new DownloadJsonString().execute("https://saltavenue.azurewebsites.net/api/" + authToken + "/RequestBillDetails/" + billID, "BillDetails");
+            new DownloadJsonString().execute("http://house.flave.co.uk/api/Bills/", "BillDetails", billID);
         }
         else
         {
@@ -94,11 +84,10 @@ public class WebHandler {
 
         ConnectivityManager connMgr = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
         NetworkInfo networkInfo = connMgr.getActiveNetworkInfo();
-        String authToken = "D2DB7539-634F-47C4-818D-59AD03C592E3";
 
         if(networkInfo!= null && networkInfo.isConnected())
         {
-            new UploadPaymentJson().execute(newPaymentString, "https://saltavenue.azurewebsites.net/api/"+ authToken + "/AddPayment");
+            new UploadPaymentJson().execute(newPaymentString, "http://house.flave.co.uk/api/Bills/AddPayment");
         }
         else
         {
@@ -115,11 +104,10 @@ public class WebHandler {
 
         ConnectivityManager connMgr = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
         NetworkInfo networkInfo = connMgr.getActiveNetworkInfo();
-        String authToken = "D2DB7539-634F-47C4-818D-59AD03C592E3";
 
         if(networkInfo!= null && networkInfo.isConnected())
         {
-            new UploadBillJson().execute(newBillString, "https://saltavenue.azurewebsites.net/api/"+ authToken + "/AddBillItem");
+            new UploadBillJson().execute(newBillString, "http://house.flave.co.uk/api/Bills/Add");
         }
         else
         {
@@ -136,11 +124,10 @@ public class WebHandler {
 
         ConnectivityManager connMgr = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
         NetworkInfo networkInfo = connMgr.getActiveNetworkInfo();
-        String authToken = "D2DB7539-634F-47C4-818D-59AD03C592E3";
 
         if(networkInfo != null && networkInfo.isConnected())
         {
-            new UploadShoppingItemJson().execute(newItemString, "https://saltavenue.azurewebsites.net/api/"+ authToken + "/AddShoppingItem");
+            new UploadShoppingItemJson().execute(newItemString, "http://house.flave.co.uk/api/Shopping/Add");
         }
         else
         {
@@ -155,12 +142,11 @@ public class WebHandler {
         GlobalObjects.downloading = true;
         ConnectivityManager connMgr = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
         NetworkInfo networkInfo = connMgr.getActiveNetworkInfo();
-        String authToken = "D2DB7539-634F-47C4-818D-59AD03C592E3";
 
         if(networkInfo != null && networkInfo.isConnected())
         {
             //Toast.makeText(getBaseContext(), "Obtaining list of bills", Toast.LENGTH_LONG).show();
-            new DownloadJsonString().execute("https://saltavenue.azurewebsites.net/api/"+ authToken + "/RequestShoppingList", "Shopping");
+            new DownloadJsonString().execute("http://house.flave.co.uk/api/Shopping/", "Shopping");
         }
         else
         {
@@ -179,7 +165,7 @@ public class WebHandler {
                 BillListObject bill;
                 BillListObjectPeople person;
                 try {
-                    JSONArray array = result.getJSONArray("BillList");
+                    JSONArray array = result.getJSONArray("bills");
 
                     ArrayList<JSONObject> allObjects = new ArrayList<>();
 
@@ -191,7 +177,7 @@ public class WebHandler {
                     for(int k = 0; k < allObjects.size(); k++)
                     {
                         ArrayList<JSONObject> allPeopleObjects = new ArrayList<>();
-                        JSONArray peopleArray = allObjects.get(k).getJSONArray("People");
+                        JSONArray peopleArray = allObjects.get(k).getJSONArray("people");
                         for(int j = 0; j < peopleArray.length(); j++)
                         {
                             allPeopleObjects.add(peopleArray.getJSONObject(j));
@@ -227,7 +213,8 @@ public class WebHandler {
                 ShoppingListObject item;
                 ShoppingListPeople shoppingPerson;
                 try {
-                    JSONArray array = result.getJSONArray("ShoppingList");
+                    JSONObject itemsobject = result.getJSONObject("items");
+                    JSONArray array = itemsobject.getJSONArray("shoppingList");
 
                     ArrayList<JSONObject> allObjects = new ArrayList<>();
                     ArrayList<JSONObject> allPeopleObjects = new ArrayList<>();
@@ -239,7 +226,7 @@ public class WebHandler {
 
                     for(int k = 0; k < allObjects.size(); k++)
                     {
-                        JSONArray peopleArray = allObjects.get(k).getJSONArray("AddedForImages");
+                        JSONArray peopleArray = allObjects.get(k).getJSONArray("addedForImages");
                         item = new ShoppingListObject(allObjects.get(k), peopleArray);
                         items.add(item);
 
@@ -266,10 +253,12 @@ public class WebHandler {
             case "BillDetails":
                 BillObjectDetailed detailedBill = null;
                 JSONArray paymentsArray;
+                JSONObject detailedJson;
 
                 try {
-                    paymentsArray = result.getJSONArray("Payments");
-                    detailedBill = new BillObjectDetailed(result, paymentsArray);
+                    detailedJson = result.getJSONObject("bill");
+                    paymentsArray = detailedJson.getJSONArray("payments");
+                    detailedBill = new BillObjectDetailed(detailedJson, paymentsArray);
                 } catch (JSONException e)
                 {
                     e.printStackTrace();
@@ -300,7 +289,15 @@ public class WebHandler {
             try
             {
                 type = urls[1];
-                return downloadUrl(urls[0]);
+                if(type.equals("Bills") || type.equals("Shopping"))
+                {
+                    return downloadUrl(urls[0], null);
+                }
+                else
+                {
+                    return downloadUrl(urls[0], urls[2]);
+                }
+
             } catch(IOException e)
             {
                 return null;
@@ -313,7 +310,7 @@ public class WebHandler {
             websiteResult(result, type);
         }
 
-        private JSONObject downloadUrl(String weburl) throws IOException
+        private JSONObject downloadUrl(String weburl, String billid) throws IOException
         {
             // Changed to 1MB buffer length. Previous was way too small
             JSONObject jsonObject;
@@ -324,13 +321,32 @@ public class WebHandler {
                 try {
                     conn.setReadTimeout(30000);
                     conn.setConnectTimeout(45000);
-                    conn.setRequestMethod("GET");
-                    conn.setDoInput(true);
+                    conn.setRequestProperty("Authorization", authToken);
+
+                    if(type.equals("Bills") || type.equals("Shopping"))
+                    {
+                        conn.setRequestMethod("GET");
+                        conn.setDoInput(true);
+                    }
+                    else
+                    {
+                        conn.setRequestMethod("POST");
+                        conn.setRequestProperty("Content-Type", "application/json; charset=UTF-8");
+                        conn.setDoOutput(true);
+                        conn.setDoInput(true);
+                        OutputStream os = conn.getOutputStream();
+                        JSONObject billidjson = new JSONObject();
+                        billidjson.put("BillId", billid);
+                        os.write(billidjson.toString().getBytes("UTF-8"));
+                        os.close();
+                    }
 
                     int response = conn.getResponseCode();
                     //Toast.makeText(getBaseContext(), "The response is: " + String.valueOf(response), Toast.LENGTH_LONG).show();
 
-                    jsonObject = new JSONObject(readIt(conn.getInputStream()));
+                    InputStream input = conn.getInputStream();
+
+                    jsonObject = new JSONObject(readIt(input));
 
                     return jsonObject;
                 } catch (JSONException e) {
@@ -409,17 +425,16 @@ public class WebHandler {
 
             try {
                 connection.setRequestMethod("POST");
+                connection.setRequestProperty("Authorization", authToken);
+                connection.setRequestProperty("Content-Type", "application/json; charset=UTF-8");
+
                 connection.setConnectTimeout(15000);
+                connection.setDoInput(true);
                 connection.setDoOutput(true);
                 connection.setChunkedStreamingMode(0);
 
-                OutputStream out = new BufferedOutputStream(connection.getOutputStream());
-                BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(out, "UTF-8"));
-
-                writer.write(newBillJsonString);
-                writer.flush();
-                writer.close();
-
+                OutputStream out = connection.getOutputStream();
+                out.write(newBillJsonString.getBytes("UTF-8"));
                 out.close();
 
                 BufferedReader serverAnswer = new BufferedReader(new InputStreamReader(connection.getInputStream()));
@@ -489,17 +504,15 @@ public class WebHandler {
 
             try {
                 connection.setRequestMethod("POST");
+                connection.setRequestProperty("Authorization", authToken);
+                connection.setRequestProperty("Content-Type", "application/json; charset=UTF-8");
                 connection.setConnectTimeout(15000);
+                connection.setDoInput(true);
                 connection.setDoOutput(true);
                 connection.setChunkedStreamingMode(0);
 
-                OutputStream out = new BufferedOutputStream(connection.getOutputStream());
-                BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(out, "UTF-8"));
-
-                writer.write(newItemJsonString);
-                writer.flush();
-                writer.close();
-
+                OutputStream out = connection.getOutputStream();
+                out.write(newItemJsonString.getBytes("UTF-8"));
                 out.close();
 
                 BufferedReader serverAnswer = new BufferedReader(new InputStreamReader(connection.getInputStream()));
@@ -570,17 +583,15 @@ public class WebHandler {
 
             try {
                 connection.setRequestMethod("POST");
+                connection.setRequestProperty("Authorization", authToken);
+                connection.setRequestProperty("Content-Type", "application/json; charset=UTF-8");
                 connection.setConnectTimeout(15000);
+                connection.setDoInput(true);
                 connection.setDoOutput(true);
                 connection.setChunkedStreamingMode(0);
 
-                OutputStream out = new BufferedOutputStream(connection.getOutputStream());
-                BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(out, "UTF-8"));
-
-                writer.write(newBillJsonString);
-                writer.flush();
-                writer.close();
-
+                OutputStream out = connection.getOutputStream();
+                out.write(newBillJsonString.getBytes());
                 out.close();
 
                 BufferedReader serverAnswer = new BufferedReader(new InputStreamReader(connection.getInputStream()));

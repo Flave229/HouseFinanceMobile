@@ -24,11 +24,11 @@ public class ShoppingListObject {
     {
         try
         {
-            ID = object.getString("Id");
-            itemName = object.getString("Name");
-            addedDate = object.getString("AddedOn");
-            addedBy = object.getString("AddedByImage");
-            done = object.getBoolean("Purchased");
+            ID = object.getString("id");
+            itemName = object.getString("name");
+            addedDate = object.getString("addedOn");
+            addedBy = object.getString("addedByImage");
+            done = object.getBoolean("purchased");
 
             switch (addedForImages.length())
             {

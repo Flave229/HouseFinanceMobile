@@ -29,14 +29,14 @@ public class BillListObject {
     {
         // Base Initialiser
         try {
-            ID = jsonObject.getString("Id");
-            cardName = jsonObject.getString("Name");
-            cardDesc = jsonObject.getString("DateDue");
-            cardAmount = jsonObject.getString("AmountDue");
-            totalAmount = jsonObject.getString("TotalAmount");
+            ID = jsonObject.getString("id");
+            cardName = jsonObject.getString("name");
+            cardDesc = jsonObject.getString("dateDue");
+            cardAmount = jsonObject.getString("amountDue");
+            totalAmount = jsonObject.getString("totalAmount");
             cardImage = android.R.drawable.ic_menu_camera;
-            paid = jsonObject.getBoolean("Paid");
-            overdue = jsonObject.getBoolean("Overdue");
+            paid = jsonObject.getBoolean("paid");
+            overdue = jsonObject.getBoolean("overdue");
             originalJson = jsonObject;
 
             people = new ArrayList<>();

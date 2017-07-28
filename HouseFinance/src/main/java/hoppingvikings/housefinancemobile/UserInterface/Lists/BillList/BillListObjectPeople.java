@@ -16,8 +16,8 @@ public class BillListObjectPeople {
     {
         ID = id;
         try {
-            URL = peopleObject.getString("ImageLink");
-            Paid = peopleObject.getBoolean("Paid");
+            URL = peopleObject.getString("imageLink");
+            Paid = peopleObject.getBoolean("paid");
         } catch (JSONException e) {
             e.printStackTrace();
         }

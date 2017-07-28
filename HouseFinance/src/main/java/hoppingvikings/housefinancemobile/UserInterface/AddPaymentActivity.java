@@ -206,6 +206,7 @@ public class AddPaymentActivity extends AppCompatActivity implements UploadCallb
                         JSONObject newPayment = new JSONObject();
 
                         try {
+                            newPayment.put("BillId", billid);
                             newPayment.put("Amount", paymentAmount.doubleValue());
                             newPayment.put("Created", new SimpleDateFormat("yyyy-MM-dd").format(paymentDate));
 
@@ -214,9 +215,7 @@ public class AddPaymentActivity extends AppCompatActivity implements UploadCallb
                             else if(forJosh)
                                 newPayment.put("PersonId", "f97a50c9-8451-4537-bccb-e89ba5ade95a");
 
-
-                            OnSuccessfulUpload();
-                            //GlobalObjects.webHandler.UploadNewPayment(getApplicationContext(), newPayment, billid, AddPaymentActivity.this);
+                            GlobalObjects.webHandler.UploadNewPayment(getApplicationContext(), newPayment, billid, AddPaymentActivity.this);
                         } catch (Exception e)
                         {
                             Snackbar.make(layout, "Failed to create Json", Snackbar.LENGTH_LONG).show();

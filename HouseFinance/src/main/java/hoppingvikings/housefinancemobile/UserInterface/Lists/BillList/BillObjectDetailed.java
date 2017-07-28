@@ -21,11 +21,11 @@ public class BillObjectDetailed {
     public BillObjectDetailed(JSONObject details, JSONArray payments)
     {
         try {
-            id = details.getString("Id");
-            name = details.getString("Name");
-            dateDue = details.getString("DateDue");
-            amountDue = details.getDouble("AmountDue");
-            amountPaid = details.getDouble("AmountPaid");
+            id = details.getString("id");
+            name = details.getString("name");
+            dateDue = details.getString("dateDue");
+            amountDue = details.getDouble("amountDue");
+            amountPaid = details.getDouble("amountPaid");
             if(payments.length() > 0)
             {
                 for(int i = 0; i < payments.length(); i++)
