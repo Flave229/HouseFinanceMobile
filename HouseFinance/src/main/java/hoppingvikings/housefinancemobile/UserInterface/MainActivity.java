@@ -7,6 +7,7 @@ import android.content.ServiceConnection;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.IBinder;
+import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.TabLayout;
 import android.support.v4.view.ViewPager;
@@ -27,6 +28,7 @@ public class MainActivity extends AppCompatActivity {
     public FloatingActionButton addBillFab;
     public FloatingActionButton addShoppingItemFab;
     private Handler _handler;
+    public CoordinatorLayout _layout;
 
     private Runnable showBillButton = new Runnable() {
         @Override
@@ -49,6 +51,7 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         _handler = new Handler();
+        _layout = (CoordinatorLayout) findViewById(R.id.nav_drawer);
 
         //_handler.post(runnable);
         addBillFab = (FloatingActionButton) findViewById(R.id.addBill);

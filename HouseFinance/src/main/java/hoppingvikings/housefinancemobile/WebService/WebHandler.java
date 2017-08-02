@@ -264,12 +264,14 @@ public class WebHandler {
                     e.printStackTrace();
                     GlobalObjects.downloading = false;
                     _billDetailsOwner.OnDownloadFailed("Failed to parse Detailed Bill");
+                    return;
                 }
                 catch (Exception e)
                 {
                     e.printStackTrace();
                     GlobalObjects.downloading = false;
                     _billDetailsOwner.OnDownloadFailed("Unknown error in Detailed Bill Download");
+                    return;
                 }
 
                 GlobalObjects.downloading = false;
@@ -449,11 +451,11 @@ public class WebHandler {
 
                 returnJson = new JSONObject(returnmessage);
 
-                if(returnJson.has("HasError"))
+                if(returnJson.has("hasError"))
                 {
-                    if(returnJson.getBoolean("HasError"))
+                    if(returnJson.getBoolean("hasError"))
                     {
-                        Log.e("Error", "Problem Sending Item");
+                        Log.e("Error", returnJson.getJSONObject("error").getString("message"));
                         return false;
                     }
                 }
@@ -527,14 +529,14 @@ public class WebHandler {
 
                 returnJson = new JSONObject(returnmessage);
 
-               if(returnJson.has("HasError"))
-               {
-                   if(returnJson.getBoolean("HasError"))
-                   {
-                       Log.e("Error", "Problem Sending Item");
-                       return false;
-                   }
-               }
+                if(returnJson.has("hasError"))
+                {
+                    if(returnJson.getBoolean("hasError"))
+                    {
+                        Log.e("Error", returnJson.getJSONObject("error").getString("message"));
+                        return false;
+                    }
+                }
             } catch (Exception e)
             {
                 Log.e("Error", "Problem Sending Item: " + e.getMessage());

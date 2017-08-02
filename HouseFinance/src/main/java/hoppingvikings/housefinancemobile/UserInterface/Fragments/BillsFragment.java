@@ -195,12 +195,12 @@ public class BillsFragment extends Fragment implements DownloadCallback {
         _handler.removeCallbacksAndMessages(null);
         if(!failReason.equals("No internet connection"))
         {
-            Snackbar.make(layout, failReason + ". Retrying...", Snackbar.LENGTH_LONG).show();
+            Snackbar.make(activity._layout, failReason + ". Retrying...", Snackbar.LENGTH_LONG).show();
             _handler.postDelayed(contactWebsite, 500);
         }
         else
         {
-            Snackbar.make(layout, failReason, Snackbar.LENGTH_LONG).show();
+            Snackbar.make(activity._layout, failReason, Snackbar.LENGTH_LONG).show();
             swipeRefreshLayout.setRefreshing(false);
         }
     }

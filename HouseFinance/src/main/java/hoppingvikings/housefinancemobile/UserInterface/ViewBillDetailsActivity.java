@@ -175,6 +175,10 @@ public class ViewBillDetailsActivity extends AppCompatActivity implements Downlo
     @Override
     public void OnDownloadFailed(String err) {
         Toast.makeText(getApplicationContext(), err, Toast.LENGTH_SHORT).show();
+        billAmountText.setText("N/A");
+        totalPaidText.setText("N/A");
+        dueDateText.setText("N/A");
+        getSupportActionBar().setTitle("Cannot load bill");
     }
 
     @Override
