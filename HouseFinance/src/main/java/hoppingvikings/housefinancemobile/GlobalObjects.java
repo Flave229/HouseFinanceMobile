@@ -4,8 +4,18 @@ import android.app.Notification;
 import android.app.NotificationManager;
 import android.content.Context;
 import android.content.Intent;
+import android.os.Environment;
 import android.support.v4.app.NotificationCompat;
+import android.util.Log;
 
+import org.json.JSONObject;
+
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.InputStreamReader;
+import java.io.OutputStreamWriter;
 import java.util.ArrayList;
 
 import hoppingvikings.housefinancemobile.UserInterface.Lists.BillList.BillListObject;
@@ -14,6 +24,7 @@ import hoppingvikings.housefinancemobile.UserInterface.Lists.ShoppingList.Shoppi
 import hoppingvikings.housefinancemobile.UserInterface.Lists.ShoppingList.ShoppingListPeople;
 import hoppingvikings.housefinancemobile.WebService.WebHandler;
 
+import static android.content.Context.MODE_APPEND;
 import static android.content.Context.NOTIFICATION_SERVICE;
 
 /**
@@ -33,6 +44,8 @@ public class GlobalObjects{
     public static boolean _bound = false;
 
     public static boolean downloading = false;
+
+    public static final String SHOPPING_RECENTITEMS_FILENAME = "hf_shopping_recent.txt";
 
     public static void SetBills(ArrayList<BillListObject> bills)
     {
@@ -107,5 +120,76 @@ public class GlobalObjects{
     public static void ShowNotif(Context context, String text, String subtext, int notifid)
     {
         AppServiceBinder._service.ShowNotification(text, subtext, notifid);
+    }
+
+    public static void WriteToFile(Context context, String data)
+    {
+        try {
+            // Get the directory path
+            String path = Environment.getExternalStorageDirectory().getAbsolutePath() + "/HouseFinance/";
+            File dir = new File(path);
+
+            // Make it if it doesn't already exist
+            if(!dir.exists())
+                dir.mkdirs();
+
+            File recentspath = new File(dir, SHOPPING_RECENTITEMS_FILENAME);
+
+            // Create our file if it doesn't exist
+            if(!recentspath.exists())
+                recentspath.createNewFile();
+
+            FileOutputStream fos = new FileOutputStream(recentspath, true);
+            OutputStreamWriter writer = new OutputStreamWriter(fos);
+
+            writer.append(data);
+            writer.append("\n");
+            writer.close();
+
+            fos.flush();
+            fos.close();
+
+        } catch (Exception e)
+        {
+            Log.e("Write Error: ", e.getMessage());
+        }
+    }
+
+    public static ArrayList<JSONObject> ReadFile(String filename)
+    {
+        ArrayList<JSONObject> recentitems = new ArrayList<>();
+        String path = Environment.getExternalStorageDirectory().getAbsolutePath() + "/HouseFinance/";
+        File dir = new File(path);
+
+        if(dir.exists())
+        {
+            File recents = new File(dir, filename);
+
+            if(recents.exists())
+            {
+                try {
+                    FileInputStream fis = new FileInputStream(recents);
+                    BufferedReader reader = new BufferedReader(new InputStreamReader(fis));
+
+                    String line = reader.readLine();
+                    while (line != null)
+                    {
+                        JSONObject recentitemjson = new JSONObject(line);
+                        recentitems.add(recentitemjson);
+                        line = reader.readLine();
+                    }
+                    reader.close();
+                    fis.close();
+
+                    return recentitems;
+                } catch (Exception e)
+                {
+                    Log.e("Read Error:", e.getMessage());
+                    return null;
+                }
+            }
+        }
+
+        return null;
     }
 }

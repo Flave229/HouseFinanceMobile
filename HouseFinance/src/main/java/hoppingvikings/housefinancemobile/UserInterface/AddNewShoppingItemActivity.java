@@ -1,6 +1,7 @@
 package hoppingvikings.housefinancemobile.UserInterface;
 
 import android.content.DialogInterface;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.CoordinatorLayout;
@@ -50,6 +51,7 @@ public class AddNewShoppingItemActivity extends AppCompatActivity implements Upl
     CoordinatorLayout layout;
 
     public ArrayList<String> _shoppingItems;
+    public ArrayList<JSONObject> _recentShoppingItems;
 
     ButtonPressedCallback _owner;
 
@@ -97,6 +99,9 @@ public class AddNewShoppingItemActivity extends AppCompatActivity implements Upl
                 .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE)
                 .addToBackStack(null)
                 .commit();
+
+        /*LoadRecentItemsAsync task = new LoadRecentItemsAsync();
+        task.execute();*/
     }
 
     @Override
@@ -216,6 +221,26 @@ public class AddNewShoppingItemActivity extends AppCompatActivity implements Upl
         } catch (Exception e)
         {
 
+        }
+    }
+
+    private class LoadRecentItemsAsync extends AsyncTask<Void, Void, ArrayList<JSONObject>>
+    {
+        @Override
+        protected ArrayList<JSONObject> doInBackground(Void... params) {
+            return GlobalObjects.ReadFile(GlobalObjects.SHOPPING_RECENTITEMS_FILENAME);
+        }
+
+        @Override
+        protected void onPostExecute(ArrayList<JSONObject> arrayList) {
+            if(arrayList != null)
+            {
+                _recentShoppingItems = arrayList;
+            }
+            else
+            {
+                _recentShoppingItems = new ArrayList<>();
+            }
         }
     }
 }

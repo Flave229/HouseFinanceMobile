@@ -92,6 +92,11 @@ public class ShoppingCartFragment extends Fragment implements ButtonPressedCallb
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 submitcheck.dismiss();
+
+                for (String item: _activity._shoppingItems) {
+                    GlobalObjects.WriteToFile(getContext(), item);
+                }
+
                 submitting = true;
                 _activity.progress = 100 / _activity._shoppingItems.size();
                 _activity.addToCartButton.setEnabled(false);

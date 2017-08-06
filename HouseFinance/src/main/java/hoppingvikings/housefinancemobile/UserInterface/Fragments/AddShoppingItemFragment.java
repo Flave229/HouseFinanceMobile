@@ -1,7 +1,9 @@
 package hoppingvikings.housefinancemobile.UserInterface.Fragments;
 
+import android.content.Context;
 import android.content.DialogInterface;
 import android.os.Bundle;
+import android.os.Environment;
 import android.support.annotation.Nullable;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.Snackbar;
@@ -21,7 +23,12 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.OutputStreamWriter;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 
 import hoppingvikings.housefinancemobile.GlobalObjects;
@@ -244,6 +251,9 @@ public class AddShoppingItemFragment extends Fragment implements ButtonPressedCa
                         people.put("f97a50c9-8451-4537-bccb-e89ba5ade95a");
 
                     newItem.put("ItemFor", people);
+
+                    // Add the item to a file on the device
+                    GlobalObjects.WriteToFile(getContext(), newItem.toString());
 
                     GlobalObjects.webHandler.UploadNewShoppingItem(getContext(), newItem, _activity);
                 } catch (JSONException je)
