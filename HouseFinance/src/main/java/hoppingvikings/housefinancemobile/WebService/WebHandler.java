@@ -628,4 +628,12 @@ public class WebHandler {
             return true;
         }
     }
+
+    private class DeleteBill extends AsyncTask<String, Void, Boolean>
+    {
+        @Override
+        protected Boolean doInBackground(String... params) {
+            return null;
+        }
+    }
 }
