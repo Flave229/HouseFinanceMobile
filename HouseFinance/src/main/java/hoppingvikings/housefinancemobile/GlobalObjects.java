@@ -46,6 +46,7 @@ public class GlobalObjects{
     public static boolean downloading = false;
 
     public static final String SHOPPING_RECENTITEMS_FILENAME = "hf_shopping_recent.txt";
+    public static final String WEB_API_URL = "http://www.house.flave.co.uk/api/";
 
     public static void SetBills(ArrayList<BillListObject> bills)
     {

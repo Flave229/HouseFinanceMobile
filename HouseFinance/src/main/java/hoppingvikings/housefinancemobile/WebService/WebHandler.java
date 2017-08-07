@@ -49,7 +49,7 @@ public class WebHandler {
         if(networkInfo != null && networkInfo.isConnected())
         {
             //Toast.makeText(getBaseContext(), "Obtaining list of bills", Toast.LENGTH_LONG).show();
-            new DownloadJsonString().execute("http://house.flave.co.uk/api/Bills/", "Bills");
+            new DownloadJsonString().execute(GlobalObjects.WEB_API_URL + "Bills/", "Bills");
         }
         else
         {
@@ -67,7 +67,7 @@ public class WebHandler {
 
         if(networkInfo != null && networkInfo.isConnected())
         {
-            new DownloadJsonString().execute("http://house.flave.co.uk/api/Bills/", "BillDetails", billID);
+            new DownloadJsonString().execute(GlobalObjects.WEB_API_URL + "Bills/", "BillDetails", billID);
         }
         else
         {
@@ -87,7 +87,7 @@ public class WebHandler {
 
         if(networkInfo!= null && networkInfo.isConnected())
         {
-            new UploadPaymentJson().execute(newPaymentString, "http://house.flave.co.uk/api/Bills/AddPayment");
+            new UploadPaymentJson().execute(newPaymentString, GlobalObjects.WEB_API_URL + "Bills/AddPayment");
         }
         else
         {
@@ -107,7 +107,7 @@ public class WebHandler {
 
         if(networkInfo!= null && networkInfo.isConnected())
         {
-            new UploadBillJson().execute(newBillString, "http://house.flave.co.uk/api/Bills/Add");
+            new UploadBillJson().execute(newBillString, GlobalObjects.WEB_API_URL + "Bills/Add");
         }
         else
         {
@@ -127,7 +127,7 @@ public class WebHandler {
 
         if(networkInfo != null && networkInfo.isConnected())
         {
-            new UploadShoppingItemJson().execute(newItemString, "http://house.flave.co.uk/api/Shopping/Add");
+            new UploadShoppingItemJson().execute(newItemString, GlobalObjects.WEB_API_URL + "Shopping/Add");
         }
         else
         {
@@ -146,7 +146,7 @@ public class WebHandler {
         if(networkInfo != null && networkInfo.isConnected())
         {
             //Toast.makeText(getBaseContext(), "Obtaining list of bills", Toast.LENGTH_LONG).show();
-            new DownloadJsonString().execute("http://house.flave.co.uk/api/Shopping/", "Shopping");
+            new DownloadJsonString().execute(GlobalObjects.WEB_API_URL + "Shopping/", "Shopping");
         }
         else
         {
