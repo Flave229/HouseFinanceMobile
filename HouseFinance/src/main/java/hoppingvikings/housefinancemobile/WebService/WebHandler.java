@@ -76,6 +76,24 @@ public class WebHandler {
         }
     }
 
+    public void DeleteBill(Context context, UploadCallback owner, String billID)
+    {
+        _uploadOwner = owner;
+        GlobalObjects.downloading = true;
+        ConnectivityManager connMgr = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo networkInfo = connMgr.getActiveNetworkInfo();
+
+        if(networkInfo != null && networkInfo.isConnected())
+        {
+            new DeleteBill().execute(GlobalObjects.WEB_API_URL + "Bills/Delete", billID);
+        }
+        else
+        {
+            GlobalObjects.downloading = false;
+            _billDetailsOwner.OnDownloadFailed("No Internet Connection");
+        }
+    }
+
     public void UploadNewPayment(Context context, JSONObject newPayment, String billid, UploadCallback owner)
     {
         _uploadOwner = owner;
@@ -633,7 +651,77 @@ public class WebHandler {
     {
         @Override
         protected Boolean doInBackground(String... params) {
-            return null;
+            try {
+                return SendBillDeleteRequest(params[0], params[1]);
+            } catch (Exception e)
+            {
+                return false;
+            }
+        }
+
+        private boolean SendBillDeleteRequest(String weburl, String billid) throws IOException
+        {
+            JSONObject returnJson;
+            URL url = new URL(weburl);
+
+            HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+            try {
+                connection.setRequestMethod("DELETE");
+                connection.setRequestProperty("Authorization", authToken);
+                connection.setRequestProperty("Content-Type", "application/json; charset=UTF-8");
+                connection.setConnectTimeout(15000);
+                connection.setDoInput(true);
+                connection.setDoOutput(true);
+                connection.setChunkedStreamingMode(0);
+
+                OutputStream out = connection.getOutputStream();
+                JSONObject billidjson = new JSONObject();
+                billidjson.put("BillId", billid);
+                out.write(billidjson.toString().getBytes("UTF-8"));
+                out.close();
+
+                BufferedReader serverAnswer = new BufferedReader(new InputStreamReader(connection.getInputStream()));
+                String line;
+                String returnmessage = "";
+                while ((line = serverAnswer.readLine()) != null)
+                {
+                    returnmessage += line;
+                }
+
+                serverAnswer.close();
+
+                returnJson = new JSONObject(returnmessage);
+
+                if(returnJson.has("hasError"))
+                {
+                    if(returnJson.getBoolean("hasError"))
+                    {
+                        Log.e("Error", returnJson.getJSONObject("error").getString("message"));
+                        return false;
+                    }
+                }
+            } catch (Exception e)
+            {
+                Log.e("Error", "Problem Sending payment: " + e.getMessage());
+                return false;
+            }
+            finally {
+                connection.disconnect();
+            }
+
+            return true;
+        }
+
+        @Override
+        protected void onPostExecute(Boolean aBoolean) {
+            if(aBoolean)
+            {
+                _uploadOwner.OnSuccessfulUpload();
+            }
+            else
+            {
+                _uploadOwner.OnFailedUpload("Failed to Delete Bill. Please try again");
+            }
         }
     }
 }

@@ -1,11 +1,14 @@
 package hoppingvikings.housefinancemobile.UserInterface;
 
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
+import android.support.design.widget.Snackbar;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
@@ -29,12 +32,14 @@ import hoppingvikings.housefinancemobile.R;
 import hoppingvikings.housefinancemobile.UserInterface.Lists.BillList.BillListObject;
 import hoppingvikings.housefinancemobile.UserInterface.Lists.BillList.BillObjectDetailed;
 import hoppingvikings.housefinancemobile.WebService.DownloadDetailsCallback;
+import hoppingvikings.housefinancemobile.WebService.UploadCallback;
 
 /**
  * Created by iView on 06/07/2017.
  */
 
-public class ViewBillDetailsActivity extends AppCompatActivity implements DownloadDetailsCallback {
+public class ViewBillDetailsActivity extends AppCompatActivity
+        implements DownloadDetailsCallback, UploadCallback {
 
     TextView billAmountText;
     TextView totalPaidText;
@@ -149,7 +154,7 @@ public class ViewBillDetailsActivity extends AppCompatActivity implements Downlo
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        //getMenuInflater().inflate(R.menu.viewdetailsmenu, menu);
+        getMenuInflater().inflate(R.menu.viewdetailsmenu, menu);
         return super.onCreateOptionsMenu(menu);
     }
 
@@ -162,7 +167,25 @@ public class ViewBillDetailsActivity extends AppCompatActivity implements Downlo
                 return true;
 
             case R.id.delete_bill:
-                //todo Add code to delete bill when ready
+                final AlertDialog deleteconfirm = new AlertDialog.Builder(ViewBillDetailsActivity.this).create();
+                deleteconfirm.setMessage("Delete the bill? This action cannot be reversed");
+                deleteconfirm.setButton(DialogInterface.BUTTON_POSITIVE, "Delete", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        addPayment.hide();
+                        deleteconfirm.dismiss();
+                        GlobalObjects.webHandler.DeleteBill(ViewBillDetailsActivity.this, ViewBillDetailsActivity.this, billID);
+                    }
+                });
+
+                deleteconfirm.setButton(DialogInterface.BUTTON_NEGATIVE, "Cancel", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        deleteconfirm.dismiss();
+                    }
+                });
+
+                deleteconfirm.show();
                 return true;
 
 
@@ -211,6 +234,18 @@ public class ViewBillDetailsActivity extends AppCompatActivity implements Downlo
         }
 
         addPayment.show();
+    }
+
+    @Override
+    public void OnSuccessfulUpload() {
+        Toast.makeText(getApplicationContext(), "Bill deleted", Toast.LENGTH_SHORT).show();
+        setResult(RESULT_OK);
+        finish();
+    }
+
+    @Override
+    public void OnFailedUpload(String failReason) {
+        Toast.makeText(getApplicationContext(), failReason, Toast.LENGTH_SHORT).show();
     }
 
     @Override

@@ -144,7 +144,7 @@ public class BillsFragment extends Fragment implements DownloadCallback {
 
                 Intent viewBillDetails = new Intent(getContext(), ViewBillDetailsActivity.class);
                 viewBillDetails.putExtra("bill_id", bill.ID);
-                startActivity(viewBillDetails);
+                startActivityForResult(viewBillDetails, 0);
             }
         });
 
