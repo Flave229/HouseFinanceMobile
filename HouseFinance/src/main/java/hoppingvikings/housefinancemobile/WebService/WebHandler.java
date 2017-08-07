@@ -154,6 +154,25 @@ public class WebHandler {
         }
     }
 
+    public void EditShoppingItem(Context context, JSONObject editedItem, UploadCallback owner)
+    {
+        _uploadOwner = owner;
+        String editedItemString = editedItem.toString();
+
+        ConnectivityManager connMgr = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo networkInfo = connMgr.getActiveNetworkInfo();
+
+        if(networkInfo != null && networkInfo.isConnected())
+        {
+            new EditShoppingItem().execute(GlobalObjects.WEB_API_URL + "Shopping/", editedItemString);
+        }
+        else
+        {
+            GlobalObjects.downloading = false;
+            _uploadOwner.OnFailedUpload("No Internet Connection");
+        }
+    }
+
     public void contactWebsiteShoppingItems(Context context, DownloadCallback owner)
     {
         _shoppingListOwner = owner;
@@ -721,6 +740,82 @@ public class WebHandler {
             else
             {
                 _uploadOwner.OnFailedUpload("Failed to Delete Bill. Please try again");
+            }
+        }
+    }
+
+    private class EditShoppingItem extends AsyncTask<String, Void, Boolean>
+    {
+        @Override
+        protected Boolean doInBackground(String... params) {
+            try {
+                return SendEditRequest(params[0], params[1]);
+            } catch (Exception e)
+            {
+                return false;
+            }
+        }
+
+        private boolean SendEditRequest(String weburl, String editeditemjson) throws IOException
+        {
+            JSONObject returnJson;
+            URL url = new URL(weburl);
+
+            HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+            try {
+                connection.setRequestMethod("PATCH");
+                connection.setRequestProperty("Authorization", authToken);
+                connection.setRequestProperty("Content-Type", "application/json; charset=UTF-8");
+                connection.setConnectTimeout(15000);
+                connection.setDoInput(true);
+                connection.setDoOutput(true);
+                connection.setChunkedStreamingMode(0);
+
+                OutputStream out = connection.getOutputStream();
+                out.write(editeditemjson.getBytes("UTF-8"));
+                out.close();
+
+                BufferedReader serverAnswer = new BufferedReader(new InputStreamReader(connection.getInputStream()));
+                String line;
+                String returnmessage = "";
+                while ((line = serverAnswer.readLine()) != null)
+                {
+                    returnmessage += line;
+                }
+
+                serverAnswer.close();
+
+                returnJson = new JSONObject(returnmessage);
+
+                if(returnJson.has("hasError"))
+                {
+                    if(returnJson.getBoolean("hasError"))
+                    {
+                        Log.e("Error", returnJson.getJSONObject("error").getString("message"));
+                        return false;
+                    }
+                }
+
+            } catch (Exception e)
+            {
+                Log.e("Error", "Problem editing item: " + e.getMessage());
+                return false;
+            }
+            finally {
+                connection.disconnect();
+            }
+            return true;
+        }
+
+        @Override
+        protected void onPostExecute(Boolean aBoolean) {
+            if(aBoolean)
+            {
+                _uploadOwner.OnSuccessfulUpload();
+            }
+            else
+            {
+                _uploadOwner.OnFailedUpload("Failed to edit shopping item. Please try again");
             }
         }
     }

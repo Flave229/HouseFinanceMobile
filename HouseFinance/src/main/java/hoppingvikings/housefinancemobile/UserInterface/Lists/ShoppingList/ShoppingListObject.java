@@ -20,6 +20,8 @@ public class ShoppingListObject {
     public String addedForImage2 = "";
     public String addedForImage3 = "";
 
+    public boolean itemExpanded = false;
+
     public ShoppingListObject(JSONObject object, JSONArray addedForImages)
     {
         try

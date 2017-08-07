@@ -8,6 +8,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -40,10 +41,18 @@ public class ShoppingListAdapter extends RecyclerView.Adapter<ShoppingListAdapte
         LinearLayout cardView;
         TextView shoppingItemName;
         TextView addedDate;
+        TextView addedForText;
+        TextView infoText;
         ImageView addedBy1;
         ImageView addedFor1;
         ImageView addedFor2;
         ImageView addedFor3;
+
+        LinearLayout buttonsContainer;
+        ImageButton completeButton;
+        ImageButton editButton;
+        ImageButton notifyButton;
+        ImageButton deleteButton;
 
         public CardViewHolder(View v) {
             super(v);
@@ -51,10 +60,18 @@ public class ShoppingListAdapter extends RecyclerView.Adapter<ShoppingListAdapte
             cardView = (LinearLayout) v.findViewById(R.id.shoppingItemCard);
             shoppingItemName = (TextView) v.findViewById(R.id.shoppingItemName);
             addedDate = (TextView) v.findViewById(R.id.addedDate);
+            addedForText = (TextView)v.findViewById(R.id.addedForText);
+            infoText = (TextView)v.findViewById(R.id.info_text);
             addedBy1 = (ImageView) v.findViewById(R.id.addedBy);
             addedFor1 = (ImageView) v.findViewById(R.id.addedFor1);
             addedFor2 = (ImageView) v.findViewById(R.id.addedFor2);
             addedFor3 = (ImageView) v.findViewById(R.id.addedFor3);
+
+            buttonsContainer = (LinearLayout) v.findViewById(R.id.buttonsContainer);
+            completeButton = (ImageButton) v.findViewById(R.id.shopping_complete);
+            editButton = (ImageButton) v.findViewById(R.id.shopping_edit);
+            notifyButton = (ImageButton) v.findViewById(R.id.shopping_notify);
+            deleteButton = (ImageButton) v.findViewById(R.id.shopping_delete);
 
             view.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -116,23 +133,50 @@ public class ShoppingListAdapter extends RecyclerView.Adapter<ShoppingListAdapte
         try {
             imgCache.PutBitmap(_shoppingItems.get(i).addedBy, _shoppingItems.get(i).addedBy, cvh.addedBy1);
 
-            imgCache.PutBitmap(_shoppingItems.get(i).addedForImage1, _shoppingItems.get(i).addedForImage1, cvh.addedFor1);
+            if(_shoppingItems.get(i).itemExpanded)
+            {
+                cvh.buttonsContainer.setVisibility(View.VISIBLE);
+                cvh.addedForText.setVisibility(View.VISIBLE);
+                cvh.infoText.setVisibility(View.INVISIBLE);
+                cvh.addedFor1.setVisibility(View.VISIBLE);
 
-            if (_shoppingItems.get(i).addedForImage2.isEmpty()) {
+                imgCache.PutBitmap(_shoppingItems.get(i).addedForImage1, _shoppingItems.get(i).addedForImage1, cvh.addedFor1);
+
+                if (_shoppingItems.get(i).addedForImage2.isEmpty()) {
+                    cvh.addedFor2.setVisibility(View.GONE);
+                } else
+                {
+                    cvh.addedFor2.setVisibility(View.VISIBLE);
+                    imgCache.PutBitmap(_shoppingItems.get(i).addedForImage2, _shoppingItems.get(i).addedForImage2, cvh.addedFor2);
+                }
+
+                if (_shoppingItems.get(i).addedForImage3.isEmpty()) {
+                    cvh.addedFor3.setVisibility(View.GONE);
+                } else
+                {
+                    cvh.addedFor3.setVisibility(View.VISIBLE);
+                    imgCache.PutBitmap(_shoppingItems.get(i).addedForImage3, _shoppingItems.get(i).addedForImage3, cvh.addedFor3);
+                }
+
+                if(_shoppingItems.get(i).done) {
+                    cvh.notifyButton.setVisibility(View.GONE);
+                    cvh.completeButton.setVisibility(View.GONE);
+                }
+                else {
+                    cvh.notifyButton.setVisibility(View.VISIBLE);
+                    cvh.completeButton.setVisibility(View.VISIBLE);
+                }
+            }
+            else
+            {
+                cvh.buttonsContainer.setVisibility(View.GONE);
+                cvh.addedForText.setVisibility(View.GONE);
+                cvh.infoText.setVisibility(View.VISIBLE);
+                cvh.addedFor1.setVisibility(View.GONE);
                 cvh.addedFor2.setVisibility(View.GONE);
-            } else
-            {
-                cvh.addedFor2.setVisibility(View.VISIBLE);
-                imgCache.PutBitmap(_shoppingItems.get(i).addedForImage2, _shoppingItems.get(i).addedForImage2, cvh.addedFor2);
+                cvh.addedFor3.setVisibility(View.GONE);
             }
 
-            if (_shoppingItems.get(i).addedForImage3.isEmpty()) {
-                cvh.addedFor3.setVisibility(View.GONE);
-            } else
-            {
-                cvh.addedFor3.setVisibility(View.VISIBLE);
-                imgCache.PutBitmap(_shoppingItems.get(i).addedForImage3, _shoppingItems.get(i).addedForImage3, cvh.addedFor3);
-            }
         } catch (Exception e)
         {
             Log.v("Error: ", e.getMessage());

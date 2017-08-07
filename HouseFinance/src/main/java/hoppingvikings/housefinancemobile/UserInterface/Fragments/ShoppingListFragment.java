@@ -4,6 +4,7 @@ import android.app.NotificationManager;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
+import android.support.design.widget.BottomSheetBehavior;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
@@ -130,7 +131,7 @@ public class ShoppingListFragment extends Fragment implements DownloadCallback {
             adapter = new ShoppingListAdapter(items, getContext());
             rv.setAdapter(adapter);
             rv.setLayoutManager(new LinearLayoutManager(getActivity()));
-            rv.addItemDecoration(new ListItemDivider(getContext()));
+            //rv.addItemDecoration(new ListItemDivider(getContext()));
             rv.setItemViewCacheSize(20);
         }
 
@@ -138,7 +139,14 @@ public class ShoppingListFragment extends Fragment implements DownloadCallback {
             @Override
             public void onShoppingItemClick(View itemView, int pos) {
                 ShoppingListObject item = adapter.GetItem(pos);
-                GlobalObjects.ShowNotif(getContext(), "Don't forget to buy " + item.itemName + "!", "Reminder", pos);
+                //GlobalObjects.ShowNotif(getContext(), "Don't forget to buy " + item.itemName + "!", "Reminder", pos);
+                if(item.itemExpanded)
+                    item.itemExpanded = false;
+                else
+                    item.itemExpanded = true;
+
+
+                adapter.notifyItemChanged(pos);
             }
         });
 
