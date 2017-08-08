@@ -32,10 +32,6 @@
             android:exported="false"
             android:stopWithTask="false"/>
 
-        <activity android:name="hoppingvikings.housefinancemobile.UserInterface.DisplayMessageActivity"
-            android:label="Display Message">
-        </activity>
-
         <activity android:name=".UserInterface.AddNewBillActivity"
             android:label="Add Bill"/>
 

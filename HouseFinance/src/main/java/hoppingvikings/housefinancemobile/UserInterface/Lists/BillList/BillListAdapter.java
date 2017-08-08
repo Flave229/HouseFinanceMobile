@@ -1,8 +1,6 @@
 package hoppingvikings.housefinancemobile.UserInterface.Lists.BillList;
 
 import android.content.Context;
-import android.content.Intent;
-import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -13,14 +11,11 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
-import com.bumptech.glide.Glide;
-
 import java.util.ArrayList;
 import java.util.Locale;
 
 import hoppingvikings.housefinancemobile.BitmapCache;
 import hoppingvikings.housefinancemobile.R;
-import hoppingvikings.housefinancemobile.UserInterface.DisplayMessageActivity;
 
 
 /**

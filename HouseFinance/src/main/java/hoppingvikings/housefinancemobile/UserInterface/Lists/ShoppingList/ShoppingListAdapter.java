@@ -1,7 +1,6 @@
 package hoppingvikings.housefinancemobile.UserInterface.Lists.ShoppingList;
 
 import android.content.Context;
-import android.content.Intent;
 import android.graphics.Color;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -17,12 +16,10 @@ import android.widget.Toast;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
-import java.util.concurrent.ExecutionException;
 
 import hoppingvikings.housefinancemobile.BitmapCache;
 import hoppingvikings.housefinancemobile.GlobalObjects;
 import hoppingvikings.housefinancemobile.R;
-import hoppingvikings.housefinancemobile.UserInterface.DisplayMessageActivity;
 import hoppingvikings.housefinancemobile.WebService.UploadCallback;
 
 /**
@@ -143,6 +140,7 @@ public class ShoppingListAdapter extends RecyclerView.Adapter<ShoppingListAdapte
 
             if(_shoppingItems.get(i).itemExpanded)
             {
+                cvh.editButton.setVisibility(View.GONE);
                 cvh.buttonsContainer.setVisibility(View.VISIBLE);
                 cvh.addedForText.setVisibility(View.VISIBLE);
                 cvh.infoText.setVisibility(View.INVISIBLE);
@@ -166,12 +164,12 @@ public class ShoppingListAdapter extends RecyclerView.Adapter<ShoppingListAdapte
                     imgCache.PutBitmap(_shoppingItems.get(i).addedForImage3, _shoppingItems.get(i).addedForImage3, cvh.addedFor3);
                 }
 
-                cvh.editButton.setOnClickListener(new View.OnClickListener() {
+                /*cvh.editButton.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
 
                     }
-                });
+                });*/
 
                 cvh.deleteButton.setOnClickListener(new View.OnClickListener() {
                     @Override
@@ -180,9 +178,25 @@ public class ShoppingListAdapter extends RecyclerView.Adapter<ShoppingListAdapte
                     }
                 });
 
+                cvh.completeButton.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        selected = i;
+                        JSONObject editeditem = new JSONObject();
+                        try {
+                            editeditem.put("id", _shoppingItems.get(i).ID);
+                            editeditem.put("purchased", !_shoppingItems.get(i).done);
+                            GlobalObjects.webHandler.EditShoppingItem(_context, editeditem, ShoppingListAdapter.this);
+                        } catch (Exception e)
+                        {
+                            OnFailedUpload("");
+                        }
+                    }
+                });
+
                 if(_shoppingItems.get(i).done) {
                     cvh.notifyButton.setVisibility(View.GONE);
-                    cvh.completeButton.setVisibility(View.GONE);
+                    //cvh.completeButton.setVisibility(View.GONE);
                 }
                 else {
                     cvh.notifyButton.setVisibility(View.VISIBLE);
@@ -192,22 +206,6 @@ public class ShoppingListAdapter extends RecyclerView.Adapter<ShoppingListAdapte
                         @Override
                         public void onClick(View v) {
                             GlobalObjects.ShowNotif(_context, "Don't forget to buy " + _shoppingItems.get(i).itemName + "!", "Reminder", i);
-                        }
-                    });
-
-                    cvh.completeButton.setOnClickListener(new View.OnClickListener() {
-                        @Override
-                        public void onClick(View v) {
-                            selected = i;
-                            JSONObject editeditem = new JSONObject();
-                            try {
-                                editeditem.put("id", _shoppingItems.get(i).ID);
-                                editeditem.put("purchased", true);
-                                GlobalObjects.webHandler.EditShoppingItem(_context, editeditem, ShoppingListAdapter.this);
-                            } catch (Exception e)
-                            {
-
-                            }
                         }
                     });
                 }
@@ -253,7 +251,7 @@ public class ShoppingListAdapter extends RecyclerView.Adapter<ShoppingListAdapte
 
     @Override
     public void OnSuccessfulUpload() {
-        _shoppingItems.get(selected).done = true;
+        _shoppingItems.get(selected).done = !_shoppingItems.get(selected).done;
         notifyItemChanged(selected);
     }
 
