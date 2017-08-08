@@ -139,7 +139,7 @@ public class ShoppingListFragment extends Fragment implements DownloadCallback {
             @Override
             public void onShoppingItemClick(View itemView, int pos) {
                 ShoppingListObject item = adapter.GetItem(pos);
-                //GlobalObjects.ShowNotif(getContext(), "Don't forget to buy " + item.itemName + "!", "Reminder", pos);
+                //
                 if(item.itemExpanded)
                     item.itemExpanded = false;
                 else

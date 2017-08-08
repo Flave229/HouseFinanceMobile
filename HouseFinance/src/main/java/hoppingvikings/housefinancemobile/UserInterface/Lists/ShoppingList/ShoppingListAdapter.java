@@ -12,18 +12,25 @@ import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
+
+import org.json.JSONObject;
 
 import java.util.ArrayList;
+import java.util.concurrent.ExecutionException;
 
 import hoppingvikings.housefinancemobile.BitmapCache;
+import hoppingvikings.housefinancemobile.GlobalObjects;
 import hoppingvikings.housefinancemobile.R;
 import hoppingvikings.housefinancemobile.UserInterface.DisplayMessageActivity;
+import hoppingvikings.housefinancemobile.WebService.UploadCallback;
 
 /**
  * Created by Josh on 06/11/2016.
  */
 
-public class ShoppingListAdapter extends RecyclerView.Adapter<ShoppingListAdapter.CardViewHolder> {
+public class ShoppingListAdapter extends RecyclerView.Adapter<ShoppingListAdapter.CardViewHolder>
+                                implements UploadCallback{
     private static ShoppingItemClickedListener _listener;
 
     public interface ShoppingItemClickedListener
@@ -92,6 +99,7 @@ public class ShoppingListAdapter extends RecyclerView.Adapter<ShoppingListAdapte
     ArrayList<ShoppingListObject> _shoppingItems = new ArrayList<>();
     private Context _context;
     BitmapCache imgCache;
+    private int selected;
 
     public ShoppingListAdapter(ArrayList<ShoppingListObject> items, Context context) {
         _shoppingItems.addAll(items);
@@ -116,7 +124,7 @@ public class ShoppingListAdapter extends RecyclerView.Adapter<ShoppingListAdapte
     }
 
     @Override
-    public void onBindViewHolder(CardViewHolder cvh, int i)
+    public void onBindViewHolder(final CardViewHolder cvh, final int i)
     {
         cvh.shoppingItemName.setText(_shoppingItems.get(i).itemName);
         cvh.addedDate.setText(_shoppingItems.get(i).addedDate);
@@ -158,6 +166,20 @@ public class ShoppingListAdapter extends RecyclerView.Adapter<ShoppingListAdapte
                     imgCache.PutBitmap(_shoppingItems.get(i).addedForImage3, _shoppingItems.get(i).addedForImage3, cvh.addedFor3);
                 }
 
+                cvh.editButton.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+
+                    }
+                });
+
+                cvh.deleteButton.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+
+                    }
+                });
+
                 if(_shoppingItems.get(i).done) {
                     cvh.notifyButton.setVisibility(View.GONE);
                     cvh.completeButton.setVisibility(View.GONE);
@@ -165,6 +187,29 @@ public class ShoppingListAdapter extends RecyclerView.Adapter<ShoppingListAdapte
                 else {
                     cvh.notifyButton.setVisibility(View.VISIBLE);
                     cvh.completeButton.setVisibility(View.VISIBLE);
+
+                    cvh.notifyButton.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            GlobalObjects.ShowNotif(_context, "Don't forget to buy " + _shoppingItems.get(i).itemName + "!", "Reminder", i);
+                        }
+                    });
+
+                    cvh.completeButton.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            selected = i;
+                            JSONObject editeditem = new JSONObject();
+                            try {
+                                editeditem.put("id", _shoppingItems.get(i).ID);
+                                editeditem.put("purchased", true);
+                                GlobalObjects.webHandler.EditShoppingItem(_context, editeditem, ShoppingListAdapter.this);
+                            } catch (Exception e)
+                            {
+
+                            }
+                        }
+                    });
                 }
             }
             else
@@ -204,5 +249,16 @@ public class ShoppingListAdapter extends RecyclerView.Adapter<ShoppingListAdapte
     public ShoppingListObject GetItem(int pos)
     {
         return _shoppingItems.get(pos);
+    }
+
+    @Override
+    public void OnSuccessfulUpload() {
+        _shoppingItems.get(selected).done = true;
+        notifyItemChanged(selected);
+    }
+
+    @Override
+    public void OnFailedUpload(String failReason) {
+        Toast.makeText(_context, "Failed to complete shopping item.", Toast.LENGTH_SHORT).show();
     }
 }
