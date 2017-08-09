@@ -48,6 +48,12 @@ public class GlobalObjects{
     public static final String SHOPPING_RECENTITEMS_FILENAME = "hf_shopping_recent.txt";
     public static final String WEB_API_URL = "http://house.flave.co.uk/api/";
 
+    public static final String USERGUID_DAVE = "e9636bbb-8b54-49b9-9fa2-9477c303032f";
+    public static final String USERGUID_JOSH = "f97a50c9-8451-4537-bccb-e89ba5ade95a";
+
+    public static final String ITEM_TYPE_SHOPPING = "item_shopping";
+    public static final String ITEM_TYPE_BILL = "item_bill";
+
     public static void SetBills(ArrayList<BillListObject> bills)
     {
         _bills.clear();

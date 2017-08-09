@@ -20,6 +20,8 @@ import java.util.ArrayList;
 import hoppingvikings.housefinancemobile.BitmapCache;
 import hoppingvikings.housefinancemobile.GlobalObjects;
 import hoppingvikings.housefinancemobile.R;
+import hoppingvikings.housefinancemobile.UserInterface.Lists.ShoppingCartList.ShoppingCartAdapter;
+import hoppingvikings.housefinancemobile.WebService.DeleteItemCallback;
 import hoppingvikings.housefinancemobile.WebService.UploadCallback;
 
 /**
@@ -27,7 +29,7 @@ import hoppingvikings.housefinancemobile.WebService.UploadCallback;
  */
 
 public class ShoppingListAdapter extends RecyclerView.Adapter<ShoppingListAdapter.CardViewHolder>
-                                implements UploadCallback{
+                                implements DeleteItemCallback, UploadCallback{
     private static ShoppingItemClickedListener _listener;
 
     public interface ShoppingItemClickedListener
@@ -39,6 +41,13 @@ public class ShoppingListAdapter extends RecyclerView.Adapter<ShoppingListAdapte
     {
         _listener = listener;
     }
+
+    public interface DeleteCallback
+    {
+        void onItemDeleted();
+    }
+
+    private static DeleteCallback _deletecallback;
 
     public static class CardViewHolder extends RecyclerView.ViewHolder {
         View view;
@@ -97,6 +106,12 @@ public class ShoppingListAdapter extends RecyclerView.Adapter<ShoppingListAdapte
     private Context _context;
     BitmapCache imgCache;
     private int selected;
+    private boolean completeAlreadyPressed = false;
+
+    public void SetDeleteCallback(DeleteCallback owner)
+    {
+        _deletecallback = owner;
+    }
 
     public ShoppingListAdapter(ArrayList<ShoppingListObject> items, Context context) {
         _shoppingItems.addAll(items);
@@ -116,17 +131,16 @@ public class ShoppingListAdapter extends RecyclerView.Adapter<ShoppingListAdapte
     @Override
     public CardViewHolder onCreateViewHolder(ViewGroup viewGroup, int i) {
         View v = LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.listitem_shopping, viewGroup, false);
-        CardViewHolder cvh = new CardViewHolder(v);
-        return cvh;
+        return new CardViewHolder(v);
     }
 
     @Override
     public void onBindViewHolder(final CardViewHolder cvh, final int i)
     {
-        cvh.shoppingItemName.setText(_shoppingItems.get(i).itemName);
-        cvh.addedDate.setText(_shoppingItems.get(i).addedDate);
+        cvh.shoppingItemName.setText(_shoppingItems.get(cvh.getAdapterPosition()).itemName);
+        cvh.addedDate.setText(_shoppingItems.get(cvh.getAdapterPosition()).addedDate);
 
-        if(_shoppingItems.get(i).done)
+        if(_shoppingItems.get(cvh.getAdapterPosition()).done)
         {
             cvh.cardView.setBackgroundResource(R.color.bill_paid);
         }
@@ -136,9 +150,9 @@ public class ShoppingListAdapter extends RecyclerView.Adapter<ShoppingListAdapte
         }
 
         try {
-            imgCache.PutBitmap(_shoppingItems.get(i).addedBy, _shoppingItems.get(i).addedBy, cvh.addedBy1);
+            imgCache.PutBitmap(_shoppingItems.get(cvh.getAdapterPosition()).addedBy, _shoppingItems.get(cvh.getAdapterPosition()).addedBy, cvh.addedBy1);
 
-            if(_shoppingItems.get(i).itemExpanded)
+            if(_shoppingItems.get(cvh.getAdapterPosition()).itemExpanded)
             {
                 cvh.editButton.setVisibility(View.GONE);
                 cvh.buttonsContainer.setVisibility(View.VISIBLE);
@@ -146,22 +160,22 @@ public class ShoppingListAdapter extends RecyclerView.Adapter<ShoppingListAdapte
                 cvh.infoText.setVisibility(View.INVISIBLE);
                 cvh.addedFor1.setVisibility(View.VISIBLE);
 
-                imgCache.PutBitmap(_shoppingItems.get(i).addedForImage1, _shoppingItems.get(i).addedForImage1, cvh.addedFor1);
+                imgCache.PutBitmap(_shoppingItems.get(cvh.getAdapterPosition()).addedForImage1, _shoppingItems.get(cvh.getAdapterPosition()).addedForImage1, cvh.addedFor1);
 
-                if (_shoppingItems.get(i).addedForImage2.isEmpty()) {
+                if (_shoppingItems.get(cvh.getAdapterPosition()).addedForImage2.isEmpty()) {
                     cvh.addedFor2.setVisibility(View.GONE);
                 } else
                 {
                     cvh.addedFor2.setVisibility(View.VISIBLE);
-                    imgCache.PutBitmap(_shoppingItems.get(i).addedForImage2, _shoppingItems.get(i).addedForImage2, cvh.addedFor2);
+                    imgCache.PutBitmap(_shoppingItems.get(cvh.getAdapterPosition()).addedForImage2, _shoppingItems.get(cvh.getAdapterPosition()).addedForImage2, cvh.addedFor2);
                 }
 
-                if (_shoppingItems.get(i).addedForImage3.isEmpty()) {
+                if (_shoppingItems.get(cvh.getAdapterPosition()).addedForImage3.isEmpty()) {
                     cvh.addedFor3.setVisibility(View.GONE);
                 } else
                 {
                     cvh.addedFor3.setVisibility(View.VISIBLE);
-                    imgCache.PutBitmap(_shoppingItems.get(i).addedForImage3, _shoppingItems.get(i).addedForImage3, cvh.addedFor3);
+                    imgCache.PutBitmap(_shoppingItems.get(cvh.getAdapterPosition()).addedForImage3, _shoppingItems.get(cvh.getAdapterPosition()).addedForImage3, cvh.addedFor3);
                 }
 
                 /*cvh.editButton.setOnClickListener(new View.OnClickListener() {
@@ -174,38 +188,56 @@ public class ShoppingListAdapter extends RecyclerView.Adapter<ShoppingListAdapte
                 cvh.deleteButton.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
+                        try {
+                            JSONObject itemjson = new JSONObject();
+                            itemjson.put("ShoppingItemId", _shoppingItems.get(cvh.getAdapterPosition()).ID);
+                            GlobalObjects.webHandler.DeleteItem(_context, ShoppingListAdapter.this, itemjson, GlobalObjects.ITEM_TYPE_SHOPPING);
+                        } catch (Exception e)
+                        {
+                            Toast.makeText(_context, "Failed to delete item", Toast.LENGTH_SHORT).show();
+                        }
 
+                        _shoppingItems.remove(cvh.getAdapterPosition());
+                        notifyItemRemoved(cvh.getAdapterPosition());
+                        notifyItemRangeChanged(cvh.getAdapterPosition(), _shoppingItems.size());
                     }
                 });
+
 
                 cvh.completeButton.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        selected = i;
-                        JSONObject editeditem = new JSONObject();
-                        try {
-                            editeditem.put("id", _shoppingItems.get(i).ID);
-                            editeditem.put("purchased", !_shoppingItems.get(i).done);
-                            GlobalObjects.webHandler.EditShoppingItem(_context, editeditem, ShoppingListAdapter.this);
-                        } catch (Exception e)
+                        if(!completeAlreadyPressed)
                         {
-                            OnFailedUpload("");
+                            completeAlreadyPressed = true;
+                            selected = cvh.getAdapterPosition();
+                            JSONObject editeditem = new JSONObject();
+                            try {
+                                editeditem.put("id", _shoppingItems.get(cvh.getAdapterPosition()).ID);
+                                editeditem.put("purchased", !_shoppingItems.get(cvh.getAdapterPosition()).done);
+                                GlobalObjects.webHandler.EditShoppingItem(_context, editeditem, ShoppingListAdapter.this);
+                            } catch (Exception e)
+                            {
+                                OnFailedUpload("");
+                            }
                         }
                     }
                 });
 
-                if(_shoppingItems.get(i).done) {
-                    cvh.notifyButton.setVisibility(View.GONE);
+                if(_shoppingItems.get(cvh.getAdapterPosition()).done) {
+                    cvh.notifyButton.setVisibility(View.INVISIBLE);
+                    cvh.completeButton.setImageResource(R.drawable.ic_undo_black_24dp);
                     //cvh.completeButton.setVisibility(View.GONE);
                 }
                 else {
                     cvh.notifyButton.setVisibility(View.VISIBLE);
                     cvh.completeButton.setVisibility(View.VISIBLE);
+                    cvh.completeButton.setImageResource(R.drawable.ic_done_black_24dp);
 
                     cvh.notifyButton.setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View v) {
-                            GlobalObjects.ShowNotif(_context, "Don't forget to buy " + _shoppingItems.get(i).itemName + "!", "Reminder", i);
+                            GlobalObjects.ShowNotif(_context, "Don't forget to buy " + _shoppingItems.get(cvh.getAdapterPosition()).itemName + "!", "Reminder", cvh.getAdapterPosition());
                         }
                     });
                 }
@@ -251,12 +283,26 @@ public class ShoppingListAdapter extends RecyclerView.Adapter<ShoppingListAdapte
 
     @Override
     public void OnSuccessfulUpload() {
+        completeAlreadyPressed = false;
         _shoppingItems.get(selected).done = !_shoppingItems.get(selected).done;
         notifyItemChanged(selected);
     }
 
     @Override
     public void OnFailedUpload(String failReason) {
-        Toast.makeText(_context, "Failed to complete shopping item.", Toast.LENGTH_SHORT).show();
+        completeAlreadyPressed = false;
+        Toast.makeText(_context, "Failed to update shopping item.", Toast.LENGTH_SHORT).show();
+    }
+
+    @Override
+    public void OnSuccessfulDelete() {
+        Toast.makeText(_context, "Item deleted", Toast.LENGTH_SHORT).show();
+        _deletecallback.onItemDeleted();
+    }
+
+    @Override
+    public void OnFailedDelete(String err) {
+        Toast.makeText(_context, "Failed to delete", Toast.LENGTH_SHORT).show();
+        _deletecallback.onItemDeleted();
     }
 }

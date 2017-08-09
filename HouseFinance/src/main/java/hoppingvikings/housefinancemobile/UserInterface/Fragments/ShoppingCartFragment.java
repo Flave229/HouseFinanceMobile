@@ -69,6 +69,20 @@ public class ShoppingCartFragment extends Fragment implements ButtonPressedCallb
         rv.setAdapter(adapter);
         rv.setLayoutManager(new LinearLayoutManager(getActivity()));
         adapter.SetDeleteCallback(this);
+        adapter.setOnCartItemClickListener(new ShoppingCartAdapter.CartItemClickedListener() {
+            @Override
+            public void onCartItemClick(View itemView, int pos) {
+                if(!adapter.GetItem(pos).itemExpanded)
+                {
+                    adapter.GetItem(pos).itemExpanded = true;
+                }
+                else
+                {
+                    adapter.GetItem(pos).itemExpanded = false;
+                }
+                adapter.notifyItemChanged(pos);
+            }
+        });
 
         if(adapter.getItemCount() > 0)
         {

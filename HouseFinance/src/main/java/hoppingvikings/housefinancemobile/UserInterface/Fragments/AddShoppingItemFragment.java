@@ -233,22 +233,22 @@ public class AddShoppingItemFragment extends Fragment implements ButtonPressedCa
                     newItem.put("Added", new SimpleDateFormat("yyyy-MM-dd").format(new Date()));
 
                     if(fromDavid)
-                        newItem.put("AddedBy", "e9636bbb-8b54-49b9-9fa2-9477c303032f");
+                        newItem.put("AddedBy", GlobalObjects.USERGUID_DAVE);
                     else if(fromVikki)
                         newItem.put("AddedBy", "25c15fb4-b5d5-47d9-917b-c572b1119e65");
                     else if(fromJosh)
-                        newItem.put("AddedBy", "f97a50c9-8451-4537-bccb-e89ba5ade95a");
+                        newItem.put("AddedBy", GlobalObjects.USERGUID_JOSH);
 
                     JSONArray people = new JSONArray();
 
                     if(forDavid)
-                        people.put("e9636bbb-8b54-49b9-9fa2-9477c303032f");
+                        people.put(GlobalObjects.USERGUID_DAVE);
 
                     if(forVikki)
                         people.put("25c15fb4-b5d5-47d9-917b-c572b1119e65");
 
                     if(forJosh)
-                        people.put("f97a50c9-8451-4537-bccb-e89ba5ade95a");
+                        people.put(GlobalObjects.USERGUID_JOSH);
 
                     newItem.put("ItemFor", people);
 
@@ -282,22 +282,22 @@ public class AddShoppingItemFragment extends Fragment implements ButtonPressedCa
             newItem.put("Added", new SimpleDateFormat("yyyy-MM-dd").format(new Date()));
 
             if(fromDavid)
-                newItem.put("AddedBy", "e9636bbb-8b54-49b9-9fa2-9477c303032f");
+                newItem.put("AddedBy", GlobalObjects.USERGUID_DAVE);
             else if(fromVikki)
                 newItem.put("AddedBy", "25c15fb4-b5d5-47d9-917b-c572b1119e65");
             else if(fromJosh)
-                newItem.put("AddedBy", "f97a50c9-8451-4537-bccb-e89ba5ade95a");
+                newItem.put("AddedBy", GlobalObjects.USERGUID_JOSH);
 
             JSONArray people = new JSONArray();
 
             if(forDavid)
-                people.put("e9636bbb-8b54-49b9-9fa2-9477c303032f");
+                people.put(GlobalObjects.USERGUID_DAVE);
 
             if(forVikki)
                 people.put("25c15fb4-b5d5-47d9-917b-c572b1119e65");
 
             if(forJosh)
-                people.put("f97a50c9-8451-4537-bccb-e89ba5ade95a");
+                people.put(GlobalObjects.USERGUID_JOSH);
 
             newItem.put("ItemFor", people);
 

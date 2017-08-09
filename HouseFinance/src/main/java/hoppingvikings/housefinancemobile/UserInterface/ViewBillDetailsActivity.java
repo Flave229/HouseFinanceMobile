@@ -31,6 +31,7 @@ import hoppingvikings.housefinancemobile.GlobalObjects;
 import hoppingvikings.housefinancemobile.R;
 import hoppingvikings.housefinancemobile.UserInterface.Lists.BillList.BillListObject;
 import hoppingvikings.housefinancemobile.UserInterface.Lists.BillList.BillObjectDetailed;
+import hoppingvikings.housefinancemobile.WebService.DeleteItemCallback;
 import hoppingvikings.housefinancemobile.WebService.DownloadDetailsCallback;
 import hoppingvikings.housefinancemobile.WebService.UploadCallback;
 
@@ -39,7 +40,7 @@ import hoppingvikings.housefinancemobile.WebService.UploadCallback;
  */
 
 public class ViewBillDetailsActivity extends AppCompatActivity
-        implements DownloadDetailsCallback, UploadCallback {
+        implements DownloadDetailsCallback, UploadCallback, DeleteItemCallback {
 
     TextView billAmountText;
     TextView totalPaidText;
@@ -174,7 +175,14 @@ public class ViewBillDetailsActivity extends AppCompatActivity
                     public void onClick(DialogInterface dialog, int which) {
                         addPayment.hide();
                         deleteconfirm.dismiss();
-                        GlobalObjects.webHandler.DeleteBill(ViewBillDetailsActivity.this, ViewBillDetailsActivity.this, billID);
+                        try {
+                            JSONObject billidjson = new JSONObject();
+                            billidjson.put("BillId", billID);
+                            GlobalObjects.webHandler.DeleteItem(ViewBillDetailsActivity.this, ViewBillDetailsActivity.this, billidjson, GlobalObjects.ITEM_TYPE_BILL);
+                        } catch (Exception e)
+                        {
+                            addPayment.show();
+                        }
                     }
                 });
 
@@ -246,6 +254,18 @@ public class ViewBillDetailsActivity extends AppCompatActivity
     @Override
     public void OnFailedUpload(String failReason) {
         Toast.makeText(getApplicationContext(), failReason, Toast.LENGTH_SHORT).show();
+    }
+
+    @Override
+    public void OnSuccessfulDelete() {
+        Toast.makeText(getApplicationContext(), "Bill deleted", Toast.LENGTH_SHORT).show();
+        setResult(RESULT_OK);
+        finish();
+    }
+
+    @Override
+    public void OnFailedDelete(String err) {
+        Toast.makeText(getApplicationContext(), err, Toast.LENGTH_SHORT).show();
     }
 
     @Override

@@ -35,6 +35,7 @@ public class WebHandler {
     DownloadCallback _billListOwner;
     DownloadDetailsCallback _billDetailsOwner;
     DownloadCallback _shoppingListOwner;
+    DeleteItemCallback _itemDeleteOwner;
     UploadCallback _uploadOwner;
     String authToken = "Token D2DB7539-634F-47C4-818D-59AD03C592E3";
 
@@ -76,21 +77,36 @@ public class WebHandler {
         }
     }
 
-    public void DeleteBill(Context context, UploadCallback owner, String billID)
+    public void DeleteItem(Context context, DeleteItemCallback owner, JSONObject itemjson, String itemtype)
     {
-        _uploadOwner = owner;
+        _itemDeleteOwner = owner;
         GlobalObjects.downloading = true;
         ConnectivityManager connMgr = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
         NetworkInfo networkInfo = connMgr.getActiveNetworkInfo();
 
         if(networkInfo != null && networkInfo.isConnected())
         {
-            new DeleteBill().execute(GlobalObjects.WEB_API_URL + "Bills/Delete", billID);
+            switch (itemtype)
+            {
+                case GlobalObjects.ITEM_TYPE_BILL:
+                    new DeleteItem().execute(GlobalObjects.WEB_API_URL + "Bills/Delete", itemjson.toString());
+                    break;
+
+                case GlobalObjects.ITEM_TYPE_SHOPPING:
+                    new DeleteItem().execute(GlobalObjects.WEB_API_URL + "Shopping/", itemjson.toString());
+                    break;
+
+                default:
+                    GlobalObjects.downloading = false;
+                    _itemDeleteOwner.OnFailedDelete("Incorrect item type");
+                    break;
+            }
+
         }
         else
         {
             GlobalObjects.downloading = false;
-            _billDetailsOwner.OnDownloadFailed("No Internet Connection");
+            _itemDeleteOwner.OnFailedDelete("No Internet Connection");
         }
     }
 
@@ -145,7 +161,7 @@ public class WebHandler {
 
         if(networkInfo != null && networkInfo.isConnected())
         {
-            new UploadShoppingItemJson().execute(newItemString, GlobalObjects.WEB_API_URL + "Shopping/Add");
+            new UploadShoppingItemJson().execute(newItemString, GlobalObjects.WEB_API_URL + "Shopping/");
         }
         else
         {
@@ -666,19 +682,19 @@ public class WebHandler {
         }
     }
 
-    private class DeleteBill extends AsyncTask<String, Void, Boolean>
+    private class DeleteItem extends AsyncTask<String, Void, Boolean>
     {
         @Override
         protected Boolean doInBackground(String... params) {
             try {
-                return SendBillDeleteRequest(params[0], params[1]);
+                return SendItemDeleteRequest(params[0], params[1]);
             } catch (Exception e)
             {
                 return false;
             }
         }
 
-        private boolean SendBillDeleteRequest(String weburl, String billid) throws IOException
+        private boolean SendItemDeleteRequest(String weburl, String itemjsonstring) throws IOException
         {
             JSONObject returnJson;
             URL url = new URL(weburl);
@@ -694,9 +710,7 @@ public class WebHandler {
                 connection.setChunkedStreamingMode(0);
 
                 OutputStream out = connection.getOutputStream();
-                JSONObject billidjson = new JSONObject();
-                billidjson.put("BillId", billid);
-                out.write(billidjson.toString().getBytes("UTF-8"));
+                out.write(itemjsonstring.getBytes("UTF-8"));
                 out.close();
 
                 BufferedReader serverAnswer = new BufferedReader(new InputStreamReader(connection.getInputStream()));
@@ -735,11 +749,11 @@ public class WebHandler {
         protected void onPostExecute(Boolean aBoolean) {
             if(aBoolean)
             {
-                _uploadOwner.OnSuccessfulUpload();
+               _itemDeleteOwner.OnSuccessfulDelete();
             }
             else
             {
-                _uploadOwner.OnFailedUpload("Failed to Delete Bill. Please try again");
+                _itemDeleteOwner.OnFailedDelete("Failed to Delete Item. Please try again");
             }
         }
     }

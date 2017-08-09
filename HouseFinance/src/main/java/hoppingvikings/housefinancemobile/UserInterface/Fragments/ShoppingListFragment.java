@@ -23,6 +23,7 @@ import hoppingvikings.housefinancemobile.GlobalObjects;
 import hoppingvikings.housefinancemobile.R;
 import hoppingvikings.housefinancemobile.UserInterface.AddNewShoppingItemActivity;
 import hoppingvikings.housefinancemobile.UserInterface.Lists.ListItemDivider;
+import hoppingvikings.housefinancemobile.UserInterface.Lists.ShoppingCartList.ShoppingCartAdapter;
 import hoppingvikings.housefinancemobile.UserInterface.Lists.ShoppingList.ShoppingListAdapter;
 import hoppingvikings.housefinancemobile.UserInterface.Lists.ShoppingList.ShoppingListObject;
 import hoppingvikings.housefinancemobile.UserInterface.MainActivity;
@@ -35,7 +36,7 @@ import static android.app.Activity.RESULT_OK;
  * Created by Josh on 24/09/2016.
  */
 
-public class ShoppingListFragment extends Fragment implements DownloadCallback {
+public class ShoppingListFragment extends Fragment implements DownloadCallback, ShoppingListAdapter.DeleteCallback {
 
     CoordinatorLayout layout;
     Handler _handler;
@@ -91,6 +92,12 @@ public class ShoppingListFragment extends Fragment implements DownloadCallback {
             }
         }
     };
+
+    @Override
+    public void onItemDeleted() {
+        swipeRefreshLayout.setRefreshing(true);
+        _handler.postDelayed(contactWebsite, 200);
+    }
 
     public ShoppingListFragment()
     {
@@ -149,6 +156,8 @@ public class ShoppingListFragment extends Fragment implements DownloadCallback {
                 adapter.notifyItemChanged(pos);
             }
         });
+
+        adapter.SetDeleteCallback(this);
 
         swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override

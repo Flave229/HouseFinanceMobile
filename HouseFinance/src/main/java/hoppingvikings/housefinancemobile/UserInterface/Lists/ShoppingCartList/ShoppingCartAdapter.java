@@ -7,11 +7,14 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageButton;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import java.util.ArrayList;
 
+import hoppingvikings.housefinancemobile.GlobalObjects;
 import hoppingvikings.housefinancemobile.R;
+import hoppingvikings.housefinancemobile.UserInterface.Lists.ShoppingList.ShoppingListAdapter;
 import hoppingvikings.housefinancemobile.UserInterface.Lists.ShoppingList.ShoppingListObject;
 
 /**
@@ -25,6 +28,18 @@ public class ShoppingCartAdapter extends RecyclerView.Adapter<ShoppingCartAdapte
         void onItemDeleted(int item);
     }
 
+    private static CartItemClickedListener _listener;
+
+    public interface CartItemClickedListener
+    {
+        void onCartItemClick(View itemView, int pos);
+    }
+
+    public void setOnCartItemClickListener(CartItemClickedListener listener)
+    {
+        _listener = listener;
+    }
+
     private static DeleteCallback _deletecallback;
 
     public static class CardViewHolder extends RecyclerView.ViewHolder
@@ -34,6 +49,10 @@ public class ShoppingCartAdapter extends RecyclerView.Adapter<ShoppingCartAdapte
         TextView itemName;
         TextView date;
         ImageButton delete;
+        LinearLayout extraInfo;
+        TextView addedBy;
+        TextView addedFor;
+        TextView moreInfoText;
 
         public CardViewHolder(View v)
         {
@@ -43,6 +62,24 @@ public class ShoppingCartAdapter extends RecyclerView.Adapter<ShoppingCartAdapte
             itemName = (TextView) view.findViewById(R.id.itemName);
             date = (TextView) view.findViewById(R.id.itemDate);
             delete = (ImageButton) view.findViewById(R.id.deleteitem);
+            extraInfo = (LinearLayout) view.findViewById(R.id.extraInfoLayout);
+            moreInfoText = (TextView) view.findViewById(R.id.info_text);
+            addedBy = (TextView) view.findViewById(R.id.addedBy);
+            addedFor = (TextView) view.findViewById(R.id.addedFor);
+
+            view.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    if(_listener != null)
+                    {
+                        int pos = getAdapterPosition();
+                        if(pos != RecyclerView.NO_POSITION)
+                        {
+                            _listener.onCartItemClick(view, pos);
+                        }
+                    }
+                }
+            });
         }
     }
 
@@ -83,10 +120,48 @@ public class ShoppingCartAdapter extends RecyclerView.Adapter<ShoppingCartAdapte
                 notifyItemRangeChanged(holder.getAdapterPosition(), _items.size());
             }
         });
+
+        if(_items.get(position).itemExpanded)
+        {
+            holder.moreInfoText.setVisibility(View.GONE);
+            holder.extraInfo.setVisibility(View.VISIBLE);
+        }
+        else
+        {
+            holder.moreInfoText.setVisibility(View.VISIBLE);
+            holder.extraInfo.setVisibility(View.GONE);
+        }
+
+        String addedForString = "";
+        for (String personname:_items.get(position).people) {
+            switch (personname)
+            {
+                case GlobalObjects.USERGUID_DAVE:
+                    addedForString += ("David" + "; ");
+                    break;
+
+                case GlobalObjects.USERGUID_JOSH:
+                    addedForString += ("Josh" + "; ");
+                    break;
+            }
+        }
+        holder.addedFor.setText(addedForString);
+
+        switch (_items.get(position).addedBy)
+        {
+            case GlobalObjects.USERGUID_DAVE:
+                holder.addedBy.setText("David");
+                break;
+
+            case GlobalObjects.USERGUID_JOSH:
+                holder.addedBy.setText("Josh");
+                break;
+        }
+
     }
 
-    public void AddAll()
+    public ShoppingCartItem GetItem(int position)
     {
-
+        return _items.get(position);
     }
 }
