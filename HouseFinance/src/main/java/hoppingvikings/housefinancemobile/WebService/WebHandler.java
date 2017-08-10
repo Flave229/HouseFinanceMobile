@@ -121,7 +121,7 @@ public class WebHandler {
 
         if(networkInfo!= null && networkInfo.isConnected())
         {
-            new UploadPaymentJson().execute(newPaymentString, GlobalObjects.WEB_API_URL + "Bills/AddPayment");
+            new UploadPaymentJson().execute(newPaymentString, GlobalObjects.WEB_API_URL + "Bills/Payments");
         }
         else
         {

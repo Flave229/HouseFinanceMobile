@@ -167,6 +167,11 @@ public class ViewBillDetailsActivity extends AppCompatActivity
                 onBackPressed();
                 return true;
 
+            case R.id.editBill:
+                Intent editBillIntent = new Intent(ViewBillDetailsActivity.this, EditBillDetailsActivity.class);
+                startActivityForResult(editBillIntent, 10);
+                return true;
+
             case R.id.delete_bill:
                 final AlertDialog deleteconfirm = new AlertDialog.Builder(ViewBillDetailsActivity.this).create();
                 deleteconfirm.setMessage("Delete the bill? This action cannot be reversed");
@@ -246,14 +251,12 @@ public class ViewBillDetailsActivity extends AppCompatActivity
 
     @Override
     public void OnSuccessfulUpload() {
-        Toast.makeText(getApplicationContext(), "Bill deleted", Toast.LENGTH_SHORT).show();
-        setResult(RESULT_OK);
-        finish();
+
     }
 
     @Override
     public void OnFailedUpload(String failReason) {
-        Toast.makeText(getApplicationContext(), failReason, Toast.LENGTH_SHORT).show();
+
     }
 
     @Override
