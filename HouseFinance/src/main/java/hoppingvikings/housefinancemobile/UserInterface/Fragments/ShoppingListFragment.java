@@ -1,5 +1,6 @@
 package hoppingvikings.housefinancemobile.UserInterface.Fragments;
 
+import android.app.Activity;
 import android.app.NotificationManager;
 import android.content.Intent;
 import android.os.Bundle;
@@ -22,6 +23,7 @@ import java.util.ArrayList;
 import hoppingvikings.housefinancemobile.GlobalObjects;
 import hoppingvikings.housefinancemobile.R;
 import hoppingvikings.housefinancemobile.UserInterface.AddNewShoppingItemActivity;
+import hoppingvikings.housefinancemobile.UserInterface.EditShoppingItemActivity;
 import hoppingvikings.housefinancemobile.UserInterface.Lists.ListItemDivider;
 import hoppingvikings.housefinancemobile.UserInterface.Lists.ShoppingCartList.ShoppingCartAdapter;
 import hoppingvikings.housefinancemobile.UserInterface.Lists.ShoppingList.ShoppingListAdapter;
@@ -36,7 +38,8 @@ import static android.app.Activity.RESULT_OK;
  * Created by Josh on 24/09/2016.
  */
 
-public class ShoppingListFragment extends Fragment implements DownloadCallback, ShoppingListAdapter.DeleteCallback {
+public class ShoppingListFragment extends Fragment
+        implements DownloadCallback, ShoppingListAdapter.DeleteCallback, ShoppingListAdapter.EditPressedCallback {
 
     CoordinatorLayout layout;
     Handler _handler;
@@ -99,6 +102,13 @@ public class ShoppingListFragment extends Fragment implements DownloadCallback, 
         _handler.postDelayed(contactWebsite, 200);
     }
 
+    @Override
+    public void onEditPressed(String itemid) {
+        Intent edititem = new Intent(getContext(), EditShoppingItemActivity.class);
+        edititem.putExtra("id", itemid);
+        startActivityForResult(edititem, 0);
+    }
+
     public ShoppingListFragment()
     {
         // Blank Constructor
@@ -135,7 +145,7 @@ public class ShoppingListFragment extends Fragment implements DownloadCallback, 
 
         if(rv != null)
         {
-            adapter = new ShoppingListAdapter(items, getContext());
+            adapter = new ShoppingListAdapter(items, getActivity());
             rv.setAdapter(adapter);
             rv.setLayoutManager(new LinearLayoutManager(getActivity()));
             //rv.addItemDecoration(new ListItemDivider(getContext()));
@@ -158,6 +168,7 @@ public class ShoppingListFragment extends Fragment implements DownloadCallback, 
         });
 
         adapter.SetDeleteCallback(this);
+        adapter.SetEditPressedCallback(this);
 
         swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
@@ -193,7 +204,7 @@ public class ShoppingListFragment extends Fragment implements DownloadCallback, 
             case RESULT_OK:
                 swipeRefreshLayout.setRefreshing(true);
                 _handler.removeCallbacksAndMessages(null);
-                _handler.postDelayed(contactWebsite, 200);
+                _handler.postDelayed(contactWebsite, 100);
                 break;
 
             case RESULT_CANCELED:

@@ -1,6 +1,9 @@
 package hoppingvikings.housefinancemobile.UserInterface.Lists.ShoppingList;
 
+import android.app.Activity;
+import android.app.NotificationManager;
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.Color;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -20,9 +23,13 @@ import java.util.ArrayList;
 import hoppingvikings.housefinancemobile.BitmapCache;
 import hoppingvikings.housefinancemobile.GlobalObjects;
 import hoppingvikings.housefinancemobile.R;
+import hoppingvikings.housefinancemobile.UserInterface.EditShoppingItemActivity;
+import hoppingvikings.housefinancemobile.UserInterface.Fragments.ShoppingListFragment;
 import hoppingvikings.housefinancemobile.UserInterface.Lists.ShoppingCartList.ShoppingCartAdapter;
 import hoppingvikings.housefinancemobile.WebService.DeleteItemCallback;
 import hoppingvikings.housefinancemobile.WebService.UploadCallback;
+
+import static android.content.Context.NOTIFICATION_SERVICE;
 
 /**
  * Created by Josh on 06/11/2016.
@@ -48,6 +55,12 @@ public class ShoppingListAdapter extends RecyclerView.Adapter<ShoppingListAdapte
     }
 
     private static DeleteCallback _deletecallback;
+    private static EditPressedCallback _editCallback;
+
+    public interface EditPressedCallback
+    {
+        void onEditPressed(String itemid);
+    }
 
     public static class CardViewHolder extends RecyclerView.ViewHolder {
         View view;
@@ -112,6 +125,8 @@ public class ShoppingListAdapter extends RecyclerView.Adapter<ShoppingListAdapte
     {
         _deletecallback = owner;
     }
+    public void SetEditPressedCallback(EditPressedCallback owner)
+    {_editCallback = owner;}
 
     public ShoppingListAdapter(ArrayList<ShoppingListObject> items, Context context) {
         _shoppingItems.addAll(items);
@@ -154,7 +169,7 @@ public class ShoppingListAdapter extends RecyclerView.Adapter<ShoppingListAdapte
 
             if(_shoppingItems.get(cvh.getAdapterPosition()).itemExpanded)
             {
-                cvh.editButton.setVisibility(View.GONE);
+                cvh.editButton.setVisibility(View.VISIBLE);
                 cvh.buttonsContainer.setVisibility(View.VISIBLE);
                 cvh.addedForText.setVisibility(View.VISIBLE);
                 cvh.infoText.setVisibility(View.INVISIBLE);
@@ -178,12 +193,13 @@ public class ShoppingListAdapter extends RecyclerView.Adapter<ShoppingListAdapte
                     imgCache.PutBitmap(_shoppingItems.get(cvh.getAdapterPosition()).addedForImage3, _shoppingItems.get(cvh.getAdapterPosition()).addedForImage3, cvh.addedFor3);
                 }
 
-                /*cvh.editButton.setOnClickListener(new View.OnClickListener() {
+                cvh.editButton.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
+                        _editCallback.onEditPressed(_shoppingItems.get(cvh.getAdapterPosition()).ID);
 
                     }
-                });*/
+                });
 
                 cvh.deleteButton.setOnClickListener(new View.OnClickListener() {
                     @Override
@@ -196,7 +212,8 @@ public class ShoppingListAdapter extends RecyclerView.Adapter<ShoppingListAdapte
                         {
                             Toast.makeText(_context, "Failed to delete item", Toast.LENGTH_SHORT).show();
                         }
-
+                        NotificationManager man = (NotificationManager) _context.getSystemService(NOTIFICATION_SERVICE);
+                        man.cancel(cvh.getAdapterPosition());
                         _shoppingItems.remove(cvh.getAdapterPosition());
                         notifyItemRemoved(cvh.getAdapterPosition());
                         notifyItemRangeChanged(cvh.getAdapterPosition(), _shoppingItems.size());
@@ -227,13 +244,14 @@ public class ShoppingListAdapter extends RecyclerView.Adapter<ShoppingListAdapte
                 if(_shoppingItems.get(cvh.getAdapterPosition()).done) {
                     cvh.notifyButton.setVisibility(View.INVISIBLE);
                     cvh.completeButton.setImageResource(R.drawable.ic_undo_black_24dp);
+                    cvh.editButton.setVisibility(View.GONE);
                     //cvh.completeButton.setVisibility(View.GONE);
                 }
                 else {
                     cvh.notifyButton.setVisibility(View.VISIBLE);
                     cvh.completeButton.setVisibility(View.VISIBLE);
                     cvh.completeButton.setImageResource(R.drawable.ic_done_black_24dp);
-
+                    cvh.editButton.setVisibility(View.VISIBLE);
                     cvh.notifyButton.setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View v) {
@@ -286,6 +304,9 @@ public class ShoppingListAdapter extends RecyclerView.Adapter<ShoppingListAdapte
         completeAlreadyPressed = false;
         _shoppingItems.get(selected).done = !_shoppingItems.get(selected).done;
         notifyItemChanged(selected);
+
+        NotificationManager man = (NotificationManager) _context.getSystemService(NOTIFICATION_SERVICE);
+        man.cancel(selected);
     }
 
     @Override
