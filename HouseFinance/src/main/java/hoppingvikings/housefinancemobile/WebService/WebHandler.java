@@ -170,6 +170,25 @@ public class WebHandler {
         }
     }
 
+    public void EditBill(Context context, JSONObject editedBill, UploadCallback owner)
+    {
+        _uploadOwner = owner;
+        String editedItemString = editedBill.toString();
+
+        ConnectivityManager connMgr = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo networkInfo = connMgr.getActiveNetworkInfo();
+
+        if(networkInfo != null && networkInfo.isConnected())
+        {
+            new EditItem().execute(GlobalObjects.WEB_API_URL + "Bills/Update", editedItemString);
+        }
+        else
+        {
+            GlobalObjects.downloading = false;
+            _uploadOwner.OnFailedUpload("No Internet Connection");
+        }
+    }
+
     public void EditShoppingItem(Context context, JSONObject editedItem, UploadCallback owner)
     {
         _uploadOwner = owner;
@@ -180,7 +199,7 @@ public class WebHandler {
 
         if(networkInfo != null && networkInfo.isConnected())
         {
-            new EditShoppingItem().execute(GlobalObjects.WEB_API_URL + "Shopping/", editedItemString);
+            new EditItem().execute(GlobalObjects.WEB_API_URL + "Shopping/", editedItemString);
         }
         else
         {
@@ -758,7 +777,7 @@ public class WebHandler {
         }
     }
 
-    private class EditShoppingItem extends AsyncTask<String, Void, Boolean>
+    private class EditItem extends AsyncTask<String, Void, Boolean>
     {
         @Override
         protected Boolean doInBackground(String... params) {
@@ -829,7 +848,7 @@ public class WebHandler {
             }
             else
             {
-                _uploadOwner.OnFailedUpload("Failed to edit shopping item. Please try again");
+                _uploadOwner.OnFailedUpload("Failed to edit item. Please try again");
             }
         }
     }

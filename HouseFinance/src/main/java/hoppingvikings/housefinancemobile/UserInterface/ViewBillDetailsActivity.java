@@ -53,6 +53,8 @@ public class ViewBillDetailsActivity extends AppCompatActivity
     LinearLayout tableContainer;
     FloatingActionButton addPayment;
 
+    boolean somethingChanged = false;
+
     BillObjectDetailed _currentBill = null;
     private Runnable contactWebsite = new Runnable() {
         @Override
@@ -80,7 +82,16 @@ public class ViewBillDetailsActivity extends AppCompatActivity
                 Intent i = new Intent(ViewBillDetailsActivity.this, AddPaymentActivity.class);
                 i.putExtra("bill_id", billID);
                 i.putExtra("bill_name", _currentBill.name);
-                i.putExtra("suggested_amount", String.format(Locale.getDefault(), "%.2f", Double.valueOf(bill.totalAmount) / bill.people.size()));
+                double suggestedamount;
+                if(bill.people.size() > 1)
+                {
+                    suggestedamount = Double.valueOf(bill.totalAmount) / bill.people.size();
+                }
+                else
+                {
+                    suggestedamount = Double.valueOf(bill.cardAmount);
+                }
+                i.putExtra("suggested_amount", String.format(Locale.getDefault(), "%.2f", suggestedamount));
                 startActivityForResult(i, 0);
             }
         });
@@ -169,6 +180,7 @@ public class ViewBillDetailsActivity extends AppCompatActivity
 
             case R.id.editBill:
                 Intent editBillIntent = new Intent(ViewBillDetailsActivity.this, EditBillDetailsActivity.class);
+                editBillIntent.putExtra("bill_id", billID);
                 startActivityForResult(editBillIntent, 10);
                 return true;
 
@@ -206,6 +218,13 @@ public class ViewBillDetailsActivity extends AppCompatActivity
                 return super.onOptionsItemSelected(item);
 
         }
+    }
+
+    @Override
+    public void onBackPressed() {
+        if(somethingChanged)
+            setResult(RESULT_OK);
+        super.onBackPressed();
     }
 
     @Override
@@ -277,6 +296,7 @@ public class ViewBillDetailsActivity extends AppCompatActivity
         switch (resultCode)
         {
             case RESULT_OK:
+                somethingChanged = true;
                 ClearTable();
                 _handler.postDelayed(contactWebsite, 100);
                 break;

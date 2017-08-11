@@ -184,12 +184,6 @@ public class AddShoppingItemFragment extends Fragment implements ButtonPressedCa
 
     @Override
     public void SubmitPressed() {
-        if(!ValidateFields())
-        {
-            _activity.ReenableElements();
-            return;
-        }
-
         if(_activity._shoppingItems.size() > 0)
         {
             getActivity().getSupportFragmentManager().beginTransaction()
@@ -198,6 +192,12 @@ public class AddShoppingItemFragment extends Fragment implements ButtonPressedCa
                     .addToBackStack(null)
                     .commit();
 
+            return;
+        }
+
+        if(!ValidateFields())
+        {
+            _activity.ReenableElements();
             return;
         }
 
