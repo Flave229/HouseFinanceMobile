@@ -9,6 +9,8 @@ import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -24,6 +26,7 @@ import android.widget.Toast;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.util.ArrayList;
 import java.util.Locale;
 
 import hoppingvikings.housefinancemobile.GlobalObjects;
@@ -31,6 +34,7 @@ import hoppingvikings.housefinancemobile.R;
 import hoppingvikings.housefinancemobile.UserInterface.Items.BillListObject;
 import hoppingvikings.housefinancemobile.UserInterface.Items.BillObjectDetailed;
 import hoppingvikings.housefinancemobile.UserInterface.Items.BillObjectDetailedPayments;
+import hoppingvikings.housefinancemobile.UserInterface.Lists.ListItemDivider;
 import hoppingvikings.housefinancemobile.WebService.DeleteItemCallback;
 import hoppingvikings.housefinancemobile.WebService.DownloadDetailsCallback;
 import hoppingvikings.housefinancemobile.WebService.UploadCallback;
@@ -50,7 +54,10 @@ public class ViewBillDetailsActivity extends AppCompatActivity
 
     String billID = "";
 
-    LinearLayout tableContainer;
+    RecyclerView paymentsList;
+    PaymentsListAdapter adapter;
+
+    //LinearLayout tableContainer;
     FloatingActionButton addPayment;
 
     boolean somethingChanged = false;
@@ -71,9 +78,16 @@ public class ViewBillDetailsActivity extends AppCompatActivity
         billAmountText = (TextView) findViewById(R.id.billAmount);
         totalPaidText = (TextView) findViewById(R.id.totalPaid);
         dueDateText = (TextView) findViewById(R.id.billDueDate);
-        tableContainer = (LinearLayout) findViewById(R.id.tableContainer);
+        /*tableContainer = (LinearLayout) findViewById(R.id.tableContainer);*/
         addPayment = (FloatingActionButton) findViewById(R.id.addPaymentButton);
         addPayment.hide();
+
+        paymentsList = (RecyclerView) findViewById(R.id.paymentsList);
+        paymentsList.setNestedScrollingEnabled(true);
+        adapter = new PaymentsListAdapter(new ArrayList<BillObjectDetailedPayments>(), this);
+        paymentsList.setAdapter(adapter);
+        paymentsList.setLayoutManager(new LinearLayoutManager(this));
+        paymentsList.addItemDecoration(new ListItemDivider(this));
 
         addPayment.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -89,7 +103,7 @@ public class ViewBillDetailsActivity extends AppCompatActivity
                 }
                 else
                 {
-                    suggestedamount = Double.valueOf(bill.cardAmount);
+                    suggestedamount = (Double.valueOf(bill.totalAmount) - _currentBill.amountPaid);
                 }
                 i.putExtra("suggested_amount", String.format(Locale.getDefault(), "%.2f", suggestedamount));
                 startActivityForResult(i, 0);
@@ -127,14 +141,14 @@ public class ViewBillDetailsActivity extends AppCompatActivity
 
         TableLayout table = (TableLayout)view.findViewById(R.id.paymentsTable);
 
-        this.tableContainer.addView(view);
+        //this.tableContainer.addView(view);
 
         return table;
     }
 
     private void ClearTable()
     {
-        tableContainer.removeAllViews();
+        //tableContainer.removeAllViews();
     }
 
     private void AddRow(TableLayout table, String header, String value)
@@ -248,16 +262,18 @@ public class ViewBillDetailsActivity extends AppCompatActivity
 
         if(billObjectDetailed.paymentDetails.size() > 0)
         {
-            for (BillObjectDetailedPayments payment : billObjectDetailed.paymentDetails) {
+            /*for (BillObjectDetailedPayments payment : billObjectDetailed.paymentDetails) {
                 table = this.CreateNewTable(payment.personName);
                 this.AddRow(table, "Date Paid:", payment.Date);
                 this.AddRow(table, "Amount Paid:", "£" + String.format(Locale.getDefault(), "%.2f", payment.AmountPaid) );
-            }
+            }*/
+            adapter.AddPaymentsToList(billObjectDetailed.paymentDetails);
         }
         else
         {
-            table = this.CreateNewTable("No Payments Found");
-            this.AddRow(table, "Press the button below to add a payment!", "");
+            /*table = this.CreateNewTable("No Payments Found");
+            this.AddRow(table, "Press the button below to add a payment!", "");*/
+
         }
 
         addPayment.show();
