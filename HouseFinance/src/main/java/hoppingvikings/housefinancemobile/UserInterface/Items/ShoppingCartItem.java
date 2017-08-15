@@ -1,4 +1,4 @@
-package hoppingvikings.housefinancemobile.UserInterface.Lists.ShoppingCartList;
+package hoppingvikings.housefinancemobile.UserInterface.Items;
 
 import org.json.JSONObject;
 

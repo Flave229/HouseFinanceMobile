@@ -1,4 +1,4 @@
-package hoppingvikings.housefinancemobile.UserInterface.Lists.BillList;
+package hoppingvikings.housefinancemobile.UserInterface.Items;
 
 
 import org.json.JSONArray;
@@ -6,7 +6,6 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
-import java.util.Locale;
 
 /**
  * Created by Josh on 17/09/2016.

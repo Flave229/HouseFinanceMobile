@@ -1,6 +1,6 @@
 package hoppingvikings.housefinancemobile.WebService;
 
-import hoppingvikings.housefinancemobile.UserInterface.Lists.BillList.BillObjectDetailed;
+import hoppingvikings.housefinancemobile.UserInterface.Items.BillObjectDetailed;
 
 /**
  * Created by iView on 06/07/2017.

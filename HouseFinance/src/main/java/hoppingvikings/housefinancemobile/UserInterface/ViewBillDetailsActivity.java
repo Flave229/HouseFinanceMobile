@@ -7,7 +7,6 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
@@ -29,8 +28,9 @@ import java.util.Locale;
 
 import hoppingvikings.housefinancemobile.GlobalObjects;
 import hoppingvikings.housefinancemobile.R;
-import hoppingvikings.housefinancemobile.UserInterface.Lists.BillList.BillListObject;
-import hoppingvikings.housefinancemobile.UserInterface.Lists.BillList.BillObjectDetailed;
+import hoppingvikings.housefinancemobile.UserInterface.Items.BillListObject;
+import hoppingvikings.housefinancemobile.UserInterface.Items.BillObjectDetailed;
+import hoppingvikings.housefinancemobile.UserInterface.Items.BillObjectDetailedPayments;
 import hoppingvikings.housefinancemobile.WebService.DeleteItemCallback;
 import hoppingvikings.housefinancemobile.WebService.DownloadDetailsCallback;
 import hoppingvikings.housefinancemobile.WebService.UploadCallback;
@@ -248,15 +248,10 @@ public class ViewBillDetailsActivity extends AppCompatActivity
 
         if(billObjectDetailed.paymentDetails.size() > 0)
         {
-            for (JSONObject paymentInfo: billObjectDetailed.paymentDetails) {
-                try {
-                    table = this.CreateNewTable(paymentInfo.getString("personName"));
-                    this.AddRow(table, "Date Paid", paymentInfo.getString("datePaid"));
-                    this.AddRow(table, "Amount Paid", "£" + String.valueOf(paymentInfo.getDouble("amountPaid")));
-                } catch (JSONException e)
-                {
-                    Log.v("Error payment info: ", e.getMessage());
-                }
+            for (BillObjectDetailedPayments payment : billObjectDetailed.paymentDetails) {
+                table = this.CreateNewTable(payment.personName);
+                this.AddRow(table, "Date Paid:", payment.Date);
+                this.AddRow(table, "Amount Paid:", "£" + String.format(Locale.getDefault(), "%.2f", payment.AmountPaid) );
             }
         }
         else

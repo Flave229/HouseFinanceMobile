@@ -1,11 +1,7 @@
 package hoppingvikings.housefinancemobile;
 
-import android.app.Notification;
-import android.app.NotificationManager;
 import android.content.Context;
-import android.content.Intent;
 import android.os.Environment;
-import android.support.v4.app.NotificationCompat;
 import android.util.Log;
 
 import org.json.JSONObject;
@@ -18,14 +14,11 @@ import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.util.ArrayList;
 
-import hoppingvikings.housefinancemobile.UserInterface.Lists.BillList.BillListObject;
-import hoppingvikings.housefinancemobile.UserInterface.Lists.BillList.BillListObjectPeople;
-import hoppingvikings.housefinancemobile.UserInterface.Lists.ShoppingList.ShoppingListObject;
-import hoppingvikings.housefinancemobile.UserInterface.Lists.ShoppingList.ShoppingListPeople;
+import hoppingvikings.housefinancemobile.UserInterface.Items.BillListObject;
+import hoppingvikings.housefinancemobile.UserInterface.Items.BillListObjectPeople;
+import hoppingvikings.housefinancemobile.UserInterface.Items.ShoppingListObject;
+import hoppingvikings.housefinancemobile.UserInterface.Items.ShoppingListPeople;
 import hoppingvikings.housefinancemobile.WebService.WebHandler;
-
-import static android.content.Context.MODE_APPEND;
-import static android.content.Context.NOTIFICATION_SERVICE;
 
 /**
  * Created by Josh on 25/09/2016.

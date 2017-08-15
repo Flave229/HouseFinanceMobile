@@ -35,8 +35,7 @@ import java.util.Locale;
 
 import hoppingvikings.housefinancemobile.GlobalObjects;
 import hoppingvikings.housefinancemobile.R;
-import hoppingvikings.housefinancemobile.UserInterface.Lists.BillList.BillListObject;
-import hoppingvikings.housefinancemobile.UserInterface.Lists.BillList.BillListObjectPeople;
+import hoppingvikings.housefinancemobile.UserInterface.Items.BillListObject;
 import hoppingvikings.housefinancemobile.WebService.UploadCallback;
 
 /**

@@ -1,9 +1,7 @@
 package hoppingvikings.housefinancemobile.UserInterface.Lists.ShoppingList;
 
-import android.app.Activity;
 import android.app.NotificationManager;
 import android.content.Context;
-import android.content.Intent;
 import android.graphics.Color;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -23,9 +21,7 @@ import java.util.ArrayList;
 import hoppingvikings.housefinancemobile.BitmapCache;
 import hoppingvikings.housefinancemobile.GlobalObjects;
 import hoppingvikings.housefinancemobile.R;
-import hoppingvikings.housefinancemobile.UserInterface.EditShoppingItemActivity;
-import hoppingvikings.housefinancemobile.UserInterface.Fragments.ShoppingListFragment;
-import hoppingvikings.housefinancemobile.UserInterface.Lists.ShoppingCartList.ShoppingCartAdapter;
+import hoppingvikings.housefinancemobile.UserInterface.Items.ShoppingListObject;
 import hoppingvikings.housefinancemobile.WebService.DeleteItemCallback;
 import hoppingvikings.housefinancemobile.WebService.UploadCallback;
 

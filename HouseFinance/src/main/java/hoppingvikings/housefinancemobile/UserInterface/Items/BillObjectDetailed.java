@@ -1,4 +1,4 @@
-package hoppingvikings.housefinancemobile.UserInterface.Lists.BillList;
+package hoppingvikings.housefinancemobile.UserInterface.Items;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -16,7 +16,7 @@ public class BillObjectDetailed {
     public String dateDue = "";
     public double amountDue = 0.0;
     public double amountPaid = 0.0;
-    public ArrayList<JSONObject> paymentDetails = new ArrayList<>();
+    public ArrayList<BillObjectDetailedPayments> paymentDetails = new ArrayList<>();
 
     public BillObjectDetailed(JSONObject details, JSONArray payments)
     {
@@ -30,7 +30,7 @@ public class BillObjectDetailed {
             {
                 for(int i = 0; i < payments.length(); i++)
                 {
-                    paymentDetails.add(payments.getJSONObject(i));
+                    paymentDetails.add(new BillObjectDetailedPayments(payments.getJSONObject(i)));
                 }
             }
         } catch (JSONException e)

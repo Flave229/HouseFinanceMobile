@@ -20,7 +20,7 @@ import hoppingvikings.housefinancemobile.GlobalObjects;
 import hoppingvikings.housefinancemobile.R;
 import hoppingvikings.housefinancemobile.UserInterface.AddNewBillActivity;
 import hoppingvikings.housefinancemobile.UserInterface.Lists.BillList.BillListAdapter;
-import hoppingvikings.housefinancemobile.UserInterface.Lists.BillList.BillListObject;
+import hoppingvikings.housefinancemobile.UserInterface.Items.BillListObject;
 import hoppingvikings.housefinancemobile.UserInterface.Lists.ListItemDivider;
 import hoppingvikings.housefinancemobile.UserInterface.MainActivity;
 import hoppingvikings.housefinancemobile.UserInterface.ViewBillDetailsActivity;

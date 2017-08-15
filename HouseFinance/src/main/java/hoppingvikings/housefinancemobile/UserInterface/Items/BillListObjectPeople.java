@@ -1,4 +1,4 @@
-package hoppingvikings.housefinancemobile.UserInterface.Lists.BillList;
+package hoppingvikings.housefinancemobile.UserInterface.Items;
 
 import org.json.JSONException;
 import org.json.JSONObject;

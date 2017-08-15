@@ -20,11 +20,11 @@ import java.net.URL;
 import java.util.ArrayList;
 
 import hoppingvikings.housefinancemobile.GlobalObjects;
-import hoppingvikings.housefinancemobile.UserInterface.Lists.BillList.BillListObject;
-import hoppingvikings.housefinancemobile.UserInterface.Lists.BillList.BillListObjectPeople;
-import hoppingvikings.housefinancemobile.UserInterface.Lists.BillList.BillObjectDetailed;
-import hoppingvikings.housefinancemobile.UserInterface.Lists.ShoppingList.ShoppingListObject;
-import hoppingvikings.housefinancemobile.UserInterface.Lists.ShoppingList.ShoppingListPeople;
+import hoppingvikings.housefinancemobile.UserInterface.Items.BillListObject;
+import hoppingvikings.housefinancemobile.UserInterface.Items.BillListObjectPeople;
+import hoppingvikings.housefinancemobile.UserInterface.Items.BillObjectDetailed;
+import hoppingvikings.housefinancemobile.UserInterface.Items.ShoppingListObject;
+import hoppingvikings.housefinancemobile.UserInterface.Items.ShoppingListPeople;
 
 /**
  * Created by Josh on 24/09/2016.

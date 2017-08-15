@@ -16,6 +16,7 @@ import java.util.Locale;
 
 import hoppingvikings.housefinancemobile.BitmapCache;
 import hoppingvikings.housefinancemobile.R;
+import hoppingvikings.housefinancemobile.UserInterface.Items.BillListObject;
 
 
 /**
