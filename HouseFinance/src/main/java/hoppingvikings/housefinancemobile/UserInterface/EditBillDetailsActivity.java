@@ -369,7 +369,7 @@ public class EditBillDetailsActivity extends AppCompatActivity implements Upload
                             editedBill.put("RecurringType", 0);
                     }
 
-                    GlobalObjects.webHandler.EditBill(EditBillDetailsActivity.this, editedBill, EditBillDetailsActivity.this);
+                    GlobalObjects.webHandler.EditItem(EditBillDetailsActivity.this, editedBill, EditBillDetailsActivity.this, GlobalObjects.ITEM_TYPE_BILL);
 
                 } catch (Exception e)
                 {

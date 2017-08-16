@@ -96,6 +96,10 @@ public class WebHandler {
                     new DeleteItem().execute(GlobalObjects.WEB_API_URL + "Shopping/", itemjson.toString());
                     break;
 
+                case GlobalObjects.ITEM_TYPE_BILLPAYMENT:
+                    new DeleteItem().execute(GlobalObjects.WEB_API_URL + "Bills/Payments", itemjson.toString());
+                    break;
+
                 default:
                     GlobalObjects.downloading = false;
                     _itemDeleteOwner.OnFailedDelete("Incorrect item type");
@@ -170,26 +174,7 @@ public class WebHandler {
         }
     }
 
-    public void EditBill(Context context, JSONObject editedBill, UploadCallback owner)
-    {
-        _uploadOwner = owner;
-        String editedItemString = editedBill.toString();
-
-        ConnectivityManager connMgr = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
-        NetworkInfo networkInfo = connMgr.getActiveNetworkInfo();
-
-        if(networkInfo != null && networkInfo.isConnected())
-        {
-            new EditItem().execute(GlobalObjects.WEB_API_URL + "Bills/Update", editedItemString);
-        }
-        else
-        {
-            GlobalObjects.downloading = false;
-            _uploadOwner.OnFailedUpload("No Internet Connection");
-        }
-    }
-
-    public void EditShoppingItem(Context context, JSONObject editedItem, UploadCallback owner)
+    public void EditItem(Context context, JSONObject editedItem, UploadCallback owner, String itemType)
     {
         _uploadOwner = owner;
         String editedItemString = editedItem.toString();
@@ -199,7 +184,24 @@ public class WebHandler {
 
         if(networkInfo != null && networkInfo.isConnected())
         {
-            new EditItem().execute(GlobalObjects.WEB_API_URL + "Shopping/", editedItemString);
+            switch (itemType)
+            {
+                case GlobalObjects.ITEM_TYPE_BILL:
+                    new EditItem().execute(GlobalObjects.WEB_API_URL + "Bills/Update", editedItemString);
+                    break;
+
+                case GlobalObjects.ITEM_TYPE_SHOPPING:
+                    new EditItem().execute(GlobalObjects.WEB_API_URL + "Shopping/", editedItemString);
+                    break;
+
+                case GlobalObjects.ITEM_TYPE_BILLPAYMENT:
+                    new EditItem().execute(GlobalObjects.WEB_API_URL + "Bills/Payments", editedItemString);
+                    break;
+
+                default:
+                    _uploadOwner.OnFailedUpload("Incorrect item type");
+                    break;
+            }
         }
         else
         {

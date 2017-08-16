@@ -44,11 +44,13 @@ import hoppingvikings.housefinancemobile.WebService.UploadCallback;
  */
 
 public class ViewBillDetailsActivity extends AppCompatActivity
-        implements DownloadDetailsCallback, UploadCallback, DeleteItemCallback {
+        implements DownloadDetailsCallback, UploadCallback, DeleteItemCallback,
+        PaymentsListAdapter.DeleteCallback, PaymentsListAdapter.EditPressedCallback{
 
     TextView billAmountText;
     TextView totalPaidText;
     TextView dueDateText;
+    TextView noPaymentsText;
 
     Handler _handler;
 
@@ -71,6 +73,21 @@ public class ViewBillDetailsActivity extends AppCompatActivity
     };
 
     @Override
+    public void onItemDeleted() {
+        somethingChanged = true;
+        _handler.postDelayed(contactWebsite, 100);
+    }
+
+    @Override
+    public void onEditPressed(BillObjectDetailedPayments itemid) {
+        Intent edititem = new Intent(this, EditPaymentActivity.class);
+        edititem.putExtra("payment_id", itemid.PaymentID);
+        edititem.putExtra("payment_amount", itemid.AmountPaid);
+        edititem.putExtra("payment_date", itemid.Date);
+        startActivityForResult(edititem, 0);
+    }
+
+    @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_view_bill);
@@ -78,6 +95,7 @@ public class ViewBillDetailsActivity extends AppCompatActivity
         billAmountText = (TextView) findViewById(R.id.billAmount);
         totalPaidText = (TextView) findViewById(R.id.totalPaid);
         dueDateText = (TextView) findViewById(R.id.billDueDate);
+        noPaymentsText = (TextView) findViewById(R.id.noPaymentsText);
         /*tableContainer = (LinearLayout) findViewById(R.id.tableContainer);*/
         addPayment = (FloatingActionButton) findViewById(R.id.addPaymentButton);
         addPayment.hide();
@@ -85,9 +103,11 @@ public class ViewBillDetailsActivity extends AppCompatActivity
         paymentsList = (RecyclerView) findViewById(R.id.paymentsList);
         paymentsList.setNestedScrollingEnabled(true);
         adapter = new PaymentsListAdapter(new ArrayList<BillObjectDetailedPayments>(), this);
+        adapter.SetDeleteCallback(this);
+        adapter.SetEditPressedCallback(this);
         paymentsList.setAdapter(adapter);
         paymentsList.setLayoutManager(new LinearLayoutManager(this));
-        paymentsList.addItemDecoration(new ListItemDivider(this));
+        //paymentsList.addItemDecoration(new ListItemDivider(this));
 
         addPayment.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -260,20 +280,15 @@ public class ViewBillDetailsActivity extends AppCompatActivity
         this.totalPaidText.setText("£" + String.format(Locale.getDefault(), "%.2f", Double.valueOf(_currentBill.amountPaid)));
         this.dueDateText.setText(_currentBill.dateDue);
 
-        if(billObjectDetailed.paymentDetails.size() > 0)
+        adapter.AddPaymentsToList(billObjectDetailed.paymentDetails);
+
+        if(adapter.getItemCount() > 0)
         {
-            /*for (BillObjectDetailedPayments payment : billObjectDetailed.paymentDetails) {
-                table = this.CreateNewTable(payment.personName);
-                this.AddRow(table, "Date Paid:", payment.Date);
-                this.AddRow(table, "Amount Paid:", "£" + String.format(Locale.getDefault(), "%.2f", payment.AmountPaid) );
-            }*/
-            adapter.AddPaymentsToList(billObjectDetailed.paymentDetails);
+            noPaymentsText.setVisibility(View.GONE);
         }
         else
         {
-            /*table = this.CreateNewTable("No Payments Found");
-            this.AddRow(table, "Press the button below to add a payment!", "");*/
-
+            noPaymentsText.setVisibility(View.VISIBLE);
         }
 
         addPayment.show();
@@ -308,7 +323,6 @@ public class ViewBillDetailsActivity extends AppCompatActivity
         {
             case RESULT_OK:
                 somethingChanged = true;
-                ClearTable();
                 _handler.postDelayed(contactWebsite, 100);
                 break;
 

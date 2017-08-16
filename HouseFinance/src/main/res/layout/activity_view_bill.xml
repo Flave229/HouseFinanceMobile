@@ -130,7 +130,20 @@
                 app:layout_constraintRight_toRightOf="parent"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/paymentsText"
-                tools:listitem="@layout/listitem_billpayment" />
+                tools:listitem="@layout/listitem_billpayment" >
+            </android.support.v7.widget.RecyclerView>
+
+            <TextView
+                android:id="@+id/noPaymentsText"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:textColor="#000"
+                android:text="No payments have been added yet!\nPress the button below to add payments"
+                app:layout_constraintTop_toBottomOf="@+id/paymentsText"
+                app:layout_constraintLeft_toLeftOf="parent"
+                app:layout_constraintRight_toRightOf="parent"
+                app:layout_constraintBottom_toBottomOf="parent" />
         </android.support.constraint.ConstraintLayout>
 
     <android.support.design.widget.FloatingActionButton

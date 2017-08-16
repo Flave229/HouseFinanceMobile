@@ -1,0 +1,126 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.design.widget.CoordinatorLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:id="@+id/coordlayout">
+
+    <android.support.v7.widget.Toolbar
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/appToolbar"
+        android:background="?attr/colorPrimary"
+        android:elevation="4dp"
+        android:theme="@style/ThemeOverlay.AppCompat.ActionBar"
+        app:popupTheme="@style/ThemeOverlay.AppCompat.Light"/>
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:fillViewport="true"
+        android:scrollbarStyle="insideOverlay"
+        android:paddingBottom="30dp"
+        android:clipToPadding="false"
+        android:layout_marginTop="56dp"
+        android:layout_marginBottom="40dp">
+
+        <android.support.constraint.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <CheckBox
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/editAmountCheck"
+                app:layout_constraintLeft_toLeftOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                android:layout_marginLeft="8dp"
+                android:layout_marginTop="8dp"
+                android:layout_marginStart="8dp"
+                app:layout_constraintBottom_toBottomOf="@+id/paymentAmountEntry"
+                android:layout_marginBottom="8dp" />
+
+            <android.support.design.widget.TextInputLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_margin="16dp"
+                android:id="@+id/paymentAmountEntry"
+                app:hintAnimationEnabled="true"
+                app:hintEnabled="true"
+                app:errorEnabled="true"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintRight_toRightOf="parent"
+                app:layout_constraintLeft_toRightOf="@+id/editAmountCheck"
+                android:layout_marginLeft="8dp">
+
+                <android.support.design.widget.TextInputEditText
+                    android:id="@+id/paymentAmountEntryText"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:hint="Payment Amount..."
+                    android:textColorHint="#88ffffff"
+                    android:inputType="text|textCapWords"
+                    android:maxLines="1"
+                    android:textColor="#fff"/>
+            </android.support.design.widget.TextInputLayout>
+
+
+            <CheckBox
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/editDateCheck"
+                app:layout_constraintLeft_toLeftOf="parent"
+                android:layout_marginLeft="8dp"
+                app:layout_constraintBottom_toBottomOf="@+id/paymentDateEntry"
+                android:layout_marginBottom="8dp"
+                app:layout_constraintTop_toBottomOf="@+id/paymentAmountEntry" />
+
+            <android.support.design.widget.TextInputLayout
+                android:id="@+id/paymentDateEntry"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                app:layout_constraintLeft_toRightOf="@+id/editDateCheck"
+                app:layout_constraintRight_toRightOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/paymentAmountEntry"
+                android:layout_marginEnd="16dp"
+                android:layout_marginLeft="16dp"
+                android:layout_marginRight="16dp"
+                android:layout_marginStart="16dp"
+                app:hintAnimationEnabled="true"
+                app:hintEnabled="true"
+                app:errorEnabled="true">
+
+                <android.support.design.widget.TextInputEditText
+                    android:id="@+id/paymentDateEntryText"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:hint="Payment date (DD-MM-YYYY)*"
+                    android:inputType="date"
+                    android:textColorHint="#88ffffff"
+                    android:focusable="false"/>
+
+            </android.support.design.widget.TextInputLayout>
+        </android.support.constraint.ConstraintLayout>
+    </ScrollView>
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:background="#555"
+        android:layout_gravity="bottom"
+        android:id="@+id/relativeLayout"
+        app:layout_dodgeInsetEdges="bottom">
+
+        <Button
+            android:id="@+id/submitBill"
+            style="@style/Widget.AppCompat.Button.Borderless"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentStart="true"
+            android:layout_alignParentTop="true"
+            android:text="Submit" />
+    </RelativeLayout>
+</android.support.design.widget.CoordinatorLayout>

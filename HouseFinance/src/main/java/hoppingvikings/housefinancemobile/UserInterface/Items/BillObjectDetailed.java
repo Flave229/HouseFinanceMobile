@@ -20,6 +20,7 @@ public class BillObjectDetailed {
     public String name = "";
     public String dateDue = "";
     public double amountDue = 0.0;
+    public double amountTotal = 0.0;
     public double amountPaid = 0.0;
     public ArrayList<BillObjectDetailedPayments> paymentDetails = new ArrayList<>();
     private SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd", Locale.UK);
@@ -30,13 +31,15 @@ public class BillObjectDetailed {
             id = details.getString("id");
             name = details.getString("name");
             dateDue = dateFormat.format(dateFormat.parse(details.getString("fullDateDue")));
-            amountDue = details.getDouble("amountDue");
             amountPaid = details.getDouble("amountPaid");
+            //amountTotal = details.getDouble("totalAmount");
+            amountDue = details.getDouble("amountDue");
+            //amountDue = (amountTotal - amountPaid);
             if(payments.length() > 0)
             {
                 for(int i = 0; i < payments.length(); i++)
                 {
-                    paymentDetails.add(new BillObjectDetailedPayments(payments.getJSONObject(i)));
+                    paymentDetails.add(new BillObjectDetailedPayments(payments.getJSONObject(i), id));
                 }
             }
         } catch (JSONException e)

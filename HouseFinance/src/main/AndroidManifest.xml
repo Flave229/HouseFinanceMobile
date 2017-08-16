@@ -49,6 +49,9 @@
 
         <activity android:name=".UserInterface.EditShoppingItemActivity"
             android:label="Edit Shopping Item"/>
+
+        <activity android:name=".UserInterface.EditPaymentActivity"
+            android:label="Edit Payment"/>
     </application>
 
 </manifest>

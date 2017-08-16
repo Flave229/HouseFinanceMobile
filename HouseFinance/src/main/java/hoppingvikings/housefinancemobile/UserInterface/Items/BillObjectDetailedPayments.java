@@ -10,15 +10,17 @@ import java.util.Date;
  */
 
 public class BillObjectDetailedPayments {
-    public String ID = "";
+    public String BillID = "";
+    public String PaymentID = "";
     public String personName = "";
     public String Date = "";
     public double AmountPaid = 0.0;
 
-    public BillObjectDetailedPayments(JSONObject paymentObject)
+    public BillObjectDetailedPayments(JSONObject paymentObject, String billID)
     {
         try {
-            ID = paymentObject.getString("id");
+            BillID = billID;
+            PaymentID = paymentObject.getString("id");
             personName = paymentObject.getString("personName");
             Date = paymentObject.getString("datePaid");
             AmountPaid = paymentObject.getDouble("amountPaid");

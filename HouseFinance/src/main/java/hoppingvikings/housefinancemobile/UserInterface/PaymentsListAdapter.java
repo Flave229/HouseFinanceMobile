@@ -1,20 +1,22 @@
 package hoppingvikings.housefinancemobile.UserInterface;
 
 import android.content.Context;
-import android.provider.ContactsContract;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageButton;
 import android.widget.TextView;
+import android.widget.Toast;
+
+import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.Locale;
 
+import hoppingvikings.housefinancemobile.GlobalObjects;
 import hoppingvikings.housefinancemobile.R;
 import hoppingvikings.housefinancemobile.UserInterface.Items.BillObjectDetailedPayments;
-import hoppingvikings.housefinancemobile.UserInterface.Lists.ShoppingCartList.ShoppingCartAdapter;
 import hoppingvikings.housefinancemobile.WebService.DeleteItemCallback;
 import hoppingvikings.housefinancemobile.WebService.UploadCallback;
 
@@ -24,6 +26,19 @@ import hoppingvikings.housefinancemobile.WebService.UploadCallback;
 
 public class PaymentsListAdapter extends RecyclerView.Adapter<PaymentsListAdapter.CardViewHolder>
         implements DeleteItemCallback, UploadCallback {
+
+    public interface DeleteCallback
+    {
+        void onItemDeleted();
+    }
+
+    private static PaymentsListAdapter.DeleteCallback _deletecallback;
+    private static PaymentsListAdapter.EditPressedCallback _editCallback;
+
+    public interface EditPressedCallback
+    {
+        void onEditPressed(BillObjectDetailedPayments item);
+    }
 
     public static class CardViewHolder extends RecyclerView.ViewHolder
     {
@@ -49,6 +64,13 @@ public class PaymentsListAdapter extends RecyclerView.Adapter<PaymentsListAdapte
     ArrayList<BillObjectDetailedPayments> _payments = new ArrayList<>();
     Context _context;
 
+    public void SetDeleteCallback(DeleteCallback owner)
+    {
+        _deletecallback = owner;
+    }
+    public void SetEditPressedCallback(EditPressedCallback owner)
+    {_editCallback = owner;}
+
     public PaymentsListAdapter(ArrayList<BillObjectDetailedPayments> payments, Context context)
     {
         _payments.addAll(payments);
@@ -68,20 +90,28 @@ public class PaymentsListAdapter extends RecyclerView.Adapter<PaymentsListAdapte
 
     @Override
     public void onBindViewHolder(CardViewHolder holder, int position) {
-        BillObjectDetailedPayments item = _payments.get(position);
+        final BillObjectDetailedPayments item = _payments.get(position);
         holder.paymentName.setText(item.personName);
         holder.paymentDate.setText("Date: " + item.Date);
         holder.paymentAmount.setText("Paid: £" + String.format(Locale.getDefault(), "%.2f", item.AmountPaid));
         holder.editPayment.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
+                _editCallback.onEditPressed(item);
             }
         });
         holder.deletePayment.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                try {
+                    JSONObject paymentToDelete = new JSONObject();
+                    paymentToDelete.put("BillId", item.BillID);
+                    paymentToDelete.put("PaymentId", item.PaymentID);
+                    GlobalObjects.webHandler.DeleteItem(_context, PaymentsListAdapter.this, paymentToDelete, GlobalObjects.ITEM_TYPE_BILLPAYMENT);
+                } catch (Exception e)
+                {
 
+                }
             }
         });
     }
@@ -99,12 +129,12 @@ public class PaymentsListAdapter extends RecyclerView.Adapter<PaymentsListAdapte
 
     @Override
     public void OnSuccessfulDelete() {
-
+        _deletecallback.onItemDeleted();
     }
 
     @Override
     public void OnFailedDelete(String err) {
-
+        Toast.makeText(_context, "Failed to delete payment", Toast.LENGTH_SHORT).show();
     }
 
     public void AddPaymentsToList(ArrayList<BillObjectDetailedPayments> newPayments)

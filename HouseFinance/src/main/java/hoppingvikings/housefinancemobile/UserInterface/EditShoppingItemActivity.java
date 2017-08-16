@@ -198,7 +198,7 @@ public class EditShoppingItemActivity extends AppCompatActivity implements Uploa
                         editedBill.put("ItemFor", people);
                     }
 
-                    GlobalObjects.webHandler.EditShoppingItem(EditShoppingItemActivity.this, editedBill, EditShoppingItemActivity.this);
+                    GlobalObjects.webHandler.EditItem(EditShoppingItemActivity.this, editedBill, EditShoppingItemActivity.this, GlobalObjects.ITEM_TYPE_SHOPPING);
 
                 } catch (Exception e)
                 {

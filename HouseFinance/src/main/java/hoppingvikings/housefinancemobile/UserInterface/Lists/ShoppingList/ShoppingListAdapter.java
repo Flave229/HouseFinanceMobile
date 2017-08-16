@@ -228,7 +228,7 @@ public class ShoppingListAdapter extends RecyclerView.Adapter<ShoppingListAdapte
                             try {
                                 editeditem.put("id", _shoppingItems.get(cvh.getAdapterPosition()).ID);
                                 editeditem.put("purchased", !_shoppingItems.get(cvh.getAdapterPosition()).done);
-                                GlobalObjects.webHandler.EditShoppingItem(_context, editeditem, ShoppingListAdapter.this);
+                                GlobalObjects.webHandler.EditItem(_context, editeditem, ShoppingListAdapter.this, GlobalObjects.ITEM_TYPE_SHOPPING);
                             } catch (Exception e)
                             {
                                 OnFailedUpload("");

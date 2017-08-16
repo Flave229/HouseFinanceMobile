@@ -21,6 +21,7 @@ public class BillListObject {
     public String billName = "";
     public String billDate = "";
     public String billAmount = "";
+    public String billAmountPaid = "";
     public String billTotalAmount = "";
     public ArrayList<BillListObjectPeople> people = null;
     public boolean paid = false;
@@ -36,10 +37,21 @@ public class BillListObject {
             billDate = dateFormat.format(dateFormat.parse(jsonObject.getString("fullDateDue")));
 
             // todo Add amountPaid field and make billAmount equal (totalAmount - amountPaid)
+            //billAmountPaid = jsonObject.getString("amountPaid");
             billAmount = jsonObject.getString("amountDue");
             billTotalAmount = jsonObject.getString("totalAmount");
-            paid = jsonObject.getBoolean("paid");
-            overdue = jsonObject.getBoolean("overdue");
+            //billAmount = String.valueOf((Double.valueOf(billTotalAmount) - Double.valueOf(billAmountPaid)));
+
+            if(Double.valueOf(billAmount) == 0)
+            {
+                paid = true;
+            }
+
+            if(new Date().after(dateFormat.parse(billDate)))
+            {
+                overdue = true;
+            }
+
             people = new ArrayList<>();
             for (JSONObject person: peopleObjects) {
                 people.add(new BillListObjectPeople(person, ID));
