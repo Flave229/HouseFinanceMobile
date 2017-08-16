@@ -138,9 +138,9 @@ public class EditBillDetailsActivity extends AppCompatActivity implements Upload
 
         if(bill != null)
         {
-            billNameEntryText.setText(bill.cardName);
-            billAmountEntryText.setText(bill.cardAmount);
-            billDueDateEntryText.setText(bill.cardDesc);
+            billNameEntryText.setText(bill.billName);
+            billAmountEntryText.setText(bill.billAmount);
+            billDueDateEntryText.setText(bill.billDate);
             /*for (BillListObjectPeople person : bill.people) {
                 switch (person.ID)
                 {
@@ -238,7 +238,7 @@ public class EditBillDetailsActivity extends AppCompatActivity implements Upload
                     billNameEntryText.setEnabled(false);
 
                     if(bill != null)
-                        billNameEntryText.setText(bill.cardName);
+                        billNameEntryText.setText(bill.billName);
                 }
             }
         });
@@ -257,7 +257,7 @@ public class EditBillDetailsActivity extends AppCompatActivity implements Upload
                     billAmountEntry.setEnabled(false);
                     billAmountEntryText.setEnabled(false);
                     if(bill != null)
-                        billAmountEntryText.setText(bill.cardAmount);
+                        billAmountEntryText.setText(bill.billAmount);
                 }
             }
         });
@@ -275,7 +275,7 @@ public class EditBillDetailsActivity extends AppCompatActivity implements Upload
                     billDueDateEntry.setEnabled(false);
                     billDueDateEntryText.setEnabled(false);
                     if(bill != null)
-                        billDueDateEntryText.setText(bill.cardDesc);
+                        billDueDateEntryText.setText(bill.billDate);
                 }
             }
         });

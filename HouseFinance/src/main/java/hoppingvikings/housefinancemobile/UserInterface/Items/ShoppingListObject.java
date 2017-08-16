@@ -1,10 +1,15 @@
 package hoppingvikings.housefinancemobile.UserInterface.Items;
 
+import android.util.Log;
+
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Locale;
 
 /**
  * Created by Josh on 06/11/2016.
@@ -21,6 +26,7 @@ public class ShoppingListObject {
     public String addedForImage3 = "";
 
     public boolean itemExpanded = false;
+    private SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd", Locale.UK);
 
     public ShoppingListObject(JSONObject object, JSONArray addedForImages)
     {
@@ -28,7 +34,7 @@ public class ShoppingListObject {
         {
             ID = object.getString("id");
             itemName = object.getString("name");
-            addedDate = object.getString("addedOn");
+            addedDate = dateFormat.format(dateFormat.parse(object.getString("fullAddedOn")));;
             addedBy = object.getString("addedByImage");
             done = object.getBoolean("purchased");
 
@@ -56,6 +62,10 @@ public class ShoppingListObject {
         }catch (JSONException e)
         {
 
+        }
+        catch (ParseException e)
+        {
+            Log.i("Info: ", "Failed to parse date " + e.getMessage());
         }
     }
 }

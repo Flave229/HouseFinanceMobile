@@ -105,24 +105,24 @@ public class BillListAdapter extends RecyclerView.Adapter<BillListAdapter.CardVi
     @Override
     public void onBindViewHolder(CardViewHolder cvh, int i)
     {
-        cvh.cardName.setText(_cards.get(i).cardName);
+        cvh.cardName.setText(_cards.get(i).billName);
 
         if(_cards.get(i).paid)
         {
             cvh.cardObject.setBackgroundResource(R.color.bill_paid);
             cvh.cardAmount.setText("PAID");
-            cvh.cardDate.setText(_cards.get(i).cardDesc);
+            cvh.cardDate.setText(_cards.get(i).billDate);
         }
         else if(_cards.get(i).overdue)
         {
             cvh.cardObject.setBackgroundResource(R.color.bill_overdue);
-            cvh.cardDate.setText(_cards.get(i).cardDesc + " OVERDUE");
-            cvh.cardAmount.setText("£" + String.format(Locale.getDefault(), "%.2f", Double.valueOf(_cards.get(i).cardAmount)));
+            cvh.cardDate.setText(_cards.get(i).billDate + " OVERDUE");
+            cvh.cardAmount.setText("£" + String.format(Locale.getDefault(), "%.2f", Double.valueOf(_cards.get(i).billAmount)));
         }
         else
         {
-            cvh.cardDate.setText(_cards.get(i).cardDesc);
-            cvh.cardAmount.setText("£" + String.format(Locale.getDefault(), "%.2f", Double.valueOf(_cards.get(i).cardAmount)));
+            cvh.cardDate.setText(_cards.get(i).billDate);
+            cvh.cardAmount.setText("£" + String.format(Locale.getDefault(), "%.2f", Double.valueOf(_cards.get(i).billAmount)));
             cvh.cardObject.setBackgroundColor(Color.WHITE);
         }
 
