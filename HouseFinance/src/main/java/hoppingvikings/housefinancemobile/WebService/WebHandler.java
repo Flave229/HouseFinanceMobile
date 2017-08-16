@@ -50,7 +50,7 @@ public class WebHandler {
         if(networkInfo != null && networkInfo.isConnected())
         {
             //Toast.makeText(getBaseContext(), "Obtaining list of bills", Toast.LENGTH_LONG).show();
-            new DownloadJsonString().execute(GlobalObjects.WEB_API_URL + "Bills/", "Bills");
+            new DownloadJsonString().execute(GlobalObjects.WEB_APIV2_URL + "Bills/", "Bills");
         }
         else
         {
@@ -68,7 +68,7 @@ public class WebHandler {
 
         if(networkInfo != null && networkInfo.isConnected())
         {
-            new DownloadJsonString().execute(GlobalObjects.WEB_API_URL + "Bills/", "BillDetails", billID);
+            new DownloadJsonString().execute(GlobalObjects.WEB_APIV2_URL + "Bills/", "BillDetails", billID);
         }
         else
         {
@@ -145,7 +145,7 @@ public class WebHandler {
 
         if(networkInfo!= null && networkInfo.isConnected())
         {
-            new UploadBillJson().execute(newBillString, GlobalObjects.WEB_API_URL + "Bills/Add");
+            new UploadBillJson().execute(newBillString, GlobalObjects.WEB_APIV2_URL + "Bills/Add");
         }
         else
         {

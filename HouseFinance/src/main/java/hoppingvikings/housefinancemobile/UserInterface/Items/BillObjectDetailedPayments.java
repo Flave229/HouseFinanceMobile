@@ -25,8 +25,8 @@ public class BillObjectDetailedPayments {
             BillID = billID;
             PaymentID = paymentObject.getString("id");
             personName = paymentObject.getString("personName");
-            Date = paymentObject.getString("datePaid");
-            AmountPaid = paymentObject.getDouble("amountPaid");
+            Date = dateFormat.format(dateFormat.parse(paymentObject.getString("datePaid")));
+            AmountPaid = paymentObject.getDouble("amount");
         } catch (Exception e)
         {
 

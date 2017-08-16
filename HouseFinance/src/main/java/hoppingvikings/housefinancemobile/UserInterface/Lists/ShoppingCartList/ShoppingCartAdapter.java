@@ -132,7 +132,7 @@ public class ShoppingCartAdapter extends RecyclerView.Adapter<ShoppingCartAdapte
         }
 
         String addedForString = "";
-        for (String personname:_items.get(position).people) {
+        for (int personname:_items.get(position).people) {
             switch (personname)
             {
                 case GlobalObjects.USERGUID_DAVE:

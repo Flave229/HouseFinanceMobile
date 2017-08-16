@@ -179,7 +179,7 @@ public class AddNewBillActivity extends AppCompatActivity implements UploadCallb
 
                         try {
                             newBill.put("Name", billName);
-                            newBill.put("AmountOwed", billAmount.doubleValue());
+                            newBill.put("TotalAmount", billAmount.doubleValue());
                             newBill.put("Due", new SimpleDateFormat("yyyy-MM-dd").format(billDueDate));
 
                             JSONArray people = new JSONArray();
@@ -210,7 +210,7 @@ public class AddNewBillActivity extends AppCompatActivity implements UploadCallb
                         people.put(vikki);
                         people.put(josh);*/
 
-                            newBill.put("People", people);
+                            newBill.put("PeopleIds", people);
 
                             if(recurring)
                                 newBill.put("RecurringType", 1);

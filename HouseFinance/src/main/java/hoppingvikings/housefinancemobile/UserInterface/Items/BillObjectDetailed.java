@@ -32,9 +32,9 @@ public class BillObjectDetailed {
             name = details.getString("name");
             dateDue = dateFormat.format(dateFormat.parse(details.getString("fullDateDue")));
             amountPaid = details.getDouble("amountPaid");
-            //amountTotal = details.getDouble("totalAmount");
-            amountDue = details.getDouble("amountDue");
-            //amountDue = (amountTotal - amountPaid);
+            amountTotal = details.getDouble("totalAmount");
+           // amountDue = details.getDouble("amountDue");
+            amountDue = (amountTotal - amountPaid);
             if(payments.length() > 0)
             {
                 for(int i = 0; i < payments.length(); i++)
