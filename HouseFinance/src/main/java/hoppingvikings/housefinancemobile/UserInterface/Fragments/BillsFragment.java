@@ -193,16 +193,7 @@ public class BillsFragment extends Fragment implements DownloadCallback {
     @Override
     public void OnFailedDownload(String failReason) {
         _handler.removeCallbacksAndMessages(null);
-        if(!failReason.equals("No internet connection"))
-        {
-            Snackbar.make(activity._layout, failReason + ". Retrying...", Snackbar.LENGTH_LONG).show();
-           // _handler.postDelayed(contactWebsite, 500);
-            swipeRefreshLayout.setRefreshing(false);
-        }
-        else
-        {
-            Snackbar.make(activity._layout, failReason, Snackbar.LENGTH_LONG).show();
-            swipeRefreshLayout.setRefreshing(false);
-        }
+        Snackbar.make(activity._layout, failReason, Snackbar.LENGTH_LONG).show();
+        swipeRefreshLayout.setRefreshing(false);
     }
 }
