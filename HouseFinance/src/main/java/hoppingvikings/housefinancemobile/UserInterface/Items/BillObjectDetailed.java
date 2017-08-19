@@ -16,7 +16,7 @@ import java.util.Locale;
  */
 
 public class BillObjectDetailed {
-    public String id = "";
+    public int id = 0;
     public String name = "";
     public String dateDue = "";
     public double amountDue = 0.0;
@@ -28,7 +28,7 @@ public class BillObjectDetailed {
     public BillObjectDetailed(JSONObject details, JSONArray payments)
     {
         try {
-            id = details.getString("id");
+            id = details.getInt("id");
             name = details.getString("name");
             dateDue = dateFormat.format(dateFormat.parse(details.getString("fullDateDue")));
             amountPaid = details.getDouble("amountPaid");

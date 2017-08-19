@@ -12,14 +12,14 @@ import java.util.Locale;
  */
 
 public class BillObjectDetailedPayments {
-    public String BillID = "";
+    public int BillID = 0;
     public String PaymentID = "";
     public String personName = "";
     public String Date = "";
     public double AmountPaid = 0.0;
     private SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd", Locale.UK);
 
-    public BillObjectDetailedPayments(JSONObject paymentObject, String billID)
+    public BillObjectDetailedPayments(JSONObject paymentObject, int billID)
     {
         try {
             BillID = billID;

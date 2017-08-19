@@ -6,7 +6,9 @@ import android.graphics.Color;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.annotation.Nullable;
+import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.FloatingActionButton;
+import android.support.design.widget.Snackbar;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
@@ -54,7 +56,7 @@ public class ViewBillDetailsActivity extends AppCompatActivity
 
     Handler _handler;
 
-    String billID = "";
+    int billID = 0;
 
     RecyclerView paymentsList;
     PaymentsListAdapter adapter;
@@ -63,6 +65,7 @@ public class ViewBillDetailsActivity extends AppCompatActivity
     FloatingActionButton addPayment;
 
     boolean somethingChanged = false;
+    CoordinatorLayout layout;
 
     BillObjectDetailed _currentBill = null;
     private Runnable contactWebsite = new Runnable() {
@@ -92,6 +95,7 @@ public class ViewBillDetailsActivity extends AppCompatActivity
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_view_bill);
 
+        layout = (CoordinatorLayout) findViewById(R.id.viewBillLayout);
         billAmountText = (TextView) findViewById(R.id.billAmount);
         totalPaidText = (TextView) findViewById(R.id.totalPaid);
         dueDateText = (TextView) findViewById(R.id.billDueDate);
@@ -114,7 +118,7 @@ public class ViewBillDetailsActivity extends AppCompatActivity
             public void onClick(View v) {
                 BillListObject bill = GlobalObjects.GetBillFromID(_currentBill.id);
                 Intent i = new Intent(ViewBillDetailsActivity.this, AddPaymentActivity.class);
-                i.putExtra("bill_id", billID);
+                i.putExtra("bill_id", _currentBill.id);
                 i.putExtra("bill_name", _currentBill.name);
                 double suggestedamount;
                 if(bill.people.size() > 1)
@@ -134,7 +138,7 @@ public class ViewBillDetailsActivity extends AppCompatActivity
         {
             if(getIntent().hasExtra("bill_id"))
             {
-                billID = getIntent().getStringExtra("bill_id");
+                billID = getIntent().getIntExtra("bill_id", -1);
             }
         }
 
@@ -214,7 +218,7 @@ public class ViewBillDetailsActivity extends AppCompatActivity
 
             case R.id.editBill:
                 Intent editBillIntent = new Intent(ViewBillDetailsActivity.this, EditBillDetailsActivity.class);
-                editBillIntent.putExtra("bill_id", billID);
+                editBillIntent.putExtra("bill_id", _currentBill.id);
                 startActivityForResult(editBillIntent, 10);
                 return true;
 
@@ -263,7 +267,7 @@ public class ViewBillDetailsActivity extends AppCompatActivity
 
     @Override
     public void OnDownloadFailed(String err) {
-        Toast.makeText(getApplicationContext(), err, Toast.LENGTH_SHORT).show();
+        Snackbar.make(layout, err, Snackbar.LENGTH_SHORT).show();
         billAmountText.setText("N/A");
         totalPaidText.setText("N/A");
         dueDateText.setText("N/A");
@@ -313,7 +317,8 @@ public class ViewBillDetailsActivity extends AppCompatActivity
 
     @Override
     public void OnFailedDelete(String err) {
-        Toast.makeText(getApplicationContext(), err, Toast.LENGTH_SHORT).show();
+        addPayment.show();
+        Snackbar.make(layout, err, Snackbar.LENGTH_SHORT).show();
     }
 
     @Override

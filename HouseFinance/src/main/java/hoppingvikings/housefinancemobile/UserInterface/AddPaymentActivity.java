@@ -58,7 +58,7 @@ public class AddPaymentActivity extends AppCompatActivity implements UploadCallb
     Number paymentAmount;
     Date paymentDate;
 
-    String billid;
+    int billid;
     String suggestedPayment;
 
     boolean forDavid;
@@ -78,7 +78,7 @@ public class AddPaymentActivity extends AppCompatActivity implements UploadCallb
 
         if(i.hasExtra("bill_id"))
         {
-            billid = i.getStringExtra("bill_id");
+            billid = i.getIntExtra("bill_id", -1);
         }
 
         if(i.hasExtra("suggested_amount"))
@@ -211,11 +211,11 @@ public class AddPaymentActivity extends AppCompatActivity implements UploadCallb
                             newPayment.put("Created", new SimpleDateFormat("yyyy-MM-dd").format(paymentDate));
 
                             if(forDavid)
-                                newPayment.put("PersonId", "e9636bbb-8b54-49b9-9fa2-9477c303032f");
+                                newPayment.put("PersonId", GlobalObjects.USERGUID_DAVE);
                             else if(forJosh)
-                                newPayment.put("PersonId", "f97a50c9-8451-4537-bccb-e89ba5ade95a");
+                                newPayment.put("PersonId", GlobalObjects.USERGUID_JOSH);
 
-                            GlobalObjects.webHandler.UploadNewPayment(getApplicationContext(), newPayment, billid, AddPaymentActivity.this);
+                            GlobalObjects.webHandler.UploadNewPayment(getApplicationContext(), newPayment, AddPaymentActivity.this);
                         } catch (Exception e)
                         {
                             Snackbar.make(layout, "Failed to create Json", Snackbar.LENGTH_LONG).show();

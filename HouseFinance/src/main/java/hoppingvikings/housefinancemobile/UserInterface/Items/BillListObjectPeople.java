@@ -8,13 +8,13 @@ import org.json.JSONObject;
  */
 
 public class BillListObjectPeople {
-    public String ID = "";
+    public int billID = 0;
     public String URL = "";
     public boolean Paid = false;
 
-    public BillListObjectPeople(JSONObject peopleObject, String id)
+    public BillListObjectPeople(JSONObject peopleObject, int id)
     {
-        ID = id;
+        billID = id;
         try {
             URL = peopleObject.getString("imageLink");
             Paid = peopleObject.getBoolean("paid");

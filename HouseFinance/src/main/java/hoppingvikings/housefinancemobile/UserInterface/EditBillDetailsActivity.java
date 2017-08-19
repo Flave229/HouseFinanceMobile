@@ -86,7 +86,7 @@ public class EditBillDetailsActivity extends AppCompatActivity implements Upload
 
         if(getIntent() != null && getIntent().hasExtra("bill_id"))
         {
-            bill = GlobalObjects.GetBillFromID(getIntent().getStringExtra("bill_id"));
+            bill = GlobalObjects.GetBillFromID(getIntent().getIntExtra("bill_id", -1));
         }
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.appToolbar);
@@ -341,7 +341,7 @@ public class EditBillDetailsActivity extends AppCompatActivity implements Upload
                         editedBill.put("Name", billNameEntryText.getText().toString());
 
                     if(editAmount.isChecked())
-                        editedBill.put("AmountOwed", Double.valueOf(billAmountEntryText.getText().toString()));
+                        editedBill.put("TotalAmount", Double.valueOf(billAmountEntryText.getText().toString()));
 
                     if(editDate.isChecked())
                     {
@@ -358,7 +358,7 @@ public class EditBillDetailsActivity extends AppCompatActivity implements Upload
                         if(joshCheck.isChecked())
                             people.put(GlobalObjects.USERGUID_JOSH);
 
-                        editedBill.put("People", people);
+                        editedBill.put("PeopleIds", people);
                     }
 
                     if(editType.isChecked())

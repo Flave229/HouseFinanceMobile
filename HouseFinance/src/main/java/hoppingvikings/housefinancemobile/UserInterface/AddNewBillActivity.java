@@ -193,23 +193,6 @@ public class AddNewBillActivity extends AppCompatActivity implements UploadCallb
                             if(forJosh)
                                 people.put(GlobalObjects.USERGUID_JOSH);
 
-                        /*JSONObject david = new JSONObject();
-                        JSONObject vikki = new JSONObject();
-                        JSONObject josh = new JSONObject();
-
-                        david.put("Id","");
-                        david.put("ForDavid", forDavid);
-
-                        vikki.put("Id", "");
-                        vikki.put("ForVikki", forVikki);
-
-                        josh.put("Id", "");
-                        josh.put("ForJosh", forJosh);
-
-                        people.put(david);
-                        people.put(vikki);
-                        people.put(josh);*/
-
                             newBill.put("PeopleIds", people);
 
                             if(recurring)

@@ -59,7 +59,7 @@ public class WebHandler {
         }
     }
 
-    public void RequestBillDetails(Context context, DownloadDetailsCallback owner, String billID)
+    public void RequestBillDetails(Context context, DownloadDetailsCallback owner, int billID)
     {
         _billDetailsOwner = owner;
         GlobalObjects.downloading = true;
@@ -68,7 +68,7 @@ public class WebHandler {
 
         if(networkInfo != null && networkInfo.isConnected())
         {
-            new DownloadJsonString().execute(GlobalObjects.WEB_APIV2_URL + "Bills/", "BillDetails", billID);
+            new DownloadJsonString().execute(GlobalObjects.WEB_APIV2_URL + "Bills/", "BillDetails", String.valueOf(billID));
         }
         else
         {
@@ -89,7 +89,7 @@ public class WebHandler {
             switch (itemtype)
             {
                 case GlobalObjects.ITEM_TYPE_BILL:
-                    new DeleteItem().execute(GlobalObjects.WEB_API_URL + "Bills/Delete", itemjson.toString());
+                    new DeleteItem().execute(GlobalObjects.WEB_APIV2_URL + "Bills/Delete", itemjson.toString());
                     break;
 
                 case GlobalObjects.ITEM_TYPE_SHOPPING:
@@ -97,7 +97,7 @@ public class WebHandler {
                     break;
 
                 case GlobalObjects.ITEM_TYPE_BILLPAYMENT:
-                    new DeleteItem().execute(GlobalObjects.WEB_API_URL + "Bills/Payments", itemjson.toString());
+                    new DeleteItem().execute(GlobalObjects.WEB_APIV2_URL + "Bills/Payments", itemjson.toString());
                     break;
 
                 default:
@@ -114,7 +114,7 @@ public class WebHandler {
         }
     }
 
-    public void UploadNewPayment(Context context, JSONObject newPayment, String billid, UploadCallback owner)
+    public void UploadNewPayment(Context context, JSONObject newPayment, UploadCallback owner)
     {
         _uploadOwner = owner;
         String newPaymentString = newPayment.toString();
@@ -125,7 +125,7 @@ public class WebHandler {
 
         if(networkInfo!= null && networkInfo.isConnected())
         {
-            new UploadPaymentJson().execute(newPaymentString, GlobalObjects.WEB_API_URL + "Bills/Payments");
+            new UploadPaymentJson().execute(newPaymentString, GlobalObjects.WEB_APIV2_URL + "Bills/Payments");
         }
         else
         {
@@ -187,7 +187,7 @@ public class WebHandler {
             switch (itemType)
             {
                 case GlobalObjects.ITEM_TYPE_BILL:
-                    new EditItem().execute(GlobalObjects.WEB_API_URL + "Bills/Update", editedItemString);
+                    new EditItem().execute(GlobalObjects.WEB_APIV2_URL + "Bills/Update", editedItemString);
                     break;
 
                 case GlobalObjects.ITEM_TYPE_SHOPPING:
@@ -195,7 +195,7 @@ public class WebHandler {
                     break;
 
                 case GlobalObjects.ITEM_TYPE_BILLPAYMENT:
-                    new EditItem().execute(GlobalObjects.WEB_API_URL + "Bills/Payments", editedItemString);
+                    new EditItem().execute(GlobalObjects.WEB_APIV2_URL + "Bills/Payments", editedItemString);
                     break;
 
                 default:

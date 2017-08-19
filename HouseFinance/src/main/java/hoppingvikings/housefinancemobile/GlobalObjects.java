@@ -60,10 +60,10 @@ public class GlobalObjects{
         return _bills;
     }
 
-    public static BillListObject GetBillFromID(String id)
+    public static BillListObject GetBillFromID(int id)
     {
         for (BillListObject bill: _bills) {
-            if(id.equals(bill.ID))
+            if(id == bill.ID)
             {
                 return bill;
             }
@@ -77,10 +77,10 @@ public class GlobalObjects{
         _billsPeople.addAll(people);
     }
 
-    public static BillListObjectPeople GetPersonFromID(String id)
+    public static BillListObjectPeople GetPersonFromID(int id)
     {
         for (BillListObjectPeople person:_billsPeople) {
-            if(id.equals(person.ID))
+            if(id == person.billID)
             {
                 return person;
             }

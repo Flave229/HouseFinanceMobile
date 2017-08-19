@@ -17,7 +17,7 @@ import java.util.Locale;
  * Created by Josh on 17/09/2016.
  */
 public class BillListObject {
-    public String ID = "";
+    public int ID = 0;
     public String billName = "";
     public String billDate = "";
     public String billAmount = "";
@@ -32,7 +32,7 @@ public class BillListObject {
     {
         // Base Initialiser
         try {
-            ID = jsonObject.getString("id");
+            ID = jsonObject.getInt("id");
             billName = jsonObject.getString("name");
             billDate = dateFormat.format(dateFormat.parse(jsonObject.getString("fullDateDue")));
 

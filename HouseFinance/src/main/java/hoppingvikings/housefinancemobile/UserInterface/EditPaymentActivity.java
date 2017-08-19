@@ -207,7 +207,7 @@ public class EditPaymentActivity extends AppCompatActivity implements UploadCall
                 confirmcancel.dismiss();
                 JSONObject editedPayment = new JSONObject();
                 try {
-                    editedPayment.put("PaymentId", paymentID);
+                    editedPayment.put("Id", paymentID);
 
                     if(editAmount.isChecked())
                         editedPayment.put("Amount", Double.valueOf(paymentAmountEntryText.getText().toString()));
