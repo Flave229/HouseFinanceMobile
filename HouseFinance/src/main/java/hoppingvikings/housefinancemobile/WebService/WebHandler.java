@@ -38,9 +38,14 @@ public class WebHandler {
     DownloadCallback _shoppingListOwner;
     DeleteItemCallback _itemDeleteOwner;
     UploadCallback _uploadOwner;
-    String authToken = "Token D2DB7539-634F-47C4-818D-59AD03C592E3";
+    String authToken = "";
     private boolean debugging = false;
 
+
+    public void SetAuthToken(Context context)
+    {
+        authToken = GlobalObjects.SetAuthToken(context);
+    }
 
     public void contactWebsiteBills(Context context, DownloadCallback owner)
     {
@@ -98,7 +103,7 @@ public class WebHandler {
                     break;
 
                 case GlobalObjects.ITEM_TYPE_SHOPPING:
-                    new DeleteItem().execute(GlobalObjects.WEB_API_URL + "Shopping/", itemjson.toString());
+                    new DeleteItem().execute(GlobalObjects.WEB_APIV2_URL + "Shopping/", itemjson.toString());
                     break;
 
                 case GlobalObjects.ITEM_TYPE_BILLPAYMENT:
@@ -138,7 +143,7 @@ public class WebHandler {
                     break;
 
                 case GlobalObjects.ITEM_TYPE_SHOPPING:
-                    new UploadItem().execute(newItemString, GlobalObjects.WEB_API_URL + "Shopping/");
+                    new UploadItem().execute(newItemString, GlobalObjects.WEB_APIV2_URL + "Shopping/");
                     break;
 
                 case GlobalObjects.ITEM_TYPE_BILLPAYMENT:
@@ -176,7 +181,7 @@ public class WebHandler {
                     break;
 
                 case GlobalObjects.ITEM_TYPE_SHOPPING:
-                    new EditItem().execute(GlobalObjects.WEB_API_URL + "Shopping/", editedItemString);
+                    new EditItem().execute(GlobalObjects.WEB_APIV2_URL + "Shopping/", editedItemString);
                     break;
 
                 case GlobalObjects.ITEM_TYPE_BILLPAYMENT:
@@ -206,7 +211,7 @@ public class WebHandler {
         if(networkInfo != null && networkInfo.isConnected())
         {
             //Toast.makeText(getBaseContext(), "Obtaining list of bills", Toast.LENGTH_LONG).show();
-            new DownloadJsonString().execute(GlobalObjects.WEB_API_URL + "Shopping/", "Shopping");
+            new DownloadJsonString().execute(GlobalObjects.WEB_APIV2_URL + "Shopping/", "Shopping");
         }
         else
         {

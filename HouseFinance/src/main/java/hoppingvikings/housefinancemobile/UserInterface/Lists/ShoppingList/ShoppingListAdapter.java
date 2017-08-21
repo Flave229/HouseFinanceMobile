@@ -55,7 +55,7 @@ public class ShoppingListAdapter extends RecyclerView.Adapter<ShoppingListAdapte
 
     public interface EditPressedCallback
     {
-        void onEditPressed(String itemid);
+        void onEditPressed(int itemid);
     }
 
     public static class CardViewHolder extends RecyclerView.ViewHolder {
@@ -209,7 +209,7 @@ public class ShoppingListAdapter extends RecyclerView.Adapter<ShoppingListAdapte
                             Toast.makeText(_context, "Failed to delete item", Toast.LENGTH_SHORT).show();
                         }
                         NotificationManager man = (NotificationManager) _context.getSystemService(NOTIFICATION_SERVICE);
-                        man.cancel(cvh.getAdapterPosition());
+                        man.cancel(_shoppingItems.get(cvh.getAdapterPosition()).ID);
                         _shoppingItems.remove(cvh.getAdapterPosition());
                         notifyItemRemoved(cvh.getAdapterPosition());
                         notifyItemRangeChanged(cvh.getAdapterPosition(), _shoppingItems.size());
@@ -226,9 +226,11 @@ public class ShoppingListAdapter extends RecyclerView.Adapter<ShoppingListAdapte
                             selected = cvh.getAdapterPosition();
                             JSONObject editeditem = new JSONObject();
                             try {
-                                editeditem.put("id", _shoppingItems.get(cvh.getAdapterPosition()).ID);
-                                editeditem.put("purchased", !_shoppingItems.get(cvh.getAdapterPosition()).done);
+                                editeditem.put("Id", _shoppingItems.get(cvh.getAdapterPosition()).ID);
+                                editeditem.put("Purchased", !_shoppingItems.get(cvh.getAdapterPosition()).done);
                                 GlobalObjects.webHandler.EditItem(_context, editeditem, ShoppingListAdapter.this, GlobalObjects.ITEM_TYPE_SHOPPING);
+                                NotificationManager man = (NotificationManager) _context.getSystemService(NOTIFICATION_SERVICE);
+                                man.cancel(_shoppingItems.get(cvh.getAdapterPosition()).ID);
                             } catch (Exception e)
                             {
                                 OnFailedUpload("");
@@ -251,7 +253,7 @@ public class ShoppingListAdapter extends RecyclerView.Adapter<ShoppingListAdapte
                     cvh.notifyButton.setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View v) {
-                            GlobalObjects.ShowNotif(_context, "Don't forget to buy " + _shoppingItems.get(cvh.getAdapterPosition()).itemName + "!", "Reminder", cvh.getAdapterPosition());
+                            GlobalObjects.ShowNotif(_context, "Don't forget to buy " + _shoppingItems.get(cvh.getAdapterPosition()).itemName + "!", "Reminder", _shoppingItems.get(cvh.getAdapterPosition()).ID);
                         }
                     });
                 }
@@ -300,9 +302,6 @@ public class ShoppingListAdapter extends RecyclerView.Adapter<ShoppingListAdapte
         completeAlreadyPressed = false;
         _shoppingItems.get(selected).done = !_shoppingItems.get(selected).done;
         notifyItemChanged(selected);
-
-        NotificationManager man = (NotificationManager) _context.getSystemService(NOTIFICATION_SERVICE);
-        man.cancel(selected);
     }
 
     @Override

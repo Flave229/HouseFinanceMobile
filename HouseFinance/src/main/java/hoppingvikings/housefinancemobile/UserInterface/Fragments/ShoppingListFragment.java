@@ -97,7 +97,7 @@ public class ShoppingListFragment extends Fragment
     }
 
     @Override
-    public void onEditPressed(String itemid) {
+    public void onEditPressed(int itemid) {
         Intent edititem = new Intent(getContext(), EditShoppingItemActivity.class);
         edititem.putExtra("id", itemid);
         startActivityForResult(edititem, 0);

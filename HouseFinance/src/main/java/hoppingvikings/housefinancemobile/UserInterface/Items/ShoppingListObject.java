@@ -16,7 +16,7 @@ import java.util.Locale;
  */
 
 public class ShoppingListObject {
-    public String ID = "";
+    public int ID = 0;
     public String itemName = "";
     public String addedDate = "";
     public String addedBy = "";
@@ -32,9 +32,9 @@ public class ShoppingListObject {
     {
         try
         {
-            ID = object.getString("id");
+            ID = object.getInt("id");
             itemName = object.getString("name");
-            addedDate = dateFormat.format(dateFormat.parse(object.getString("fullAddedOn")));;
+            addedDate = dateFormat.format(dateFormat.parse(object.getString("dateAdded")));;
             addedBy = object.getString("addedByImage");
             done = object.getBoolean("purchased");
 

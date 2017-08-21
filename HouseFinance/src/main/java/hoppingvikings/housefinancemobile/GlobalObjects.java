@@ -10,6 +10,7 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
+import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.util.ArrayList;
@@ -103,11 +104,11 @@ public class GlobalObjects{
     }
 
 
-    public static ShoppingListObject GetShoppingItemFromID(String id)
+    public static ShoppingListObject GetShoppingItemFromID(int id)
     {
         for(ShoppingListObject item : _shoppingItems)
         {
-            if(id.equals(item.ID))
+            if(id == item.ID)
             {
                 return item;
             }
@@ -124,6 +125,24 @@ public class GlobalObjects{
     public static void ShowNotif(Context context, String text, String subtext, int notifid)
     {
         AppServiceBinder._service.ShowNotification(text, subtext, notifid);
+    }
+
+    public static String SetAuthToken(Context context)
+    {
+        InputStream inputStream = context.getResources().openRawResource(R.raw.api_authtoken);
+        BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream));
+
+        try {
+            String line = reader.readLine();
+            if(line != null)
+            {
+                return line;
+            }
+        } catch (Exception e)
+        {
+            Log.i("Read Error", "Failed to read file. " + e.getMessage());
+        }
+        return "";
     }
 
     public static void WriteToFile(Context context, String data)
