@@ -1,6 +1,7 @@
 package hoppingvikings.housefinancemobile.WebService;
 
 import android.content.Context;
+import android.content.pm.ApplicationInfo;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.AsyncTask;
@@ -38,10 +39,12 @@ public class WebHandler {
     DeleteItemCallback _itemDeleteOwner;
     UploadCallback _uploadOwner;
     String authToken = "Token D2DB7539-634F-47C4-818D-59AD03C592E3";
+    private boolean debugging = false;
 
 
     public void contactWebsiteBills(Context context, DownloadCallback owner)
     {
+        debugging = 0 != (context.getApplicationInfo().flags & ApplicationInfo.FLAG_DEBUGGABLE);
         _billListOwner = owner;
         GlobalObjects.downloading = true;
         ConnectivityManager connMgr = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
@@ -61,6 +64,7 @@ public class WebHandler {
 
     public void RequestBillDetails(Context context, DownloadDetailsCallback owner, int billID)
     {
+        debugging = 0 != (context.getApplicationInfo().flags & ApplicationInfo.FLAG_DEBUGGABLE);
         _billDetailsOwner = owner;
         GlobalObjects.downloading = true;
         ConnectivityManager connMgr = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
@@ -79,6 +83,7 @@ public class WebHandler {
 
     public void DeleteItem(Context context, DeleteItemCallback owner, JSONObject itemjson, String itemtype)
     {
+        debugging = 0 != (context.getApplicationInfo().flags & ApplicationInfo.FLAG_DEBUGGABLE);
         _itemDeleteOwner = owner;
         GlobalObjects.downloading = true;
         ConnectivityManager connMgr = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
@@ -114,48 +119,9 @@ public class WebHandler {
         }
     }
 
-    public void UploadNewPayment(Context context, JSONObject newPayment, UploadCallback owner)
+    public void UploadNewItem(Context context, JSONObject newItem, UploadCallback owner, String itemtype)
     {
-        _uploadOwner = owner;
-        String newPaymentString = newPayment.toString();
-        GlobalObjects.downloading = true;
-
-        ConnectivityManager connMgr = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
-        NetworkInfo networkInfo = connMgr.getActiveNetworkInfo();
-
-        if(networkInfo!= null && networkInfo.isConnected())
-        {
-            new UploadPaymentJson().execute(newPaymentString, GlobalObjects.WEB_APIV2_URL + "Bills/Payments");
-        }
-        else
-        {
-            GlobalObjects.downloading = false;
-            _uploadOwner.OnFailedUpload("No internet connection");
-        }
-    }
-
-    public void UploadNewBill(Context context, JSONObject newBill, UploadCallback owner)
-    {
-        _uploadOwner = owner;
-        String newBillString = newBill.toString();
-        GlobalObjects.downloading = true;
-
-        ConnectivityManager connMgr = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
-        NetworkInfo networkInfo = connMgr.getActiveNetworkInfo();
-
-        if(networkInfo!= null && networkInfo.isConnected())
-        {
-            new UploadBillJson().execute(newBillString, GlobalObjects.WEB_APIV2_URL + "Bills/Add");
-        }
-        else
-        {
-            GlobalObjects.downloading = false;
-            _uploadOwner.OnFailedUpload("No internet connection");
-        }
-    }
-
-    public void UploadNewShoppingItem(Context context, JSONObject newItem, UploadCallback owner)
-    {
+        debugging = 0 != (context.getApplicationInfo().flags & ApplicationInfo.FLAG_DEBUGGABLE);
         _uploadOwner = owner;
         String newItemString = newItem.toString();
         GlobalObjects.downloading = true;
@@ -163,19 +129,38 @@ public class WebHandler {
         ConnectivityManager connMgr = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
         NetworkInfo networkInfo = connMgr.getActiveNetworkInfo();
 
-        if(networkInfo != null && networkInfo.isConnected())
+        if(networkInfo!= null && networkInfo.isConnected())
         {
-            new UploadShoppingItemJson().execute(newItemString, GlobalObjects.WEB_API_URL + "Shopping/");
+            switch (itemtype)
+            {
+                case GlobalObjects.ITEM_TYPE_BILL:
+                    new UploadItem().execute(newItemString, GlobalObjects.WEB_APIV2_URL + "Bills/Add");
+                    break;
+
+                case GlobalObjects.ITEM_TYPE_SHOPPING:
+                    new UploadItem().execute(newItemString, GlobalObjects.WEB_API_URL + "Shopping/");
+                    break;
+
+                case GlobalObjects.ITEM_TYPE_BILLPAYMENT:
+                    new UploadItem().execute(newItemString, GlobalObjects.WEB_APIV2_URL + "Bills/Payments");
+                    break;
+
+                default:
+                    GlobalObjects.downloading = false;
+                    _uploadOwner.OnFailedUpload("Incorrect item type");
+                    break;
+            }
         }
         else
         {
             GlobalObjects.downloading = false;
-            _uploadOwner.OnFailedUpload("No Internet Connection");
+            _uploadOwner.OnFailedUpload("No internet connection");
         }
     }
 
     public void EditItem(Context context, JSONObject editedItem, UploadCallback owner, String itemType)
     {
+        debugging = 0 != (context.getApplicationInfo().flags & ApplicationInfo.FLAG_DEBUGGABLE);
         _uploadOwner = owner;
         String editedItemString = editedItem.toString();
 
@@ -212,6 +197,7 @@ public class WebHandler {
 
     public void contactWebsiteShoppingItems(Context context, DownloadCallback owner)
     {
+        debugging = 0 != (context.getApplicationInfo().flags & ApplicationInfo.FLAG_DEBUGGABLE);
         _shoppingListOwner = owner;
         GlobalObjects.downloading = true;
         ConnectivityManager connMgr = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
@@ -466,7 +452,7 @@ public class WebHandler {
         }
     }
 
-    private class UploadBillJson extends AsyncTask<String, Void, Boolean>
+    private class UploadItem extends AsyncTask<String, Void, Boolean>
     {
         @Override
         protected Boolean doInBackground(String... params) {
@@ -488,90 +474,11 @@ public class WebHandler {
             }
             else
             {
-                _uploadOwner.OnFailedUpload("Failed to upload new Bill. Please try again");
-            }
-        }
-
-        private boolean UploadJsonObject(String newBillJsonString, String weburl) throws IOException
-        {
-            JSONObject returnJson;
-            URL url = new URL(weburl);
-
-            HttpURLConnection connection = (HttpURLConnection) url.openConnection();
-
-            try {
-                connection.setRequestMethod("POST");
-                connection.setRequestProperty("Authorization", authToken);
-                connection.setRequestProperty("Content-Type", "application/json; charset=UTF-8");
-
-                connection.setConnectTimeout(15000);
-                connection.setDoInput(true);
-                connection.setDoOutput(true);
-                connection.setChunkedStreamingMode(0);
-
-                OutputStream out = connection.getOutputStream();
-                out.write(newBillJsonString.getBytes("UTF-8"));
-                out.close();
-
-                BufferedReader serverAnswer = new BufferedReader(new InputStreamReader(connection.getInputStream()));
-                String line;
-                String returnmessage = "";
-                while ((line = serverAnswer.readLine()) != null)
-                {
-                    returnmessage += line;
-                }
-
-                serverAnswer.close();
-
-                returnJson = new JSONObject(returnmessage);
-
-                if(returnJson.has("hasError"))
-                {
-                    if(returnJson.getBoolean("hasError"))
-                    {
-                        Log.e("Error", returnJson.getJSONObject("error").getString("message"));
-                        return false;
-                    }
-                }
-            } catch (Exception e)
-            {
-                Log.e("Error", "Problem Sending Bill: " + e.getMessage());
-                return false;
-            }
-            finally {
-                connection.disconnect();
-            }
-
-            return true;
-        }
-    }
-
-    private class UploadShoppingItemJson extends AsyncTask<String, Void, Boolean>
-    {
-        @Override
-        protected Boolean doInBackground(String... params) {
-
-            try {
-                return UploadJsonObject(params[0], params[1]);
-            } catch (IOException e)
-            {
-                return false;
-            }
-        }
-
-        @Override
-        protected void onPostExecute(Boolean aBoolean) {
-            if(aBoolean)
-            {
-                _uploadOwner.OnSuccessfulUpload();
-            }
-            else
-            {
                 _uploadOwner.OnFailedUpload("Failed to upload new Item. Please try again");
             }
         }
 
-        private boolean UploadJsonObject(String newItemJsonString, String weburl) throws IOException
+        private boolean UploadJsonObject(String newItemString, String weburl) throws IOException
         {
             JSONObject returnJson;
             URL url = new URL(weburl);
@@ -582,13 +489,14 @@ public class WebHandler {
                 connection.setRequestMethod("POST");
                 connection.setRequestProperty("Authorization", authToken);
                 connection.setRequestProperty("Content-Type", "application/json; charset=UTF-8");
+
                 connection.setConnectTimeout(15000);
                 connection.setDoInput(true);
                 connection.setDoOutput(true);
                 connection.setChunkedStreamingMode(0);
 
                 OutputStream out = connection.getOutputStream();
-                out.write(newItemJsonString.getBytes("UTF-8"));
+                out.write(newItemString.getBytes("UTF-8"));
                 out.close();
 
                 BufferedReader serverAnswer = new BufferedReader(new InputStreamReader(connection.getInputStream()));
@@ -614,85 +522,6 @@ public class WebHandler {
             } catch (Exception e)
             {
                 Log.e("Error", "Problem Sending Item: " + e.getMessage());
-                return false;
-            }
-            finally {
-                connection.disconnect();
-            }
-
-            return true;
-        }
-    }
-
-    private class UploadPaymentJson extends AsyncTask<String, Void, Boolean>
-    {
-        @Override
-        protected Boolean doInBackground(String... params) {
-
-            try {
-                return UploadJsonObject(params[0], params[1]);
-            }
-            catch (IOException e)
-            {
-                return false;
-            }
-        }
-
-        @Override
-        protected void onPostExecute(Boolean aBoolean) {
-            if(aBoolean)
-            {
-                _uploadOwner.OnSuccessfulUpload();
-            }
-            else
-            {
-                _uploadOwner.OnFailedUpload("Failed to upload payment. Please try again");
-            }
-        }
-
-        private boolean UploadJsonObject(String newBillJsonString, String weburl) throws IOException
-        {
-            JSONObject returnJson;
-            URL url = new URL(weburl);
-
-            HttpURLConnection connection = (HttpURLConnection) url.openConnection();
-
-            try {
-                connection.setRequestMethod("POST");
-                connection.setRequestProperty("Authorization", authToken);
-                connection.setRequestProperty("Content-Type", "application/json; charset=UTF-8");
-                connection.setConnectTimeout(15000);
-                connection.setDoInput(true);
-                connection.setDoOutput(true);
-                connection.setChunkedStreamingMode(0);
-
-                OutputStream out = connection.getOutputStream();
-                out.write(newBillJsonString.getBytes());
-                out.close();
-
-                BufferedReader serverAnswer = new BufferedReader(new InputStreamReader(connection.getInputStream()));
-                String line;
-                String returnmessage = "";
-                while ((line = serverAnswer.readLine()) != null)
-                {
-                    returnmessage += line;
-                }
-
-                serverAnswer.close();
-
-                returnJson = new JSONObject(returnmessage);
-
-                if(returnJson.has("hasError"))
-                {
-                    if(returnJson.getBoolean("hasError"))
-                    {
-                        Log.e("Error", returnJson.getJSONObject("error").getString("message"));
-                        return false;
-                    }
-                }
-            } catch (Exception e)
-            {
-                Log.e("Error", "Problem Sending payment: " + e.getMessage());
                 return false;
             }
             finally {

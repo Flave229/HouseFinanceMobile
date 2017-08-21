@@ -201,7 +201,7 @@ public class AddNewBillActivity extends AppCompatActivity implements UploadCallb
                                 newBill.put("RecurringType", 0);
 
 
-                            GlobalObjects.webHandler.UploadNewBill(getApplicationContext(), newBill, AddNewBillActivity.this);
+                            GlobalObjects.webHandler.UploadNewItem(getApplicationContext(), newBill, AddNewBillActivity.this, GlobalObjects.ITEM_TYPE_BILL);
 
                         } catch (JSONException je)
                         {

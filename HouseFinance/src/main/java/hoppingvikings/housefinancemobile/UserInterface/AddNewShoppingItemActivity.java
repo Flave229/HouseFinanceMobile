@@ -217,7 +217,7 @@ public class AddNewShoppingItemActivity extends AppCompatActivity implements Upl
     public void UploadNextItem()
     {
         try {
-            GlobalObjects.webHandler.UploadNewShoppingItem(this, new JSONObject(_shoppingItems.get(0)), this);
+            GlobalObjects.webHandler.UploadNewItem(this, new JSONObject(_shoppingItems.get(0)), this, GlobalObjects.ITEM_TYPE_SHOPPING);
         } catch (Exception e)
         {
 

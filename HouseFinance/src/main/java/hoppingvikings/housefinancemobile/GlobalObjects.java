@@ -39,8 +39,10 @@ public class GlobalObjects{
     public static boolean downloading = false;
 
     public static final String SHOPPING_RECENTITEMS_FILENAME = "hf_shopping_recent.txt";
+
     public static final String WEB_API_URL = "http://house.flave.co.uk/api/";
     public static final String WEB_APIV2_URL = "http://house.flave.co.uk/api/v2/";
+    public static final String WEB_APIV2_URL_TESTING = "http://house.flave.co.uk/api/v2/testing/";
 
     public static final int USERGUID_DAVE = 1;
     public static final int USERGUID_JOSH = 3;

@@ -215,7 +215,7 @@ public class AddPaymentActivity extends AppCompatActivity implements UploadCallb
                             else if(forJosh)
                                 newPayment.put("PersonId", GlobalObjects.USERGUID_JOSH);
 
-                            GlobalObjects.webHandler.UploadNewPayment(getApplicationContext(), newPayment, AddPaymentActivity.this);
+                            GlobalObjects.webHandler.UploadNewItem(getApplicationContext(), newPayment, AddPaymentActivity.this, GlobalObjects.ITEM_TYPE_BILLPAYMENT);
                         } catch (Exception e)
                         {
                             Snackbar.make(layout, "Failed to create Json", Snackbar.LENGTH_LONG).show();

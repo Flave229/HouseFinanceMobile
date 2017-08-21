@@ -114,7 +114,7 @@ public class ShoppingCartFragment extends Fragment implements ButtonPressedCallb
                 _activity.addToCartButton.setEnabled(false);
                 _activity.submitButton.setEnabled(false);
                 try {
-                    GlobalObjects.webHandler.UploadNewShoppingItem(getContext(), new JSONObject(_activity._shoppingItems.get(0)), _activity);
+                    GlobalObjects.webHandler.UploadNewItem(getContext(), new JSONObject(_activity._shoppingItems.get(0)), _activity, GlobalObjects.ITEM_TYPE_SHOPPING);
                 } catch (Exception e)
                 {
 

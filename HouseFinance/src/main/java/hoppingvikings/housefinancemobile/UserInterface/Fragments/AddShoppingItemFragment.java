@@ -244,8 +244,8 @@ public class AddShoppingItemFragment extends Fragment implements ButtonPressedCa
                     if(forDavid)
                         people.put(GlobalObjects.USERGUID_DAVE);
 
-                    if(forVikki)
-                        people.put("25c15fb4-b5d5-47d9-917b-c572b1119e65");
+                    /*if(forVikki)
+                        people.put("25c15fb4-b5d5-47d9-917b-c572b1119e65");*/
 
                     if(forJosh)
                         people.put(GlobalObjects.USERGUID_JOSH);
@@ -253,9 +253,9 @@ public class AddShoppingItemFragment extends Fragment implements ButtonPressedCa
                     newItem.put("ItemFor", people);
 
                     // Add the item to a file on the device
-                    GlobalObjects.WriteToFile(getContext(), newItem.toString());
+                    //GlobalObjects.WriteToFile(getContext(), newItem.toString());
 
-                    GlobalObjects.webHandler.UploadNewShoppingItem(getContext(), newItem, _activity);
+                    GlobalObjects.webHandler.UploadNewItem(getContext(), newItem, _activity, GlobalObjects.ITEM_TYPE_SHOPPING);
                 } catch (JSONException je)
                 {
                     Snackbar.make(layout, "Failed to create Json", Snackbar.LENGTH_LONG).show();
