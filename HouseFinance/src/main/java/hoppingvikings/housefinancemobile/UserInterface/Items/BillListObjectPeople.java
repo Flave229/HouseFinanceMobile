@@ -9,6 +9,7 @@ import org.json.JSONObject;
 
 public class BillListObjectPeople {
     public int billID = 0;
+    public int personID = 0;
     public String URL = "";
     public boolean Paid = false;
 
@@ -16,6 +17,7 @@ public class BillListObjectPeople {
     {
         billID = id;
         try {
+            personID = peopleObject.getInt("id");
             URL = peopleObject.getString("imageLink");
             Paid = peopleObject.getBoolean("paid");
         } catch (JSONException e) {

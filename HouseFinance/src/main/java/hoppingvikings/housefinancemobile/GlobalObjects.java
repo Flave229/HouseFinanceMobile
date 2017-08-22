@@ -47,6 +47,7 @@ public class GlobalObjects{
 
     public static final int USERGUID_DAVE = 1;
     public static final int USERGUID_JOSH = 3;
+    public static final int USERGUID_SAM = 4;
 
     public static final String ITEM_TYPE_SHOPPING = "item_shopping";
     public static final String ITEM_TYPE_BILL = "item_bill";

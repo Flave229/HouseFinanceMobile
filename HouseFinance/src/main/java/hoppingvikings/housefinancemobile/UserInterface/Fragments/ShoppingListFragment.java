@@ -15,6 +15,7 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import java.util.ArrayList;
+import java.util.Date;
 
 import hoppingvikings.housefinancemobile.GlobalObjects;
 import hoppingvikings.housefinancemobile.R;
@@ -44,6 +45,8 @@ public class ShoppingListFragment extends Fragment
     FloatingActionButton addItemButton;
 
     MainActivity activity;
+
+    Date lastRefreshedTime = new Date();
 
     private Runnable contactWebsite = new Runnable() {
         @Override
@@ -106,6 +109,19 @@ public class ShoppingListFragment extends Fragment
     public ShoppingListFragment()
     {
         // Blank Constructor
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+
+        Date onehour = new Date(System.currentTimeMillis() - 1000L*60L*60L);
+        if(lastRefreshedTime.getTime() < onehour.getTime())
+        {
+            swipeRefreshLayout.setRefreshing(true);
+            _handler.removeCallbacksAndMessages(null);
+            _handler.postDelayed(contactWebsite, 100);
+        }
     }
 
     @Override
@@ -211,6 +227,7 @@ public class ShoppingListFragment extends Fragment
     public void OnSuccessfulDownload() {
         // After calling the website, allow 3 seconds before we update the list. Can be reduced if needed
         _handler.postDelayed(updateList, 1000);
+        lastRefreshedTime = new Date();
     }
 
     @Override
