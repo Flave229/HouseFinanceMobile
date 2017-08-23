@@ -122,14 +122,11 @@ public class BillsFragment extends Fragment
         rv = (RecyclerView) view.findViewById(R.id.recycler_view);
         rv.setHasFixedSize(true);
 
-        if(GlobalObjects.GetBills() != null && GlobalObjects.GetBills().size() != 0)
+        ArrayList<BillListObject> bills = GlobalObjects.GetBills();
+        cards = new ArrayList<>();
+        if(bills != null && bills.size() != 0)
         {
-            cards = new ArrayList<>();
-            cards.addAll(GlobalObjects.GetBills());
-        }
-        else
-        {
-            cards = new ArrayList<>();
+            cards.addAll(bills);
         }
 
         activity.addBillFab.setOnClickListener(new View.OnClickListener() {
