@@ -37,7 +37,7 @@ public class GlobalObjects{
 
     public static WebHandler webHandler;
     public static BackgroundService backgroundService;
-    public static boolean _bound = false;
+    public static boolean bound = false;
 
     public static boolean downloading = false;
 

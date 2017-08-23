@@ -37,14 +37,14 @@ import static android.app.Activity.RESULT_OK;
 public class BillsFragment extends Fragment
         implements DownloadCallback, DownloadPeopleCallback {
 
-    CoordinatorLayout layout;
+    CoordinatorLayout _layout;
     Handler _handler;
-    RecyclerView rv;
-    BillListAdapter adapter;
-    ArrayList<BillListObject> cards;
-    SwipeRefreshLayout swipeRefreshLayout;
-    FloatingActionButton addItemButton;
-    MainActivity activity;
+    RecyclerView _recyclerView;
+    BillListAdapter _adapter;
+    ArrayList<BillListObject> _cards;
+    SwipeRefreshLayout _swipeRefreshLayout;
+    FloatingActionButton _addItemButton;
+    MainActivity _activity;
 
     private Runnable contactWebsite = new Runnable() {
         @Override
@@ -63,26 +63,24 @@ public class BillsFragment extends Fragment
     private Runnable updateList = new Runnable() {
         @Override
         public void run() {
-
             if(!GlobalObjects.downloading) {
                 if (GlobalObjects.GetBills() != null) {
-                    if(cards != null)
-                    {
-                        cards.clear();
-                        cards.addAll(GlobalObjects.GetBills());
-                        adapter.AddAll(cards);
+                    if(_cards != null) {
+                        _cards.clear();
+                        _cards.addAll(GlobalObjects.GetBills());
+                        _adapter.AddAll(_cards);
                     }
-                    else
-                    {
-                        cards = new ArrayList<>();
-                        cards.addAll(GlobalObjects.GetBills());
-                        adapter.AddAll(cards);
+                    else {
+                        _cards = new ArrayList<>();
+                        _cards.addAll(GlobalObjects.GetBills());
+                        _adapter.AddAll(_cards);
                     }
-                    if (adapter.getItemCount() != cards.size()) {
-                        _handler.post(contactWebsite);
-                    } else {
 
-                        swipeRefreshLayout.setRefreshing(false);
+                    if (_adapter.getItemCount() != _cards.size()) {
+                        _handler.post(contactWebsite);
+                    }
+                    else {
+                        _swipeRefreshLayout.setRefreshing(false);
                         _handler.postDelayed(requestUsers, 200);
                     }
                 } else {
@@ -111,25 +109,25 @@ public class BillsFragment extends Fragment
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
     {
-        activity = ((MainActivity)getActivity());
+        _activity = ((MainActivity)getActivity());
         View view = inflater.inflate(R.layout.fragment_blank, container, false);
 
-        swipeRefreshLayout = (SwipeRefreshLayout) view.findViewById(R.id.swipeRefresh);
-        layout = (CoordinatorLayout)view.findViewById(R.id.coordlayout);
-        addItemButton = (FloatingActionButton) view.findViewById(R.id.addItem);
+        _swipeRefreshLayout = (SwipeRefreshLayout) view.findViewById(R.id.swipeRefresh);
+        _layout = (CoordinatorLayout)view.findViewById(R.id.coordlayout);
+        _addItemButton = (FloatingActionButton) view.findViewById(R.id.addItem);
 
         _handler = new Handler();
-        rv = (RecyclerView) view.findViewById(R.id.recycler_view);
-        rv.setHasFixedSize(true);
+        _recyclerView = (RecyclerView) view.findViewById(R.id.recycler_view);
+        _recyclerView.setHasFixedSize(true);
 
         ArrayList<BillListObject> bills = GlobalObjects.GetBills();
-        cards = new ArrayList<>();
+        _cards = new ArrayList<>();
         if(bills != null && bills.size() != 0)
         {
-            cards.addAll(bills);
+            _cards.addAll(bills);
         }
 
-        activity.addBillFab.setOnClickListener(new View.OnClickListener() {
+        _activity.addBillFab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Intent addBill = new Intent(getContext(), AddNewBillActivity.class);
@@ -137,17 +135,17 @@ public class BillsFragment extends Fragment
             }
         });
 
-        if(rv != null) {
-            adapter = new BillListAdapter(cards, getContext());
-            rv.setAdapter(adapter);
-            rv.setLayoutManager(new LinearLayoutManager(getActivity()));
-            rv.addItemDecoration(new ListItemDivider(getContext()));
+        if(_recyclerView != null) {
+            _adapter = new BillListAdapter(_cards, getContext());
+            _recyclerView.setAdapter(_adapter);
+            _recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
+            _recyclerView.addItemDecoration(new ListItemDivider(getContext()));
         }
 
-        adapter.setOnBillClickListener(new BillListAdapter.BillClickedListener() {
+        _adapter.setOnBillClickListener(new BillListAdapter.BillClickedListener() {
             @Override
             public void onBillClick(View itemView, int pos) {
-                BillListObject bill = adapter.GetItem(pos);
+                BillListObject bill = _adapter.GetItem(pos);
 
                 Intent viewBillDetails = new Intent(getContext(), ViewBillDetailsActivity.class);
                 viewBillDetails.putExtra("bill_id", bill.ID);
@@ -155,19 +153,19 @@ public class BillsFragment extends Fragment
             }
         });
 
-        swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+        _swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
                 _handler.post(contactWebsite);
             }
         });
 
-        swipeRefreshLayout.setColorSchemeResources(android.R.color.holo_blue_bright,
+        _swipeRefreshLayout.setColorSchemeResources(android.R.color.holo_blue_bright,
                 android.R.color.holo_green_light,
                 android.R.color.holo_orange_light,
                 android.R.color.holo_red_light);
 
-        swipeRefreshLayout.setRefreshing(true);
+        _swipeRefreshLayout.setRefreshing(true);
         _handler.postDelayed(contactWebsite, 200);
 
         //_handler.postDelayed(runnable, 1000);
@@ -181,7 +179,7 @@ public class BillsFragment extends Fragment
         {
             case RESULT_OK:
                 _handler.removeCallbacksAndMessages(null);
-                swipeRefreshLayout.setRefreshing(true);
+                _swipeRefreshLayout.setRefreshing(true);
                 _handler.postDelayed(contactWebsite, 200);
                 break;
 
@@ -210,7 +208,7 @@ public class BillsFragment extends Fragment
     @Override
     public void OnFailedDownload(String failReason) {
         _handler.removeCallbacksAndMessages(null);
-        Snackbar.make(activity._layout, failReason, Snackbar.LENGTH_LONG).show();
-        swipeRefreshLayout.setRefreshing(false);
+        Snackbar.make(_activity._layout, failReason, Snackbar.LENGTH_LONG).show();
+        _swipeRefreshLayout.setRefreshing(false);
     }
 }
