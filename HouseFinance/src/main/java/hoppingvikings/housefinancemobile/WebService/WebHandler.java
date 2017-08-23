@@ -276,33 +276,20 @@ public class WebHandler {
 
             case "Shopping":
                 ArrayList<ShoppingListObject> items = new ArrayList<>();
-                ArrayList<ShoppingListPeople> shoppingPeople = new ArrayList<>();
                 ShoppingListObject item;
                 ShoppingListPeople shoppingPerson;
                 try {
-                    JSONObject itemsobject = result.getJSONObject("items");
-                    JSONArray array = itemsobject.getJSONArray("shoppingList");
+                    JSONObject itemsObject = result.getJSONObject("items");
+                    JSONArray shoppingList = itemsObject.getJSONArray("shoppingList");
 
-                    ArrayList<JSONObject> allObjects = new ArrayList<>();
-                    ArrayList<JSONObject> allPeopleObjects = new ArrayList<>();
-
-                    for(int i = 0; i < array.length(); i++)
+                    for(int k = 0; k < shoppingList.length(); k++)
                     {
-                        allObjects.add(array.getJSONObject(i));
-                    }
-
-                    for(int k = 0; k < allObjects.size(); k++)
-                    {
-                        JSONArray peopleArray = allObjects.get(k).getJSONArray("addedForImages");
-                        item = new ShoppingListObject(allObjects.get(k), peopleArray);
+                        JSONObject shoppingItem = shoppingList.getJSONObject(k);
+                        JSONArray peopleArray = shoppingItem.getJSONArray("addedForImages");
+                        item = new ShoppingListObject(shoppingItem, peopleArray);
                         items.add(item);
-
-                        //shoppingPerson = item.people;
-                        //shoppingPeople.add(shoppingPerson);
-
                     }
                     GlobalObjects.SetShoppingItems(items);
-                    GlobalObjects.SetShoppingPeopleList(shoppingPeople);
 
                     GlobalObjects.downloading = false;
                     _shoppingListOwner.OnSuccessfulDownload();
