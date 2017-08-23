@@ -246,39 +246,20 @@ public class WebHandler {
         switch (type)
         {
             case "Bills":
-                ArrayList<BillListObject> _bills = new ArrayList<>();
-                ArrayList<BillListObjectPeople> _people = new ArrayList<>();
-                BillListObject bill;
-                BillListObjectPeople person;
                 try {
-                    JSONArray array = result.getJSONArray("bills");
+                    JSONArray billJsonArray = result.getJSONArray("bills");
 
-                    ArrayList<JSONObject> allObjects = new ArrayList<>();
-
-                    for(int i = 0; i < array.length(); i++)
+                    ArrayList<BillListObject> bills = new ArrayList<>();
+                    for(int k = 0; k < billJsonArray.length(); k++)
                     {
-                        allObjects.add(array.getJSONObject(i));
+                        JSONObject billJson = billJsonArray.getJSONObject(k);
+                        JSONArray peopleArray = billJson.getJSONArray("people");
+
+                        BillListObject bill = new BillListObject(billJson, peopleArray);
+                        bills.add(bill);
                     }
 
-                    for(int k = 0; k < allObjects.size(); k++)
-                    {
-                        ArrayList<JSONObject> allPeopleObjects = new ArrayList<>();
-                        JSONArray peopleArray = allObjects.get(k).getJSONArray("people");
-                        for(int j = 0; j < peopleArray.length(); j++)
-                        {
-                            allPeopleObjects.add(peopleArray.getJSONObject(j));
-                        }
-
-                        bill = new BillListObject(allObjects.get(k), allPeopleObjects);
-                        _bills.add(bill);
-
-                        //person = bill.;
-                        //_people.add(person);
-
-                    }
-                    GlobalObjects.SetBills(_bills);
-                    GlobalObjects.SetBillPeopleList(_people);
-
+                    GlobalObjects.SetBills(bills);
                     GlobalObjects.downloading = false;
 
                     _billListOwner.OnSuccessfulDownload();

@@ -158,7 +158,7 @@ public class ShoppingListFragment extends Fragment
             adapter = new ShoppingListAdapter(items, getActivity());
             rv.setAdapter(adapter);
             rv.setLayoutManager(new LinearLayoutManager(getActivity()));
-            //_recyclerView.addItemDecoration(new ListItemDivider(getContext()));
+            //rv.addItemDecoration(new ListItemDivider(getContext()));
             rv.setItemViewCacheSize(20);
         }
 

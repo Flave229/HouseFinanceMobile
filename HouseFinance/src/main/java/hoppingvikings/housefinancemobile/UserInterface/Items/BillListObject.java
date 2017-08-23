@@ -28,9 +28,8 @@ public class BillListObject {
     public boolean overdue = false;
     private SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd", Locale.UK);
 
-    public BillListObject(JSONObject jsonObject, ArrayList<JSONObject> peopleObjects)
+    public BillListObject(JSONObject jsonObject, JSONArray peopleObjects)
     {
-        // Base Initialiser
         try {
             ID = jsonObject.getInt("id");
             billName = jsonObject.getString("name");
@@ -53,7 +52,8 @@ public class BillListObject {
             }
 
             people = new ArrayList<>();
-            for (JSONObject person: peopleObjects) {
+            for(int i = 0; i < peopleObjects.length(); i++) {
+                JSONObject person = peopleObjects.getJSONObject(i);
                 people.add(new BillListObjectPeople(person, ID));
             }
         } catch (JSONException e) {

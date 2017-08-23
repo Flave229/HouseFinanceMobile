@@ -120,16 +120,16 @@ public class ViewBillDetailsActivity extends AppCompatActivity
                 Intent i = new Intent(ViewBillDetailsActivity.this, AddPaymentActivity.class);
                 i.putExtra("bill_id", _currentBill.id);
                 i.putExtra("bill_name", _currentBill.name);
-                double suggestedamount;
+                double suggestedAmount;
                 if(bill.people.size() > 1)
                 {
-                    suggestedamount = Double.valueOf(bill.billTotalAmount) / bill.people.size();
+                    suggestedAmount = Double.valueOf(bill.billTotalAmount) / bill.people.size();
                 }
                 else
                 {
-                    suggestedamount = (Double.valueOf(bill.billTotalAmount) - _currentBill.amountPaid);
+                    suggestedAmount = (Double.valueOf(bill.billTotalAmount) - _currentBill.amountPaid);
                 }
-                i.putExtra("suggested_amount", String.format(Locale.getDefault(), "%.2f", suggestedamount));
+                i.putExtra("suggested_amount", String.format(Locale.getDefault(), "%.2f", suggestedAmount));
                 startActivityForResult(i, 0);
             }
         });
