@@ -23,7 +23,6 @@ import java.util.ArrayList;
 import hoppingvikings.housefinancemobile.GlobalObjects;
 import hoppingvikings.housefinancemobile.Person;
 import hoppingvikings.housefinancemobile.UserInterface.Items.BillListObject;
-import hoppingvikings.housefinancemobile.UserInterface.Items.BillListObjectPeople;
 import hoppingvikings.housefinancemobile.UserInterface.Items.BillObjectDetailed;
 import hoppingvikings.housefinancemobile.UserInterface.Items.ShoppingListObject;
 import hoppingvikings.housefinancemobile.UserInterface.Items.ShoppingListPeople;
@@ -32,26 +31,25 @@ import hoppingvikings.housefinancemobile.UserInterface.Items.ShoppingListPeople;
  * Created by Josh on 24/09/2016.
  */
 
-public class WebHandler {
-
-    DownloadCallback _billListOwner;
-    DownloadDetailsCallback _billDetailsOwner;
-    DownloadPeopleCallback _peopleDownloadOwner;
-    DownloadCallback _shoppingListOwner;
-    DeleteItemCallback _itemDeleteOwner;
-    UploadCallback _uploadOwner;
-    String authToken = "";
-    private boolean debugging = false;
-
+public class WebHandler
+{
+    private DownloadCallback _billListOwner;
+    private DownloadDetailsCallback _billDetailsOwner;
+    private DownloadPeopleCallback _peopleDownloadOwner;
+    private DownloadCallback _shoppingListOwner;
+    private DeleteItemCallback _itemDeleteOwner;
+    private UploadCallback _uploadOwner;
+    private String _authToken = "";
+    private boolean _debugging;
 
     public void SetAuthToken(Context context)
     {
-        authToken = GlobalObjects.SetAuthToken(context);
+        _authToken = GlobalObjects.SetAuthToken(context);
     }
 
     public void contactWebsiteBills(Context context, DownloadCallback owner)
     {
-        debugging = 0 != (context.getApplicationInfo().flags & ApplicationInfo.FLAG_DEBUGGABLE);
+        _debugging = 0 != (context.getApplicationInfo().flags & ApplicationInfo.FLAG_DEBUGGABLE);
         _billListOwner = owner;
         GlobalObjects.downloading = true;
         ConnectivityManager connMgr = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
@@ -71,7 +69,7 @@ public class WebHandler {
 
     public void RequestBillDetails(Context context, DownloadDetailsCallback owner, int billID)
     {
-        debugging = 0 != (context.getApplicationInfo().flags & ApplicationInfo.FLAG_DEBUGGABLE);
+        _debugging = 0 != (context.getApplicationInfo().flags & ApplicationInfo.FLAG_DEBUGGABLE);
         _billDetailsOwner = owner;
         GlobalObjects.downloading = true;
         ConnectivityManager connMgr = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
@@ -90,7 +88,7 @@ public class WebHandler {
 
     public void RequestUsers(Context context, DownloadPeopleCallback owner)
     {
-        debugging = 0 != (context.getApplicationInfo().flags & ApplicationInfo.FLAG_DEBUGGABLE);
+        _debugging = 0 != (context.getApplicationInfo().flags & ApplicationInfo.FLAG_DEBUGGABLE);
         _peopleDownloadOwner = owner;
         GlobalObjects.downloading = true;
         ConnectivityManager connMgr = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
@@ -109,7 +107,7 @@ public class WebHandler {
 
     public void DeleteItem(Context context, DeleteItemCallback owner, JSONObject itemjson, String itemtype)
     {
-        debugging = 0 != (context.getApplicationInfo().flags & ApplicationInfo.FLAG_DEBUGGABLE);
+        _debugging = 0 != (context.getApplicationInfo().flags & ApplicationInfo.FLAG_DEBUGGABLE);
         _itemDeleteOwner = owner;
         GlobalObjects.downloading = true;
         ConnectivityManager connMgr = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
@@ -147,7 +145,7 @@ public class WebHandler {
 
     public void UploadNewItem(Context context, JSONObject newItem, UploadCallback owner, String itemtype)
     {
-        debugging = 0 != (context.getApplicationInfo().flags & ApplicationInfo.FLAG_DEBUGGABLE);
+        _debugging = 0 != (context.getApplicationInfo().flags & ApplicationInfo.FLAG_DEBUGGABLE);
         _uploadOwner = owner;
         String newItemString = newItem.toString();
         GlobalObjects.downloading = true;
@@ -186,7 +184,7 @@ public class WebHandler {
 
     public void EditItem(Context context, JSONObject editedItem, UploadCallback owner, String itemType)
     {
-        debugging = 0 != (context.getApplicationInfo().flags & ApplicationInfo.FLAG_DEBUGGABLE);
+        _debugging = 0 != (context.getApplicationInfo().flags & ApplicationInfo.FLAG_DEBUGGABLE);
         _uploadOwner = owner;
         String editedItemString = editedItem.toString();
 
@@ -223,7 +221,7 @@ public class WebHandler {
 
     public void contactWebsiteShoppingItems(Context context, DownloadCallback owner)
     {
-        debugging = 0 != (context.getApplicationInfo().flags & ApplicationInfo.FLAG_DEBUGGABLE);
+        _debugging = 0 != (context.getApplicationInfo().flags & ApplicationInfo.FLAG_DEBUGGABLE);
         _shoppingListOwner = owner;
         GlobalObjects.downloading = true;
         ConnectivityManager connMgr = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
@@ -411,7 +409,7 @@ public class WebHandler {
                 try {
                     conn.setReadTimeout(30000);
                     conn.setConnectTimeout(45000);
-                    conn.setRequestProperty("Authorization", authToken);
+                    conn.setRequestProperty("Authorization", _authToken);
 
                     if(type.equals("Bills") || type.equals("Shopping") || type.equals("People"))
                     {
@@ -515,7 +513,7 @@ public class WebHandler {
 
             try {
                 connection.setRequestMethod("POST");
-                connection.setRequestProperty("Authorization", authToken);
+                connection.setRequestProperty("Authorization", _authToken);
                 connection.setRequestProperty("Content-Type", "application/json; charset=UTF-8");
 
                 connection.setConnectTimeout(15000);
@@ -580,7 +578,7 @@ public class WebHandler {
             HttpURLConnection connection = (HttpURLConnection) url.openConnection();
             try {
                 connection.setRequestMethod("DELETE");
-                connection.setRequestProperty("Authorization", authToken);
+                connection.setRequestProperty("Authorization", _authToken);
                 connection.setRequestProperty("Content-Type", "application/json; charset=UTF-8");
                 connection.setConnectTimeout(15000);
                 connection.setDoInput(true);
@@ -656,7 +654,7 @@ public class WebHandler {
             HttpURLConnection connection = (HttpURLConnection) url.openConnection();
             try {
                 connection.setRequestMethod("PATCH");
-                connection.setRequestProperty("Authorization", authToken);
+                connection.setRequestProperty("Authorization", _authToken);
                 connection.setRequestProperty("Content-Type", "application/json; charset=UTF-8");
                 connection.setConnectTimeout(15000);
                 connection.setDoInput(true);
