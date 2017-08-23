@@ -21,6 +21,7 @@ import java.net.URL;
 import java.util.ArrayList;
 
 import hoppingvikings.housefinancemobile.GlobalObjects;
+import hoppingvikings.housefinancemobile.Person;
 import hoppingvikings.housefinancemobile.UserInterface.Items.BillListObject;
 import hoppingvikings.housefinancemobile.UserInterface.Items.BillListObjectPeople;
 import hoppingvikings.housefinancemobile.UserInterface.Items.BillObjectDetailed;
@@ -35,6 +36,7 @@ public class WebHandler {
 
     DownloadCallback _billListOwner;
     DownloadDetailsCallback _billDetailsOwner;
+    DownloadPeopleCallback _peopleDownloadOwner;
     DownloadCallback _shoppingListOwner;
     DeleteItemCallback _itemDeleteOwner;
     UploadCallback _uploadOwner;
@@ -58,7 +60,7 @@ public class WebHandler {
         if(networkInfo != null && networkInfo.isConnected())
         {
             //Toast.makeText(getBaseContext(), "Obtaining list of bills", Toast.LENGTH_LONG).show();
-            new DownloadJsonString().execute(GlobalObjects.WEB_APIV2_URL + "Bills/", "Bills");
+            new DownloadJsonString().executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, GlobalObjects.WEB_APIV2_URL + "Bills/", "Bills");
         }
         else
         {
@@ -83,6 +85,25 @@ public class WebHandler {
         {
             GlobalObjects.downloading = false;
             _billDetailsOwner.OnDownloadFailed("No Internet Connection");
+        }
+    }
+
+    public void RequestUsers(Context context, DownloadPeopleCallback owner)
+    {
+        debugging = 0 != (context.getApplicationInfo().flags & ApplicationInfo.FLAG_DEBUGGABLE);
+        _peopleDownloadOwner = owner;
+        GlobalObjects.downloading = true;
+        ConnectivityManager connMgr = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo networkInfo = connMgr.getActiveNetworkInfo();
+
+        if(networkInfo != null && networkInfo.isConnected())
+        {
+            new DownloadJsonString().execute(GlobalObjects.WEB_APIV2_URL + "Users/", "People");
+        }
+        else
+        {
+            GlobalObjects.downloading = false;
+            _peopleDownloadOwner.UsersDownloadFailed("No Internet Connection");
         }
     }
 
@@ -211,7 +232,7 @@ public class WebHandler {
         if(networkInfo != null && networkInfo.isConnected())
         {
             //Toast.makeText(getBaseContext(), "Obtaining list of bills", Toast.LENGTH_LONG).show();
-            new DownloadJsonString().execute(GlobalObjects.WEB_APIV2_URL + "Shopping/", "Shopping");
+            new DownloadJsonString().executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, GlobalObjects.WEB_APIV2_URL + "Shopping/", "Shopping");
         }
         else
         {
@@ -315,6 +336,42 @@ public class WebHandler {
                 }
                 break;
 
+            case "People":
+                Person newPerson = null;
+
+                JSONArray returnedObject;
+                ArrayList<JSONObject> userObjects = new ArrayList<>();
+                ArrayList<Person> parsedUsers = new ArrayList<>();
+
+                try {
+                    returnedObject = result.getJSONArray("people");
+
+                    for(int i = 0; i < returnedObject.length(); i++)
+                    {
+                        userObjects.add(returnedObject.getJSONObject(i));
+                    }
+
+                    for (int j = 0; j < userObjects.size(); j++)
+                    {
+                        parsedUsers.add(new Person(userObjects.get(j)));
+                    }
+
+                    GlobalObjects.SetCurrentUsers(parsedUsers);
+
+                } catch (JSONException je)
+                {
+                    je.printStackTrace();
+                    GlobalObjects.downloading = false;
+                    _peopleDownloadOwner.UsersDownloadFailed("Failed to parse Shopping list");
+                } catch (Exception e)
+                {
+
+                }
+                GlobalObjects.downloading = false;
+                _peopleDownloadOwner.UsersDownloadSuccess();
+
+                break;
+
             case "BillDetails":
                 BillObjectDetailed detailedBill = null;
                 JSONArray paymentsArray;
@@ -356,7 +413,7 @@ public class WebHandler {
             try
             {
                 type = urls[1];
-                if(type.equals("Bills") || type.equals("Shopping"))
+                if(type.equals("Bills") || type.equals("Shopping") || type.equals("People"))
                 {
                     return downloadUrl(urls[0], null);
                 }
@@ -390,7 +447,7 @@ public class WebHandler {
                     conn.setConnectTimeout(45000);
                     conn.setRequestProperty("Authorization", authToken);
 
-                    if(type.equals("Bills") || type.equals("Shopping"))
+                    if(type.equals("Bills") || type.equals("Shopping") || type.equals("People"))
                     {
                         conn.setRequestMethod("GET");
                         conn.setDoInput(true);

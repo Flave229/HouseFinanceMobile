@@ -33,6 +33,8 @@ public class GlobalObjects{
     static ArrayList<ShoppingListObject> _shoppingItems = new ArrayList<>();
     static ArrayList<ShoppingListPeople> _shoppingPeople = new ArrayList<>();
 
+    static ArrayList<Person> _allUsers = new ArrayList<>();
+
     public static WebHandler webHandler;
     public static BackgroundService backgroundService;
     public static boolean _bound = false;
@@ -121,6 +123,27 @@ public class GlobalObjects{
     {
         _shoppingPeople.clear();
         _shoppingPeople.addAll(people);
+    }
+
+    public static void SetCurrentUsers(ArrayList<Person> users)
+    {
+        _allUsers.clear();
+        _allUsers.addAll(users);
+    }
+
+    public static ArrayList<Person> GetUsers()
+    {
+        return _allUsers;
+    }
+
+    public static int GetUserIDFromLastName(String lastName)
+    {
+        for (Person user: _allUsers) {
+            if(user.Surname.toLowerCase().equals(lastName.toLowerCase()))
+                return user.ID;
+        }
+
+        return -1;
     }
 
     public static void ShowNotif(Context context, String text, String subtext, int notifid)

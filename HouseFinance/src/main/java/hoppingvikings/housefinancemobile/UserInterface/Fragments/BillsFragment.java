@@ -25,6 +25,7 @@ import hoppingvikings.housefinancemobile.UserInterface.Lists.ListItemDivider;
 import hoppingvikings.housefinancemobile.UserInterface.MainActivity;
 import hoppingvikings.housefinancemobile.UserInterface.ViewBillDetailsActivity;
 import hoppingvikings.housefinancemobile.WebService.DownloadCallback;
+import hoppingvikings.housefinancemobile.WebService.DownloadPeopleCallback;
 
 import static android.app.Activity.RESULT_CANCELED;
 import static android.app.Activity.RESULT_OK;
@@ -33,7 +34,8 @@ import static android.app.Activity.RESULT_OK;
  * Created by Josh on 24/09/2016.
  */
 
-public class BillsFragment extends Fragment implements DownloadCallback {
+public class BillsFragment extends Fragment
+        implements DownloadCallback, DownloadPeopleCallback {
 
     CoordinatorLayout layout;
     Handler _handler;
@@ -48,6 +50,13 @@ public class BillsFragment extends Fragment implements DownloadCallback {
         @Override
         public void run() {
             GlobalObjects.webHandler.contactWebsiteBills(getContext(), BillsFragment.this);
+        }
+    };
+
+    private Runnable requestUsers = new Runnable() {
+        @Override
+        public void run() {
+            GlobalObjects.webHandler.RequestUsers(getContext(), BillsFragment.this);
         }
     };
 
@@ -74,6 +83,7 @@ public class BillsFragment extends Fragment implements DownloadCallback {
                     } else {
 
                         swipeRefreshLayout.setRefreshing(false);
+                        _handler.postDelayed(requestUsers, 200);
                     }
                 } else {
                     _handler.post(contactWebsite);
@@ -182,6 +192,16 @@ public class BillsFragment extends Fragment implements DownloadCallback {
 
                 break;
         }
+    }
+
+    @Override
+    public void UsersDownloadSuccess() {
+
+    }
+
+    @Override
+    public void UsersDownloadFailed(String err) {
+        _handler.postDelayed(requestUsers, 500);
     }
 
     @Override

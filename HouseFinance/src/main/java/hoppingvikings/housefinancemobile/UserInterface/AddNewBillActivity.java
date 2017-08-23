@@ -36,6 +36,7 @@ import java.util.GregorianCalendar;
 import java.util.Locale;
 
 import hoppingvikings.housefinancemobile.GlobalObjects;
+import hoppingvikings.housefinancemobile.Person;
 import hoppingvikings.housefinancemobile.R;
 import hoppingvikings.housefinancemobile.WebService.UploadCallback;
 import hoppingvikings.housefinancemobile.WebService.WebHandler;
@@ -56,7 +57,7 @@ public class AddNewBillActivity extends AppCompatActivity implements UploadCallb
     TextInputEditText billDueDateEntryText;
 
     CheckBox davidCheck;
-    CheckBox vikkiCheck;
+    CheckBox samCheck;
     CheckBox joshCheck;
 
     RadioButton regularRadio;
@@ -67,7 +68,7 @@ public class AddNewBillActivity extends AppCompatActivity implements UploadCallb
     Date billDueDate;
 
     boolean forDavid;
-    boolean forVikki;
+    boolean forSam;
     boolean forJosh;
 
     boolean recurring;
@@ -94,8 +95,7 @@ public class AddNewBillActivity extends AppCompatActivity implements UploadCallb
         billDueDateEntryText.setInputType(InputType.TYPE_NULL);
 
         davidCheck = (CheckBox) findViewById(R.id.CheckBoxDavid);
-        vikkiCheck = (CheckBox) findViewById(R.id.CheckBoxVikki);
-        vikkiCheck.setChecked(false);
+        samCheck = (CheckBox) findViewById(R.id.CheckBoxSam);
         joshCheck = (CheckBox) findViewById(R.id.CheckBoxJosh);
 
         regularRadio = (RadioButton) findViewById(R.id.BillTypeRegular);
@@ -170,7 +170,7 @@ public class AddNewBillActivity extends AppCompatActivity implements UploadCallb
                         submitButton.setEnabled(false);
 
                         davidCheck.setEnabled(false);
-                        vikkiCheck.setEnabled(false);
+                        samCheck.setEnabled(false);
                         joshCheck.setEnabled(false);
                         recurRadio.setEnabled(false);
                         regularRadio.setEnabled(false);
@@ -185,13 +185,24 @@ public class AddNewBillActivity extends AppCompatActivity implements UploadCallb
                             JSONArray people = new JSONArray();
 
                             if(forDavid)
-                                people.put(GlobalObjects.USERGUID_DAVE);
+                            {
+                                if(GlobalObjects.GetUserIDFromLastName("smith") != -1)
+                                {
+                                    people.put(GlobalObjects.GetUserIDFromLastName("smith"));
+                                }
+                            }
 
-                            if(forVikki)
-                                people.put("25c15fb4-b5d5-47d9-917b-c572b1119e65");
+                            if(forSam)
+                            {
+                                if(GlobalObjects.GetUserIDFromLastName("head") != -1)
+                                    people.put(GlobalObjects.GetUserIDFromLastName("head"));
+                            }
 
                             if(forJosh)
-                                people.put(GlobalObjects.USERGUID_JOSH);
+                            {
+                                if(GlobalObjects.GetUserIDFromLastName("marshall") != -1)
+                                    people.put(GlobalObjects.GetUserIDFromLastName("marshall"));
+                            }
 
                             newBill.put("PeopleIds", people);
 
@@ -290,6 +301,16 @@ public class AddNewBillActivity extends AppCompatActivity implements UploadCallb
         }
     }
 
+    private void GenerateCheckBoxes()
+    {
+        for (Person user : GlobalObjects.GetUsers()) {
+            CheckBox userCheck = new CheckBox(this);
+            userCheck.setId(user.ID);
+            userCheck.setText(user.FirstName + " " + user.Surname);
+            userCheck.setChecked(true);
+        }
+    }
+
     private void ReenableElements()
     {
         billNameEntry.setEnabled(true);
@@ -298,7 +319,7 @@ public class AddNewBillActivity extends AppCompatActivity implements UploadCallb
         submitButton.setEnabled(true);
 
         davidCheck.setEnabled(true);
-        vikkiCheck.setEnabled(true);
+        samCheck.setEnabled(true);
         joshCheck.setEnabled(true);
 
         recurRadio.setEnabled(true);
@@ -347,7 +368,7 @@ public class AddNewBillActivity extends AppCompatActivity implements UploadCallb
         }
 
         forDavid = davidCheck.isChecked();
-        forVikki = vikkiCheck.isChecked();
+        forSam = samCheck.isChecked();
         forJosh = joshCheck.isChecked();
 
         if(!forDavid && !forJosh)

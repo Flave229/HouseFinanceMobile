@@ -146,15 +146,15 @@
                 android:layout_marginTop="8dp"/>
 
             <CheckBox
-                android:id="@+id/CheckBoxVikki"
+                android:id="@+id/CheckBoxSam"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:checked="false"
-                android:text="Victoria Walters"
+                android:checked="true"
+                android:text="Sam Head"
                 app:layout_constraintTop_toBottomOf="@+id/CheckBoxDavid"
                 app:layout_constraintLeft_toLeftOf="@+id/CheckBoxDavid"
                 android:layout_marginTop="8dp"
-                android:visibility="gone"/>
+                android:visibility="visible"/>
 
             <CheckBox
                 android:id="@+id/CheckBoxJosh"
@@ -162,8 +162,8 @@
                 android:layout_height="wrap_content"
                 android:checked="true"
                 android:text="Joshua Marshall"
-                app:layout_constraintTop_toBottomOf="@+id/CheckBoxVikki"
-                app:layout_constraintLeft_toLeftOf="@+id/CheckBoxVikki"
+                app:layout_constraintTop_toBottomOf="@+id/CheckBoxSam"
+                app:layout_constraintLeft_toLeftOf="@+id/CheckBoxSam"
                 android:layout_marginTop="8dp" />
 
             <TextView
