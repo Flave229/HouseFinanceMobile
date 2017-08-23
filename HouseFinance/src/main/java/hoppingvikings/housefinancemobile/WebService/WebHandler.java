@@ -342,12 +342,10 @@ public class WebHandler {
 
             case "BillDetails":
                 BillObjectDetailed detailedBill = null;
-                JSONArray paymentsArray;
-                JSONObject detailedJson;
 
                 try {
-                    detailedJson = result.getJSONObject("bill");
-                    paymentsArray = detailedJson.getJSONArray("payments");
+                    JSONObject detailedJson = result.getJSONObject("bill");
+                    JSONArray paymentsArray = detailedJson.getJSONArray("payments");
                     detailedBill = new BillObjectDetailed(detailedJson, paymentsArray);
                 } catch (JSONException e)
                 {
