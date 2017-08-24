@@ -35,9 +35,7 @@ public class BillListObject {
             billName = jsonObject.getString("name");
             billDate = dateFormat.format(dateFormat.parse(jsonObject.getString("fullDateDue")));
 
-            // todo Add amountPaid field and make billAmount equal (totalAmount - amountPaid)
             billAmountPaid = jsonObject.getString("amountPaid");
-            //billAmount = jsonObject.getString("amountDue");
             billTotalAmount = jsonObject.getString("totalAmount");
             billAmount = String.valueOf((Double.valueOf(billTotalAmount) - Double.valueOf(billAmountPaid)));
 

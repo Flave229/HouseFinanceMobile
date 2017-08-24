@@ -6,6 +6,7 @@ import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.AsyncTask;
 import android.util.Log;
+import android.widget.Toast;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -404,7 +405,7 @@ public class WebHandler
             HttpURLConnection conn = (HttpURLConnection) url.openConnection();
 
             try {
-                conn.setReadTimeout(30000);
+                conn.setReadTimeout(15000);
                 conn.setConnectTimeout(45000);
                 conn.setRequestProperty("Authorization", _authToken);
 
@@ -428,7 +429,7 @@ public class WebHandler
 
                 int response = conn.getResponseCode();
                 // TODO: Bother Josh about the below comment
-                // Toast.makeText(getBaseContext(), "The response is: " + String.valueOf(response), Toast.LENGTH_LONG).show();
+                 //Toast.makeText(context, "The response is: " + String.valueOf(response), Toast.LENGTH_LONG).show();
 
                 InputStream input = conn.getInputStream();
                 jsonObject = new JSONObject(readInputStream(input));
@@ -523,15 +524,15 @@ public class WebHandler
 
                 BufferedReader serverAnswer = new BufferedReader(new InputStreamReader(connection.getInputStream()));
                 String line;
-                String returnmessage = "";
+                String returnMessage = "";
                 while ((line = serverAnswer.readLine()) != null)
                 {
-                    returnmessage += line;
+                    returnMessage += line;
                 }
 
                 serverAnswer.close();
 
-                returnJson = new JSONObject(returnmessage);
+                returnJson = new JSONObject(returnMessage);
 
                 if(returnJson.has("hasError"))
                 {
