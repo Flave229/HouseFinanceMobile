@@ -65,6 +65,15 @@ public class AddShoppingItemFragment extends Fragment implements ButtonPressedCa
 
     AddNewShoppingItemActivity _activity;
 
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+        outState.putStringArrayList("user_names",_selectedUserNames);
+        outState.putIntegerArrayList("user_ids", _selectedUserIds);
+        outState.putInt("user_id", _selectedUserId);
+        outState.putString("user_name", _selectedUserName);
+        super.onSaveInstanceState(outState);
+    }
+
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -73,6 +82,14 @@ public class AddShoppingItemFragment extends Fragment implements ButtonPressedCa
         _activity.SetCallbackOwner(this);
         _activity.addToCartButton.setEnabled(true);
         _activity.addToCartButton.setText("Add to Cart");
+
+        if(savedInstanceState != null)
+        {
+            _selectedUserId = savedInstanceState.getInt("user_id");
+            _selectedUserIds = savedInstanceState.getIntegerArrayList("user_ids");
+            _selectedUserName = savedInstanceState.getString("user_name");
+            _selectedUserNames = savedInstanceState.getStringArrayList("user_names");
+        }
 
         if(_activity._shoppingItems.size() > 0)
         {
@@ -116,6 +133,26 @@ public class AddShoppingItemFragment extends Fragment implements ButtonPressedCa
                 startActivityForResult(selectusers, 1);
             }
         });
+
+        if(_selectedUserNames.size() > 0)
+        {
+            String namesString = "";
+            int index = 0;
+            for (String name:_selectedUserNames) {
+                if(index != _selectedUserNames.size() - 1)
+                    namesString += (name + ", ");
+                else
+                    namesString += name;
+
+                index++;
+            }
+            selectUsers.setText(namesString);
+        }
+
+        if(!_selectedUserName.isEmpty())
+        {
+            selectUser.setText(_selectedUserName);
+        }
 
         return _currentView;
     }

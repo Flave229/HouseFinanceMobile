@@ -13,6 +13,7 @@ import android.widget.TextView;
 import java.util.ArrayList;
 
 import hoppingvikings.housefinancemobile.GlobalObjects;
+import hoppingvikings.housefinancemobile.Person;
 import hoppingvikings.housefinancemobile.R;
 import hoppingvikings.housefinancemobile.UserInterface.Items.ShoppingCartItem;
 
@@ -88,10 +89,12 @@ public class ShoppingCartAdapter extends RecyclerView.Adapter<ShoppingCartAdapte
     }
 
     ArrayList<ShoppingCartItem> _items = new ArrayList<>();
+    ArrayList<Person> _usersList = new ArrayList<>();
 
-    public ShoppingCartAdapter(ArrayList<ShoppingCartItem> items, Context context)
+    public ShoppingCartAdapter(ArrayList<ShoppingCartItem> items, ArrayList<Person> users, Context context)
     {
         _items.addAll(items);
+        _usersList.addAll(users);
     }
 
     @Override
@@ -133,34 +136,26 @@ public class ShoppingCartAdapter extends RecyclerView.Adapter<ShoppingCartAdapte
 
         String addedForString = "";
         for (int personname:_items.get(position).people) {
-            switch (personname)
-            {
-                case GlobalObjects.USERGUID_DAVE:
-                    addedForString += ("David" + "; ");
-                    break;
-
-                case GlobalObjects.USERGUID_JOSH:
-                    addedForString += ("Josh" + "; ");
-                    break;
+            for (Person user:_usersList) {
+                if(personname == user.ID)
+                    addedForString += (user.FirstName + "; ");
             }
         }
         holder.addedFor.setText(addedForString);
 
-        switch (_items.get(position).addedBy)
-        {
-            case GlobalObjects.USERGUID_DAVE:
-                holder.addedBy.setText("David");
-                break;
-
-            case GlobalObjects.USERGUID_JOSH:
-                holder.addedBy.setText("Josh");
-                break;
+        for (Person user: _usersList) {
+            if(_items.get(position).addedBy == user.ID)
+                holder.addedBy.setText(user.FirstName);
         }
-
     }
 
     public ShoppingCartItem GetItem(int position)
     {
         return _items.get(position);
+    }
+
+    public void SetUsersList(ArrayList<Person> allUsers)
+    {
+        _usersList.addAll(allUsers);
     }
 }

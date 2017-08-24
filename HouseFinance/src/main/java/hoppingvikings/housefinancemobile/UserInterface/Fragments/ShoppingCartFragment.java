@@ -19,17 +19,20 @@ import org.json.JSONObject;
 import java.util.ArrayList;
 
 import hoppingvikings.housefinancemobile.GlobalObjects;
+import hoppingvikings.housefinancemobile.Person;
 import hoppingvikings.housefinancemobile.R;
 import hoppingvikings.housefinancemobile.UserInterface.Activities.AddNewShoppingItemActivity;
 import hoppingvikings.housefinancemobile.UserInterface.Fragments.Interfaces.ButtonPressedCallback;
 import hoppingvikings.housefinancemobile.UserInterface.Lists.ShoppingCartList.ShoppingCartAdapter;
 import hoppingvikings.housefinancemobile.UserInterface.Items.ShoppingCartItem;
+import hoppingvikings.housefinancemobile.WebService.DownloadPeopleCallback;
 
 /**
  * Created by iView on 25/07/2017.
  */
 
-public class ShoppingCartFragment extends Fragment implements ButtonPressedCallback, ShoppingCartAdapter.DeleteCallback {
+public class ShoppingCartFragment extends Fragment
+        implements ButtonPressedCallback, ShoppingCartAdapter.DeleteCallback, DownloadPeopleCallback {
     View currentView;
     TextView cartEmptyText;
     CoordinatorLayout layout;
@@ -39,21 +42,13 @@ public class ShoppingCartFragment extends Fragment implements ButtonPressedCallb
     AddNewShoppingItemActivity _activity;
     boolean submitting = false;
 
-    @Nullable
     @Override
-    public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        currentView = inflater.inflate(R.layout.fragment_shoppingcart, container, false);
-        _activity = (AddNewShoppingItemActivity)getActivity();
-        _activity.SetCallbackOwner(this);
-        _activity.submitButton.setText("Go Back");
-        _activity.addToCartButton.setText("Submit Items");
-        _activity.addToCartButton.setEnabled(true);
+    public void UsersDownloadFailed(String err) {
 
-        cartEmptyText = (TextView) currentView.findViewById(R.id.cartEmptyText);
-        layout = (CoordinatorLayout) currentView.findViewById(R.id.coordlayout);
-        rv = (RecyclerView) currentView.findViewById(R.id.cartList);
-        items = new ArrayList<>();
+    }
 
+    @Override
+    public void UsersDownloadSuccess(ArrayList<Person> users) {
         try {
             for (String jsonstring: _activity._shoppingItems) {
                 JSONObject json = new JSONObject(jsonstring);
@@ -63,7 +58,7 @@ public class ShoppingCartFragment extends Fragment implements ButtonPressedCallb
         {
 
         }
-        adapter = new ShoppingCartAdapter(items, getContext());
+        adapter = new ShoppingCartAdapter(items, users, getContext());
         rv.setAdapter(adapter);
         rv.setLayoutManager(new LinearLayoutManager(getActivity()));
         adapter.SetDeleteCallback(this);
@@ -86,6 +81,23 @@ public class ShoppingCartFragment extends Fragment implements ButtonPressedCallb
         {
             cartEmptyText.setVisibility(View.GONE);
         }
+    }
+
+    @Nullable
+    @Override
+    public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+        GlobalObjects.webHandler.RequestUsers(getContext(), this);
+        currentView = inflater.inflate(R.layout.fragment_shoppingcart, container, false);
+        _activity = (AddNewShoppingItemActivity)getActivity();
+        _activity.SetCallbackOwner(this);
+        _activity.submitButton.setText("Go Back");
+        _activity.addToCartButton.setText("Submit Items");
+        _activity.addToCartButton.setEnabled(true);
+
+        cartEmptyText = (TextView) currentView.findViewById(R.id.cartEmptyText);
+        layout = (CoordinatorLayout) currentView.findViewById(R.id.coordlayout);
+        rv = (RecyclerView) currentView.findViewById(R.id.cartList);
+        items = new ArrayList<>();
 
         return currentView;
     }
