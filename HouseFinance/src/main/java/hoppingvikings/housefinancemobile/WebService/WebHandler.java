@@ -322,7 +322,7 @@ public class WebHandler
                         parsedUsers.add(new Person(userObjects.get(j)));
                     }
 
-                    GlobalObjects.SetCurrentUsers(parsedUsers);
+                    _peopleDownloadOwner.UsersDownloadSuccess(parsedUsers);
 
                 } catch (JSONException je)
                 {
@@ -334,7 +334,6 @@ public class WebHandler
 
                 }
                 GlobalObjects.downloading = false;
-                _peopleDownloadOwner.UsersDownloadSuccess();
 
                 break;
 

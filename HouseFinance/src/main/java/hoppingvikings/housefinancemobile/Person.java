@@ -13,6 +13,8 @@ public class Person {
     public String Surname = "";
     public String ImageUrl = "";
 
+    public boolean selected = false;
+
     public Person(JSONObject userObj)
     {
         try {

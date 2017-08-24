@@ -2,7 +2,9 @@ package hoppingvikings.housefinancemobile.UserInterface.Activities;
 
 import android.app.DatePickerDialog;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.annotation.Nullable;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.Snackbar;
@@ -19,7 +21,9 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.DatePicker;
+import android.widget.ImageButton;
 import android.widget.RadioButton;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import org.json.JSONArray;
@@ -29,6 +33,7 @@ import org.json.JSONObject;
 import java.text.DecimalFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
@@ -37,6 +42,7 @@ import java.util.Locale;
 import hoppingvikings.housefinancemobile.GlobalObjects;
 import hoppingvikings.housefinancemobile.Person;
 import hoppingvikings.housefinancemobile.R;
+import hoppingvikings.housefinancemobile.WebService.DownloadPeopleCallback;
 import hoppingvikings.housefinancemobile.WebService.UploadCallback;
 
 /**
@@ -54,9 +60,8 @@ public class AddNewBillActivity extends AppCompatActivity implements UploadCallb
     TextInputLayout billDueDateEntry;
     TextInputEditText billDueDateEntryText;
 
-    CheckBox davidCheck;
-    CheckBox samCheck;
-    CheckBox joshCheck;
+    TextView selectUsers;
+    ImageButton editPeople;
 
     RadioButton regularRadio;
     RadioButton recurRadio;
@@ -65,13 +70,12 @@ public class AddNewBillActivity extends AppCompatActivity implements UploadCallb
     Number billAmount;
     Date billDueDate;
 
-    boolean forDavid;
-    boolean forSam;
-    boolean forJosh;
-
     boolean recurring;
 
     CoordinatorLayout layout;
+
+    ArrayList<Integer> _selectedUserIds = new ArrayList<>();
+    ArrayList<String> _selectedUserNames = new ArrayList<>();
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -92,9 +96,20 @@ public class AddNewBillActivity extends AppCompatActivity implements UploadCallb
         billDueDateEntryText = (TextInputEditText) findViewById(R.id.billDueDateEntryText);
         billDueDateEntryText.setInputType(InputType.TYPE_NULL);
 
-        davidCheck = (CheckBox) findViewById(R.id.CheckBoxDavid);
-        samCheck = (CheckBox) findViewById(R.id.CheckBoxSam);
-        joshCheck = (CheckBox) findViewById(R.id.CheckBoxJosh);
+        selectUsers = (TextView) findViewById(R.id.selectUsers);
+        editPeople = (ImageButton) findViewById(R.id.editPeople);
+        editPeople.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent selectusers = new Intent(AddNewBillActivity.this, SelectUsersActivity.class);
+                selectusers.putExtra("multiple_user_selection", true);
+                if(_selectedUserIds.size() > 0)
+                {
+                    selectusers.putExtra("currently_selected_ids", _selectedUserIds);
+                }
+                startActivityForResult(selectusers, 0);
+            }
+        });
 
         regularRadio = (RadioButton) findViewById(R.id.BillTypeRegular);
         recurRadio = (RadioButton) findViewById(R.id.BillTypeRecur);
@@ -165,11 +180,9 @@ public class AddNewBillActivity extends AppCompatActivity implements UploadCallb
                         billNameEntry.setEnabled(false);
                         billAmountEntry.setEnabled(false);
                         billAmountEntryText.setEnabled(false);
+                        editPeople.setEnabled(false);
                         submitButton.setEnabled(false);
 
-                        davidCheck.setEnabled(false);
-                        samCheck.setEnabled(false);
-                        joshCheck.setEnabled(false);
                         recurRadio.setEnabled(false);
                         regularRadio.setEnabled(false);
 
@@ -182,24 +195,8 @@ public class AddNewBillActivity extends AppCompatActivity implements UploadCallb
 
                             JSONArray people = new JSONArray();
 
-                            if(forDavid)
-                            {
-                                if(GlobalObjects.GetUserIDFromLastName("smith") != -1)
-                                {
-                                    people.put(GlobalObjects.GetUserIDFromLastName("smith"));
-                                }
-                            }
-
-                            if(forSam)
-                            {
-                                if(GlobalObjects.GetUserIDFromLastName("head") != -1)
-                                    people.put(GlobalObjects.GetUserIDFromLastName("head"));
-                            }
-
-                            if(forJosh)
-                            {
-                                if(GlobalObjects.GetUserIDFromLastName("marshall") != -1)
-                                    people.put(GlobalObjects.GetUserIDFromLastName("marshall"));
+                            for (int id : _selectedUserIds) {
+                                people.put(id);
                             }
 
                             newBill.put("PeopleIds", people);
@@ -299,16 +296,6 @@ public class AddNewBillActivity extends AppCompatActivity implements UploadCallb
         }
     }
 
-    private void GenerateCheckBoxes()
-    {
-        for (Person user : GlobalObjects.GetUsers()) {
-            CheckBox userCheck = new CheckBox(this);
-            userCheck.setId(user.ID);
-            userCheck.setText(user.FirstName + " " + user.Surname);
-            userCheck.setChecked(true);
-        }
-    }
-
     private void ReenableElements()
     {
         billNameEntry.setEnabled(true);
@@ -316,9 +303,7 @@ public class AddNewBillActivity extends AppCompatActivity implements UploadCallb
         billAmountEntryText.setEnabled(true);
         submitButton.setEnabled(true);
 
-        davidCheck.setEnabled(true);
-        samCheck.setEnabled(true);
-        joshCheck.setEnabled(true);
+        editPeople.setEnabled(true);
 
         recurRadio.setEnabled(true);
         regularRadio.setEnabled(true);
@@ -365,17 +350,44 @@ public class AddNewBillActivity extends AppCompatActivity implements UploadCallb
             return false;
         }
 
-        forDavid = davidCheck.isChecked();
-        forSam = samCheck.isChecked();
-        forJosh = joshCheck.isChecked();
-
-        if(!forDavid && !forJosh)
+        if(_selectedUserIds.size() < 1)
         {
             Snackbar.make(layout, "Please select at least one person for this bill", Snackbar.LENGTH_LONG).show();
             return false;
         }
 
         return true;
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        switch (resultCode)
+        {
+            case RESULT_OK:
+                if(data != null)
+                {
+                    _selectedUserIds = data.getIntegerArrayListExtra("selected_ids");
+                    _selectedUserNames = data.getStringArrayListExtra("selected_names");
+
+                    String namesString = "";
+                    int index = 0;
+                    for (String name:_selectedUserNames) {
+                        if(index != _selectedUserNames.size() - 1)
+                            namesString += (name + ", ");
+                        else
+                            namesString += name;
+
+                        index++;
+                    }
+                    selectUsers.setText(namesString);
+                }
+                break;
+
+            case RESULT_CANCELED:
+
+                break;
+        }
     }
 
     @Override
@@ -390,6 +402,4 @@ public class AddNewBillActivity extends AppCompatActivity implements UploadCallb
         Snackbar.make(layout, failReason, Snackbar.LENGTH_LONG).show();
         ReenableElements();
     }
-
-
 }

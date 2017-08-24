@@ -35,7 +35,7 @@ import static android.app.Activity.RESULT_OK;
  */
 
 public class BillsFragment extends Fragment
-        implements DownloadCallback, DownloadPeopleCallback {
+        implements DownloadCallback {
 
     CoordinatorLayout _layout;
     Handler _handler;
@@ -50,13 +50,6 @@ public class BillsFragment extends Fragment
         @Override
         public void run() {
             GlobalObjects.webHandler.contactWebsiteBills(getContext(), BillsFragment.this);
-        }
-    };
-
-    private Runnable requestUsers = new Runnable() {
-        @Override
-        public void run() {
-            GlobalObjects.webHandler.RequestUsers(getContext(), BillsFragment.this);
         }
     };
 
@@ -81,7 +74,7 @@ public class BillsFragment extends Fragment
                     }
                     else {
                         _swipeRefreshLayout.setRefreshing(false);
-                        _handler.postDelayed(requestUsers, 200);
+
                     }
                 } else {
                     _handler.post(contactWebsite);
@@ -187,16 +180,6 @@ public class BillsFragment extends Fragment
 
                 break;
         }
-    }
-
-    @Override
-    public void UsersDownloadSuccess() {
-
-    }
-
-    @Override
-    public void UsersDownloadFailed(String err) {
-        _handler.postDelayed(requestUsers, 500);
     }
 
     @Override

@@ -52,6 +52,9 @@
 
         <activity android:name=".UserInterface.Activities.EditPaymentActivity"
             android:label="Edit Payment"/>
+
+        <activity android:name=".UserInterface.Activities.SelectUsersActivity"
+            android:label="Select Users"/>
     </application>
 
 </manifest>
