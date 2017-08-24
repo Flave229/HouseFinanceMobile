@@ -104,35 +104,27 @@
                 app:layout_constraintTop_toBottomOf="@+id/paymentDateEntry"
                 app:layout_constraintLeft_toLeftOf="parent" />
 
-            <RadioButton
-                android:id="@+id/davidRadio"
+            <TextView
+                android:id="@+id/selectUser"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginLeft="16dp"
+                android:text=""
+                android:textSize="18sp"
                 android:layout_marginTop="8dp"
-                android:text="David Smith"
-                app:layout_constraintLeft_toLeftOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/whoLabel"/>
+                app:layout_constraintTop_toBottomOf="@+id/whoLabel"
+                app:layout_constraintLeft_toLeftOf="@+id/whoLabel" />
 
-            <RadioButton
-                android:id="@+id/joshRadio"
-                android:layout_width="wrap_content"
+            <ImageButton
+                android:id="@+id/editPerson"
+                android:layout_width="48dp"
                 android:layout_height="wrap_content"
-                android:layout_marginLeft="16dp"
-                android:layout_marginTop="8dp"
-                android:text="Joshua Marshall"
-                app:layout_constraintLeft_toLeftOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/davidRadio"/>
-
-            <RadioButton
-                android:id="@+id/vikkiRadio"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginLeft="16dp"
-                android:layout_marginTop="8dp"
-                android:text="Victoria Walters"
-                app:layout_constraintLeft_toLeftOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/joshRadio"/>
+                android:src="@drawable/ic_create_white_24dp"
+                style="@style/Widget.AppCompat.Button.Borderless"
+                app:layout_constraintLeft_toRightOf="@+id/selectUser"
+                app:layout_constraintTop_toTopOf="@+id/selectUser"
+                app:layout_constraintBottom_toBottomOf="@+id/selectUser"
+                android:layout_marginBottom="0dp"
+                android:layout_marginLeft="8dp"/>
 
         </android.support.constraint.ConstraintLayout>
 

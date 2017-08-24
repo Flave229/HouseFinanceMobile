@@ -19,6 +19,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.DatePicker;
+import android.widget.ImageButton;
 import android.widget.RadioButton;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -50,9 +51,8 @@ public class AddPaymentActivity extends AppCompatActivity implements UploadCallb
     TextInputLayout paymentDateEntry;
     TextInputEditText paymentDateEntryText;
 
-    RadioButton davidRadio;
-    RadioButton joshRadio;
-    RadioButton vikkiRadio;
+    TextView selectUser;
+    ImageButton editPerson;
 
     Number paymentAmount;
     Date paymentDate;
@@ -60,11 +60,10 @@ public class AddPaymentActivity extends AppCompatActivity implements UploadCallb
     int billid;
     String suggestedPayment;
 
-    boolean forDavid;
-    boolean forJosh;
-    boolean forVikki;
-
     CoordinatorLayout layout;
+
+    int _selectedUserId = -1;
+    String _selectedUserName = "";
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -108,41 +107,17 @@ public class AddPaymentActivity extends AppCompatActivity implements UploadCallb
         paymentDateEntryText = (TextInputEditText) findViewById(R.id.paymentDateEntryText);
         paymentDateEntryText.setInputType(InputType.TYPE_NULL);
 
-        davidRadio = (RadioButton) findViewById(R.id.davidRadio);
-        joshRadio = (RadioButton) findViewById(R.id.joshRadio);
-        vikkiRadio = (RadioButton) findViewById(R.id.vikkiRadio);
-        vikkiRadio.setVisibility(View.GONE);
-
-        davidRadio.setOnClickListener(new View.OnClickListener() {
+        selectUser = (TextView) findViewById(R.id.selectUser);
+        editPerson = (ImageButton) findViewById(R.id.editPerson);
+        editPerson.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(vikkiRadio.isChecked())
-                    vikkiRadio.setChecked(false);
-
-                if(joshRadio.isChecked())
-                    joshRadio.setChecked(false);
-            }
-        });
-
-        vikkiRadio.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if(davidRadio.isChecked())
-                    davidRadio.setChecked(false);
-
-                if(joshRadio.isChecked())
-                    joshRadio.setChecked(false);
-            }
-        });
-
-        joshRadio.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if(vikkiRadio.isChecked())
-                    vikkiRadio.setChecked(false);
-
-                if(davidRadio.isChecked())
-                    davidRadio.setChecked(false);
+                Intent selectusers = new Intent(AddPaymentActivity.this, SelectUsersActivity.class);
+                if(_selectedUserId > -1)
+                {
+                    selectusers.putExtra("currently_selected_id", _selectedUserId);
+                }
+                startActivityForResult(selectusers, 0);
             }
         });
 
@@ -196,11 +171,7 @@ public class AddPaymentActivity extends AppCompatActivity implements UploadCallb
 
                         paymentAmountEntry.setEnabled(false);
                         paymentDateEntry.setEnabled(false);
-                        davidRadio.setEnabled(false);
-                        joshRadio.setEnabled(false);
-
-                        forDavid = davidRadio.isChecked();
-                        forJosh = joshRadio.isChecked();
+                        editPerson.setEnabled(false);
 
                         JSONObject newPayment = new JSONObject();
 
@@ -209,10 +180,7 @@ public class AddPaymentActivity extends AppCompatActivity implements UploadCallb
                             newPayment.put("Amount", paymentAmount.doubleValue());
                             newPayment.put("Created", new SimpleDateFormat("yyyy-MM-dd").format(paymentDate));
 
-                            if(forDavid)
-                                newPayment.put("PersonId", GlobalObjects.USERGUID_DAVE);
-                            else if(forJosh)
-                                newPayment.put("PersonId", GlobalObjects.USERGUID_JOSH);
+                            newPayment.put("PersonId", _selectedUserId);
 
                             GlobalObjects.webHandler.UploadNewItem(getApplicationContext(), newPayment, AddPaymentActivity.this, GlobalObjects.ITEM_TYPE_BILLPAYMENT);
                         } catch (Exception e)
@@ -241,9 +209,7 @@ public class AddPaymentActivity extends AppCompatActivity implements UploadCallb
         paymentDateEntry.setEnabled(true);
         submitButton.setEnabled(true);
 
-        davidRadio.setEnabled(true);
-        vikkiRadio.setEnabled(true);
-        joshRadio.setEnabled(true);
+        editPerson.setEnabled(true);
     }
 
     private boolean ValidateFields()
@@ -272,11 +238,7 @@ public class AddPaymentActivity extends AppCompatActivity implements UploadCallb
                 return false;
             }
 
-            forDavid = davidRadio.isChecked();
-            forVikki = vikkiRadio.isChecked();
-            forJosh = joshRadio.isChecked();
-
-            if(!forDavid && !forJosh)
+            if(_selectedUserId == -1)
             {
                 Snackbar.make(layout, "Please select at least one person for this bill", Snackbar.LENGTH_LONG).show();
                 return false;
@@ -348,5 +310,26 @@ public class AddPaymentActivity extends AppCompatActivity implements UploadCallb
         Toast.makeText(getApplicationContext(), "Payment added successfully", Toast.LENGTH_LONG).show();
         setResult(RESULT_OK);
         finish();
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        switch (resultCode)
+        {
+            case RESULT_OK:
+                if(data != null)
+                {
+                    _selectedUserId = data.getIntExtra("selected_id", -1);
+                    _selectedUserName = data.getStringExtra("selected_name");
+
+                    selectUser.setText(_selectedUserName);
+                }
+                break;
+
+            case RESULT_CANCELED:
+
+                break;
+        }
     }
 }
