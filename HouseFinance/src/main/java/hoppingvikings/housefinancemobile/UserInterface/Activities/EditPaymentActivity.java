@@ -1,4 +1,4 @@
-package hoppingvikings.housefinancemobile.UserInterface;
+package hoppingvikings.housefinancemobile.UserInterface.Activities;
 
 import android.app.DatePickerDialog;
 import android.content.DialogInterface;
@@ -21,11 +21,8 @@ import android.widget.CheckBox;
 import android.widget.DatePicker;
 import android.widget.Toast;
 
-import org.json.JSONArray;
 import org.json.JSONObject;
 
-import java.text.DecimalFormat;
-import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;

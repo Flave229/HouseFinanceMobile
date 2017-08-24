@@ -1,4 +1,4 @@
-package hoppingvikings.housefinancemobile.UserInterface;
+package hoppingvikings.housefinancemobile.UserInterface.Activities;
 
 import android.content.DialogInterface;
 import android.os.AsyncTask;

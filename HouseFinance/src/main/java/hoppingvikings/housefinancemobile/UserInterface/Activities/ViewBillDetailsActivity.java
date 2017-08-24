@@ -1,4 +1,4 @@
-package hoppingvikings.housefinancemobile.UserInterface;
+package hoppingvikings.housefinancemobile.UserInterface.Activities;
 
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -14,18 +14,15 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.LinearLayout;
 import android.widget.TableLayout;
 import android.widget.TableRow;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
@@ -36,7 +33,7 @@ import hoppingvikings.housefinancemobile.R;
 import hoppingvikings.housefinancemobile.UserInterface.Items.BillListObject;
 import hoppingvikings.housefinancemobile.UserInterface.Items.BillObjectDetailed;
 import hoppingvikings.housefinancemobile.UserInterface.Items.BillObjectDetailedPayments;
-import hoppingvikings.housefinancemobile.UserInterface.Lists.ListItemDivider;
+import hoppingvikings.housefinancemobile.UserInterface.PaymentsListAdapter;
 import hoppingvikings.housefinancemobile.WebService.DeleteItemCallback;
 import hoppingvikings.housefinancemobile.WebService.DownloadDetailsCallback;
 import hoppingvikings.housefinancemobile.WebService.UploadCallback;

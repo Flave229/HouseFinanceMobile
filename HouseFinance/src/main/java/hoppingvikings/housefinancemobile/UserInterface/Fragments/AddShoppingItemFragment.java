@@ -1,9 +1,7 @@
 package hoppingvikings.housefinancemobile.UserInterface.Fragments;
 
-import android.content.Context;
 import android.content.DialogInterface;
 import android.os.Bundle;
-import android.os.Environment;
 import android.support.annotation.Nullable;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.Snackbar;
@@ -23,17 +21,12 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.OutputStreamWriter;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Date;
 
 import hoppingvikings.housefinancemobile.GlobalObjects;
 import hoppingvikings.housefinancemobile.R;
-import hoppingvikings.housefinancemobile.UserInterface.AddNewShoppingItemActivity;
+import hoppingvikings.housefinancemobile.UserInterface.Activities.AddNewShoppingItemActivity;
 import hoppingvikings.housefinancemobile.UserInterface.Fragments.Interfaces.ButtonPressedCallback;
 
 /**

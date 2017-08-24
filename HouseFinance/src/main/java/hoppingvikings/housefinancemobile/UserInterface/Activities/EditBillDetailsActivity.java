@@ -1,4 +1,4 @@
-package hoppingvikings.housefinancemobile.UserInterface;
+package hoppingvikings.housefinancemobile.UserInterface.Activities;
 
 import android.app.DatePickerDialog;
 import android.content.DialogInterface;

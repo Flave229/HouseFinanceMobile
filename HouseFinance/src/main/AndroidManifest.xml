@@ -32,25 +32,25 @@
             android:exported="false"
             android:stopWithTask="false"/>
 
-        <activity android:name=".UserInterface.AddNewBillActivity"
+        <activity android:name=".UserInterface.Activities.AddNewBillActivity"
             android:label="Add Bill"/>
 
-        <activity android:name=".UserInterface.AddNewShoppingItemActivity"
+        <activity android:name=".UserInterface.Activities.AddNewShoppingItemActivity"
             android:label="Add Shopping Item"/>
 
-        <activity android:name=".UserInterface.ViewBillDetailsActivity"
+        <activity android:name=".UserInterface.Activities.ViewBillDetailsActivity"
             android:label="Bill Details"/>
 
-        <activity android:name=".UserInterface.AddPaymentActivity"
+        <activity android:name=".UserInterface.Activities.AddPaymentActivity"
             android:label="Add Payment"/>
 
-        <activity android:name=".UserInterface.EditBillDetailsActivity"
+        <activity android:name=".UserInterface.Activities.EditBillDetailsActivity"
             android:label="Edit Bill"/>
 
-        <activity android:name=".UserInterface.EditShoppingItemActivity"
+        <activity android:name=".UserInterface.Activities.EditShoppingItemActivity"
             android:label="Edit Shopping Item"/>
 
-        <activity android:name=".UserInterface.EditPaymentActivity"
+        <activity android:name=".UserInterface.Activities.EditPaymentActivity"
             android:label="Edit Payment"/>
     </application>
 

@@ -18,12 +18,12 @@ import java.util.ArrayList;
 
 import hoppingvikings.housefinancemobile.GlobalObjects;
 import hoppingvikings.housefinancemobile.R;
-import hoppingvikings.housefinancemobile.UserInterface.AddNewBillActivity;
+import hoppingvikings.housefinancemobile.UserInterface.Activities.AddNewBillActivity;
 import hoppingvikings.housefinancemobile.UserInterface.Lists.BillList.BillListAdapter;
 import hoppingvikings.housefinancemobile.UserInterface.Items.BillListObject;
 import hoppingvikings.housefinancemobile.UserInterface.Lists.ListItemDivider;
 import hoppingvikings.housefinancemobile.UserInterface.MainActivity;
-import hoppingvikings.housefinancemobile.UserInterface.ViewBillDetailsActivity;
+import hoppingvikings.housefinancemobile.UserInterface.Activities.ViewBillDetailsActivity;
 import hoppingvikings.housefinancemobile.WebService.DownloadCallback;
 import hoppingvikings.housefinancemobile.WebService.DownloadPeopleCallback;
 

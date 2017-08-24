@@ -20,7 +20,7 @@ import java.util.ArrayList;
 
 import hoppingvikings.housefinancemobile.GlobalObjects;
 import hoppingvikings.housefinancemobile.R;
-import hoppingvikings.housefinancemobile.UserInterface.AddNewShoppingItemActivity;
+import hoppingvikings.housefinancemobile.UserInterface.Activities.AddNewShoppingItemActivity;
 import hoppingvikings.housefinancemobile.UserInterface.Fragments.Interfaces.ButtonPressedCallback;
 import hoppingvikings.housefinancemobile.UserInterface.Lists.ShoppingCartList.ShoppingCartAdapter;
 import hoppingvikings.housefinancemobile.UserInterface.Items.ShoppingCartItem;

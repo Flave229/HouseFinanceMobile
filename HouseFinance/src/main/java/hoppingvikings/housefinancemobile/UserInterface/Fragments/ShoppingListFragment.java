@@ -19,8 +19,8 @@ import java.util.Date;
 
 import hoppingvikings.housefinancemobile.GlobalObjects;
 import hoppingvikings.housefinancemobile.R;
-import hoppingvikings.housefinancemobile.UserInterface.AddNewShoppingItemActivity;
-import hoppingvikings.housefinancemobile.UserInterface.EditShoppingItemActivity;
+import hoppingvikings.housefinancemobile.UserInterface.Activities.AddNewShoppingItemActivity;
+import hoppingvikings.housefinancemobile.UserInterface.Activities.EditShoppingItemActivity;
 import hoppingvikings.housefinancemobile.UserInterface.Lists.ShoppingList.ShoppingListAdapter;
 import hoppingvikings.housefinancemobile.UserInterface.Items.ShoppingListObject;
 import hoppingvikings.housefinancemobile.UserInterface.MainActivity;

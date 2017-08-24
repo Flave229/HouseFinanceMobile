@@ -1,4 +1,4 @@
-package hoppingvikings.housefinancemobile.UserInterface;
+package hoppingvikings.housefinancemobile.UserInterface.Activities;
 
 import android.app.DatePickerDialog;
 import android.content.DialogInterface;
@@ -19,7 +19,6 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.DatePicker;
-import android.widget.ImageView;
 import android.widget.RadioButton;
 import android.widget.Toast;
 
@@ -39,7 +38,6 @@ import hoppingvikings.housefinancemobile.GlobalObjects;
 import hoppingvikings.housefinancemobile.Person;
 import hoppingvikings.housefinancemobile.R;
 import hoppingvikings.housefinancemobile.WebService.UploadCallback;
-import hoppingvikings.housefinancemobile.WebService.WebHandler;
 
 /**
  * Created by Josh on 11/02/2017.

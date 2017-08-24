@@ -14,7 +14,7 @@
         <intent
             android:action="android.intent.action.VIEW"
             android:targetPackage="hoppingvikings.housefinancemobile"
-            android:targetClass="hoppingvikings.housefinancemobile.UserInterface.AddNewBillActivity"/>
+            android:targetClass="hoppingvikings.housefinancemobile.UserInterface.Activities.AddNewBillActivity"/>
     </shortcut>
 
     <shortcut
@@ -31,6 +31,6 @@
         <intent
             android:action="android.intent.action.VIEW"
             android:targetPackage="hoppingvikings.housefinancemobile"
-            android:targetClass="hoppingvikings.housefinancemobile.UserInterface.AddNewShoppingItemActivity"/>
+            android:targetClass="hoppingvikings.housefinancemobile.UserInterface.Activities.AddNewShoppingItemActivity"/>
     </shortcut>
 </shortcuts>
