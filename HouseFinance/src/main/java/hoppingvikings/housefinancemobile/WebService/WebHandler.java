@@ -398,55 +398,52 @@ public class WebHandler
             websiteResult(result, type);
         }
 
-        private JSONObject downloadUrl(String weburl, String billid) throws IOException
+        private JSONObject downloadUrl(String webUrl, String billId) throws IOException
         {
-            // Changed to 1MB buffer length. Previous was way too small
             JSONObject jsonObject;
-            URL url = new URL(weburl);
+            URL url = new URL(webUrl);
             HttpURLConnection conn = (HttpURLConnection) url.openConnection();
 
-            // Might need this at some point
-                try {
-                    conn.setReadTimeout(30000);
-                    conn.setConnectTimeout(45000);
-                    conn.setRequestProperty("Authorization", _authToken);
+            try {
+                conn.setReadTimeout(30000);
+                conn.setConnectTimeout(45000);
+                conn.setRequestProperty("Authorization", _authToken);
 
-                    if(type.equals("Bills") || type.equals("Shopping") || type.equals("People"))
-                    {
-                        conn.setRequestMethod("GET");
-                        conn.setDoInput(true);
-                    }
-                    else
-                    {
-                        conn.setRequestMethod("POST");
-                        conn.setRequestProperty("Content-Type", "application/json; charset=UTF-8");
-                        conn.setDoOutput(true);
-                        conn.setDoInput(true);
-                        OutputStream os = conn.getOutputStream();
-                        JSONObject billidjson = new JSONObject();
-                        billidjson.put("BillId", billid);
-                        os.write(billidjson.toString().getBytes("UTF-8"));
-                        os.close();
-                    }
-
-                    int response = conn.getResponseCode();
-                    //Toast.makeText(getBaseContext(), "The response is: " + String.valueOf(response), Toast.LENGTH_LONG).show();
-
-                    InputStream input = conn.getInputStream();
-
-                    jsonObject = new JSONObject(readIt(input));
-
-                    return jsonObject;
-                } catch (JSONException e) {
-                    conn.disconnect();
+                if(type.equals("Bills") || type.equals("Shopping") || type.equals("People"))
+                {
+                    conn.setRequestMethod("GET");
+                    conn.setDoInput(true);
                 }
+                else
+                {
+                    conn.setRequestMethod("POST");
+                    conn.setRequestProperty("Content-Type", "application/json; charset=UTF-8");
+                    conn.setDoOutput(true);
+                    conn.setDoInput(true);
+                    OutputStream os = conn.getOutputStream();
+                    JSONObject billIdJson = new JSONObject();
+                    billIdJson.put("BillId", billId);
+                    os.write(billIdJson.toString().getBytes("UTF-8"));
+                    os.close();
+                }
+
+                int response = conn.getResponseCode();
+                // TODO: Bother Josh about the below comment
+                // Toast.makeText(getBaseContext(), "The response is: " + String.valueOf(response), Toast.LENGTH_LONG).show();
+
+                InputStream input = conn.getInputStream();
+                jsonObject = new JSONObject(readInputStream(input));
+                return jsonObject;
+            } catch (JSONException e) {
+                conn.disconnect();
+            }
             finally {
-                    conn.disconnect();
-                }
+                conn.disconnect();
+            }
             return null;
         }
 
-        public String readIt(InputStream input)
+        public String readInputStream(InputStream input)
         {
             BufferedReader reader = null;
             StringBuilder response = new StringBuilder();
