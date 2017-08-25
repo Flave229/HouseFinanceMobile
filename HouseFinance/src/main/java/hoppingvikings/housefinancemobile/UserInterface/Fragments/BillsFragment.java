@@ -8,6 +8,7 @@ import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.support.v4.widget.SwipeRefreshLayout;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -19,13 +20,14 @@ import java.util.ArrayList;
 import hoppingvikings.housefinancemobile.GlobalObjects;
 import hoppingvikings.housefinancemobile.R;
 import hoppingvikings.housefinancemobile.UserInterface.Activities.AddNewBillActivity;
+import hoppingvikings.housefinancemobile.UserInterface.Items.BillListObjectPeople;
 import hoppingvikings.housefinancemobile.UserInterface.Lists.BillList.BillListAdapter;
 import hoppingvikings.housefinancemobile.UserInterface.Items.BillListObject;
 import hoppingvikings.housefinancemobile.UserInterface.Lists.ListItemDivider;
 import hoppingvikings.housefinancemobile.UserInterface.MainActivity;
 import hoppingvikings.housefinancemobile.UserInterface.Activities.ViewBillDetailsActivity;
+import hoppingvikings.housefinancemobile.UserInterface.PeoplePopup;
 import hoppingvikings.housefinancemobile.WebService.DownloadCallback;
-import hoppingvikings.housefinancemobile.WebService.DownloadPeopleCallback;
 
 import static android.app.Activity.RESULT_CANCELED;
 import static android.app.Activity.RESULT_OK;
@@ -35,7 +37,7 @@ import static android.app.Activity.RESULT_OK;
  */
 
 public class BillsFragment extends Fragment
-        implements DownloadCallback {
+        implements DownloadCallback, BillListAdapter.ViewAllPeopleClicked {
 
     CoordinatorLayout _layout;
     Handler _handler;
@@ -45,6 +47,8 @@ public class BillsFragment extends Fragment
     SwipeRefreshLayout _swipeRefreshLayout;
     FloatingActionButton _addItemButton;
     MainActivity _activity;
+
+    PeoplePopup _peopleListPopup;
 
     private Runnable contactWebsite = new Runnable() {
         @Override
@@ -87,6 +91,11 @@ public class BillsFragment extends Fragment
             }
         }
     };
+
+    @Override
+    public void onViewAllPressed(ArrayList<BillListObjectPeople> allPeople) {
+        _peopleListPopup.Show(allPeople);
+    }
 
     public BillsFragment()
     {
@@ -146,6 +155,8 @@ public class BillsFragment extends Fragment
             }
         });
 
+        _adapter.SetViewAllCallback(this);
+
         _swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
@@ -160,6 +171,8 @@ public class BillsFragment extends Fragment
 
         _swipeRefreshLayout.setRefreshing(true);
         _handler.postDelayed(contactWebsite, 200);
+
+        _peopleListPopup = new PeoplePopup(getContext(), (ViewGroup) view);
 
         //_handler.postDelayed(runnable, 1000);
         return view;

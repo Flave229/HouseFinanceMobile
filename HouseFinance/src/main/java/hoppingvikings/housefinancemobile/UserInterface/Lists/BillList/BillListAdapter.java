@@ -17,6 +17,7 @@ import java.util.Locale;
 import hoppingvikings.housefinancemobile.BitmapCache;
 import hoppingvikings.housefinancemobile.R;
 import hoppingvikings.housefinancemobile.UserInterface.Items.BillListObject;
+import hoppingvikings.housefinancemobile.UserInterface.Items.BillListObjectPeople;
 
 
 /**
@@ -36,6 +37,13 @@ public class BillListAdapter extends RecyclerView.Adapter<BillListAdapter.CardVi
         _listener = listener;
     }
 
+    public interface ViewAllPeopleClicked
+    {
+        void onViewAllPressed(ArrayList<BillListObjectPeople> allPeople);
+    }
+
+    private static ViewAllPeopleClicked _viewAllCallback;
+
     public static class CardViewHolder extends RecyclerView.ViewHolder
     {
         View view;
@@ -46,6 +54,7 @@ public class BillListAdapter extends RecyclerView.Adapter<BillListAdapter.CardVi
         ImageView cardImage;
         ImageView cardImage2;
         ImageView cardImage3;
+        ImageView viewMore;
 
         public CardViewHolder(View v)
         {
@@ -58,6 +67,7 @@ public class BillListAdapter extends RecyclerView.Adapter<BillListAdapter.CardVi
             cardImage = (ImageView)v.findViewById(R.id.card_image);
             cardImage2 = (ImageView)v.findViewById(R.id.card_image_2);
             cardImage3 = (ImageView)v.findViewById(R.id.card_image_3);
+            viewMore = (ImageView)v.findViewById(R.id.viewAllPeople);
             view.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
@@ -77,6 +87,11 @@ public class BillListAdapter extends RecyclerView.Adapter<BillListAdapter.CardVi
     ArrayList<BillListObject> _cards = new ArrayList<>();
     Context _context;
     BitmapCache imgCache;
+
+    public void SetViewAllCallback(ViewAllPeopleClicked owner)
+    {
+        _viewAllCallback = owner;
+    }
 
     public BillListAdapter(ArrayList<BillListObject> cards, Context context){
         _cards.addAll(cards);
@@ -103,7 +118,7 @@ public class BillListAdapter extends RecyclerView.Adapter<BillListAdapter.CardVi
     }
 
     @Override
-    public void onBindViewHolder(CardViewHolder cvh, int i)
+    public void onBindViewHolder(final CardViewHolder cvh, int i)
     {
         cvh.cardName.setText(_cards.get(i).billName);
 
@@ -143,6 +158,7 @@ public class BillListAdapter extends RecyclerView.Adapter<BillListAdapter.CardVi
 
                     cvh.cardImage2.setVisibility(View.GONE);
                     cvh.cardImage3.setVisibility(View.GONE);
+                    cvh.viewMore.setVisibility(View.GONE);
                     break;
 
                 case 2:
@@ -168,6 +184,7 @@ public class BillListAdapter extends RecyclerView.Adapter<BillListAdapter.CardVi
 
                     cvh.cardImage2.setVisibility(View.VISIBLE);
                     cvh.cardImage3.setVisibility(View.GONE);
+                    cvh.viewMore.setVisibility(View.GONE);
                     break;
 
                 case 3:
@@ -204,6 +221,51 @@ public class BillListAdapter extends RecyclerView.Adapter<BillListAdapter.CardVi
 
                     cvh.cardImage2.setVisibility(View.VISIBLE);
                     cvh.cardImage3.setVisibility(View.VISIBLE);
+                    cvh.viewMore.setVisibility(View.GONE);
+                    break;
+
+                default:
+                    imgCache.PutBitmap(_cards.get(i).people.get(0).URL, _cards.get(i).people.get(0).URL, cvh.cardImage);
+                    imgCache.PutBitmap(_cards.get(i).people.get(1).URL, _cards.get(i).people.get(1).URL, cvh.cardImage2);
+                    imgCache.PutBitmap(_cards.get(i).people.get(2).URL, _cards.get(i).people.get(2).URL, cvh.cardImage3);
+
+                    if(_cards.get(i).people.get(0).Paid)
+                    {
+                        cvh.cardImage.setAlpha(1.0f);
+                    }
+                    else
+                    {
+                        cvh.cardImage.setAlpha(0.5f);
+                    }
+
+                    if(_cards.get(i).people.get(1).Paid)
+                    {
+                        cvh.cardImage2.setAlpha(1.0f);
+                    }
+                    else
+                    {
+                        cvh.cardImage2.setAlpha(0.5f);
+                    }
+
+                    if(_cards.get(i).people.get(2).Paid)
+                    {
+                        cvh.cardImage3.setAlpha(1.0f);
+                    }
+                    else
+                    {
+                        cvh.cardImage3.setAlpha(0.5f);
+                    }
+
+                    cvh.cardImage2.setVisibility(View.VISIBLE);
+                    cvh.cardImage3.setVisibility(View.VISIBLE);
+
+                    cvh.viewMore.setVisibility(View.VISIBLE);
+                    cvh.viewMore.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            _viewAllCallback.onViewAllPressed(_cards.get(cvh.getAdapterPosition()).people);
+                        }
+                    });
                     break;
             }
         } catch (Exception e)
