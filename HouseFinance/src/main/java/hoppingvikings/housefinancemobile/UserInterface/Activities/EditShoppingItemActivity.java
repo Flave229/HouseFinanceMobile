@@ -1,6 +1,7 @@
 package hoppingvikings.housefinancemobile.UserInterface.Activities;
 
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.CoordinatorLayout;
@@ -15,10 +16,14 @@ import android.view.View;
 import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.CheckBox;
+import android.widget.ImageButton;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
+
+import java.util.ArrayList;
 
 import hoppingvikings.housefinancemobile.GlobalObjects;
 import hoppingvikings.housefinancemobile.R;
@@ -36,26 +41,20 @@ public class EditShoppingItemActivity extends AppCompatActivity implements Uploa
     TextInputLayout itemNameLayout;
     TextInputEditText shoppingItemNameEntry;
 
-    CheckBox davidCheck;
-    CheckBox vikkiCheck;
-    CheckBox joshCheck;
+    TextView selectUsers;
+    ImageButton editPeople;
 
     CheckBox editName;
     CheckBox editFor;
 
     String itemName;
 
-    boolean forDavid;
-    boolean forVikki;
-    boolean forJosh;
-
-    boolean fromDavid;
-    boolean fromVikki;
-    boolean fromJosh;
-
     CoordinatorLayout layout;
 
     ShoppingListObject item = null;
+
+    ArrayList<Integer> _selectedUserIds = new ArrayList<>();
+    ArrayList<String> _selectedUserNames = new ArrayList<>();
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -83,14 +82,22 @@ public class EditShoppingItemActivity extends AppCompatActivity implements Uploa
         itemNameLayout.setEnabled(false);
         shoppingItemNameEntry.setEnabled(false);
 
-        davidCheck = (CheckBox) findViewById(R.id.CheckBoxDavid);
-        davidCheck.setEnabled(false);
-        davidCheck.setChecked(false);
-        vikkiCheck = (CheckBox) findViewById(R.id.CheckBoxVikki);
-        vikkiCheck.setChecked(false);
-        joshCheck = (CheckBox) findViewById(R.id.CheckBoxJosh);
-        joshCheck.setEnabled(false);
-        joshCheck.setChecked(false);
+        selectUsers = (TextView) findViewById(R.id.selectUsers);
+        editPeople = (ImageButton) findViewById(R.id.editPeople);
+        editPeople.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent selectusers = new Intent(EditShoppingItemActivity.this, SelectUsersActivity.class);
+                selectusers.putExtra("multiple_user_selection", true);
+                if(_selectedUserIds.size() > 0)
+                {
+                    selectusers.putExtra("currently_selected_ids", _selectedUserIds);
+                }
+                startActivityForResult(selectusers, 0);
+            }
+        });
+        editPeople.setEnabled(false);
+        editPeople.setAlpha(0.3f);
 
         if(item != null)
         {
@@ -146,15 +153,13 @@ public class EditShoppingItemActivity extends AppCompatActivity implements Uploa
             public void onClick(View v) {
                 if(editFor.isChecked())
                 {
-                    davidCheck.setEnabled(true);
-                    vikkiCheck.setEnabled(true);
-                    joshCheck.setEnabled(true);
+                    editPeople.setEnabled(true);
+                    editPeople.setAlpha(1.0f);
                 }
                 else
                 {
-                    davidCheck.setEnabled(false);
-                    vikkiCheck.setEnabled(false);
-                    joshCheck.setEnabled(false);
+                    editPeople.setEnabled(false);
+                    editPeople.setAlpha(0.3f);
                 }
             }
         });
@@ -189,11 +194,9 @@ public class EditShoppingItemActivity extends AppCompatActivity implements Uploa
                     if(editFor.isChecked())
                     {
                         JSONArray people = new JSONArray();
-                        if(davidCheck.isChecked())
-                            people.put(GlobalObjects.USERGUID_DAVE);
-
-                        if(joshCheck.isChecked())
-                            people.put(GlobalObjects.USERGUID_JOSH);
+                        for (int id : _selectedUserIds) {
+                            people.put(id);
+                        }
 
                         editedBill.put("ItemFor", people);
                     }
@@ -221,13 +224,9 @@ public class EditShoppingItemActivity extends AppCompatActivity implements Uploa
             return false;
         }
 
-        forDavid = davidCheck.isChecked();
-        forVikki = vikkiCheck.isChecked();
-        forJosh = joshCheck.isChecked();
-
         if(editFor.isChecked())
         {
-            if(!forDavid && !forJosh)
+            if(_selectedUserIds.size() < 1)
             {
                 Snackbar.make(layout, "Please select at least one person for this bill", Snackbar.LENGTH_LONG).show();
                 return false;
@@ -235,6 +234,37 @@ public class EditShoppingItemActivity extends AppCompatActivity implements Uploa
         }
 
         return true;
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        switch (resultCode)
+        {
+            case RESULT_OK:
+                if(data != null)
+                {
+                    _selectedUserIds = data.getIntegerArrayListExtra("selected_ids");
+                    _selectedUserNames = data.getStringArrayListExtra("selected_names");
+
+                    String namesString = "";
+                    int index = 0;
+                    for (String name:_selectedUserNames) {
+                        if(index != _selectedUserNames.size() - 1)
+                            namesString += (name + ", ");
+                        else
+                            namesString += name;
+
+                        index++;
+                    }
+                    selectUsers.setText(namesString);
+                }
+                break;
+
+            case RESULT_CANCELED:
+
+                break;
+        }
     }
 
     @Override

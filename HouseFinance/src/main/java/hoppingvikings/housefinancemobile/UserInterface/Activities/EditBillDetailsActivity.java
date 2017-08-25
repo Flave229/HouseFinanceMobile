@@ -2,6 +2,7 @@ package hoppingvikings.housefinancemobile.UserInterface.Activities;
 
 import android.app.DatePickerDialog;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.CoordinatorLayout;
@@ -19,7 +20,9 @@ import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.DatePicker;
+import android.widget.ImageButton;
 import android.widget.RadioButton;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import org.json.JSONArray;
@@ -28,6 +31,7 @@ import org.json.JSONObject;
 import java.text.DecimalFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
@@ -60,9 +64,8 @@ public class EditBillDetailsActivity extends AppCompatActivity implements Upload
     TextInputLayout billDueDateEntry;
     TextInputEditText billDueDateEntryText;
 
-    CheckBox davidCheck;
-    CheckBox vikkiCheck;
-    CheckBox joshCheck;
+    TextView selectUsers;
+    ImageButton editPeople;
 
     RadioButton regularRadio;
     RadioButton recurRadio;
@@ -71,14 +74,14 @@ public class EditBillDetailsActivity extends AppCompatActivity implements Upload
     Number billAmount;
     Date billDueDate;
 
-    boolean forDavid;
-    boolean forVikki;
-    boolean forJosh;
-
     boolean recurring;
     BillListObject bill = null;
 
     CoordinatorLayout layout;
+
+    ArrayList<Integer> _selectedUserIds = new ArrayList<>();
+    ArrayList<String> _selectedUserNames = new ArrayList<>();
+
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -114,14 +117,22 @@ public class EditBillDetailsActivity extends AppCompatActivity implements Upload
         billDueDateEntryText.setEnabled(false);
         billDueDateEntryText.setInputType(InputType.TYPE_NULL);
 
-        davidCheck = (CheckBox) findViewById(R.id.CheckBoxDavid);
-        davidCheck.setEnabled(false);
-        davidCheck.setChecked(false);
-        vikkiCheck = (CheckBox) findViewById(R.id.CheckBoxVikki);
-        vikkiCheck.setChecked(false);
-        joshCheck = (CheckBox) findViewById(R.id.CheckBoxJosh);
-        joshCheck.setEnabled(false);
-        joshCheck.setChecked(false);
+        selectUsers = (TextView) findViewById(R.id.selectUsers);
+        editPeople = (ImageButton) findViewById(R.id.editPeople);
+        editPeople.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent selectusers = new Intent(EditBillDetailsActivity.this, SelectUsersActivity.class);
+                selectusers.putExtra("multiple_user_selection", true);
+                if(_selectedUserIds.size() > 0)
+                {
+                    selectusers.putExtra("currently_selected_ids", _selectedUserIds);
+                }
+                startActivityForResult(selectusers, 0);
+            }
+        });
+        editPeople.setEnabled(false);
+        editPeople.setAlpha(0.3f);
 
         regularRadio = (RadioButton) findViewById(R.id.BillTypeRegular);
         regularRadio.setEnabled(false);
@@ -285,15 +296,13 @@ public class EditBillDetailsActivity extends AppCompatActivity implements Upload
             public void onClick(View v) {
                 if(editFor.isChecked())
                 {
-                    davidCheck.setEnabled(true);
-                    vikkiCheck.setEnabled(true);
-                    joshCheck.setEnabled(true);
+                    editPeople.setEnabled(true);
+                    editPeople.setAlpha(1.0f);
                 }
                 else
                 {
-                    davidCheck.setEnabled(false);
-                    vikkiCheck.setEnabled(false);
-                    joshCheck.setEnabled(false);
+                    editPeople.setEnabled(false);
+                    editPeople.setAlpha(0.3f);
                 }
             }
         });
@@ -352,11 +361,9 @@ public class EditBillDetailsActivity extends AppCompatActivity implements Upload
                     if(editFor.isChecked())
                     {
                         JSONArray people = new JSONArray();
-                        if(davidCheck.isChecked())
-                            people.put(GlobalObjects.USERGUID_DAVE);
-
-                        if(joshCheck.isChecked())
-                            people.put(GlobalObjects.USERGUID_JOSH);
+                        for (int id : _selectedUserIds) {
+                            people.put(id);
+                        }
 
                         editedBill.put("PeopleIds", people);
                     }
@@ -421,13 +428,9 @@ public class EditBillDetailsActivity extends AppCompatActivity implements Upload
             return false;
         }
 
-        forDavid = davidCheck.isChecked();
-        forVikki = vikkiCheck.isChecked();
-        forJosh = joshCheck.isChecked();
-
         if(editFor.isChecked())
         {
-            if(!forDavid && !forJosh)
+            if(_selectedUserIds.size() < 1)
             {
                 Snackbar.make(layout, "Please select at least one person for this bill", Snackbar.LENGTH_LONG).show();
                 return false;
@@ -435,6 +438,37 @@ public class EditBillDetailsActivity extends AppCompatActivity implements Upload
         }
 
         return true;
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        switch (resultCode)
+        {
+            case RESULT_OK:
+                if(data != null)
+                {
+                    _selectedUserIds = data.getIntegerArrayListExtra("selected_ids");
+                    _selectedUserNames = data.getStringArrayListExtra("selected_names");
+
+                    String namesString = "";
+                    int index = 0;
+                    for (String name:_selectedUserNames) {
+                        if(index != _selectedUserNames.size() - 1)
+                            namesString += (name + ", ");
+                        else
+                            namesString += name;
+
+                        index++;
+                    }
+                    selectUsers.setText(namesString);
+                }
+                break;
+
+            case RESULT_CANCELED:
+
+                break;
+        }
     }
 
     @Override
