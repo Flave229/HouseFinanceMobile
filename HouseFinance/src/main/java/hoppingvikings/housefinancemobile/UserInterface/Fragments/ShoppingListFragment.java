@@ -63,23 +63,17 @@ public class ShoppingListFragment extends Fragment
             {
                 if (GlobalObjects.GetShoppingItems() != null) {
                     if(items != null)
-                    {
                         items.clear();
-                        items.addAll(GlobalObjects.GetShoppingItems());
-                        adapter.addAll(items);
-                    }
                     else
-                    {
                         items = new ArrayList<>();
-                        items.addAll(GlobalObjects.GetShoppingItems());
-                        adapter.addAll(items);
-                    }
-                    if (adapter.getItemCount() != items.size()) {
-                        _handler.post(contactWebsite);
-                    } else {
 
+                    items.addAll(GlobalObjects.GetShoppingItems());
+                    adapter.addAll(items);
+
+                    if (adapter.getItemCount() != items.size())
+                        _handler.post(contactWebsite);
+                    else
                         swipeRefreshLayout.setRefreshing(false);
-                    }
                 }
                 else
                 {

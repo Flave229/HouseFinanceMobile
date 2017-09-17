@@ -42,14 +42,11 @@ public class ShoppingListObject {
             {
                 case 1:
                     addedForImage1 = addedForImages.getString(0);
-                    addedForImage2 = "";
-                    addedForImage3 = "";
                     break;
 
                 case 2:
                     addedForImage1 = addedForImages.getString(0);
                     addedForImage2 = addedForImages.getString(1);
-                    addedForImage3 = "";
                     break;
 
                 case 3:
