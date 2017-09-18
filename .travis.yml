@@ -5,3 +5,9 @@ android:
     components:
         - build-tools-25.0.2
         - android-25
+install:
+  # Check install section: http://docs.travis-ci.com/user/build-configuration/#install
+  # If you'd like to skip the install stage entirely, set it to true and nothing will be run.
+  - true
+script:
+    - ./gradlew build
