@@ -62,6 +62,7 @@ public class ShoppingListAdapter extends RecyclerView.Adapter<ShoppingListAdapte
         View view;
         LinearLayout cardView;
         TextView shoppingItemName;
+        TextView addedByText;
         TextView addedDate;
         TextView addedForText;
         TextView infoText;
@@ -84,6 +85,7 @@ public class ShoppingListAdapter extends RecyclerView.Adapter<ShoppingListAdapte
             addedDate = (TextView) v.findViewById(R.id.addedDate);
             addedForText = (TextView)v.findViewById(R.id.addedForText);
             infoText = (TextView)v.findViewById(R.id.info_text);
+            addedByText = (TextView)v.findViewById(R.id.addedByText);
             addedBy1 = (ImageView) v.findViewById(R.id.addedBy);
             addedFor1 = (ImageView) v.findViewById(R.id.addedFor1);
             addedFor2 = (ImageView) v.findViewById(R.id.addedFor2);
@@ -161,33 +163,34 @@ public class ShoppingListAdapter extends RecyclerView.Adapter<ShoppingListAdapte
         }
 
         try {
-            imgCache.PutBitmap(_shoppingItems.get(cvh.getAdapterPosition()).addedBy, _shoppingItems.get(cvh.getAdapterPosition()).addedBy, cvh.addedBy1);
+
+            imgCache.PutBitmap(_shoppingItems.get(cvh.getAdapterPosition()).addedForImage1, _shoppingItems.get(cvh.getAdapterPosition()).addedForImage1, cvh.addedFor1);
+
+            if (_shoppingItems.get(cvh.getAdapterPosition()).addedForImage2.isEmpty()) {
+                cvh.addedFor2.setVisibility(View.GONE);
+            } else
+            {
+                cvh.addedFor2.setVisibility(View.VISIBLE);
+                imgCache.PutBitmap(_shoppingItems.get(cvh.getAdapterPosition()).addedForImage2, _shoppingItems.get(cvh.getAdapterPosition()).addedForImage2, cvh.addedFor2);
+            }
+
+            if (_shoppingItems.get(cvh.getAdapterPosition()).addedForImage3.isEmpty()) {
+                cvh.addedFor3.setVisibility(View.GONE);
+            } else
+            {
+                cvh.addedFor3.setVisibility(View.VISIBLE);
+                imgCache.PutBitmap(_shoppingItems.get(cvh.getAdapterPosition()).addedForImage3, _shoppingItems.get(cvh.getAdapterPosition()).addedForImage3, cvh.addedFor3);
+            }
 
             if(_shoppingItems.get(cvh.getAdapterPosition()).itemExpanded)
             {
                 cvh.editButton.setVisibility(View.VISIBLE);
                 cvh.buttonsContainer.setVisibility(View.VISIBLE);
-                cvh.addedForText.setVisibility(View.VISIBLE);
+                cvh.addedByText.setVisibility(View.VISIBLE);
                 cvh.infoText.setVisibility(View.INVISIBLE);
-                cvh.addedFor1.setVisibility(View.VISIBLE);
+                cvh.addedBy1.setVisibility(View.VISIBLE);
 
-                imgCache.PutBitmap(_shoppingItems.get(cvh.getAdapterPosition()).addedForImage1, _shoppingItems.get(cvh.getAdapterPosition()).addedForImage1, cvh.addedFor1);
-
-                if (_shoppingItems.get(cvh.getAdapterPosition()).addedForImage2.isEmpty()) {
-                    cvh.addedFor2.setVisibility(View.GONE);
-                } else
-                {
-                    cvh.addedFor2.setVisibility(View.VISIBLE);
-                    imgCache.PutBitmap(_shoppingItems.get(cvh.getAdapterPosition()).addedForImage2, _shoppingItems.get(cvh.getAdapterPosition()).addedForImage2, cvh.addedFor2);
-                }
-
-                if (_shoppingItems.get(cvh.getAdapterPosition()).addedForImage3.isEmpty()) {
-                    cvh.addedFor3.setVisibility(View.GONE);
-                } else
-                {
-                    cvh.addedFor3.setVisibility(View.VISIBLE);
-                    imgCache.PutBitmap(_shoppingItems.get(cvh.getAdapterPosition()).addedForImage3, _shoppingItems.get(cvh.getAdapterPosition()).addedForImage3, cvh.addedFor3);
-                }
+                imgCache.PutBitmap(_shoppingItems.get(cvh.getAdapterPosition()).addedBy, _shoppingItems.get(cvh.getAdapterPosition()).addedBy, cvh.addedBy1);
 
                 cvh.editButton.setOnClickListener(new View.OnClickListener() {
                     @Override
@@ -261,11 +264,9 @@ public class ShoppingListAdapter extends RecyclerView.Adapter<ShoppingListAdapte
             else
             {
                 cvh.buttonsContainer.setVisibility(View.GONE);
-                cvh.addedForText.setVisibility(View.GONE);
                 cvh.infoText.setVisibility(View.VISIBLE);
-                cvh.addedFor1.setVisibility(View.GONE);
-                cvh.addedFor2.setVisibility(View.GONE);
-                cvh.addedFor3.setVisibility(View.GONE);
+                cvh.addedByText.setVisibility(View.INVISIBLE);
+                cvh.addedBy1.setVisibility(View.GONE);
             }
 
         } catch (Exception e)

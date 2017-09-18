@@ -26,7 +26,7 @@
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintVertical_chainStyle="packed"
-            app:layout_constraintRight_toLeftOf="@+id/textView"
+            app:layout_constraintRight_toLeftOf="@+id/addedByText"
             android:layout_marginRight="8dp" />
 
         <TextView
@@ -46,9 +46,11 @@
             android:layout_height="wrap_content"
             android:text="Added By:"
             android:textColor="#000"
-            app:layout_constraintTop_toTopOf="parent"
-            android:id="@+id/textView"
-            app:layout_constraintRight_toRightOf="parent"/>
+            android:layout_marginTop="8dp"
+            app:layout_constraintTop_toBottomOf="@+id/addedFor1"
+            android:id="@+id/addedByText"
+            app:layout_constraintRight_toRightOf="parent"
+            android:visibility="gone"/>
         <ImageView
             android:layout_width="30dp"
             android:layout_height="30dp"
@@ -56,7 +58,8 @@
             android:contentDescription="generic card image"
             app:layout_constraintRight_toRightOf="parent"
             android:layout_marginTop="8dp"
-            app:layout_constraintTop_toBottomOf="@+id/textView"/>
+            app:layout_constraintTop_toBottomOf="@+id/addedByText"
+            android:visibility="gone"/>
 
         <!--################## Added for images ####################-->
 
@@ -66,10 +69,9 @@
             android:text="Added For:"
             android:textColor="#000"
             android:id="@+id/addedForText"
-            android:layout_marginTop="8dp"
-            app:layout_constraintTop_toBottomOf="@+id/addedBy"
+            app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintRight_toRightOf="parent"
-            android:visibility="gone"/>
+            android:visibility="visible"/>
         <ImageView
             android:layout_width="30dp"
             android:layout_height="30dp"
@@ -80,7 +82,7 @@
             android:layout_marginRight="8dp"
             android:layout_marginTop="8dp"
             app:layout_constraintTop_toBottomOf="@+id/addedForText"
-            android:visibility="gone"/>
+            android:visibility="visible"/>
         <ImageView
             android:layout_width="30dp"
             android:layout_height="30dp"
@@ -91,7 +93,7 @@
             android:layout_marginRight="8dp"
             android:layout_marginTop="8dp"
             app:layout_constraintTop_toBottomOf="@+id/addedForText"
-            android:visibility="gone"/>
+            android:visibility="visible"/>
         <ImageView
             android:layout_width="30dp"
             android:layout_height="30dp"
@@ -100,13 +102,13 @@
             app:layout_constraintRight_toRightOf="parent"
             android:layout_marginTop="8dp"
             app:layout_constraintTop_toBottomOf="@+id/addedForText"
-            android:visibility="gone"/>
+            android:visibility="visible"/>
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             app:layout_constraintRight_toRightOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/addedBy"
+            app:layout_constraintTop_toBottomOf="@+id/addedFor1"
             android:layout_marginTop="8dp"
             android:textColor="#000"
             android:text="Tap for more info"
