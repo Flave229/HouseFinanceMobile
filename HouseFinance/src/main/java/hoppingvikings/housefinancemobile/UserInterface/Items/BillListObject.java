@@ -39,7 +39,7 @@ public class BillListObject {
             billTotalAmount = jsonObject.getString("totalAmount");
             billAmount = String.valueOf((Double.valueOf(billTotalAmount) - Double.valueOf(billAmountPaid)));
 
-            if(Double.valueOf(billAmount) == 0)
+            if(Double.valueOf(billAmount) <= 0)
             {
                 paid = true;
             }
