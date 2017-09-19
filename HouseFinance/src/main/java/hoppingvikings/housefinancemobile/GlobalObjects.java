@@ -69,7 +69,7 @@ public class GlobalObjects{
     public static BillListObject GetBillFromID(int id)
     {
         for (BillListObject bill: _bills) {
-            if(id == bill.ID)
+            if(id == bill.id)
             {
                 return bill;
             }

@@ -17,36 +17,35 @@ import java.util.Locale;
  * Created by Josh on 17/09/2016.
  */
 public class BillListObject {
-    public int ID = 0;
-    public String billName = "";
-    public String billDate = "";
-    public String billAmount = "";
-    public String billAmountPaid = "";
-    public String billTotalAmount = "";
+    public int id = 0;
+    public String name = "";
+    public String date = "";
+    public String amount = "";
+    public String amountPaid = "";
+    public String totalAmount = "";
     public RecurringType recurringType;
-    public ArrayList<BillListObjectPeople> people = null;
-    public boolean paid = false;
-    public boolean overdue = false;
-    private SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd", Locale.UK);
+    public ArrayList<BillListObjectPeople> people;
+    public boolean paid;
+    public boolean overdue;
+    private SimpleDateFormat _dateFormat = new SimpleDateFormat("yyyy-MM-dd", Locale.UK);
 
     public BillListObject(JSONObject jsonObject, JSONArray peopleObjects)
     {
         try {
-            ID = jsonObject.getInt("id");
-            billName = jsonObject.getString("name");
-            billDate = dateFormat.format(dateFormat.parse(jsonObject.getString("fullDateDue")));
+            id = jsonObject.getInt("id");
+            name = jsonObject.getString("name");
+            date = _dateFormat.format(_dateFormat.parse(jsonObject.getString("fullDateDue")));
 
-            billAmountPaid = jsonObject.getString("amountPaid");
-            billTotalAmount = jsonObject.getString("totalAmount");
-            billAmount = String.valueOf((Double.valueOf(billTotalAmount) - Double.valueOf(billAmountPaid)));
+            amountPaid = jsonObject.getString("amountPaid");
+            totalAmount = jsonObject.getString("totalAmount");
+            amount = String.valueOf((Double.valueOf(totalAmount) - Double.valueOf(amountPaid)));
             recurringType = RecurringType.values()[jsonObject.getInt("recurringType")];
 
-            if(Double.valueOf(billAmount) <= 0)
+            if(Double.valueOf(amount) == 0)
             {
                 paid = true;
             }
-
-            if(new Date().after(dateFormat.parse(billDate)))
+            else if(new Date().after(_dateFormat.parse(date)))
             {
                 overdue = true;
             }
@@ -54,7 +53,7 @@ public class BillListObject {
             people = new ArrayList<>();
             for(int i = 0; i < peopleObjects.length(); i++) {
                 JSONObject person = peopleObjects.getJSONObject(i);
-                people.add(new BillListObjectPeople(person, ID));
+                people.add(new BillListObjectPeople(person, id));
             }
         } catch (JSONException e) {
 
