@@ -41,7 +41,7 @@ public class BillListObject {
             billAmount = String.valueOf((Double.valueOf(billTotalAmount) - Double.valueOf(billAmountPaid)));
             recurringType = RecurringType.values()[jsonObject.getInt("recurringType")];
 
-            if(Double.valueOf(billAmount) == 0)
+            if(Double.valueOf(billAmount) <= 0)
             {
                 paid = true;
             }
