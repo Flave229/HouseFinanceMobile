@@ -23,6 +23,7 @@ public class BillListObject {
     public String billAmount = "";
     public String billAmountPaid = "";
     public String billTotalAmount = "";
+    public RecurringType recurringType;
     public ArrayList<BillListObjectPeople> people = null;
     public boolean paid = false;
     public boolean overdue = false;
@@ -38,6 +39,7 @@ public class BillListObject {
             billAmountPaid = jsonObject.getString("amountPaid");
             billTotalAmount = jsonObject.getString("totalAmount");
             billAmount = String.valueOf((Double.valueOf(billTotalAmount) - Double.valueOf(billAmountPaid)));
+            recurringType = RecurringType.values()[jsonObject.getInt("recurringType")];
 
             if(Double.valueOf(billAmount) == 0)
             {

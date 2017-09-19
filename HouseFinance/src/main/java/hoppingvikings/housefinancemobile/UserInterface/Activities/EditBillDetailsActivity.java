@@ -152,18 +152,16 @@ public class EditBillDetailsActivity extends AppCompatActivity implements Upload
             billNameEntryText.setText(bill.billName);
             billAmountEntryText.setText(bill.billTotalAmount);
             billDueDateEntryText.setText(bill.billDate);
-            /*for (BillListObjectPeople person : bill.people) {
-                switch (person.ID)
-                {
-                    case GlobalObjects.USERGUID_DAVE:
-                        davidCheck.setChecked(true);
-                        break;
 
-                    case GlobalObjects.USERGUID_JOSH:
-                        joshCheck.setChecked(true);
-                        break;
-                }
-            }*/
+            switch (bill.recurringType)
+            {
+                case NONE:
+                    regularRadio.setChecked(true);
+                    break;
+                case MONTHLY:
+                    recurRadio.setChecked(true);
+                    break;
+            }
         }
         else
         {
