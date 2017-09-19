@@ -120,11 +120,11 @@ public class ViewBillDetailsActivity extends AppCompatActivity
                 double suggestedAmount;
                 if(bill.people.size() > 1)
                 {
-                    suggestedAmount = Double.valueOf(bill.totalAmount) / bill.people.size();
+                    suggestedAmount = bill.totalAmount / bill.people.size();
                 }
                 else
                 {
-                    suggestedAmount = (Double.valueOf(bill.totalAmount) - _currentBill.amountPaid);
+                    suggestedAmount = (bill.totalAmount - _currentBill.amountPaid);
                 }
                 i.putExtra("suggested_amount", String.format(Locale.getDefault(), "%.2f", suggestedAmount));
                 startActivityForResult(i, 0);

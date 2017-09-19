@@ -328,7 +328,7 @@ public class AddNewBillActivity extends AppCompatActivity implements UploadCallb
             }
             else {
                 billAmountEntryText.requestFocus();
-                billAmountEntry.setError("Please enter a valid Bill amount");
+                billAmountEntry.setError("Please enter a valid Bill remainingAmount");
                 return false;
             }
 

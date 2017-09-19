@@ -132,12 +132,12 @@ public class BillListAdapter extends RecyclerView.Adapter<BillListAdapter.CardVi
         {
             cvh.cardObject.setBackgroundResource(R.color.bill_overdue);
             cvh.cardDate.setText(_cards.get(i).date + " OVERDUE");
-            cvh.cardAmount.setText("£" + String.format(Locale.getDefault(), "%.2f", Double.valueOf(_cards.get(i).amount)));
+            cvh.cardAmount.setText("£" + String.format(Locale.getDefault(), "%.2f", _cards.get(i).remainingAmount));
         }
         else
         {
             cvh.cardDate.setText(_cards.get(i).date);
-            cvh.cardAmount.setText("£" + String.format(Locale.getDefault(), "%.2f", Double.valueOf(_cards.get(i).amount)));
+            cvh.cardAmount.setText("£" + String.format(Locale.getDefault(), "%.2f", _cards.get(i).remainingAmount));
             cvh.cardObject.setBackgroundColor(Color.WHITE);
         }
 

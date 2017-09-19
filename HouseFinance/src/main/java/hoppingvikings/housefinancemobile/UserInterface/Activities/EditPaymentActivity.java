@@ -234,7 +234,7 @@ public class EditPaymentActivity extends AppCompatActivity implements UploadCall
             }
             else {
                 paymentAmountEntryText.requestFocus();
-                paymentAmountEntry.setError("Please enter a valid payment amount");
+                paymentAmountEntry.setError("Please enter a valid payment remainingAmount");
                 return false;
             }
 

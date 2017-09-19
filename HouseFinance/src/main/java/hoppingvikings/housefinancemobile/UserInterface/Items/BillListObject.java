@@ -19,7 +19,7 @@ public class BillListObject {
     public int id = 0;
     public String name = "";
     public String date = "";
-    public double amount;
+    public double remainingAmount;
     public double totalAmount;
     public RecurringType recurringType;
     public ArrayList<BillListObjectPeople> people;
@@ -36,10 +36,10 @@ public class BillListObject {
 
             double amountPaid = jsonObject.getDouble("amountPaid");
             totalAmount = jsonObject.getDouble("totalAmount");
-            amount = totalAmount - amountPaid;
+            remainingAmount = totalAmount - amountPaid;
             recurringType = RecurringType.values()[jsonObject.getInt("recurringType")];
 
-            if(amount <= 0)
+            if(remainingAmount <= 0)
             {
                 paid = true;
             }

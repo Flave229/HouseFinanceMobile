@@ -224,7 +224,7 @@ public class AddPaymentActivity extends AppCompatActivity implements UploadCallb
             else
             {
                 paymentAmountEntryText.requestFocus();
-                paymentAmountEntry.setError("Please enter a valid payment amount");
+                paymentAmountEntry.setError("Please enter a valid payment remainingAmount");
                 return false;
             }
 
