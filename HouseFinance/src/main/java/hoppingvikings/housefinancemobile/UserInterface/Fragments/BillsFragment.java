@@ -8,7 +8,6 @@ import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.support.v4.widget.SwipeRefreshLayout;
-import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -150,7 +149,7 @@ public class BillsFragment extends Fragment
                 BillListObject bill = _adapter.GetItem(pos);
 
                 Intent viewBillDetails = new Intent(getContext(), ViewBillDetailsActivity.class);
-                viewBillDetails.putExtra("bill_id", bill.ID);
+                viewBillDetails.putExtra("bill_id", bill.id);
                 startActivityForResult(viewBillDetails, 0);
             }
         });

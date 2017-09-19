@@ -149,9 +149,9 @@ public class EditBillDetailsActivity extends AppCompatActivity implements Upload
 
         if(bill != null)
         {
-            billNameEntryText.setText(bill.billName);
-            billAmountEntryText.setText(bill.billTotalAmount);
-            billDueDateEntryText.setText(bill.billDate);
+            billNameEntryText.setText(bill.name);
+            billAmountEntryText.setText(bill.totalAmount);
+            billDueDateEntryText.setText(bill.date);
 
             switch (bill.recurringType)
             {
@@ -247,7 +247,7 @@ public class EditBillDetailsActivity extends AppCompatActivity implements Upload
                     billNameEntryText.setEnabled(false);
 
                     if(bill != null)
-                        billNameEntryText.setText(bill.billName);
+                        billNameEntryText.setText(bill.name);
                 }
             }
         });
@@ -266,7 +266,7 @@ public class EditBillDetailsActivity extends AppCompatActivity implements Upload
                     billAmountEntry.setEnabled(false);
                     billAmountEntryText.setEnabled(false);
                     if(bill != null)
-                        billAmountEntryText.setText(bill.billTotalAmount);
+                        billAmountEntryText.setText(bill.totalAmount);
                 }
             }
         });
@@ -284,7 +284,7 @@ public class EditBillDetailsActivity extends AppCompatActivity implements Upload
                     billDueDateEntry.setEnabled(false);
                     billDueDateEntryText.setEnabled(false);
                     if(bill != null)
-                        billDueDateEntryText.setText(bill.billDate);
+                        billDueDateEntryText.setText(bill.date);
                 }
             }
         });
@@ -343,7 +343,7 @@ public class EditBillDetailsActivity extends AppCompatActivity implements Upload
                 confirmcancel.dismiss();
                 JSONObject editedBill = new JSONObject();
                 try {
-                    editedBill.put("Id", bill.ID);
+                    editedBill.put("Id", bill.id);
                     if(editName.isChecked())
                         editedBill.put("Name", billNameEntryText.getText().toString());
 
