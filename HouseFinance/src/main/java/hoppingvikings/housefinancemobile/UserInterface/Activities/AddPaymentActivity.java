@@ -167,6 +167,7 @@ public class AddPaymentActivity extends AppCompatActivity implements UploadCallb
                 confirmCancel.setButton(DialogInterface.BUTTON_POSITIVE, "Confirm", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
+                        submitButton.setEnabled(false);
                         confirmCancel.dismiss();
 
                         paymentAmountEntry.setEnabled(false);
