@@ -150,7 +150,7 @@ public class EditBillDetailsActivity extends AppCompatActivity implements Upload
         if(bill != null)
         {
             billNameEntryText.setText(bill.name);
-            billAmountEntryText.setText(bill.totalAmount);
+            billAmountEntryText.setText(Double.toString(bill.totalAmount));
             billDueDateEntryText.setText(bill.date);
 
             switch (bill.recurringType)
@@ -266,7 +266,7 @@ public class EditBillDetailsActivity extends AppCompatActivity implements Upload
                     billAmountEntry.setEnabled(false);
                     billAmountEntryText.setEnabled(false);
                     if(bill != null)
-                        billAmountEntryText.setText(bill.totalAmount);
+                        billAmountEntryText.setText(Double.toString(bill.totalAmount));
                 }
             }
         });

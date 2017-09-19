@@ -1,6 +1,5 @@
 package hoppingvikings.housefinancemobile.UserInterface.Items;
 
-
 import android.util.Log;
 
 import org.json.JSONArray;
@@ -20,9 +19,8 @@ public class BillListObject {
     public int id = 0;
     public String name = "";
     public String date = "";
-    public String amount = "";
-    public String amountPaid = "";
-    public String totalAmount = "";
+    public double amount;
+    public double totalAmount;
     public RecurringType recurringType;
     public ArrayList<BillListObjectPeople> people;
     public boolean paid;
@@ -36,12 +34,12 @@ public class BillListObject {
             name = jsonObject.getString("name");
             date = _dateFormat.format(_dateFormat.parse(jsonObject.getString("fullDateDue")));
 
-            amountPaid = jsonObject.getString("amountPaid");
-            totalAmount = jsonObject.getString("totalAmount");
-            amount = String.valueOf((Double.valueOf(totalAmount) - Double.valueOf(amountPaid)));
+            double amountPaid = jsonObject.getDouble("amountPaid");
+            totalAmount = jsonObject.getDouble("totalAmount");
+            amount = totalAmount - amountPaid;
             recurringType = RecurringType.values()[jsonObject.getInt("recurringType")];
 
-            if(Double.valueOf(amount) == 0)
+            if(amount <= 0)
             {
                 paid = true;
             }
