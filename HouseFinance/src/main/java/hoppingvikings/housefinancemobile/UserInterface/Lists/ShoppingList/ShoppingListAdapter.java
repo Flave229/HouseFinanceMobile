@@ -164,22 +164,25 @@ public class ShoppingListAdapter extends RecyclerView.Adapter<ShoppingListAdapte
 
         try {
 
-            imgCache.PutBitmap(_shoppingItems.get(cvh.getAdapterPosition()).addedForImage1, _shoppingItems.get(cvh.getAdapterPosition()).addedForImage1, cvh.addedFor1);
+            String addedForImage1 = _shoppingItems.get(cvh.getAdapterPosition()).addedFor1.ImageUrl;
+            imgCache.PutBitmap(addedForImage1, addedForImage1, cvh.addedFor1);
 
-            if (_shoppingItems.get(cvh.getAdapterPosition()).addedForImage2.isEmpty()) {
+            if (_shoppingItems.get(cvh.getAdapterPosition()).addedFor2 == null) {
                 cvh.addedFor2.setVisibility(View.GONE);
             } else
             {
                 cvh.addedFor2.setVisibility(View.VISIBLE);
-                imgCache.PutBitmap(_shoppingItems.get(cvh.getAdapterPosition()).addedForImage2, _shoppingItems.get(cvh.getAdapterPosition()).addedForImage2, cvh.addedFor2);
+                String addedForImage2 = _shoppingItems.get(cvh.getAdapterPosition()).addedFor2.ImageUrl;
+                imgCache.PutBitmap(addedForImage2, addedForImage2, cvh.addedFor2);
             }
 
-            if (_shoppingItems.get(cvh.getAdapterPosition()).addedForImage3.isEmpty()) {
+            if (_shoppingItems.get(cvh.getAdapterPosition()).addedFor3 == null) {
                 cvh.addedFor3.setVisibility(View.GONE);
             } else
             {
                 cvh.addedFor3.setVisibility(View.VISIBLE);
-                imgCache.PutBitmap(_shoppingItems.get(cvh.getAdapterPosition()).addedForImage3, _shoppingItems.get(cvh.getAdapterPosition()).addedForImage3, cvh.addedFor3);
+                String addedForImage3 = _shoppingItems.get(cvh.getAdapterPosition()).addedFor3.ImageUrl;
+                imgCache.PutBitmap(addedForImage3, addedForImage3, cvh.addedFor3);
             }
 
             if(_shoppingItems.get(cvh.getAdapterPosition()).itemExpanded)
@@ -190,13 +193,13 @@ public class ShoppingListAdapter extends RecyclerView.Adapter<ShoppingListAdapte
                 cvh.infoText.setVisibility(View.INVISIBLE);
                 cvh.addedBy1.setVisibility(View.VISIBLE);
 
-                imgCache.PutBitmap(_shoppingItems.get(cvh.getAdapterPosition()).addedBy, _shoppingItems.get(cvh.getAdapterPosition()).addedBy, cvh.addedBy1);
+                String addedByImage = _shoppingItems.get(cvh.getAdapterPosition()).addedBy.ImageUrl;
+                imgCache.PutBitmap(addedByImage, addedByImage, cvh.addedBy1);
 
                 cvh.editButton.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
                         _editCallback.onEditPressed(_shoppingItems.get(cvh.getAdapterPosition()).ID);
-
                     }
                 });
 
@@ -204,9 +207,9 @@ public class ShoppingListAdapter extends RecyclerView.Adapter<ShoppingListAdapte
                     @Override
                     public void onClick(View v) {
                         try {
-                            JSONObject itemjson = new JSONObject();
-                            itemjson.put("ShoppingItemId", _shoppingItems.get(cvh.getAdapterPosition()).ID);
-                            GlobalObjects.webHandler.DeleteItem(_context, ShoppingListAdapter.this, itemjson, GlobalObjects.ITEM_TYPE_SHOPPING);
+                            JSONObject itemJson = new JSONObject();
+                            itemJson.put("ShoppingItemId", _shoppingItems.get(cvh.getAdapterPosition()).ID);
+                            GlobalObjects.webHandler.DeleteItem(_context, ShoppingListAdapter.this, itemJson, GlobalObjects.ITEM_TYPE_SHOPPING);
                         } catch (Exception e)
                         {
                             Toast.makeText(_context, "Failed to delete item", Toast.LENGTH_SHORT).show();
@@ -219,7 +222,6 @@ public class ShoppingListAdapter extends RecyclerView.Adapter<ShoppingListAdapte
                     }
                 });
 
-
                 cvh.completeButton.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
@@ -227,11 +229,11 @@ public class ShoppingListAdapter extends RecyclerView.Adapter<ShoppingListAdapte
                         {
                             completeAlreadyPressed = true;
                             selected = cvh.getAdapterPosition();
-                            JSONObject editeditem = new JSONObject();
+                            JSONObject editedItem = new JSONObject();
                             try {
-                                editeditem.put("Id", _shoppingItems.get(cvh.getAdapterPosition()).ID);
-                                editeditem.put("Purchased", !_shoppingItems.get(cvh.getAdapterPosition()).done);
-                                GlobalObjects.webHandler.EditItem(_context, editeditem, ShoppingListAdapter.this, GlobalObjects.ITEM_TYPE_SHOPPING);
+                                editedItem.put("Id", _shoppingItems.get(cvh.getAdapterPosition()).ID);
+                                editedItem.put("Purchased", !_shoppingItems.get(cvh.getAdapterPosition()).done);
+                                GlobalObjects.webHandler.EditItem(_context, editedItem, ShoppingListAdapter.this, GlobalObjects.ITEM_TYPE_SHOPPING);
                                 NotificationManager man = (NotificationManager) _context.getSystemService(NOTIFICATION_SERVICE);
                                 man.cancel(_shoppingItems.get(cvh.getAdapterPosition()).ID);
                             } catch (Exception e)
@@ -246,7 +248,6 @@ public class ShoppingListAdapter extends RecyclerView.Adapter<ShoppingListAdapte
                     cvh.notifyButton.setVisibility(View.INVISIBLE);
                     cvh.completeButton.setImageResource(R.drawable.ic_undo_black_24dp);
                     cvh.editButton.setVisibility(View.GONE);
-                    //cvh.completeButton.setVisibility(View.GONE);
                 }
                 else {
                     cvh.notifyButton.setVisibility(View.VISIBLE);

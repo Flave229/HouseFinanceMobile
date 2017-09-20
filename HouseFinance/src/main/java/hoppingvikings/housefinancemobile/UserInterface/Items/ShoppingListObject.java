@@ -8,8 +8,9 @@ import org.json.JSONObject;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Locale;
+
+import hoppingvikings.housefinancemobile.Person;
 
 /**
  * Created by Josh on 06/11/2016.
@@ -19,44 +20,45 @@ public class ShoppingListObject {
     public int ID = 0;
     public String itemName = "";
     public String addedDate = "";
-    public String addedBy = "";
+    public Person addedBy;
     public boolean done = false;
-    public String addedForImage1 = "";
-    public String addedForImage2 = "";
-    public String addedForImage3 = "";
+    public Person addedFor1;
+    public Person addedFor2;
+    public Person addedFor3;
 
     public boolean itemExpanded = false;
     private SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd", Locale.UK);
 
-    public ShoppingListObject(JSONObject object, JSONArray addedForImages)
+    public ShoppingListObject(JSONObject shoppingItem)
     {
         try
         {
-            ID = object.getInt("id");
-            itemName = object.getString("name");
-            addedDate = dateFormat.format(dateFormat.parse(object.getString("dateAdded")));;
-            addedBy = object.getString("addedByImage");
-            done = object.getBoolean("purchased");
+            ID = shoppingItem.getInt("id");
+            itemName = shoppingItem.getString("name");
+            addedDate = dateFormat.format(dateFormat.parse(shoppingItem.getString("dateAdded")));
+            addedBy = new Person(shoppingItem.getJSONObject("addedBy"));
+            done = shoppingItem.getBoolean("purchased");
 
-            switch (addedForImages.length())
+            JSONArray addedFor = shoppingItem.getJSONArray("addedFor");
+            switch (addedFor.length())
             {
                 case 1:
-                    addedForImage1 = addedForImages.getString(0);
+                    addedFor1 = new Person(addedFor.getJSONObject(0));
                     break;
 
                 case 2:
-                    addedForImage1 = addedForImages.getString(0);
-                    addedForImage2 = addedForImages.getString(1);
+                    addedFor1 = new Person(addedFor.getJSONObject(0));
+                    addedFor2 = new Person(addedFor.getJSONObject(1));
                     break;
 
                 case 3:
-                    addedForImage1 = addedForImages.getString(0);
-                    addedForImage2 = addedForImages.getString(1);
-                    addedForImage3 = addedForImages.getString(2);
+                    addedFor1 = new Person(addedFor.getJSONObject(0));
+                    addedFor2 = new Person(addedFor.getJSONObject(1));
+                    addedFor3 = new Person(addedFor.getJSONObject(2));
                     break;
             }
-
-        }catch (JSONException e)
+        }
+        catch (JSONException e)
         {
 
         }

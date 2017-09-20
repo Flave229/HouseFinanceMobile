@@ -282,8 +282,7 @@ public class WebHandler
                     for(int k = 0; k < shoppingList.length(); k++)
                     {
                         JSONObject shoppingItem = shoppingList.getJSONObject(k);
-                        JSONArray peopleArray = shoppingItem.getJSONArray("addedForImages");
-                        item = new ShoppingListObject(shoppingItem, peopleArray);
+                        item = new ShoppingListObject(shoppingItem);
                         items.add(item);
                     }
                     GlobalObjects.SetShoppingItems(items);
