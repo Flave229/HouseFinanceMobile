@@ -14,15 +14,14 @@ import java.io.OutputStreamWriter;
 import java.util.ArrayList;
 
 import hoppingvikings.housefinancemobile.MemoryRepositories.BillMemoryRepository;
-import hoppingvikings.housefinancemobile.UserInterface.Items.ShoppingListObject;
+import hoppingvikings.housefinancemobile.MemoryRepositories.ShoppingMemoryRepository;
 import hoppingvikings.housefinancemobile.WebService.WebHandler;
 
 public class GlobalObjects
 {
-    static ArrayList<ShoppingListObject> _shoppingItems = new ArrayList<>();
-
     public static WebHandler WebHandler;
     public static BillMemoryRepository BillRepository = new BillMemoryRepository();
+    public static ShoppingMemoryRepository ShoppingRepository = new ShoppingMemoryRepository();
 
     // TODO: JOSH, I assume this needs to stick around for a future feature. Please replace this comment detailing its purpose
     public static BackgroundService backgroundService;
@@ -38,51 +37,9 @@ public class GlobalObjects
     public static final String ITEM_TYPE_BILL = "item_bill";
     public static final String ITEM_TYPE_BILLPAYMENT = "item_billpayment";
 
-    public static void SetShoppingItems(ArrayList<ShoppingListObject> items)
-    {
-        _shoppingItems.clear();
-        _shoppingItems.addAll(items);
-    }
-
-    public static ArrayList<ShoppingListObject> GetShoppingItems()
-    {
-        return _shoppingItems;
-    }
-
-
-    public static ShoppingListObject GetShoppingItemFromID(int id)
-    {
-        for(ShoppingListObject item : _shoppingItems)
-        {
-            if(id == item.Id)
-            {
-                return item;
-            }
-        }
-        return null;
-    }
-
     public static void ShowNotif(String text, String subtext, int notificationId)
     {
         AppServiceBinder._service.ShowNotification(text, subtext, notificationId);
-    }
-
-    public static String SetAuthToken(Context context)
-    {
-        InputStream inputStream = context.getResources().openRawResource(R.raw.api_authtoken);
-        BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream));
-
-        try {
-            String line = reader.readLine();
-            if(line != null)
-            {
-                return line;
-            }
-        } catch (Exception e)
-        {
-            Log.i("Read Error", "Failed to read file. " + e.getMessage());
-        }
-        return "";
     }
 
     public static void WriteToFile(String data)
@@ -134,8 +91,8 @@ public class GlobalObjects
                     String line = reader.readLine();
                     while (line != null)
                     {
-                        JSONObject recentitemjson = new JSONObject(line);
-                        recentItems.add(recentitemjson);
+                        JSONObject recentItemJson = new JSONObject(line);
+                        recentItems.add(recentItemJson);
                         line = reader.readLine();
                     }
                     reader.close();

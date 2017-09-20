@@ -22,6 +22,7 @@ import java.util.ArrayList;
 
 import hoppingvikings.housefinancemobile.GlobalObjects;
 import hoppingvikings.housefinancemobile.Person;
+import hoppingvikings.housefinancemobile.R;
 import hoppingvikings.housefinancemobile.UserInterface.Items.BillListObject;
 import hoppingvikings.housefinancemobile.UserInterface.Items.BillObjectDetailed;
 import hoppingvikings.housefinancemobile.UserInterface.Items.ShoppingListObject;
@@ -39,7 +40,19 @@ public class WebHandler
 
     public void SetAuthToken(Context context)
     {
-        _authToken = GlobalObjects.SetAuthToken(context);
+        InputStream inputStream = context.getResources().openRawResource(R.raw.api_authtoken);
+        BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream));
+
+        try
+        {
+            String line = reader.readLine();
+            if(line != null)
+                _authToken = line;
+        }
+        catch (Exception e)
+        {
+            Log.i("Read Error", "Failed to read file. " + e.getMessage());
+        }
     }
 
     public void contactWebsiteBills(Context context, DownloadCallback owner)
@@ -280,7 +293,7 @@ public class WebHandler
                         item = new ShoppingListObject(shoppingItem);
                         items.add(item);
                     }
-                    GlobalObjects.SetShoppingItems(items);
+                    GlobalObjects.ShoppingRepository.Set(items);
 
                     GlobalObjects.downloading = false;
                     _shoppingListOwner.OnSuccessfulDownload();

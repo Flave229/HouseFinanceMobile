@@ -61,13 +61,14 @@ public class ShoppingListFragment extends Fragment
 
             if(!GlobalObjects.downloading)
             {
-                if (GlobalObjects.GetShoppingItems() != null) {
+                ArrayList<ShoppingListObject> shoppingItems = GlobalObjects.ShoppingRepository.Get();
+                if (shoppingItems != null) {
                     if(items != null)
                         items.clear();
                     else
                         items = new ArrayList<>();
 
-                    items.addAll(GlobalObjects.GetShoppingItems());
+                    items.addAll(shoppingItems);
                     adapter.addAll(items);
 
                     if (adapter.getItemCount() != items.size())
@@ -137,10 +138,11 @@ public class ShoppingListFragment extends Fragment
         rv = (RecyclerView) view.findViewById(R.id.recycler_view);
         rv.setHasFixedSize(false);
 
-        if(GlobalObjects.GetShoppingItems() != null && GlobalObjects.GetShoppingItems().size() != 0)
+        ArrayList<ShoppingListObject> shoppingItems = GlobalObjects.ShoppingRepository.Get();
+        if(shoppingItems != null && shoppingItems.size() != 0)
         {
             items = new ArrayList<>();
-            items.addAll(GlobalObjects.GetShoppingItems());
+            items.addAll(shoppingItems);
         }
         else
         {
