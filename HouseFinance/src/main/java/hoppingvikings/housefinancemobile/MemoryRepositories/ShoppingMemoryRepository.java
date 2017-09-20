@@ -6,7 +6,22 @@ import hoppingvikings.housefinancemobile.UserInterface.Items.ShoppingListObject;
 
 public class ShoppingMemoryRepository
 {
+    private static ShoppingMemoryRepository _instance;
     private ArrayList<ShoppingListObject> _shoppingItems = new ArrayList<>();
+
+    private ShoppingMemoryRepository()
+    {
+
+    }
+
+    public static ShoppingMemoryRepository Instance()
+    {
+        if (_instance != null)
+            return _instance;
+
+        _instance = new ShoppingMemoryRepository();
+        return _instance;
+    }
 
     public void Set(ArrayList<ShoppingListObject> items)
     {

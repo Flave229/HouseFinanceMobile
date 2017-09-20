@@ -22,6 +22,7 @@ import java.util.ArrayList;
 
 import hoppingvikings.housefinancemobile.GlobalObjects;
 import hoppingvikings.housefinancemobile.MemoryRepositories.BillMemoryRepository;
+import hoppingvikings.housefinancemobile.MemoryRepositories.ShoppingMemoryRepository;
 import hoppingvikings.housefinancemobile.Person;
 import hoppingvikings.housefinancemobile.R;
 import hoppingvikings.housefinancemobile.UserInterface.Items.BillListObject;
@@ -293,7 +294,7 @@ public class WebHandler
                         item = new ShoppingListObject(shoppingItem);
                         items.add(item);
                     }
-                    GlobalObjects.ShoppingRepository.Set(items);
+                    ShoppingMemoryRepository.Instance().Set(items);
 
                     _downloading = false;
                     _shoppingListOwner.OnSuccessfulDownload();

@@ -21,6 +21,7 @@ import java.util.ArrayList;
 import hoppingvikings.housefinancemobile.GlobalObjects;
 import hoppingvikings.housefinancemobile.Person;
 import hoppingvikings.housefinancemobile.R;
+import hoppingvikings.housefinancemobile.JsonFileIO;
 import hoppingvikings.housefinancemobile.UserInterface.Activities.AddNewShoppingItemActivity;
 import hoppingvikings.housefinancemobile.UserInterface.Fragments.Interfaces.ButtonPressedCallback;
 import hoppingvikings.housefinancemobile.UserInterface.Lists.ShoppingCartList.ShoppingCartAdapter;
@@ -117,8 +118,10 @@ public class ShoppingCartFragment extends Fragment
             public void onClick(DialogInterface dialog, int which) {
                 submitcheck.dismiss();
 
+                JsonFileIO fileIO = new JsonFileIO();
+
                 for (String item: _activity._shoppingItems) {
-                    GlobalObjects.WriteToFile(item);
+                    fileIO.WriteToFile(GlobalObjects.SHOPPING_RECENTITEMS_FILENAME, item);
                 }
 
                 submitting = true;

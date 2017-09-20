@@ -274,7 +274,6 @@ public class ViewBillDetailsActivity extends AppCompatActivity
 
     @Override
     public void OnDownloadSuccessful(BillObjectDetailed billObjectDetailed) {
-        TableLayout table;
         _currentBill = billObjectDetailed;
         getSupportActionBar().setTitle("Bill Details");
         getSupportActionBar().setSubtitle(_currentBill.name);

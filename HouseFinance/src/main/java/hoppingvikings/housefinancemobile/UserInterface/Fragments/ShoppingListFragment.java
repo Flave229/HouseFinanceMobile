@@ -18,6 +18,7 @@ import java.util.ArrayList;
 import java.util.Date;
 
 import hoppingvikings.housefinancemobile.GlobalObjects;
+import hoppingvikings.housefinancemobile.MemoryRepositories.ShoppingMemoryRepository;
 import hoppingvikings.housefinancemobile.R;
 import hoppingvikings.housefinancemobile.UserInterface.Activities.AddNewShoppingItemActivity;
 import hoppingvikings.housefinancemobile.UserInterface.Activities.EditShoppingItemActivity;
@@ -61,7 +62,7 @@ public class ShoppingListFragment extends Fragment
 
             if(!GlobalObjects.WebHandler.IsDownloading())
             {
-                ArrayList<ShoppingListObject> shoppingItems = GlobalObjects.ShoppingRepository.Get();
+                ArrayList<ShoppingListObject> shoppingItems = ShoppingMemoryRepository.Instance().Get();
                 if (shoppingItems != null) {
                     if(items != null)
                         items.clear();
@@ -138,7 +139,7 @@ public class ShoppingListFragment extends Fragment
         rv = (RecyclerView) view.findViewById(R.id.recycler_view);
         rv.setHasFixedSize(false);
 
-        ArrayList<ShoppingListObject> shoppingItems = GlobalObjects.ShoppingRepository.Get();
+        ArrayList<ShoppingListObject> shoppingItems = ShoppingMemoryRepository.Instance().Get();
         if(shoppingItems != null && shoppingItems.size() != 0)
         {
             items = new ArrayList<>();

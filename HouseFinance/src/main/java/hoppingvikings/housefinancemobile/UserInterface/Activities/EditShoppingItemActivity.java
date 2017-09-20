@@ -26,6 +26,7 @@ import org.json.JSONObject;
 import java.util.ArrayList;
 
 import hoppingvikings.housefinancemobile.GlobalObjects;
+import hoppingvikings.housefinancemobile.MemoryRepositories.ShoppingMemoryRepository;
 import hoppingvikings.housefinancemobile.R;
 import hoppingvikings.housefinancemobile.UserInterface.Items.ShoppingListObject;
 import hoppingvikings.housefinancemobile.WebService.UploadCallback;
@@ -70,7 +71,7 @@ public class EditShoppingItemActivity extends AppCompatActivity implements Uploa
 
         if(getIntent() != null && getIntent().hasExtra("id"))
         {
-            item = GlobalObjects.ShoppingRepository.GetFromId(getIntent().getIntExtra("id", -1));
+            item = ShoppingMemoryRepository.Instance().GetFromId(getIntent().getIntExtra("id", -1));
         }
 
         layout = (CoordinatorLayout) findViewById(R.id.coordlayout);
