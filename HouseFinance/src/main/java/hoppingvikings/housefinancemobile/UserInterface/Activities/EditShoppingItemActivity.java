@@ -70,7 +70,7 @@ public class EditShoppingItemActivity extends AppCompatActivity implements Uploa
 
         if(getIntent() != null && getIntent().hasExtra("id"))
         {
-            item = GlobalObjects.GetShoppingItemFromID(getIntent().getIntExtra("id", -1));
+            item = GlobalObjects.ShoppingRepository.GetFromId(getIntent().getIntExtra("id", -1));
         }
 
         layout = (CoordinatorLayout) findViewById(R.id.coordlayout);
