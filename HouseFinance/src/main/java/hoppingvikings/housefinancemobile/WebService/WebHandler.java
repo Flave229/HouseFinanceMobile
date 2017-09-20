@@ -26,7 +26,6 @@ import hoppingvikings.housefinancemobile.Person;
 import hoppingvikings.housefinancemobile.UserInterface.Items.BillListObject;
 import hoppingvikings.housefinancemobile.UserInterface.Items.BillObjectDetailed;
 import hoppingvikings.housefinancemobile.UserInterface.Items.ShoppingListObject;
-import hoppingvikings.housefinancemobile.UserInterface.Items.ShoppingListPeople;
 
 /**
  * Created by Josh on 24/09/2016.
@@ -276,7 +275,6 @@ public class WebHandler
             case "Shopping":
                 ArrayList<ShoppingListObject> items = new ArrayList<>();
                 ShoppingListObject item;
-                ShoppingListPeople shoppingPerson;
                 try {
                     JSONObject itemsObject = result.getJSONObject("items");
                     JSONArray shoppingList = itemsObject.getJSONArray("shoppingList");
