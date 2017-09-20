@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="hoppingvikings.housefinancemobile"
-    android:versionCode="25"
-    android:versionName="02.01.00">
+    android:versionCode="26"
+    android:versionName="02.02.00">
 
     <uses-permission android:name="android.permission.INTERNET"/>
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
