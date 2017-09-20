@@ -24,7 +24,9 @@ public class GlobalObjects
     public static WebHandler WebHandler;
     public static BillMemoryRepository BillRepository = new BillMemoryRepository();
 
-    // TODO: JOSH, I assume this needs to stick around for a future feature. Please replace this comment detailing its purpose
+    // TODO: If we ever hook the app to the server in a way that the server can send notifications to the app,
+    // TODO We will need to have a service running in the background. This will be used to access the service within the app.
+    // TODO The boolean is just for a check to see if the service has started up and is bound.
     public static BackgroundService backgroundService;
     public static boolean bound = false;
 
