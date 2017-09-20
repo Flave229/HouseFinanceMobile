@@ -91,7 +91,7 @@ public class PaymentsListAdapter extends RecyclerView.Adapter<PaymentsListAdapte
     @Override
     public void onBindViewHolder(CardViewHolder holder, int position) {
         final BillObjectDetailedPayments item = _payments.get(position);
-        holder.paymentName.setText(item.personName);
+        holder.paymentName.setText(item.Person.FirstName + " " + item.Person.Surname);
         holder.paymentDate.setText("Date: " + item.Date);
         holder.paymentAmount.setText("Paid: £" + String.format(Locale.getDefault(), "%.2f", item.AmountPaid));
         holder.editPayment.setOnClickListener(new View.OnClickListener() {
@@ -105,7 +105,6 @@ public class PaymentsListAdapter extends RecyclerView.Adapter<PaymentsListAdapte
             public void onClick(View v) {
                 try {
                     JSONObject paymentToDelete = new JSONObject();
-                    //paymentToDelete.put("BillId", item.BillID);
                     paymentToDelete.put("PaymentId", item.PaymentID);
                     GlobalObjects.webHandler.DeleteItem(_context, PaymentsListAdapter.this, paymentToDelete, GlobalObjects.ITEM_TYPE_BILLPAYMENT);
                 } catch (Exception e)
