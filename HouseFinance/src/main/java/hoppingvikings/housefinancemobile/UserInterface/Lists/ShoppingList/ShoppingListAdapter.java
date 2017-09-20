@@ -256,7 +256,7 @@ public class ShoppingListAdapter extends RecyclerView.Adapter<ShoppingListAdapte
                     cvh.notifyButton.setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View v) {
-                            GlobalObjects.ShowNotif(_context, "Don't forget to buy " + _shoppingItems.get(cvh.getAdapterPosition()).itemName + "!", "Reminder", _shoppingItems.get(cvh.getAdapterPosition()).ID);
+                            GlobalObjects.ShowNotif("Don't forget to buy " + _shoppingItems.get(cvh.getAdapterPosition()).itemName + "!", "Reminder", _shoppingItems.get(cvh.getAdapterPosition()).ID);
                         }
                     });
                 }

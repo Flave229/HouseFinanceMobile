@@ -3,9 +3,7 @@ package hoppingvikings.housefinancemobile;
 import android.content.Context;
 import android.os.Environment;
 import android.util.Log;
-
 import org.json.JSONObject;
-
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
@@ -17,22 +15,16 @@ import java.util.ArrayList;
 
 import hoppingvikings.housefinancemobile.UserInterface.Items.BillListObject;
 import hoppingvikings.housefinancemobile.UserInterface.Items.ShoppingListObject;
-import hoppingvikings.housefinancemobile.UserInterface.Items.ShoppingListPeople;
 import hoppingvikings.housefinancemobile.WebService.WebHandler;
 
-/**
- * Created by Josh on 25/09/2016.
- */
-
-public class GlobalObjects{
-
+public class GlobalObjects
+{
     static ArrayList<BillListObject> _bills = new ArrayList<>();
     static ArrayList<ShoppingListObject> _shoppingItems = new ArrayList<>();
-    static ArrayList<ShoppingListPeople> _shoppingPeople = new ArrayList<>();
-
-    static ArrayList<Person> _allUsers = new ArrayList<>();
 
     public static WebHandler webHandler;
+
+    // TODO: JOSH, I assume this needs to stick around for a future feature. Please replace this comment detailing its purpose
     public static BackgroundService backgroundService;
     public static boolean bound = false;
 
@@ -92,36 +84,9 @@ public class GlobalObjects{
         return null;
     }
 
-    public static void SetShoppingPeopleList(ArrayList<ShoppingListPeople> people)
+    public static void ShowNotif(String text, String subtext, int notificationId)
     {
-        _shoppingPeople.clear();
-        _shoppingPeople.addAll(people);
-    }
-
-    public static void SetCurrentUsers(ArrayList<Person> users)
-    {
-        _allUsers.clear();
-        _allUsers.addAll(users);
-    }
-
-    public static ArrayList<Person> GetUsers()
-    {
-        return _allUsers;
-    }
-
-    public static int GetUserIDFromLastName(String lastName)
-    {
-        for (Person user: _allUsers) {
-            if(user.Surname.toLowerCase().equals(lastName.toLowerCase()))
-                return user.ID;
-        }
-
-        return -1;
-    }
-
-    public static void ShowNotif(Context context, String text, String subtext, int notifid)
-    {
-        AppServiceBinder._service.ShowNotification(text, subtext, notifid);
+        AppServiceBinder._service.ShowNotification(text, subtext, notificationId);
     }
 
     public static String SetAuthToken(Context context)
@@ -142,24 +107,21 @@ public class GlobalObjects{
         return "";
     }
 
-    public static void WriteToFile(Context context, String data)
+    public static void WriteToFile(String data)
     {
         try {
-            // Get the directory path
-            String path = Environment.getExternalStorageDirectory().getAbsolutePath() + "/HouseFinance/";
-            File dir = new File(path);
+            String directoryPath = Environment.getExternalStorageDirectory().getAbsolutePath() + "/HouseFinance/";
+            File directory = new File(directoryPath);
 
-            // Make it if it doesn't already exist
-            if(!dir.exists())
-                dir.mkdirs();
+            if(!directory.exists())
+                directory.mkdirs();
 
-            File recentspath = new File(dir, SHOPPING_RECENTITEMS_FILENAME);
+            File recentsPath = new File(directory, SHOPPING_RECENTITEMS_FILENAME);
 
-            // Create our file if it doesn't exist
-            if(!recentspath.exists())
-                recentspath.createNewFile();
+            if(!recentsPath.exists())
+                recentsPath.createNewFile();
 
-            FileOutputStream fos = new FileOutputStream(recentspath, true);
+            FileOutputStream fos = new FileOutputStream(recentsPath, true);
             OutputStreamWriter writer = new OutputStreamWriter(fos);
 
             writer.append(data);
@@ -177,7 +139,7 @@ public class GlobalObjects{
 
     public static ArrayList<JSONObject> ReadFile(String filename)
     {
-        ArrayList<JSONObject> recentitems = new ArrayList<>();
+        ArrayList<JSONObject> recentItems = new ArrayList<>();
         String path = Environment.getExternalStorageDirectory().getAbsolutePath() + "/HouseFinance/";
         File dir = new File(path);
 
@@ -195,13 +157,13 @@ public class GlobalObjects{
                     while (line != null)
                     {
                         JSONObject recentitemjson = new JSONObject(line);
-                        recentitems.add(recentitemjson);
+                        recentItems.add(recentitemjson);
                         line = reader.readLine();
                     }
                     reader.close();
                     fis.close();
 
-                    return recentitems;
+                    return recentItems;
                 } catch (Exception e)
                 {
                     Log.e("Read Error:", e.getMessage());

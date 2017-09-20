@@ -118,7 +118,7 @@ public class ShoppingCartFragment extends Fragment
                 submitcheck.dismiss();
 
                 for (String item: _activity._shoppingItems) {
-                    GlobalObjects.WriteToFile(getContext(), item);
+                    GlobalObjects.WriteToFile(item);
                 }
 
                 submitting = true;
