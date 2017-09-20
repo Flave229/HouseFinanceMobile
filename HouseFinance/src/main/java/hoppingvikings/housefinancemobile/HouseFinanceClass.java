@@ -1,24 +1,19 @@
 package hoppingvikings.housefinancemobile;
 
 import android.app.Application;
-import android.app.NotificationManager;
 import android.content.Intent;
 
 import hoppingvikings.housefinancemobile.WebService.WebHandler;
-
-/**
- * Created by iView on 14/07/2017.
- */
 
 public class HouseFinanceClass extends Application implements AppServiceBinder.OnBindInterface {
 
     @Override
     public void OnBind() {
       // AppServiceBinder._service.ShowNotification("Started", NotificationManager.IMPORTANCE_DEFAULT);
-        if(GlobalObjects.webHandler == null)
-            GlobalObjects.webHandler = new WebHandler();
+        if(GlobalObjects.WebHandler == null)
+            GlobalObjects.WebHandler = new WebHandler();
 
-        GlobalObjects.webHandler.SetAuthToken(getApplicationContext());
+        GlobalObjects.WebHandler.SetAuthToken(getApplicationContext());
     }
 
     @Override

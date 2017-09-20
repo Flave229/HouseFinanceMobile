@@ -51,7 +51,7 @@ public class ShoppingListFragment extends Fragment
     private Runnable contactWebsite = new Runnable() {
         @Override
         public void run() {
-            GlobalObjects.webHandler.contactWebsiteShoppingItems(getContext(), ShoppingListFragment.this);
+            GlobalObjects.WebHandler.contactWebsiteShoppingItems(getContext(), ShoppingListFragment.this);
         }
     };
 

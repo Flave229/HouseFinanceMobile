@@ -215,7 +215,7 @@ public class EditPaymentActivity extends AppCompatActivity implements UploadCall
                         editedPayment.put("Created", new SimpleDateFormat("yyyy-MM-dd").format(editedDate));
                     }
 
-                    GlobalObjects.webHandler.EditItem(EditPaymentActivity.this, editedPayment, EditPaymentActivity.this, GlobalObjects.ITEM_TYPE_BILLPAYMENT);
+                    GlobalObjects.WebHandler.EditItem(EditPaymentActivity.this, editedPayment, EditPaymentActivity.this, GlobalObjects.ITEM_TYPE_BILLPAYMENT);
 
                 } catch (Exception e)
                 {

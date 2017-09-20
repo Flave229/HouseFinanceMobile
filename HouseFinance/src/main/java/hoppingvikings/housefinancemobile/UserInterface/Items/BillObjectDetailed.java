@@ -11,10 +11,6 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Locale;
 
-/**
- * Created by iView on 06/07/2017.
- */
-
 public class BillObjectDetailed {
     public int id = 0;
     public String name = "";

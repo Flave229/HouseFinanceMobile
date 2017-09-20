@@ -49,7 +49,7 @@ public class SelectUsersActivity extends AppCompatActivity implements DownloadPe
     private Runnable requestUsers = new Runnable() {
         @Override
         public void run() {
-            GlobalObjects.webHandler.RequestUsers(SelectUsersActivity.this, SelectUsersActivity.this);
+            GlobalObjects.WebHandler.RequestUsers(SelectUsersActivity.this, SelectUsersActivity.this);
         }
     };
 

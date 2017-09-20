@@ -13,16 +13,16 @@ import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.util.ArrayList;
 
-import hoppingvikings.housefinancemobile.UserInterface.Items.BillListObject;
+import hoppingvikings.housefinancemobile.MemoryRepositories.BillMemoryRepository;
 import hoppingvikings.housefinancemobile.UserInterface.Items.ShoppingListObject;
 import hoppingvikings.housefinancemobile.WebService.WebHandler;
 
 public class GlobalObjects
 {
-    static ArrayList<BillListObject> _bills = new ArrayList<>();
     static ArrayList<ShoppingListObject> _shoppingItems = new ArrayList<>();
 
-    public static WebHandler webHandler;
+    public static WebHandler WebHandler;
+    public static BillMemoryRepository BillRepository = new BillMemoryRepository();
 
     // TODO: JOSH, I assume this needs to stick around for a future feature. Please replace this comment detailing its purpose
     public static BackgroundService backgroundService;
@@ -37,28 +37,6 @@ public class GlobalObjects
     public static final String ITEM_TYPE_SHOPPING = "item_shopping";
     public static final String ITEM_TYPE_BILL = "item_bill";
     public static final String ITEM_TYPE_BILLPAYMENT = "item_billpayment";
-
-    public static void SetBills(ArrayList<BillListObject> bills)
-    {
-        _bills.clear();
-        _bills.addAll(bills);
-    }
-
-    public static ArrayList<BillListObject> GetBills()
-    {
-        return _bills;
-    }
-
-    public static BillListObject GetBillFromID(int id)
-    {
-        for (BillListObject bill: _bills) {
-            if(id == bill.id)
-            {
-                return bill;
-            }
-        }
-        return null;
-    }
 
     public static void SetShoppingItems(ArrayList<ShoppingListObject> items)
     {

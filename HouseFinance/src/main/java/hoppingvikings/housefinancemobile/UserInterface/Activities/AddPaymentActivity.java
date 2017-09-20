@@ -20,7 +20,6 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.ImageButton;
-import android.widget.RadioButton;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -183,7 +182,7 @@ public class AddPaymentActivity extends AppCompatActivity implements UploadCallb
 
                             newPayment.put("PersonId", _selectedUserId);
 
-                            GlobalObjects.webHandler.UploadNewItem(getApplicationContext(), newPayment, AddPaymentActivity.this, GlobalObjects.ITEM_TYPE_BILLPAYMENT);
+                            GlobalObjects.WebHandler.UploadNewItem(getApplicationContext(), newPayment, AddPaymentActivity.this, GlobalObjects.ITEM_TYPE_BILLPAYMENT);
                         } catch (Exception e)
                         {
                             Snackbar.make(layout, "Failed to create Json", Snackbar.LENGTH_LONG).show();

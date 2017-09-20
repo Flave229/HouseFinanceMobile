@@ -4,7 +4,6 @@ import android.app.DatePickerDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
-import android.os.Handler;
 import android.support.annotation.Nullable;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.Snackbar;
@@ -19,7 +18,6 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
-import android.widget.CheckBox;
 import android.widget.DatePicker;
 import android.widget.ImageButton;
 import android.widget.RadioButton;
@@ -40,9 +38,7 @@ import java.util.GregorianCalendar;
 import java.util.Locale;
 
 import hoppingvikings.housefinancemobile.GlobalObjects;
-import hoppingvikings.housefinancemobile.Person;
 import hoppingvikings.housefinancemobile.R;
-import hoppingvikings.housefinancemobile.WebService.DownloadPeopleCallback;
 import hoppingvikings.housefinancemobile.WebService.UploadCallback;
 
 /**
@@ -207,7 +203,7 @@ public class AddNewBillActivity extends AppCompatActivity implements UploadCallb
                                 newBill.put("RecurringType", 0);
 
 
-                            GlobalObjects.webHandler.UploadNewItem(getApplicationContext(), newBill, AddNewBillActivity.this, GlobalObjects.ITEM_TYPE_BILL);
+                            GlobalObjects.WebHandler.UploadNewItem(getApplicationContext(), newBill, AddNewBillActivity.this, GlobalObjects.ITEM_TYPE_BILL);
 
                         } catch (JSONException je)
                         {

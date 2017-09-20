@@ -89,7 +89,7 @@ public class EditBillDetailsActivity extends AppCompatActivity implements Upload
 
         if(getIntent() != null && getIntent().hasExtra("bill_id"))
         {
-            bill = GlobalObjects.GetBillFromID(getIntent().getIntExtra("bill_id", -1));
+            bill = GlobalObjects.BillRepository.GetFromId(getIntent().getIntExtra("bill_id", -1));
         }
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.appToolbar);
@@ -374,7 +374,7 @@ public class EditBillDetailsActivity extends AppCompatActivity implements Upload
                             editedBill.put("RecurringType", 0);
                     }
 
-                    GlobalObjects.webHandler.EditItem(EditBillDetailsActivity.this, editedBill, EditBillDetailsActivity.this, GlobalObjects.ITEM_TYPE_BILL);
+                    GlobalObjects.WebHandler.EditItem(EditBillDetailsActivity.this, editedBill, EditBillDetailsActivity.this, GlobalObjects.ITEM_TYPE_BILL);
 
                 } catch (Exception e)
                 {

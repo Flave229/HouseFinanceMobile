@@ -106,7 +106,7 @@ public class PaymentsListAdapter extends RecyclerView.Adapter<PaymentsListAdapte
                 try {
                     JSONObject paymentToDelete = new JSONObject();
                     paymentToDelete.put("PaymentId", item.PaymentID);
-                    GlobalObjects.webHandler.DeleteItem(_context, PaymentsListAdapter.this, paymentToDelete, GlobalObjects.ITEM_TYPE_BILLPAYMENT);
+                    GlobalObjects.WebHandler.DeleteItem(_context, PaymentsListAdapter.this, paymentToDelete, GlobalObjects.ITEM_TYPE_BILLPAYMENT);
                 } catch (Exception e)
                 {
 

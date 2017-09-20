@@ -86,7 +86,7 @@ public class ShoppingCartFragment extends Fragment
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        GlobalObjects.webHandler.RequestUsers(getContext(), this);
+        GlobalObjects.WebHandler.RequestUsers(getContext(), this);
         currentView = inflater.inflate(R.layout.fragment_shoppingcart, container, false);
         _activity = (AddNewShoppingItemActivity)getActivity();
         _activity.SetCallbackOwner(this);
@@ -126,7 +126,7 @@ public class ShoppingCartFragment extends Fragment
                 _activity.addToCartButton.setEnabled(false);
                 _activity.submitButton.setEnabled(false);
                 try {
-                    GlobalObjects.webHandler.UploadNewItem(getContext(), new JSONObject(_activity._shoppingItems.get(0)), _activity, GlobalObjects.ITEM_TYPE_SHOPPING);
+                    GlobalObjects.WebHandler.UploadNewItem(getContext(), new JSONObject(_activity._shoppingItems.get(0)), _activity, GlobalObjects.ITEM_TYPE_SHOPPING);
                 } catch (Exception e)
                 {
 

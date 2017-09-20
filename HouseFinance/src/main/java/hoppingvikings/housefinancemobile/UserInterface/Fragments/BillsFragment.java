@@ -52,7 +52,7 @@ public class BillsFragment extends Fragment
     private Runnable contactWebsite = new Runnable() {
         @Override
         public void run() {
-            GlobalObjects.webHandler.contactWebsiteBills(getContext(), BillsFragment.this);
+            GlobalObjects.WebHandler.contactWebsiteBills(getContext(), BillsFragment.this);
         }
     };
 
@@ -60,15 +60,15 @@ public class BillsFragment extends Fragment
         @Override
         public void run() {
             if(!GlobalObjects.downloading) {
-                if (GlobalObjects.GetBills() != null) {
+                if (GlobalObjects.BillRepository.Get() != null) {
                     if(_cards != null) {
                         _cards.clear();
-                        _cards.addAll(GlobalObjects.GetBills());
+                        _cards.addAll(GlobalObjects.BillRepository.Get());
                         _adapter.AddAll(_cards);
                     }
                     else {
                         _cards = new ArrayList<>();
-                        _cards.addAll(GlobalObjects.GetBills());
+                        _cards.addAll(GlobalObjects.BillRepository.Get());
                         _adapter.AddAll(_cards);
                     }
 
@@ -121,7 +121,7 @@ public class BillsFragment extends Fragment
         _recyclerView = (RecyclerView) view.findViewById(R.id.recycler_view);
         _recyclerView.setHasFixedSize(true);
 
-        ArrayList<BillListObject> bills = GlobalObjects.GetBills();
+        ArrayList<BillListObject> bills = GlobalObjects.BillRepository.Get();
         _cards = new ArrayList<>();
         if(bills != null && bills.size() != 0)
         {

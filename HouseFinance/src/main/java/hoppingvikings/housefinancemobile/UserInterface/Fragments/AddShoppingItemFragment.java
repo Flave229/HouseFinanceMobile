@@ -14,9 +14,7 @@ import android.support.v7.app.AlertDialog;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.CheckBox;
 import android.widget.ImageButton;
-import android.widget.RadioButton;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -30,7 +28,6 @@ import java.util.Date;
 
 import hoppingvikings.housefinancemobile.GlobalObjects;
 import hoppingvikings.housefinancemobile.R;
-import hoppingvikings.housefinancemobile.UserInterface.Activities.AddNewBillActivity;
 import hoppingvikings.housefinancemobile.UserInterface.Activities.AddNewShoppingItemActivity;
 import hoppingvikings.housefinancemobile.UserInterface.Activities.SelectUsersActivity;
 import hoppingvikings.housefinancemobile.UserInterface.Fragments.Interfaces.ButtonPressedCallback;
@@ -250,7 +247,7 @@ public class AddShoppingItemFragment extends Fragment implements ButtonPressedCa
                     // Add the item to a file on the device
                     //GlobalObjects.WriteToFile(getContext(), newItem.toString());
 
-                    GlobalObjects.webHandler.UploadNewItem(getContext(), newItem, _activity, GlobalObjects.ITEM_TYPE_SHOPPING);
+                    GlobalObjects.WebHandler.UploadNewItem(getContext(), newItem, _activity, GlobalObjects.ITEM_TYPE_SHOPPING);
                 } catch (JSONException je)
                 {
                     Snackbar.make(layout, "Failed to create Json", Snackbar.LENGTH_LONG).show();
@@ -291,7 +288,7 @@ public class AddShoppingItemFragment extends Fragment implements ButtonPressedCa
             _activity.getSupportActionBar().setSubtitle("Items in cart: " + String.valueOf(_activity._shoppingItems.size()));
 
             _activity.submitButton.setText("View Cart");
-            //GlobalObjects.webHandler.UploadNewShoppingItem(getApplicationContext(), newItem, AddNewShoppingItemActivity.this);
+            //GlobalObjects.WebHandler.UploadNewShoppingItem(getApplicationContext(), newItem, AddNewShoppingItemActivity.this);
         } catch (JSONException je)
         {
             Snackbar.make(layout, "Failed to create Json", Snackbar.LENGTH_LONG).show();

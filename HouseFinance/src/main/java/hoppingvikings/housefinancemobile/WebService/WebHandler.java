@@ -6,7 +6,6 @@ import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.AsyncTask;
 import android.util.Log;
-import android.widget.Toast;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -26,10 +25,6 @@ import hoppingvikings.housefinancemobile.Person;
 import hoppingvikings.housefinancemobile.UserInterface.Items.BillListObject;
 import hoppingvikings.housefinancemobile.UserInterface.Items.BillObjectDetailed;
 import hoppingvikings.housefinancemobile.UserInterface.Items.ShoppingListObject;
-
-/**
- * Created by Josh on 24/09/2016.
- */
 
 public class WebHandler
 {
@@ -257,7 +252,7 @@ public class WebHandler
                         bills.add(bill);
                     }
 
-                    GlobalObjects.SetBills(bills);
+                    GlobalObjects.BillRepository.Set(bills);
                     GlobalObjects.downloading = false;
 
                     _billListOwner.OnSuccessfulDownload();

@@ -68,7 +68,7 @@ public class ViewBillDetailsActivity extends AppCompatActivity
     private Runnable contactWebsite = new Runnable() {
         @Override
         public void run() {
-            GlobalObjects.webHandler.RequestBillDetails(ViewBillDetailsActivity.this, ViewBillDetailsActivity.this, billID);
+            GlobalObjects.WebHandler.RequestBillDetails(ViewBillDetailsActivity.this, ViewBillDetailsActivity.this, billID);
         }
     };
 
@@ -113,7 +113,7 @@ public class ViewBillDetailsActivity extends AppCompatActivity
         addPayment.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                BillListObject bill = GlobalObjects.GetBillFromID(_currentBill.id);
+                BillListObject bill = GlobalObjects.BillRepository.GetFromId(_currentBill.id);
                 Intent i = new Intent(ViewBillDetailsActivity.this, AddPaymentActivity.class);
                 i.putExtra("bill_id", _currentBill.id);
                 i.putExtra("bill_name", _currentBill.name);
@@ -230,7 +230,7 @@ public class ViewBillDetailsActivity extends AppCompatActivity
                         try {
                             JSONObject billidjson = new JSONObject();
                             billidjson.put("BillId", billID);
-                            GlobalObjects.webHandler.DeleteItem(ViewBillDetailsActivity.this, ViewBillDetailsActivity.this, billidjson, GlobalObjects.ITEM_TYPE_BILL);
+                            GlobalObjects.WebHandler.DeleteItem(ViewBillDetailsActivity.this, ViewBillDetailsActivity.this, billidjson, GlobalObjects.ITEM_TYPE_BILL);
                         } catch (Exception e)
                         {
                             addPayment.show();
