@@ -17,6 +17,7 @@ import android.view.ViewGroup;
 import java.util.ArrayList;
 
 import hoppingvikings.housefinancemobile.GlobalObjects;
+import hoppingvikings.housefinancemobile.MemoryRepositories.BillMemoryRepository;
 import hoppingvikings.housefinancemobile.R;
 import hoppingvikings.housefinancemobile.UserInterface.Activities.AddNewBillActivity;
 import hoppingvikings.housefinancemobile.UserInterface.Items.BillListObjectPeople;
@@ -60,15 +61,16 @@ public class BillsFragment extends Fragment
         @Override
         public void run() {
             if(!GlobalObjects.WebHandler.IsDownloading()) {
-                if (GlobalObjects.BillRepository.Get() != null) {
+                BillMemoryRepository billRepository = BillMemoryRepository.Instance();
+                if (billRepository.Get() != null) {
                     if(_cards != null) {
                         _cards.clear();
-                        _cards.addAll(GlobalObjects.BillRepository.Get());
+                        _cards.addAll(billRepository.Get());
                         _adapter.AddAll(_cards);
                     }
                     else {
                         _cards = new ArrayList<>();
-                        _cards.addAll(GlobalObjects.BillRepository.Get());
+                        _cards.addAll(billRepository.Get());
                         _adapter.AddAll(_cards);
                     }
 
@@ -121,7 +123,7 @@ public class BillsFragment extends Fragment
         _recyclerView = (RecyclerView) view.findViewById(R.id.recycler_view);
         _recyclerView.setHasFixedSize(true);
 
-        ArrayList<BillListObject> bills = GlobalObjects.BillRepository.Get();
+        ArrayList<BillListObject> bills = BillMemoryRepository.Instance().Get();
         _cards = new ArrayList<>();
         if(bills != null && bills.size() != 0)
         {

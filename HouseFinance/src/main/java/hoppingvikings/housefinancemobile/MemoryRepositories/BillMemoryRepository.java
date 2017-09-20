@@ -6,11 +6,21 @@ import hoppingvikings.housefinancemobile.UserInterface.Items.BillListObject;
 
 public class BillMemoryRepository
 {
+    private static BillMemoryRepository _instance;
     private ArrayList<BillListObject> _bills;
 
-    public BillMemoryRepository()
+    private BillMemoryRepository()
     {
         _bills = new ArrayList<>();
+    }
+
+    public static BillMemoryRepository Instance()
+    {
+        if (_instance != null)
+            return _instance;
+
+        _instance = new BillMemoryRepository();
+        return _instance;
     }
 
     public void Set(ArrayList<BillListObject> bills)

@@ -21,6 +21,7 @@ import java.net.URL;
 import java.util.ArrayList;
 
 import hoppingvikings.housefinancemobile.GlobalObjects;
+import hoppingvikings.housefinancemobile.MemoryRepositories.BillMemoryRepository;
 import hoppingvikings.housefinancemobile.Person;
 import hoppingvikings.housefinancemobile.R;
 import hoppingvikings.housefinancemobile.UserInterface.Items.BillListObject;
@@ -264,7 +265,7 @@ public class WebHandler
                         bills.add(bill);
                     }
 
-                    GlobalObjects.BillRepository.Set(bills);
+                    BillMemoryRepository.Instance().Set(bills);
                     _downloading = false;
 
                     _billListOwner.OnSuccessfulDownload();

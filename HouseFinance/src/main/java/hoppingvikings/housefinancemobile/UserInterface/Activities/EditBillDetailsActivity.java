@@ -38,6 +38,7 @@ import java.util.GregorianCalendar;
 import java.util.Locale;
 
 import hoppingvikings.housefinancemobile.GlobalObjects;
+import hoppingvikings.housefinancemobile.MemoryRepositories.BillMemoryRepository;
 import hoppingvikings.housefinancemobile.R;
 import hoppingvikings.housefinancemobile.UserInterface.Items.BillListObject;
 import hoppingvikings.housefinancemobile.WebService.UploadCallback;
@@ -89,7 +90,7 @@ public class EditBillDetailsActivity extends AppCompatActivity implements Upload
 
         if(getIntent() != null && getIntent().hasExtra("bill_id"))
         {
-            bill = GlobalObjects.BillRepository.GetFromId(getIntent().getIntExtra("bill_id", -1));
+            bill = BillMemoryRepository.Instance().GetFromId(getIntent().getIntExtra("bill_id", -1));
         }
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.appToolbar);

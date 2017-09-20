@@ -77,20 +77,16 @@ public class MainActivity extends AppCompatActivity {
                         addShoppingItemFab.hide();
                         _handler.postDelayed(showBillButton, 200);
                         break;
-
                     case 1:
                         // shopping
                         //addShoppingItemFab.show();
                         addBillFab.hide();
                         _handler.postDelayed(showShoppingButton, 200);
                         break;
-
                     case 2:
                         // stats
-
                         break;
                 }
-
             }
 
             @Override
@@ -107,6 +103,7 @@ public class MainActivity extends AppCompatActivity {
             tab.setCustomView(adapter.getTabView(i));
         }
 
+        // TODO: Need to keep this around for when "We want to write stuff to a file". I asked what specifically... Ha
         /*if((ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED)
                 || ContextCompat.checkSelfPermission(this, Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED)
         {

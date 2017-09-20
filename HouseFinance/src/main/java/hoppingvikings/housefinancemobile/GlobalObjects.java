@@ -11,14 +11,12 @@ import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.util.ArrayList;
 
-import hoppingvikings.housefinancemobile.MemoryRepositories.BillMemoryRepository;
 import hoppingvikings.housefinancemobile.MemoryRepositories.ShoppingMemoryRepository;
 import hoppingvikings.housefinancemobile.WebService.WebHandler;
 
 public class GlobalObjects
 {
     public static WebHandler WebHandler;
-    public static BillMemoryRepository BillRepository = new BillMemoryRepository();
     public static ShoppingMemoryRepository ShoppingRepository = new ShoppingMemoryRepository();
 
     // TODO: If we ever hook the app to the server in a way that the server can send notifications to the app,
