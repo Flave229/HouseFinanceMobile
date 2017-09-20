@@ -21,13 +21,9 @@ import hoppingvikings.housefinancemobile.UserInterface.Lists.ShoppingCartList.Sh
  */
 
 public class UserSelectAdapter extends RecyclerView.Adapter<UserSelectAdapter.CardViewHolder> {
-    private static UserClickedListener _listener;
-    public interface UserClickedListener
-    {
-        void onUserClicked(View itemView, int pos);
-    }
+    private static IUserClickedListener _listener;
 
-    public void setOnUserClickedListener(UserClickedListener listener)
+    public void setOnUserClickedListener(IUserClickedListener listener)
     {
         _listener = listener;
     }

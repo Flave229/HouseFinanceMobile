@@ -19,6 +19,7 @@ import java.util.HashMap;
 import hoppingvikings.housefinancemobile.GlobalObjects;
 import hoppingvikings.housefinancemobile.Person;
 import hoppingvikings.housefinancemobile.R;
+import hoppingvikings.housefinancemobile.UserInterface.Lists.UserSelectList.IUserClickedListener;
 import hoppingvikings.housefinancemobile.UserInterface.Lists.UserSelectList.UserSelectAdapter;
 import hoppingvikings.housefinancemobile.WebService.DownloadPeopleCallback;
 
@@ -104,7 +105,7 @@ public class SelectUsersActivity extends AppCompatActivity implements DownloadPe
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
         _adapter = new UserSelectAdapter(_users, this);
-        _adapter.setOnUserClickedListener(new UserSelectAdapter.UserClickedListener() {
+        _adapter.setOnUserClickedListener(new IUserClickedListener() {
             @Override
             public void onUserClicked(View itemView, int pos) {
                 Person selectedUser = _adapter.GetUser(pos);
