@@ -13,7 +13,6 @@ import android.widget.TextView;
 import java.util.ArrayList;
 
 import hoppingvikings.housefinancemobile.R;
-import hoppingvikings.housefinancemobile.UserInterface.Fragments.Interfaces.ButtonPressedCallback;
 import hoppingvikings.housefinancemobile.UserInterface.Items.BillListObjectPeople;
 import hoppingvikings.housefinancemobile.UserInterface.Lists.AllPeopleAdapter;
 

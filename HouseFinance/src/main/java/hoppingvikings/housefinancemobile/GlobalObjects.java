@@ -16,7 +16,6 @@ import java.io.OutputStreamWriter;
 import java.util.ArrayList;
 
 import hoppingvikings.housefinancemobile.UserInterface.Items.BillListObject;
-import hoppingvikings.housefinancemobile.UserInterface.Items.BillListObjectPeople;
 import hoppingvikings.housefinancemobile.UserInterface.Items.ShoppingListObject;
 import hoppingvikings.housefinancemobile.UserInterface.Items.ShoppingListPeople;
 import hoppingvikings.housefinancemobile.WebService.WebHandler;
@@ -28,8 +27,6 @@ import hoppingvikings.housefinancemobile.WebService.WebHandler;
 public class GlobalObjects{
 
     static ArrayList<BillListObject> _bills = new ArrayList<>();
-    static ArrayList<BillListObjectPeople> _billsPeople = new ArrayList<>();
-
     static ArrayList<ShoppingListObject> _shoppingItems = new ArrayList<>();
     static ArrayList<ShoppingListPeople> _shoppingPeople = new ArrayList<>();
 
@@ -68,24 +65,6 @@ public class GlobalObjects{
                 return bill;
             }
         }
-        return null;
-    }
-
-    public static void SetBillPeopleList(ArrayList<BillListObjectPeople> people)
-    {
-        _billsPeople.clear();
-        _billsPeople.addAll(people);
-    }
-
-    public static BillListObjectPeople GetPersonFromID(int id)
-    {
-        for (BillListObjectPeople person:_billsPeople) {
-            if(id == person.billID)
-            {
-                return person;
-            }
-        }
-
         return null;
     }
 
