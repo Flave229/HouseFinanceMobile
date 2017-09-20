@@ -161,10 +161,10 @@ public class ShoppingListFragment extends Fragment
             public void onShoppingItemClick(View itemView, int pos) {
                 ShoppingListObject item = adapter.GetItem(pos);
                 //
-                if(item.itemExpanded)
-                    item.itemExpanded = false;
+                if(item.ItemExpanded)
+                    item.ItemExpanded = false;
                 else
-                    item.itemExpanded = true;
+                    item.ItemExpanded = true;
 
 
                 adapter.notifyItemChanged(pos);

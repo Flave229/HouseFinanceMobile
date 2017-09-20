@@ -76,7 +76,7 @@ public class GlobalObjects
     {
         for(ShoppingListObject item : _shoppingItems)
         {
-            if(id == item.ID)
+            if(id == item.Id)
             {
                 return item;
             }

@@ -101,7 +101,7 @@ public class EditShoppingItemActivity extends AppCompatActivity implements Uploa
 
         if(item != null)
         {
-            shoppingItemNameEntry.setText(item.itemName);
+            shoppingItemNameEntry.setText(item.ItemName);
         }
         else
         {
@@ -187,7 +187,7 @@ public class EditShoppingItemActivity extends AppCompatActivity implements Uploa
                 confirmcancel.dismiss();
                 JSONObject editedBill = new JSONObject();
                 try {
-                    editedBill.put("Id", item.ID);
+                    editedBill.put("Id", item.Id);
                     if(editName.isChecked())
                         editedBill.put("Name", shoppingItemNameEntry.getText().toString());
 

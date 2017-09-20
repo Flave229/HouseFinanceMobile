@@ -150,10 +150,10 @@ public class ShoppingListAdapter extends RecyclerView.Adapter<ShoppingListAdapte
     @Override
     public void onBindViewHolder(final CardViewHolder cvh, final int i)
     {
-        cvh.shoppingItemName.setText(_shoppingItems.get(cvh.getAdapterPosition()).itemName);
-        cvh.addedDate.setText(_shoppingItems.get(cvh.getAdapterPosition()).addedDate);
+        cvh.shoppingItemName.setText(_shoppingItems.get(cvh.getAdapterPosition()).ItemName);
+        cvh.addedDate.setText(_shoppingItems.get(cvh.getAdapterPosition()).AddedDate);
 
-        if(_shoppingItems.get(cvh.getAdapterPosition()).done)
+        if(_shoppingItems.get(cvh.getAdapterPosition()).Purchased)
         {
             cvh.cardView.setBackgroundResource(R.color.bill_paid);
         }
@@ -164,28 +164,28 @@ public class ShoppingListAdapter extends RecyclerView.Adapter<ShoppingListAdapte
 
         try {
 
-            String addedForImage1 = _shoppingItems.get(cvh.getAdapterPosition()).addedFor1.ImageUrl;
+            String addedForImage1 = _shoppingItems.get(cvh.getAdapterPosition()).AddedFor.get(0).ImageUrl;
             imgCache.PutBitmap(addedForImage1, addedForImage1, cvh.addedFor1);
 
-            if (_shoppingItems.get(cvh.getAdapterPosition()).addedFor2 == null) {
+            if (_shoppingItems.get(cvh.getAdapterPosition()).AddedFor.size() < 2) {
                 cvh.addedFor2.setVisibility(View.GONE);
             } else
             {
                 cvh.addedFor2.setVisibility(View.VISIBLE);
-                String addedForImage2 = _shoppingItems.get(cvh.getAdapterPosition()).addedFor2.ImageUrl;
+                String addedForImage2 = _shoppingItems.get(cvh.getAdapterPosition()).AddedFor.get(1).ImageUrl;
                 imgCache.PutBitmap(addedForImage2, addedForImage2, cvh.addedFor2);
             }
 
-            if (_shoppingItems.get(cvh.getAdapterPosition()).addedFor3 == null) {
+            if (_shoppingItems.get(cvh.getAdapterPosition()).AddedFor.size() < 3) {
                 cvh.addedFor3.setVisibility(View.GONE);
             } else
             {
                 cvh.addedFor3.setVisibility(View.VISIBLE);
-                String addedForImage3 = _shoppingItems.get(cvh.getAdapterPosition()).addedFor3.ImageUrl;
+                String addedForImage3 = _shoppingItems.get(cvh.getAdapterPosition()).AddedFor.get(2).ImageUrl;
                 imgCache.PutBitmap(addedForImage3, addedForImage3, cvh.addedFor3);
             }
 
-            if(_shoppingItems.get(cvh.getAdapterPosition()).itemExpanded)
+            if(_shoppingItems.get(cvh.getAdapterPosition()).ItemExpanded)
             {
                 cvh.editButton.setVisibility(View.VISIBLE);
                 cvh.buttonsContainer.setVisibility(View.VISIBLE);
@@ -193,13 +193,13 @@ public class ShoppingListAdapter extends RecyclerView.Adapter<ShoppingListAdapte
                 cvh.infoText.setVisibility(View.INVISIBLE);
                 cvh.addedBy1.setVisibility(View.VISIBLE);
 
-                String addedByImage = _shoppingItems.get(cvh.getAdapterPosition()).addedBy.ImageUrl;
+                String addedByImage = _shoppingItems.get(cvh.getAdapterPosition()).AddedBy.ImageUrl;
                 imgCache.PutBitmap(addedByImage, addedByImage, cvh.addedBy1);
 
                 cvh.editButton.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        _editCallback.onEditPressed(_shoppingItems.get(cvh.getAdapterPosition()).ID);
+                        _editCallback.onEditPressed(_shoppingItems.get(cvh.getAdapterPosition()).Id);
                     }
                 });
 
@@ -208,14 +208,14 @@ public class ShoppingListAdapter extends RecyclerView.Adapter<ShoppingListAdapte
                     public void onClick(View v) {
                         try {
                             JSONObject itemJson = new JSONObject();
-                            itemJson.put("ShoppingItemId", _shoppingItems.get(cvh.getAdapterPosition()).ID);
+                            itemJson.put("ShoppingItemId", _shoppingItems.get(cvh.getAdapterPosition()).Id);
                             GlobalObjects.webHandler.DeleteItem(_context, ShoppingListAdapter.this, itemJson, GlobalObjects.ITEM_TYPE_SHOPPING);
                         } catch (Exception e)
                         {
                             Toast.makeText(_context, "Failed to delete item", Toast.LENGTH_SHORT).show();
                         }
                         NotificationManager man = (NotificationManager) _context.getSystemService(NOTIFICATION_SERVICE);
-                        man.cancel(_shoppingItems.get(cvh.getAdapterPosition()).ID);
+                        man.cancel(_shoppingItems.get(cvh.getAdapterPosition()).Id);
                         _shoppingItems.remove(cvh.getAdapterPosition());
                         notifyItemRemoved(cvh.getAdapterPosition());
                         notifyItemRangeChanged(cvh.getAdapterPosition(), _shoppingItems.size());
@@ -231,11 +231,11 @@ public class ShoppingListAdapter extends RecyclerView.Adapter<ShoppingListAdapte
                             selected = cvh.getAdapterPosition();
                             JSONObject editedItem = new JSONObject();
                             try {
-                                editedItem.put("Id", _shoppingItems.get(cvh.getAdapterPosition()).ID);
-                                editedItem.put("Purchased", !_shoppingItems.get(cvh.getAdapterPosition()).done);
+                                editedItem.put("Id", _shoppingItems.get(cvh.getAdapterPosition()).Id);
+                                editedItem.put("Purchased", !_shoppingItems.get(cvh.getAdapterPosition()).Purchased);
                                 GlobalObjects.webHandler.EditItem(_context, editedItem, ShoppingListAdapter.this, GlobalObjects.ITEM_TYPE_SHOPPING);
                                 NotificationManager man = (NotificationManager) _context.getSystemService(NOTIFICATION_SERVICE);
-                                man.cancel(_shoppingItems.get(cvh.getAdapterPosition()).ID);
+                                man.cancel(_shoppingItems.get(cvh.getAdapterPosition()).Id);
                             } catch (Exception e)
                             {
                                 OnFailedUpload("");
@@ -244,7 +244,7 @@ public class ShoppingListAdapter extends RecyclerView.Adapter<ShoppingListAdapte
                     }
                 });
 
-                if(_shoppingItems.get(cvh.getAdapterPosition()).done) {
+                if(_shoppingItems.get(cvh.getAdapterPosition()).Purchased) {
                     cvh.notifyButton.setVisibility(View.INVISIBLE);
                     cvh.completeButton.setImageResource(R.drawable.ic_undo_black_24dp);
                     cvh.editButton.setVisibility(View.GONE);
@@ -257,7 +257,7 @@ public class ShoppingListAdapter extends RecyclerView.Adapter<ShoppingListAdapte
                     cvh.notifyButton.setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View v) {
-                            GlobalObjects.ShowNotif("Don't forget to buy " + _shoppingItems.get(cvh.getAdapterPosition()).itemName + "!", "Reminder", _shoppingItems.get(cvh.getAdapterPosition()).ID);
+                            GlobalObjects.ShowNotif("Don't forget to buy " + _shoppingItems.get(cvh.getAdapterPosition()).ItemName + "!", "Reminder", _shoppingItems.get(cvh.getAdapterPosition()).Id);
                         }
                     });
                 }
@@ -302,7 +302,7 @@ public class ShoppingListAdapter extends RecyclerView.Adapter<ShoppingListAdapte
     @Override
     public void OnSuccessfulUpload() {
         completeAlreadyPressed = false;
-        _shoppingItems.get(selected).done = !_shoppingItems.get(selected).done;
+        _shoppingItems.get(selected).Purchased = !_shoppingItems.get(selected).Purchased;
         notifyItemChanged(selected);
     }
 

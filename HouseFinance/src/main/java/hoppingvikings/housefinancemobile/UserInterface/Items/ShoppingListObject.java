@@ -8,6 +8,7 @@ import org.json.JSONObject;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Locale;
 
 import hoppingvikings.housefinancemobile.Person;
@@ -17,46 +18,31 @@ import hoppingvikings.housefinancemobile.Person;
  */
 
 public class ShoppingListObject {
-    public int ID = 0;
-    public String itemName = "";
-    public String addedDate = "";
-    public Person addedBy;
-    public boolean done = false;
-    public Person addedFor1;
-    public Person addedFor2;
-    public Person addedFor3;
+    private SimpleDateFormat _dateFormat = new SimpleDateFormat("yyyy-MM-dd", Locale.UK);
 
-    public boolean itemExpanded = false;
-    private SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd", Locale.UK);
+    public int Id = 0;
+    public String ItemName = "";
+    public String AddedDate = "";
+    public Person AddedBy;
+    public boolean Purchased;
+    public ArrayList<Person> AddedFor = new ArrayList<>();
+
+    public boolean ItemExpanded = false;
 
     public ShoppingListObject(JSONObject shoppingItem)
     {
         try
         {
-            ID = shoppingItem.getInt("id");
-            itemName = shoppingItem.getString("name");
-            addedDate = dateFormat.format(dateFormat.parse(shoppingItem.getString("dateAdded")));
-            addedBy = new Person(shoppingItem.getJSONObject("addedBy"));
-            done = shoppingItem.getBoolean("purchased");
+            Id = shoppingItem.getInt("id");
+            ItemName = shoppingItem.getString("name");
+            AddedDate = _dateFormat.format(_dateFormat.parse(shoppingItem.getString("dateAdded")));
+            AddedBy = new Person(shoppingItem.getJSONObject("addedBy"));
+            Purchased = shoppingItem.getBoolean("purchased");
 
             JSONArray addedFor = shoppingItem.getJSONArray("addedFor");
-            switch (addedFor.length())
-            {
-                case 1:
-                    addedFor1 = new Person(addedFor.getJSONObject(0));
-                    break;
 
-                case 2:
-                    addedFor1 = new Person(addedFor.getJSONObject(0));
-                    addedFor2 = new Person(addedFor.getJSONObject(1));
-                    break;
-
-                case 3:
-                    addedFor1 = new Person(addedFor.getJSONObject(0));
-                    addedFor2 = new Person(addedFor.getJSONObject(1));
-                    addedFor3 = new Person(addedFor.getJSONObject(2));
-                    break;
-            }
+            for (int i = 0; i < addedFor.length(); i++)
+                AddedFor.add(new Person(addedFor.getJSONObject(i)));
         }
         catch (JSONException e)
         {
