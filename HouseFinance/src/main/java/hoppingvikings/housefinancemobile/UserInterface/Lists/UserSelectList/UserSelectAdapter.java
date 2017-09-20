@@ -81,7 +81,7 @@ public class UserSelectAdapter extends RecyclerView.Adapter<UserSelectAdapter.Ca
     public void onBindViewHolder(CardViewHolder holder, int position) {
         Person user = _users.get(position);
         holder.userName.setText(user.FirstName + " " + user.Surname);
-        imgCache.PutBitmap(user.ImageUrl, user.ImageUrl, holder.userImage);
+        imgCache.PutBitmap(user.ImageUrl, holder.userImage);
 
         if(user.selected)
             holder.userSelected.setChecked(true);

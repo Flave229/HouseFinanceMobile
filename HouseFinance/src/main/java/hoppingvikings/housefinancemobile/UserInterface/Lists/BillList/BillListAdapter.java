@@ -145,7 +145,7 @@ public class BillListAdapter extends RecyclerView.Adapter<BillListAdapter.CardVi
             switch (_cards.get(i).people.size())
             {
                 case 1:
-                    imgCache.PutBitmap(_cards.get(i).people.get(0).URL, _cards.get(i).people.get(0).URL, cvh.cardImage);
+                    imgCache.PutBitmap(_cards.get(i).people.get(0).URL, cvh.cardImage);
 
                     if(_cards.get(i).people.get(0).Paid)
                     {
@@ -162,8 +162,8 @@ public class BillListAdapter extends RecyclerView.Adapter<BillListAdapter.CardVi
                     break;
 
                 case 2:
-                    imgCache.PutBitmap(_cards.get(i).people.get(0).URL, _cards.get(i).people.get(0).URL, cvh.cardImage);
-                    imgCache.PutBitmap(_cards.get(i).people.get(1).URL, _cards.get(i).people.get(1).URL, cvh.cardImage2);
+                    imgCache.PutBitmap(_cards.get(i).people.get(0).URL, cvh.cardImage);
+                    imgCache.PutBitmap(_cards.get(i).people.get(1).URL, cvh.cardImage2);
                     if(_cards.get(i).people.get(0).Paid)
                     {
                         cvh.cardImage.setAlpha(1.0f);
@@ -188,9 +188,9 @@ public class BillListAdapter extends RecyclerView.Adapter<BillListAdapter.CardVi
                     break;
 
                 case 3:
-                    imgCache.PutBitmap(_cards.get(i).people.get(0).URL, _cards.get(i).people.get(0).URL, cvh.cardImage);
-                    imgCache.PutBitmap(_cards.get(i).people.get(1).URL, _cards.get(i).people.get(1).URL, cvh.cardImage2);
-                    imgCache.PutBitmap(_cards.get(i).people.get(2).URL, _cards.get(i).people.get(2).URL, cvh.cardImage3);
+                    imgCache.PutBitmap(_cards.get(i).people.get(0).URL, cvh.cardImage);
+                    imgCache.PutBitmap(_cards.get(i).people.get(1).URL, cvh.cardImage2);
+                    imgCache.PutBitmap(_cards.get(i).people.get(2).URL, cvh.cardImage3);
 
                     if(_cards.get(i).people.get(0).Paid)
                     {
@@ -225,9 +225,9 @@ public class BillListAdapter extends RecyclerView.Adapter<BillListAdapter.CardVi
                     break;
 
                 default:
-                    imgCache.PutBitmap(_cards.get(i).people.get(0).URL, _cards.get(i).people.get(0).URL, cvh.cardImage);
-                    imgCache.PutBitmap(_cards.get(i).people.get(1).URL, _cards.get(i).people.get(1).URL, cvh.cardImage2);
-                    imgCache.PutBitmap(_cards.get(i).people.get(2).URL, _cards.get(i).people.get(2).URL, cvh.cardImage3);
+                    imgCache.PutBitmap(_cards.get(i).people.get(0).URL, cvh.cardImage);
+                    imgCache.PutBitmap(_cards.get(i).people.get(1).URL, cvh.cardImage2);
+                    imgCache.PutBitmap(_cards.get(i).people.get(2).URL, cvh.cardImage3);
 
                     if(_cards.get(i).people.get(0).Paid)
                     {

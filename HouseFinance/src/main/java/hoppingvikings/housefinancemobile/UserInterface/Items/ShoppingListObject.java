@@ -13,14 +13,10 @@ import java.util.Locale;
 
 import hoppingvikings.housefinancemobile.Person;
 
-/**
- * Created by Josh on 06/11/2016.
- */
-
 public class ShoppingListObject {
     private SimpleDateFormat _dateFormat = new SimpleDateFormat("yyyy-MM-dd", Locale.UK);
 
-    public int Id = 0;
+    public int Id;
     public String ItemName = "";
     public String AddedDate = "";
     public Person AddedBy;
@@ -40,7 +36,6 @@ public class ShoppingListObject {
             Purchased = shoppingItem.getBoolean("purchased");
 
             JSONArray addedFor = shoppingItem.getJSONArray("addedFor");
-
             for (int i = 0; i < addedFor.length(); i++)
                 AddedFor.add(new Person(addedFor.getJSONObject(i)));
         }

@@ -31,24 +31,23 @@ public class BitmapCache {
         };
     }
 
-    public void PutBitmap(String url, final String name, final ImageView imgview)
+    public void PutBitmap(final String url, final ImageView imageView)
     {
-        if(_lruImageCache.get(name) == null)
+        if(_lruImageCache.get(url) == null)
         {
             Glide.with(_context).load(url).asBitmap().into(new SimpleTarget<Bitmap>(Target.SIZE_ORIGINAL, Target.SIZE_ORIGINAL) {
 
                 @Override
                 public void onResourceReady(Bitmap bitmap, GlideAnimation<? super Bitmap> glideAnimation) {
-                    _lruImageCache.put(name, bitmap);
-                    imgview.setImageBitmap(_lruImageCache.get(name));
+                    _lruImageCache.put(url, bitmap);
+                    imageView.setImageBitmap(_lruImageCache.get(url));
                 }
             });
         }
         else
         {
-            imgview.setImageBitmap(GetBitmap(name));
+            imageView.setImageBitmap(GetBitmap(url));
         }
-        //_lruImageCache.put(name, image);
     }
 
     public Bitmap GetBitmap(String name)

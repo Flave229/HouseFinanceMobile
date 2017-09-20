@@ -58,7 +58,7 @@ public class AllPeopleAdapter extends RecyclerView.Adapter<AllPeopleAdapter.View
 
     @Override
     public void onBindViewHolder(ViewHolder holder, int position) {
-        imgCache.PutBitmap(_users.get(holder.getAdapterPosition()).URL, _users.get(holder.getAdapterPosition()).URL, holder._userImage);
+        imgCache.PutBitmap(_users.get(holder.getAdapterPosition()).URL, holder._userImage);
     }
 
     public void AddUsersAndRefresh(ArrayList<BillListObjectPeople> users)

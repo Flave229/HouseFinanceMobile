@@ -162,18 +162,16 @@ public class ShoppingListAdapter extends RecyclerView.Adapter<ShoppingListAdapte
             cvh.cardView.setBackgroundColor(Color.WHITE);
         }
 
-        try {
-
-            String addedForImage1 = _shoppingItems.get(cvh.getAdapterPosition()).AddedFor.get(0).ImageUrl;
-            imgCache.PutBitmap(addedForImage1, addedForImage1, cvh.addedFor1);
+        try
+        {
+            imgCache.PutBitmap(_shoppingItems.get(cvh.getAdapterPosition()).AddedFor.get(0).ImageUrl, cvh.addedFor1);
 
             if (_shoppingItems.get(cvh.getAdapterPosition()).AddedFor.size() < 2) {
                 cvh.addedFor2.setVisibility(View.GONE);
             } else
             {
                 cvh.addedFor2.setVisibility(View.VISIBLE);
-                String addedForImage2 = _shoppingItems.get(cvh.getAdapterPosition()).AddedFor.get(1).ImageUrl;
-                imgCache.PutBitmap(addedForImage2, addedForImage2, cvh.addedFor2);
+                imgCache.PutBitmap(_shoppingItems.get(cvh.getAdapterPosition()).AddedFor.get(1).ImageUrl, cvh.addedFor2);
             }
 
             if (_shoppingItems.get(cvh.getAdapterPosition()).AddedFor.size() < 3) {
@@ -181,8 +179,7 @@ public class ShoppingListAdapter extends RecyclerView.Adapter<ShoppingListAdapte
             } else
             {
                 cvh.addedFor3.setVisibility(View.VISIBLE);
-                String addedForImage3 = _shoppingItems.get(cvh.getAdapterPosition()).AddedFor.get(2).ImageUrl;
-                imgCache.PutBitmap(addedForImage3, addedForImage3, cvh.addedFor3);
+                imgCache.PutBitmap(_shoppingItems.get(cvh.getAdapterPosition()).AddedFor.get(2).ImageUrl, cvh.addedFor3);
             }
 
             if(_shoppingItems.get(cvh.getAdapterPosition()).ItemExpanded)
@@ -193,8 +190,7 @@ public class ShoppingListAdapter extends RecyclerView.Adapter<ShoppingListAdapte
                 cvh.infoText.setVisibility(View.INVISIBLE);
                 cvh.addedBy1.setVisibility(View.VISIBLE);
 
-                String addedByImage = _shoppingItems.get(cvh.getAdapterPosition()).AddedBy.ImageUrl;
-                imgCache.PutBitmap(addedByImage, addedByImage, cvh.addedBy1);
+                imgCache.PutBitmap(_shoppingItems.get(cvh.getAdapterPosition()).AddedBy.ImageUrl, cvh.addedBy1);
 
                 cvh.editButton.setOnClickListener(new View.OnClickListener() {
                     @Override
