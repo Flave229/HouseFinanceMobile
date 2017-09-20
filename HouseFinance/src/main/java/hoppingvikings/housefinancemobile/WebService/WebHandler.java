@@ -29,6 +29,7 @@ import hoppingvikings.housefinancemobile.UserInterface.Items.ShoppingListObject;
 
 public class WebHandler
 {
+    private boolean _downloading;
     private DownloadCallback _billListOwner;
     private DownloadDetailsCallback _billDetailsOwner;
     private DownloadPeopleCallback _peopleDownloadOwner;
@@ -59,18 +60,17 @@ public class WebHandler
     {
         _debugging = 0 != (context.getApplicationInfo().flags & ApplicationInfo.FLAG_DEBUGGABLE);
         _billListOwner = owner;
-        GlobalObjects.downloading = true;
+        _downloading = true;
         ConnectivityManager connMgr = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
         NetworkInfo networkInfo = connMgr.getActiveNetworkInfo();
 
         if(networkInfo != null && networkInfo.isConnected())
         {
-            //Toast.makeText(getBaseContext(), "Obtaining list of bills", Toast.LENGTH_LONG).show();
             new DownloadJsonString().executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, GlobalObjects.WEB_APIV2_URL + "Bills/", "Bills");
         }
         else
         {
-            GlobalObjects.downloading = false;
+            _downloading = false;
             _billListOwner.OnFailedDownload("No internet connection");
         }
     }
@@ -79,7 +79,7 @@ public class WebHandler
     {
         _debugging = 0 != (context.getApplicationInfo().flags & ApplicationInfo.FLAG_DEBUGGABLE);
         _billDetailsOwner = owner;
-        GlobalObjects.downloading = true;
+        _downloading = true;
         ConnectivityManager connMgr = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
         NetworkInfo networkInfo = connMgr.getActiveNetworkInfo();
 
@@ -89,7 +89,7 @@ public class WebHandler
         }
         else
         {
-            GlobalObjects.downloading = false;
+            _downloading = false;
             _billDetailsOwner.OnDownloadFailed("No Internet Connection");
         }
     }
@@ -98,7 +98,7 @@ public class WebHandler
     {
         _debugging = 0 != (context.getApplicationInfo().flags & ApplicationInfo.FLAG_DEBUGGABLE);
         _peopleDownloadOwner = owner;
-        GlobalObjects.downloading = true;
+        _downloading = true;
         ConnectivityManager connMgr = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
         NetworkInfo networkInfo = connMgr.getActiveNetworkInfo();
 
@@ -108,7 +108,7 @@ public class WebHandler
         }
         else
         {
-            GlobalObjects.downloading = false;
+            _downloading = false;
             _peopleDownloadOwner.UsersDownloadFailed("No Internet Connection");
         }
     }
@@ -117,7 +117,7 @@ public class WebHandler
     {
         _debugging = 0 != (context.getApplicationInfo().flags & ApplicationInfo.FLAG_DEBUGGABLE);
         _itemDeleteOwner = owner;
-        GlobalObjects.downloading = true;
+        _downloading = true;
         ConnectivityManager connMgr = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
         NetworkInfo networkInfo = connMgr.getActiveNetworkInfo();
 
@@ -138,15 +138,14 @@ public class WebHandler
                     break;
 
                 default:
-                    GlobalObjects.downloading = false;
+                    _downloading = false;
                     _itemDeleteOwner.OnFailedDelete("Incorrect item type");
                     break;
             }
-
         }
         else
         {
-            GlobalObjects.downloading = false;
+            _downloading = false;
             _itemDeleteOwner.OnFailedDelete("No Internet Connection");
         }
     }
@@ -156,7 +155,7 @@ public class WebHandler
         _debugging = 0 != (context.getApplicationInfo().flags & ApplicationInfo.FLAG_DEBUGGABLE);
         _uploadOwner = owner;
         String newItemString = newItem.toString();
-        GlobalObjects.downloading = true;
+        _downloading = true;
 
         ConnectivityManager connMgr = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
         NetworkInfo networkInfo = connMgr.getActiveNetworkInfo();
@@ -178,14 +177,14 @@ public class WebHandler
                     break;
 
                 default:
-                    GlobalObjects.downloading = false;
+                    _downloading = false;
                     _uploadOwner.OnFailedUpload("Incorrect item type");
                     break;
             }
         }
         else
         {
-            GlobalObjects.downloading = false;
+            _downloading = false;
             _uploadOwner.OnFailedUpload("No internet connection");
         }
     }
@@ -222,7 +221,7 @@ public class WebHandler
         }
         else
         {
-            GlobalObjects.downloading = false;
+            _downloading = false;
             _uploadOwner.OnFailedUpload("No Internet Connection");
         }
     }
@@ -231,7 +230,7 @@ public class WebHandler
     {
         _debugging = 0 != (context.getApplicationInfo().flags & ApplicationInfo.FLAG_DEBUGGABLE);
         _shoppingListOwner = owner;
-        GlobalObjects.downloading = true;
+        _downloading = true;
         ConnectivityManager connMgr = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
         NetworkInfo networkInfo = connMgr.getActiveNetworkInfo();
 
@@ -242,7 +241,7 @@ public class WebHandler
         }
         else
         {
-            GlobalObjects.downloading = false;
+            _downloading = false;
             _shoppingListOwner.OnFailedDownload("No internet connection");
         }
     }
@@ -266,16 +265,16 @@ public class WebHandler
                     }
 
                     GlobalObjects.BillRepository.Set(bills);
-                    GlobalObjects.downloading = false;
+                    _downloading = false;
 
                     _billListOwner.OnSuccessfulDownload();
 
                 } catch (JSONException je) {
                     je.printStackTrace();
-                    GlobalObjects.downloading = false;
+                    _downloading = false;
                     _billListOwner.OnFailedDownload("Failed to parse Bill list");
                 } catch(Exception e) {
-                    GlobalObjects.downloading = false;
+                    _downloading = false;
                     _billListOwner.OnFailedDownload("Unknown Error in Bill list download");
                 }
                 break;
@@ -295,15 +294,15 @@ public class WebHandler
                     }
                     GlobalObjects.ShoppingRepository.Set(items);
 
-                    GlobalObjects.downloading = false;
+                    _downloading = false;
                     _shoppingListOwner.OnSuccessfulDownload();
 
                 } catch (JSONException je) {
                     je.printStackTrace();
-                    GlobalObjects.downloading = false;
+                    _downloading = false;
                     _shoppingListOwner.OnFailedDownload("Failed to parse Shopping list");
                 } catch(Exception e) {
-                    GlobalObjects.downloading = false;
+                    _downloading = false;
                     _shoppingListOwner.OnFailedDownload("Unknown Error in Shopping List download");
                 }
                 break;
@@ -333,13 +332,13 @@ public class WebHandler
                 } catch (JSONException je)
                 {
                     je.printStackTrace();
-                    GlobalObjects.downloading = false;
+                    _downloading = false;
                     _peopleDownloadOwner.UsersDownloadFailed("Failed to parse Shopping list");
                 } catch (Exception e)
                 {
 
                 }
-                GlobalObjects.downloading = false;
+                _downloading = false;
 
                 break;
 
@@ -353,24 +352,27 @@ public class WebHandler
                 } catch (JSONException e)
                 {
                     e.printStackTrace();
-                    GlobalObjects.downloading = false;
+                    _downloading = false;
                     _billDetailsOwner.OnDownloadFailed("Failed to parse Detailed Bill");
                     return;
                 }
                 catch (Exception e)
                 {
                     e.printStackTrace();
-                    GlobalObjects.downloading = false;
+                    _downloading = false;
                     _billDetailsOwner.OnDownloadFailed("Unknown error in Detailed Bill Download");
                     return;
                 }
 
-                GlobalObjects.downloading = false;
+                _downloading = false;
                 _billDetailsOwner.OnDownloadSuccessful(detailedBill);
                 break;
         }
+    }
 
-        //Toast.makeText(getBaseContext(), result, Toast.LENGTH_SHORT).show();
+    public boolean IsDownloading()
+    {
+        return _downloading;
     }
 
     private class DownloadJsonString extends AsyncTask<String, Void, JSONObject>

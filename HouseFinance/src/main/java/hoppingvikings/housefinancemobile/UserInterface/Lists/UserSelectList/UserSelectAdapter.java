@@ -14,11 +14,6 @@ import java.util.ArrayList;
 import hoppingvikings.housefinancemobile.BitmapCache;
 import hoppingvikings.housefinancemobile.Person;
 import hoppingvikings.housefinancemobile.R;
-import hoppingvikings.housefinancemobile.UserInterface.Lists.ShoppingCartList.ShoppingCartAdapter;
-
-/**
- * Created by iView on 24/08/2017.
- */
 
 public class UserSelectAdapter extends RecyclerView.Adapter<UserSelectAdapter.CardViewHolder> {
     private static IUserClickedListener _listener;

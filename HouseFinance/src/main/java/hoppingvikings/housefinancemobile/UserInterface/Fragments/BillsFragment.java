@@ -59,7 +59,7 @@ public class BillsFragment extends Fragment
     private Runnable updateList = new Runnable() {
         @Override
         public void run() {
-            if(!GlobalObjects.downloading) {
+            if(!GlobalObjects.WebHandler.IsDownloading()) {
                 if (GlobalObjects.BillRepository.Get() != null) {
                     if(_cards != null) {
                         _cards.clear();

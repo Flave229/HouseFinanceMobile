@@ -12,14 +12,9 @@ import android.widget.TextView;
 
 import java.util.ArrayList;
 
-import hoppingvikings.housefinancemobile.GlobalObjects;
 import hoppingvikings.housefinancemobile.Person;
 import hoppingvikings.housefinancemobile.R;
 import hoppingvikings.housefinancemobile.UserInterface.Items.ShoppingCartItem;
-
-/**
- * Created by iView on 25/07/2017.
- */
 
 public class ShoppingCartAdapter extends RecyclerView.Adapter<ShoppingCartAdapter.CardViewHolder> {
 

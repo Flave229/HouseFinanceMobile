@@ -59,7 +59,7 @@ public class ShoppingListFragment extends Fragment
         @Override
         public void run() {
 
-            if(!GlobalObjects.downloading)
+            if(!GlobalObjects.WebHandler.IsDownloading())
             {
                 ArrayList<ShoppingListObject> shoppingItems = GlobalObjects.ShoppingRepository.Get();
                 if (shoppingItems != null) {

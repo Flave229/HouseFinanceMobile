@@ -1,6 +1,5 @@
 package hoppingvikings.housefinancemobile;
 
-import android.content.Context;
 import android.os.Environment;
 import android.util.Log;
 import org.json.JSONObject;
@@ -8,7 +7,6 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
-import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.util.ArrayList;
@@ -26,10 +24,8 @@ public class GlobalObjects
     // TODO: If we ever hook the app to the server in a way that the server can send notifications to the app,
     // TODO We will need to have a service running in the background. This will be used to access the service within the app.
     // TODO The boolean is just for a check to see if the service has started up and is bound.
-    public static BackgroundService backgroundService;
-    public static boolean bound = false;
-
-    public static boolean downloading = false;
+    public static BackgroundService BackgroundService;
+    public static boolean Bound = false;
 
     public static final String SHOPPING_RECENTITEMS_FILENAME = "hf_shopping_recent.txt";
 
