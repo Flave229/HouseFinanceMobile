@@ -29,6 +29,7 @@ import java.util.ArrayList;
 import java.util.Locale;
 
 import hoppingvikings.housefinancemobile.GlobalObjects;
+import hoppingvikings.housefinancemobile.ItemType;
 import hoppingvikings.housefinancemobile.MemoryRepositories.BillMemoryRepository;
 import hoppingvikings.housefinancemobile.R;
 import hoppingvikings.housefinancemobile.UserInterface.Items.BillListObject;
@@ -231,7 +232,7 @@ public class ViewBillDetailsActivity extends AppCompatActivity
                         try {
                             JSONObject billidjson = new JSONObject();
                             billidjson.put("BillId", billID);
-                            GlobalObjects.WebHandler.DeleteItem(ViewBillDetailsActivity.this, ViewBillDetailsActivity.this, billidjson, GlobalObjects.ITEM_TYPE_BILL);
+                            GlobalObjects.WebHandler.DeleteItem(ViewBillDetailsActivity.this, ViewBillDetailsActivity.this, billidjson, ItemType.BILL);
                         } catch (Exception e)
                         {
                             addPayment.show();

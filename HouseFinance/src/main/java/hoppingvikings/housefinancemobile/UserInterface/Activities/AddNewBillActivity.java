@@ -38,6 +38,7 @@ import java.util.GregorianCalendar;
 import java.util.Locale;
 
 import hoppingvikings.housefinancemobile.GlobalObjects;
+import hoppingvikings.housefinancemobile.ItemType;
 import hoppingvikings.housefinancemobile.R;
 import hoppingvikings.housefinancemobile.WebService.UploadCallback;
 
@@ -203,7 +204,7 @@ public class AddNewBillActivity extends AppCompatActivity implements UploadCallb
                                 newBill.put("RecurringType", 0);
 
 
-                            GlobalObjects.WebHandler.UploadNewItem(getApplicationContext(), newBill, AddNewBillActivity.this, GlobalObjects.ITEM_TYPE_BILL);
+                            GlobalObjects.WebHandler.UploadNewItem(getApplicationContext(), newBill, AddNewBillActivity.this, ItemType.BILL);
 
                         } catch (JSONException je)
                         {

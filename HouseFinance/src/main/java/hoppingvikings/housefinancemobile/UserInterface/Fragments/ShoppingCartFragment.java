@@ -19,6 +19,7 @@ import org.json.JSONObject;
 import java.util.ArrayList;
 
 import hoppingvikings.housefinancemobile.GlobalObjects;
+import hoppingvikings.housefinancemobile.ItemType;
 import hoppingvikings.housefinancemobile.Person;
 import hoppingvikings.housefinancemobile.R;
 import hoppingvikings.housefinancemobile.JsonFileIO;
@@ -129,7 +130,7 @@ public class ShoppingCartFragment extends Fragment
                 _activity.addToCartButton.setEnabled(false);
                 _activity.submitButton.setEnabled(false);
                 try {
-                    GlobalObjects.WebHandler.UploadNewItem(getContext(), new JSONObject(_activity._shoppingItems.get(0)), _activity, GlobalObjects.ITEM_TYPE_SHOPPING);
+                    GlobalObjects.WebHandler.UploadNewItem(getContext(), new JSONObject(_activity._shoppingItems.get(0)), _activity, ItemType.SHOPPING);
                 } catch (Exception e)
                 {
 

@@ -20,6 +20,7 @@ import java.util.ArrayList;
 
 import hoppingvikings.housefinancemobile.BitmapCache;
 import hoppingvikings.housefinancemobile.GlobalObjects;
+import hoppingvikings.housefinancemobile.ItemType;
 import hoppingvikings.housefinancemobile.R;
 import hoppingvikings.housefinancemobile.UserInterface.Items.ShoppingListObject;
 import hoppingvikings.housefinancemobile.WebService.DeleteItemCallback;
@@ -205,7 +206,7 @@ public class ShoppingListAdapter extends RecyclerView.Adapter<ShoppingListAdapte
                         try {
                             JSONObject itemJson = new JSONObject();
                             itemJson.put("ShoppingItemId", _shoppingItems.get(cvh.getAdapterPosition()).Id);
-                            GlobalObjects.WebHandler.DeleteItem(_context, ShoppingListAdapter.this, itemJson, GlobalObjects.ITEM_TYPE_SHOPPING);
+                            GlobalObjects.WebHandler.DeleteItem(_context, ShoppingListAdapter.this, itemJson, ItemType.SHOPPING);
                         } catch (Exception e)
                         {
                             Toast.makeText(_context, "Failed to delete item", Toast.LENGTH_SHORT).show();
@@ -229,7 +230,7 @@ public class ShoppingListAdapter extends RecyclerView.Adapter<ShoppingListAdapte
                             try {
                                 editedItem.put("Id", _shoppingItems.get(cvh.getAdapterPosition()).Id);
                                 editedItem.put("Purchased", !_shoppingItems.get(cvh.getAdapterPosition()).Purchased);
-                                GlobalObjects.WebHandler.EditItem(_context, editedItem, ShoppingListAdapter.this, GlobalObjects.ITEM_TYPE_SHOPPING);
+                                GlobalObjects.WebHandler.EditItem(_context, editedItem, ShoppingListAdapter.this, ItemType.SHOPPING);
                                 NotificationManager man = (NotificationManager) _context.getSystemService(NOTIFICATION_SERVICE);
                                 man.cancel(_shoppingItems.get(cvh.getAdapterPosition()).Id);
                             } catch (Exception e)

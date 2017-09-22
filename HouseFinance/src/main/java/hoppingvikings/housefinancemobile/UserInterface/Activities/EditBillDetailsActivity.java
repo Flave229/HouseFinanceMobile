@@ -38,6 +38,7 @@ import java.util.GregorianCalendar;
 import java.util.Locale;
 
 import hoppingvikings.housefinancemobile.GlobalObjects;
+import hoppingvikings.housefinancemobile.ItemType;
 import hoppingvikings.housefinancemobile.MemoryRepositories.BillMemoryRepository;
 import hoppingvikings.housefinancemobile.R;
 import hoppingvikings.housefinancemobile.UserInterface.Items.BillListObject;
@@ -375,7 +376,7 @@ public class EditBillDetailsActivity extends AppCompatActivity implements Upload
                             editedBill.put("RecurringType", 0);
                     }
 
-                    GlobalObjects.WebHandler.EditItem(EditBillDetailsActivity.this, editedBill, EditBillDetailsActivity.this, GlobalObjects.ITEM_TYPE_BILL);
+                    GlobalObjects.WebHandler.EditItem(EditBillDetailsActivity.this, editedBill, EditBillDetailsActivity.this, ItemType.BILL);
 
                 } catch (Exception e)
                 {

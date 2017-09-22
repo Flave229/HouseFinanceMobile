@@ -26,6 +26,7 @@ import org.json.JSONObject;
 import java.util.ArrayList;
 
 import hoppingvikings.housefinancemobile.GlobalObjects;
+import hoppingvikings.housefinancemobile.ItemType;
 import hoppingvikings.housefinancemobile.MemoryRepositories.ShoppingMemoryRepository;
 import hoppingvikings.housefinancemobile.R;
 import hoppingvikings.housefinancemobile.UserInterface.Items.ShoppingListObject;
@@ -202,7 +203,7 @@ public class EditShoppingItemActivity extends AppCompatActivity implements Uploa
                         editedBill.put("ItemFor", people);
                     }
 
-                    GlobalObjects.WebHandler.EditItem(EditShoppingItemActivity.this, editedBill, EditShoppingItemActivity.this, GlobalObjects.ITEM_TYPE_SHOPPING);
+                    GlobalObjects.WebHandler.EditItem(EditShoppingItemActivity.this, editedBill, EditShoppingItemActivity.this, ItemType.SHOPPING);
 
                 } catch (Exception e)
                 {

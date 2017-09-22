@@ -15,6 +15,7 @@ import java.util.ArrayList;
 import java.util.Locale;
 
 import hoppingvikings.housefinancemobile.GlobalObjects;
+import hoppingvikings.housefinancemobile.ItemType;
 import hoppingvikings.housefinancemobile.R;
 import hoppingvikings.housefinancemobile.UserInterface.Items.BillObjectDetailedPayments;
 import hoppingvikings.housefinancemobile.WebService.DeleteItemCallback;
@@ -106,7 +107,7 @@ public class PaymentsListAdapter extends RecyclerView.Adapter<PaymentsListAdapte
                 try {
                     JSONObject paymentToDelete = new JSONObject();
                     paymentToDelete.put("PaymentId", item.PaymentID);
-                    GlobalObjects.WebHandler.DeleteItem(_context, PaymentsListAdapter.this, paymentToDelete, GlobalObjects.ITEM_TYPE_BILLPAYMENT);
+                    GlobalObjects.WebHandler.DeleteItem(_context, PaymentsListAdapter.this, paymentToDelete, ItemType.PAYMENT);
                 } catch (Exception e)
                 {
 

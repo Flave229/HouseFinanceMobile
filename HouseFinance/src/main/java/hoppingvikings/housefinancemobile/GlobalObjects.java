@@ -14,12 +14,6 @@ public class GlobalObjects
 
     public static final String SHOPPING_RECENTITEMS_FILENAME = "hf_shopping_recent.txt";
 
-    public static final String WEB_APIV2_URL = "http://house.flave.co.uk/api/v2/";
-
-    public static final String ITEM_TYPE_SHOPPING = "item_shopping";
-    public static final String ITEM_TYPE_BILL = "item_bill";
-    public static final String ITEM_TYPE_BILLPAYMENT = "item_billpayment";
-
     public static void ShowNotif(String text, String subtext, int notificationId)
     {
         AppServiceBinder._service.ShowNotification(text, subtext, notificationId);

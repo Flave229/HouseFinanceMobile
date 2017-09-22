@@ -1,5 +1,6 @@
 package hoppingvikings.housefinancemobile.UserInterface.Activities;
 
+import android.content.ClipData;
 import android.content.DialogInterface;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -23,6 +24,7 @@ import org.json.JSONObject;
 import java.util.ArrayList;
 
 import hoppingvikings.housefinancemobile.GlobalObjects;
+import hoppingvikings.housefinancemobile.ItemType;
 import hoppingvikings.housefinancemobile.JsonFileIO;
 import hoppingvikings.housefinancemobile.R;
 import hoppingvikings.housefinancemobile.UserInterface.Fragments.AddShoppingItemFragment;
@@ -204,7 +206,7 @@ public class AddNewShoppingItemActivity extends AppCompatActivity implements Upl
     public void UploadNextItem()
     {
         try {
-            GlobalObjects.WebHandler.UploadNewItem(this, new JSONObject(_shoppingItems.get(0)), this, GlobalObjects.ITEM_TYPE_SHOPPING);
+            GlobalObjects.WebHandler.UploadNewItem(this, new JSONObject(_shoppingItems.get(0)), this, ItemType.SHOPPING);
         } catch (Exception e)
         {
 

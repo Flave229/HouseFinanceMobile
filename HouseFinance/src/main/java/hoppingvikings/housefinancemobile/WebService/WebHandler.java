@@ -21,6 +21,7 @@ import java.net.URL;
 import java.util.ArrayList;
 
 import hoppingvikings.housefinancemobile.GlobalObjects;
+import hoppingvikings.housefinancemobile.ItemType;
 import hoppingvikings.housefinancemobile.MemoryRepositories.BillMemoryRepository;
 import hoppingvikings.housefinancemobile.MemoryRepositories.ShoppingMemoryRepository;
 import hoppingvikings.housefinancemobile.Person;
@@ -31,6 +32,8 @@ import hoppingvikings.housefinancemobile.UserInterface.Items.ShoppingListObject;
 
 public class WebHandler
 {
+    private static final String WEB_APIV2_URL = "http://house.flave.co.uk/api/v2/";
+
     private boolean _downloading;
     private DownloadCallback _billListOwner;
     private DownloadDetailsCallback _billDetailsOwner;
@@ -68,7 +71,7 @@ public class WebHandler
 
         if(networkInfo != null && networkInfo.isConnected())
         {
-            new DownloadJsonString().executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, GlobalObjects.WEB_APIV2_URL + "Bills/", "Bills");
+            new DownloadJsonString().executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, WEB_APIV2_URL + "Bills/", "Bills");
         }
         else
         {
@@ -87,7 +90,7 @@ public class WebHandler
 
         if(networkInfo != null && networkInfo.isConnected())
         {
-            new DownloadJsonString().execute(GlobalObjects.WEB_APIV2_URL + "Bills/", "BillDetails", String.valueOf(billID));
+            new DownloadJsonString().execute(WEB_APIV2_URL + "Bills/", "BillDetails", String.valueOf(billID));
         }
         else
         {
@@ -106,7 +109,7 @@ public class WebHandler
 
         if(networkInfo != null && networkInfo.isConnected())
         {
-            new DownloadJsonString().execute(GlobalObjects.WEB_APIV2_URL + "Users/", "People");
+            new DownloadJsonString().execute(WEB_APIV2_URL + "Users/", "People");
         }
         else
         {
@@ -115,7 +118,7 @@ public class WebHandler
         }
     }
 
-    public void DeleteItem(Context context, DeleteItemCallback owner, JSONObject itemjson, String itemtype)
+    public void DeleteItem(Context context, DeleteItemCallback owner, JSONObject itemjson, ItemType itemType)
     {
         _debugging = 0 != (context.getApplicationInfo().flags & ApplicationInfo.FLAG_DEBUGGABLE);
         _itemDeleteOwner = owner;
@@ -125,20 +128,17 @@ public class WebHandler
 
         if(networkInfo != null && networkInfo.isConnected())
         {
-            switch (itemtype)
+            switch (itemType)
             {
-                case GlobalObjects.ITEM_TYPE_BILL:
-                    new DeleteItem().execute(GlobalObjects.WEB_APIV2_URL + "Bills/Delete", itemjson.toString());
+                case BILL:
+                    new DeleteItem().execute(WEB_APIV2_URL + "Bills/Delete", itemjson.toString());
                     break;
-
-                case GlobalObjects.ITEM_TYPE_SHOPPING:
-                    new DeleteItem().execute(GlobalObjects.WEB_APIV2_URL + "Shopping/", itemjson.toString());
+                case SHOPPING:
+                    new DeleteItem().execute(WEB_APIV2_URL + "Shopping/", itemjson.toString());
                     break;
-
-                case GlobalObjects.ITEM_TYPE_BILLPAYMENT:
-                    new DeleteItem().execute(GlobalObjects.WEB_APIV2_URL + "Bills/Payments", itemjson.toString());
+                case PAYMENT:
+                    new DeleteItem().execute(WEB_APIV2_URL + "Bills/Payments", itemjson.toString());
                     break;
-
                 default:
                     _downloading = false;
                     _itemDeleteOwner.OnFailedDelete("Incorrect item type");
@@ -152,7 +152,7 @@ public class WebHandler
         }
     }
 
-    public void UploadNewItem(Context context, JSONObject newItem, UploadCallback owner, String itemtype)
+    public void UploadNewItem(Context context, JSONObject newItem, UploadCallback owner, ItemType itemType)
     {
         _debugging = 0 != (context.getApplicationInfo().flags & ApplicationInfo.FLAG_DEBUGGABLE);
         _uploadOwner = owner;
@@ -164,20 +164,17 @@ public class WebHandler
 
         if(networkInfo!= null && networkInfo.isConnected())
         {
-            switch (itemtype)
+            switch (itemType)
             {
-                case GlobalObjects.ITEM_TYPE_BILL:
-                    new UploadItem().execute(newItemString, GlobalObjects.WEB_APIV2_URL + "Bills/Add");
+                case BILL:
+                    new UploadItem().execute(newItemString, WEB_APIV2_URL + "Bills/Add");
                     break;
-
-                case GlobalObjects.ITEM_TYPE_SHOPPING:
-                    new UploadItem().execute(newItemString, GlobalObjects.WEB_APIV2_URL + "Shopping/");
+                case SHOPPING:
+                    new UploadItem().execute(newItemString, WEB_APIV2_URL + "Shopping/");
                     break;
-
-                case GlobalObjects.ITEM_TYPE_BILLPAYMENT:
-                    new UploadItem().execute(newItemString, GlobalObjects.WEB_APIV2_URL + "Bills/Payments");
+                case PAYMENT:
+                    new UploadItem().execute(newItemString, WEB_APIV2_URL + "Bills/Payments");
                     break;
-
                 default:
                     _downloading = false;
                     _uploadOwner.OnFailedUpload("Incorrect item type");
@@ -191,7 +188,7 @@ public class WebHandler
         }
     }
 
-    public void EditItem(Context context, JSONObject editedItem, UploadCallback owner, String itemType)
+    public void EditItem(Context context, JSONObject editedItem, UploadCallback owner, ItemType itemType)
     {
         _debugging = 0 != (context.getApplicationInfo().flags & ApplicationInfo.FLAG_DEBUGGABLE);
         _uploadOwner = owner;
@@ -204,16 +201,16 @@ public class WebHandler
         {
             switch (itemType)
             {
-                case GlobalObjects.ITEM_TYPE_BILL:
-                    new EditItem().execute(GlobalObjects.WEB_APIV2_URL + "Bills/Update", editedItemString);
+                case BILL:
+                    new EditItem().execute(WEB_APIV2_URL + "Bills/Update", editedItemString);
                     break;
 
-                case GlobalObjects.ITEM_TYPE_SHOPPING:
-                    new EditItem().execute(GlobalObjects.WEB_APIV2_URL + "Shopping/", editedItemString);
+                case SHOPPING:
+                    new EditItem().execute(WEB_APIV2_URL + "Shopping/", editedItemString);
                     break;
 
-                case GlobalObjects.ITEM_TYPE_BILLPAYMENT:
-                    new EditItem().execute(GlobalObjects.WEB_APIV2_URL + "Bills/Payments", editedItemString);
+                case PAYMENT:
+                    new EditItem().execute(WEB_APIV2_URL + "Bills/Payments", editedItemString);
                     break;
 
                 default:
@@ -239,7 +236,7 @@ public class WebHandler
         if(networkInfo != null && networkInfo.isConnected())
         {
             //Toast.makeText(getBaseContext(), "Obtaining list of bills", Toast.LENGTH_LONG).show();
-            new DownloadJsonString().executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, GlobalObjects.WEB_APIV2_URL + "Shopping/", "Shopping");
+            new DownloadJsonString().executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, WEB_APIV2_URL + "Shopping/", "Shopping");
         }
         else
         {
