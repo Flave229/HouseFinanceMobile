@@ -37,7 +37,7 @@ import hoppingvikings.housefinancemobile.WebService.UploadCallback;
 import hoppingvikings.housefinancemobile.WebService.WebHandler;
 
 public class ViewBillDetailsActivity extends AppCompatActivity
-        implements UploadCallback, PaymentsListAdapter.DeleteCallback, PaymentsListAdapter.EditPressedCallback
+        implements CommunicationCallback, UploadCallback, PaymentsListAdapter.DeleteCallback, PaymentsListAdapter.EditPressedCallback
 {
     TextView billAmountText;
     TextView totalPaidText;
@@ -56,14 +56,11 @@ public class ViewBillDetailsActivity extends AppCompatActivity
     boolean somethingChanged = false;
     CoordinatorLayout layout;
 
-    private CommunicationCallback _onDeleteCallback;
-    private CommunicationCallback _onGetCallback;
-
     BillObjectDetailed _currentBill = null;
     private Runnable contactWebsite = new Runnable() {
         @Override
         public void run() {
-            WebHandler.Instance().RequestBillDetails(ViewBillDetailsActivity.this, _onGetCallback, billID);
+            WebHandler.Instance().RequestBillDetails(ViewBillDetailsActivity.this, ViewBillDetailsActivity.this, billID);
         }
     };
 
@@ -104,61 +101,6 @@ public class ViewBillDetailsActivity extends AppCompatActivity
         paymentsList.setAdapter(adapter);
         paymentsList.setLayoutManager(new LinearLayoutManager(this));
         //paymentsList.addItemDecoration(new ListItemDivider(this));
-
-        _onGetCallback = new CommunicationCallback<BillObjectDetailed>()
-        {
-            @Override
-            public void OnSuccess(RequestType requestType, BillObjectDetailed billObjectDetailed)
-            {
-                _currentBill = billObjectDetailed;
-                getSupportActionBar().setTitle("Bill Details");
-                getSupportActionBar().setSubtitle(_currentBill.name);
-                ViewBillDetailsActivity.this.billAmountText.setText("£" + String.format(Locale.getDefault(), "%.2f", Double.valueOf(_currentBill.amountDue)));
-                ViewBillDetailsActivity.this.totalPaidText.setText("£" + String.format(Locale.getDefault(), "%.2f", Double.valueOf(_currentBill.amountPaid)));
-                ViewBillDetailsActivity.this.dueDateText.setText(_currentBill.dateDue);
-
-                adapter.AddPaymentsToList(billObjectDetailed.paymentDetails);
-
-                if(adapter.getItemCount() > 0)
-                {
-                    noPaymentsText.setVisibility(View.GONE);
-                }
-                else
-                {
-                    noPaymentsText.setVisibility(View.VISIBLE);
-                }
-
-                addPayment.show();
-            }
-
-            @Override
-            public void OnFail(RequestType requestType, String message)
-            {
-                Snackbar.make(layout, message, Snackbar.LENGTH_SHORT).show();
-                billAmountText.setText("N/A");
-                totalPaidText.setText("N/A");
-                dueDateText.setText("N/A");
-                getSupportActionBar().setTitle("Cannot load bill");
-            }
-        };
-
-        _onDeleteCallback = new CommunicationCallback()
-        {
-            @Override
-            public void OnSuccess(RequestType requestType, Object o)
-            {
-                Toast.makeText(getApplicationContext(), "Bill deleted", Toast.LENGTH_SHORT).show();
-                setResult(RESULT_OK);
-                finish();
-            }
-
-            @Override
-            public void OnFail(RequestType requestType, String message)
-            {
-                addPayment.show();
-                Snackbar.make(layout, message, Snackbar.LENGTH_SHORT).show();
-            }
-        };
 
         addPayment.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -231,7 +173,7 @@ public class ViewBillDetailsActivity extends AppCompatActivity
                         try {
                             JSONObject billidjson = new JSONObject();
                             billidjson.put("BillId", billID);
-                            WebHandler.Instance().DeleteItem(ViewBillDetailsActivity.this, _onDeleteCallback, billidjson, ItemType.BILL);
+                            WebHandler.Instance().DeleteItem(ViewBillDetailsActivity.this, ViewBillDetailsActivity.this, billidjson, ItemType.BILL);
                         } catch (Exception e)
                         {
                             addPayment.show();
@@ -285,6 +227,59 @@ public class ViewBillDetailsActivity extends AppCompatActivity
 
             case RESULT_CANCELED:
 
+                break;
+        }
+    }
+
+    @Override
+    public void OnSuccess(RequestType requestType, Object result)
+    {
+        switch (requestType)
+        {
+            case POST:
+                _currentBill = (BillObjectDetailed) result;
+                getSupportActionBar().setTitle("Bill Details");
+                getSupportActionBar().setSubtitle(_currentBill.name);
+                ViewBillDetailsActivity.this.billAmountText.setText("£" + String.format(Locale.getDefault(), "%.2f", Double.valueOf(_currentBill.amountDue)));
+                ViewBillDetailsActivity.this.totalPaidText.setText("£" + String.format(Locale.getDefault(), "%.2f", Double.valueOf(_currentBill.amountPaid)));
+                ViewBillDetailsActivity.this.dueDateText.setText(_currentBill.dateDue);
+
+                adapter.AddPaymentsToList(_currentBill.paymentDetails);
+
+                if(adapter.getItemCount() > 0)
+                {
+                    noPaymentsText.setVisibility(View.GONE);
+                }
+                else
+                {
+                    noPaymentsText.setVisibility(View.VISIBLE);
+                }
+
+                addPayment.show();
+                break;
+            case DELETE:
+                Toast.makeText(getApplicationContext(), "Bill deleted", Toast.LENGTH_SHORT).show();
+                setResult(RESULT_OK);
+                finish();
+                break;
+        }
+    }
+
+    @Override
+    public void OnFail(RequestType requestType, String message)
+    {
+        Snackbar.make(layout, message, Snackbar.LENGTH_SHORT).show();
+
+        switch (requestType)
+        {
+            case POST:
+                billAmountText.setText("N/A");
+                totalPaidText.setText("N/A");
+                dueDateText.setText("N/A");
+                getSupportActionBar().setTitle("Cannot load bill");
+                break;
+            case DELETE:
+                addPayment.show();
                 break;
         }
     }
