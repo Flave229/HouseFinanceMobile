@@ -67,7 +67,9 @@ public class WebHandler
         {
             String line = reader.readLine();
             if(line != null)
+            {
                 _authToken = line;
+            }
         }
         catch (Exception e)
         {
@@ -75,7 +77,7 @@ public class WebHandler
         }
     }
 
-    public void contactWebsiteBills(Context context, DownloadCallback owner)
+    public void contactWebsiteBills(Context context, final DownloadCallback owner)
     {
         _debugging = 0 != (context.getApplicationInfo().flags & ApplicationInfo.FLAG_DEBUGGABLE);
         _billListOwner = owner;
@@ -85,7 +87,13 @@ public class WebHandler
 
         if(networkInfo != null && networkInfo.isConnected())
         {
-            new DownloadJsonString().executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, WEB_APIV2_URL + "Bills/", "Bills");
+            CommunicationRequest request = new CommunicationRequest()
+            {{
+                RequestTypeData = RequestType.GET;
+                ItemTypeData = ItemType.BILL;
+                Owner = WebHandler.this;
+            }};
+            new WebService(_authToken).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, request);
         }
         else
         {

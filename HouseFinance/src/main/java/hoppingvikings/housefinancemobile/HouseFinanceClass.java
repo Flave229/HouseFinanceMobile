@@ -4,6 +4,7 @@ import android.app.Application;
 import android.content.Intent;
 
 import hoppingvikings.housefinancemobile.WebService.WebHandler;
+import hoppingvikings.housefinancemobile.WebService.WebService;
 
 public class HouseFinanceClass extends Application implements AppServiceBinder.OnBindInterface {
 
