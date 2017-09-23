@@ -18,6 +18,7 @@ import org.json.JSONObject;
 
 import java.util.ArrayList;
 
+import hoppingvikings.housefinancemobile.FileName;
 import hoppingvikings.housefinancemobile.GlobalObjects;
 import hoppingvikings.housefinancemobile.ItemType;
 import hoppingvikings.housefinancemobile.Person;
@@ -123,7 +124,7 @@ public class ShoppingCartFragment extends Fragment
                 JsonFileIO fileIO = new JsonFileIO();
 
                 for (String item: _activity._shoppingItems) {
-                    fileIO.WriteToFile(GlobalObjects.SHOPPING_RECENTITEMS_FILENAME, item);
+                    fileIO.WriteToFile(FileName.SHOPPING_RECENT_ITEMS, item);
                 }
 
                 submitting = true;

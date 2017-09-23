@@ -8,8 +8,6 @@ public class GlobalObjects
     public static BackgroundService BackgroundService;
     public static boolean Bound = false;
 
-    public static final String SHOPPING_RECENTITEMS_FILENAME = "hf_shopping_recent.txt";
-
     public static void ShowNotif(String text, String subtext, int notificationId)
     {
         AppServiceBinder._service.ShowNotification(text, subtext, notificationId);

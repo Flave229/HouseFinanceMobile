@@ -22,6 +22,7 @@ import org.json.JSONObject;
 
 import java.util.ArrayList;
 
+import hoppingvikings.housefinancemobile.FileName;
 import hoppingvikings.housefinancemobile.GlobalObjects;
 import hoppingvikings.housefinancemobile.ItemType;
 import hoppingvikings.housefinancemobile.JsonFileIO;
@@ -217,7 +218,7 @@ public class AddNewShoppingItemActivity extends AppCompatActivity implements Upl
     {
         @Override
         protected ArrayList<JSONObject> doInBackground(Void... params) {
-            return new JsonFileIO().ReadFile(GlobalObjects.SHOPPING_RECENTITEMS_FILENAME);
+            return new JsonFileIO().ReadFile(FileName.SHOPPING_RECENT_ITEMS);
         }
 
         @Override
