@@ -23,7 +23,8 @@ import hoppingvikings.housefinancemobile.GlobalObjects;
 import hoppingvikings.housefinancemobile.ItemType;
 import hoppingvikings.housefinancemobile.R;
 import hoppingvikings.housefinancemobile.UserInterface.Items.ShoppingListObject;
-import hoppingvikings.housefinancemobile.WebService.DeleteItemCallback;
+import hoppingvikings.housefinancemobile.WebService.CommunicationCallback;
+import hoppingvikings.housefinancemobile.WebService.RequestType;
 import hoppingvikings.housefinancemobile.WebService.UploadCallback;
 import hoppingvikings.housefinancemobile.WebService.WebHandler;
 
@@ -34,7 +35,8 @@ import static android.content.Context.NOTIFICATION_SERVICE;
  */
 
 public class ShoppingListAdapter extends RecyclerView.Adapter<ShoppingListAdapter.CardViewHolder>
-                                implements DeleteItemCallback, UploadCallback{
+            implements CommunicationCallback<String>, UploadCallback
+{
     private static ShoppingItemClickedListener _listener;
 
     public interface ShoppingItemClickedListener
@@ -311,14 +313,23 @@ public class ShoppingListAdapter extends RecyclerView.Adapter<ShoppingListAdapte
     }
 
     @Override
-    public void OnSuccessfulDelete() {
-        Toast.makeText(_context, "Item deleted", Toast.LENGTH_SHORT).show();
-        _deletecallback.onItemDeleted();
+    public void OnSuccess(RequestType requestType, String s)
+    {
+        if (requestType == RequestType.DELETE)
+        {
+            Toast.makeText(_context, "Item deleted", Toast.LENGTH_SHORT).show();
+            _deletecallback.onItemDeleted();
+        }
     }
 
     @Override
-    public void OnFailedDelete(String err) {
-        Toast.makeText(_context, "Failed to delete", Toast.LENGTH_SHORT).show();
-        _deletecallback.onItemDeleted();
+    public void OnFail(RequestType requestType, String message)
+    {
+        if (requestType == RequestType.DELETE)
+        {
+            Toast.makeText(_context, "Failed to delete", Toast.LENGTH_SHORT).show();
+            _deletecallback.onItemDeleted();
+        }
+
     }
 }

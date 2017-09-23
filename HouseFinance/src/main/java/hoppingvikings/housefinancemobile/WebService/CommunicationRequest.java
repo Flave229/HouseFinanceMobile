@@ -7,5 +7,5 @@ public class CommunicationRequest
     public ItemType ItemTypeData;
     public RequestType RequestTypeData;
     public String RequestBody;
-    WebHandler Owner;
+    public WebHandler Owner;
 }

@@ -13,14 +13,11 @@ import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
 
-import hoppingvikings.housefinancemobile.ItemType;
-
 public class WebService extends AsyncTask<CommunicationRequest, Void, JSONObject>
 {
     private static final String WEB_APIV2_URL = "http://house.flave.co.uk/api/v2/";
     private String _authToken = "";
-    private ItemType _itemType;
-    private WebHandler _owner;
+    private CommunicationRequest _request;
 
     public WebService(String authToken)
     {
@@ -34,9 +31,8 @@ public class WebService extends AsyncTask<CommunicationRequest, Void, JSONObject
         {
             for (CommunicationRequest request : requests)
             {
-                _itemType = request.ItemTypeData;
-                _owner = request.Owner;
-                return DownloadUrl(request);
+                _request = request;
+                return DownloadUrl();
             }
             return null;
         }
@@ -50,7 +46,7 @@ public class WebService extends AsyncTask<CommunicationRequest, Void, JSONObject
     protected void onPostExecute(JSONObject result)
     {
         String type;
-        switch (_itemType)
+        switch (_request.ItemTypeData)
         {
             case BILL:
                 type = "Bills";
@@ -68,16 +64,16 @@ public class WebService extends AsyncTask<CommunicationRequest, Void, JSONObject
                 type = "";
         }
 
-        _owner.websiteResult(result, type);
+        _request.Owner.websiteResult(result, type);
     }
 
-    private JSONObject DownloadUrl(CommunicationRequest request) throws IOException
+    private JSONObject DownloadUrl() throws IOException
     {
         JSONObject jsonObject;
 
         String subEndpoint;
 
-        switch (request.ItemTypeData)
+        switch (_request.ItemTypeData)
         {
             case BILL:
             case BILL_DETAILED:
@@ -104,9 +100,9 @@ public class WebService extends AsyncTask<CommunicationRequest, Void, JSONObject
             conn.setConnectTimeout(45000);
             conn.setRequestProperty("Authorization", _authToken);
 
-            conn.setRequestMethod(request.RequestTypeData.toString());
+            conn.setRequestMethod(_request.RequestTypeData.toString());
 
-            switch (request.RequestTypeData)
+            switch (_request.RequestTypeData)
             {
                 case GET:
                     conn.setDoInput(true);
@@ -116,14 +112,13 @@ public class WebService extends AsyncTask<CommunicationRequest, Void, JSONObject
                     conn.setDoOutput(true);
                     conn.setDoInput(true);
                     OutputStream os = conn.getOutputStream();
-                    os.write(request.RequestBody.getBytes("UTF-8"));
+                    os.write(_request.RequestBody.getBytes("UTF-8"));
                     os.close();
                     break;
             }
 
-            // int response = conn.getResponseCode();
             InputStream input = conn.getInputStream();
-            jsonObject = new JSONObject(readInputStream(input));
+            jsonObject = new JSONObject(ReadInputStream(input));
             return jsonObject;
         }
         catch (JSONException e)
@@ -135,7 +130,7 @@ public class WebService extends AsyncTask<CommunicationRequest, Void, JSONObject
         return null;
     }
 
-    public String readInputStream(InputStream input)
+    public String ReadInputStream(InputStream input)
     {
         BufferedReader reader = null;
         StringBuilder response = new StringBuilder();

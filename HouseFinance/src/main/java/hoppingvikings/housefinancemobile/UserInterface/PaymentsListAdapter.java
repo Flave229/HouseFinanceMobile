@@ -17,23 +17,19 @@ import java.util.Locale;
 import hoppingvikings.housefinancemobile.ItemType;
 import hoppingvikings.housefinancemobile.R;
 import hoppingvikings.housefinancemobile.UserInterface.Items.BillObjectDetailedPayments;
-import hoppingvikings.housefinancemobile.WebService.DeleteItemCallback;
-import hoppingvikings.housefinancemobile.WebService.UploadCallback;
+import hoppingvikings.housefinancemobile.WebService.CommunicationCallback;
+import hoppingvikings.housefinancemobile.WebService.RequestType;
 import hoppingvikings.housefinancemobile.WebService.WebHandler;
 
-/**
- * Created by iView on 15/08/2017.
- */
-
 public class PaymentsListAdapter extends RecyclerView.Adapter<PaymentsListAdapter.CardViewHolder>
-        implements DeleteItemCallback, UploadCallback {
-
+        implements CommunicationCallback<String>
+{
     public interface DeleteCallback
     {
-        void onItemDeleted();
+        void OnItemDeleted();
     }
 
-    private static PaymentsListAdapter.DeleteCallback _deletecallback;
+    private static PaymentsListAdapter.DeleteCallback _deleteCallback;
     private static PaymentsListAdapter.EditPressedCallback _editCallback;
 
     public interface EditPressedCallback
@@ -67,10 +63,13 @@ public class PaymentsListAdapter extends RecyclerView.Adapter<PaymentsListAdapte
 
     public void SetDeleteCallback(DeleteCallback owner)
     {
-        _deletecallback = owner;
+        _deleteCallback = owner;
     }
+
     public void SetEditPressedCallback(EditPressedCallback owner)
-    {_editCallback = owner;}
+    {
+        _editCallback = owner;
+    }
 
     public PaymentsListAdapter(ArrayList<BillObjectDetailedPayments> payments, Context context)
     {
@@ -116,25 +115,17 @@ public class PaymentsListAdapter extends RecyclerView.Adapter<PaymentsListAdapte
         });
     }
 
-
     @Override
-    public void OnSuccessfulUpload() {
-
+    public void OnSuccess(RequestType requestType, String s)
+    {
+        if (requestType == RequestType.DELETE)
+            _deleteCallback.OnItemDeleted();
     }
 
     @Override
-    public void OnFailedUpload(String failReason) {
-
-    }
-
-    @Override
-    public void OnSuccessfulDelete() {
-        _deletecallback.onItemDeleted();
-    }
-
-    @Override
-    public void OnFailedDelete(String err) {
-        Toast.makeText(_context, "Failed to delete payment", Toast.LENGTH_SHORT).show();
+    public void OnFail(RequestType requestType, String message)
+    {
+        Toast.makeText(_context, message, Toast.LENGTH_SHORT).show();
     }
 
     public void AddPaymentsToList(ArrayList<BillObjectDetailedPayments> newPayments)

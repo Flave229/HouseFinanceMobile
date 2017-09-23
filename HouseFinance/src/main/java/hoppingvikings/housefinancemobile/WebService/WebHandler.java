@@ -39,7 +39,7 @@ public class WebHandler
     private DownloadDetailsCallback _billDetailsOwner;
     private DownloadPeopleCallback _peopleDownloadOwner;
     private DownloadCallback _shoppingListOwner;
-    private DeleteItemCallback _itemDeleteOwner;
+    private CommunicationCallback _itemDeleteOwner;
     private UploadCallback _uploadOwner;
     private String _authToken = "";
     private boolean _debugging;
@@ -167,7 +167,7 @@ public class WebHandler
         }
     }
 
-    public void DeleteItem(Context context, DeleteItemCallback owner, JSONObject itemjson, ItemType itemType)
+    public void DeleteItem(Context context, CommunicationCallback owner, JSONObject itemjson, ItemType itemType)
     {
         _debugging = 0 != (context.getApplicationInfo().flags & ApplicationInfo.FLAG_DEBUGGABLE);
         _itemDeleteOwner = owner;
@@ -190,14 +190,14 @@ public class WebHandler
                     break;
                 default:
                     _downloading = false;
-                    _itemDeleteOwner.OnFailedDelete("Incorrect item type");
+                    _itemDeleteOwner.OnFail(RequestType.DELETE, "Incorrect item type");
                     break;
             }
         }
         else
         {
             _downloading = false;
-            _itemDeleteOwner.OnFailedDelete("No Internet Connection");
+            _itemDeleteOwner.OnFail(RequestType.DELETE, "No Internet Connection");
         }
     }
 
@@ -575,11 +575,11 @@ public class WebHandler
         protected void onPostExecute(Boolean aBoolean) {
             if(aBoolean)
             {
-               _itemDeleteOwner.OnSuccessfulDelete();
+                _itemDeleteOwner.OnSuccess(RequestType.DELETE, null);
             }
             else
             {
-                _itemDeleteOwner.OnFailedDelete("Failed to Delete Item. Please try again");
+                _itemDeleteOwner.OnFail(RequestType.DELETE, "Failed to Delete Item. Please try again");
             }
         }
     }

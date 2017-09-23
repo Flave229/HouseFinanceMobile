@@ -35,17 +35,14 @@ import hoppingvikings.housefinancemobile.UserInterface.Items.BillListObject;
 import hoppingvikings.housefinancemobile.UserInterface.Items.BillObjectDetailed;
 import hoppingvikings.housefinancemobile.UserInterface.Items.BillObjectDetailedPayments;
 import hoppingvikings.housefinancemobile.UserInterface.PaymentsListAdapter;
-import hoppingvikings.housefinancemobile.WebService.DeleteItemCallback;
+import hoppingvikings.housefinancemobile.WebService.CommunicationCallback;
 import hoppingvikings.housefinancemobile.WebService.DownloadDetailsCallback;
+import hoppingvikings.housefinancemobile.WebService.RequestType;
 import hoppingvikings.housefinancemobile.WebService.UploadCallback;
 import hoppingvikings.housefinancemobile.WebService.WebHandler;
 
-/**
- * Created by iView on 06/07/2017.
- */
-
 public class ViewBillDetailsActivity extends AppCompatActivity
-        implements DownloadDetailsCallback, UploadCallback, DeleteItemCallback,
+        implements DownloadDetailsCallback, UploadCallback, CommunicationCallback<String>,
         PaymentsListAdapter.DeleteCallback, PaymentsListAdapter.EditPressedCallback{
 
     TextView billAmountText;
@@ -75,7 +72,7 @@ public class ViewBillDetailsActivity extends AppCompatActivity
     };
 
     @Override
-    public void onItemDeleted() {
+    public void OnItemDeleted() {
         somethingChanged = true;
         _handler.postDelayed(contactWebsite, 100);
     }
@@ -307,19 +304,6 @@ public class ViewBillDetailsActivity extends AppCompatActivity
     }
 
     @Override
-    public void OnSuccessfulDelete() {
-        Toast.makeText(getApplicationContext(), "Bill deleted", Toast.LENGTH_SHORT).show();
-        setResult(RESULT_OK);
-        finish();
-    }
-
-    @Override
-    public void OnFailedDelete(String err) {
-        addPayment.show();
-        Snackbar.make(layout, err, Snackbar.LENGTH_SHORT).show();
-    }
-
-    @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         switch (resultCode)
@@ -332,6 +316,27 @@ public class ViewBillDetailsActivity extends AppCompatActivity
             case RESULT_CANCELED:
 
                 break;
+        }
+    }
+
+    @Override
+    public void OnSuccess(RequestType requestType, String s)
+    {
+        if (requestType == RequestType.DELETE)
+        {
+            Toast.makeText(getApplicationContext(), "Bill deleted", Toast.LENGTH_SHORT).show();
+            setResult(RESULT_OK);
+            finish();
+        }
+    }
+
+    @Override
+    public void OnFail(RequestType requestType, String message)
+    {
+        if (requestType == RequestType.DELETE)
+        {
+            addPayment.show();
+            Snackbar.make(layout, message, Snackbar.LENGTH_SHORT).show();
         }
     }
 }
