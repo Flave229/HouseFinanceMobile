@@ -151,7 +151,14 @@ public class WebHandler
 
         if(networkInfo != null && networkInfo.isConnected())
         {
-            new DownloadJsonString().execute(WEB_APIV2_URL + "Users/", "People");
+            CommunicationRequest request = new CommunicationRequest()
+            {{
+                ItemTypeData = ItemType.PERSON;
+                RequestTypeData = RequestType.GET;
+                Owner = WebHandler.this;
+            }};
+
+            new WebService(_authToken).execute(request);
         }
         else
         {

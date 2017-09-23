@@ -5,5 +5,5 @@ public enum ItemType
     SHOPPING,
     BILL,
     BILL_DETAILED,
-    PAYMENT
+    PERSON, PAYMENT
 }

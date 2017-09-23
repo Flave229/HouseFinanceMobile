@@ -61,6 +61,9 @@ public class WebService extends AsyncTask<CommunicationRequest, Void, JSONObject
             case BILL_DETAILED:
                 type = "BillDetails";
                 break;
+            case PERSON:
+                type = "People";
+                break;
             default:
                 type = "";
         }
@@ -85,6 +88,9 @@ public class WebService extends AsyncTask<CommunicationRequest, Void, JSONObject
                 break;
             case PAYMENT:
                 subEndpoint = "Bills/Payments";
+                break;
+            case PERSON:
+                subEndpoint = "Users";
                 break;
             default:
                 subEndpoint = "";
