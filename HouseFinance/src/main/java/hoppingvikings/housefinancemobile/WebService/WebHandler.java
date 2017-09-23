@@ -35,10 +35,10 @@ public class WebHandler
 
     private static WebHandler _instance;
     private boolean _downloading;
-    private DownloadCallback _billListOwner;
+    private CommunicationCallback _billListOwner;
     private CommunicationCallback _billDetailsOwner;
     private CommunicationCallback _peopleDownloadOwner;
-    private DownloadCallback _shoppingListOwner;
+    private CommunicationCallback _shoppingListOwner;
     private CommunicationCallback _itemDeleteOwner;
     private UploadCallback _uploadOwner;
     private String _authToken = "";
@@ -77,7 +77,7 @@ public class WebHandler
         }
     }
 
-    public void contactWebsiteBills(Context context, final DownloadCallback owner)
+    public void contactWebsiteBills(Context context, final CommunicationCallback owner)
     {
         _debugging = 0 != (context.getApplicationInfo().flags & ApplicationInfo.FLAG_DEBUGGABLE);
         _billListOwner = owner;
@@ -98,7 +98,7 @@ public class WebHandler
         else
         {
             _downloading = false;
-            _billListOwner.OnFailedDownload("No internet connection");
+            _billListOwner.OnFail(RequestType.GET, "No internet connection");
         }
     }
 
@@ -274,7 +274,7 @@ public class WebHandler
         }
     }
 
-    public void contactWebsiteShoppingItems(Context context, DownloadCallback owner)
+    public void contactWebsiteShoppingItems(Context context, CommunicationCallback owner)
     {
         _debugging = 0 != (context.getApplicationInfo().flags & ApplicationInfo.FLAG_DEBUGGABLE);
         _shoppingListOwner = owner;
@@ -295,7 +295,7 @@ public class WebHandler
         else
         {
             _downloading = false;
-            _shoppingListOwner.OnFailedDownload("No internet connection");
+            _shoppingListOwner.OnFail(RequestType.GET, "No internet connection");
         }
     }
 
@@ -320,15 +320,15 @@ public class WebHandler
                     BillRepository.Instance().Set(bills);
                     _downloading = false;
 
-                    _billListOwner.OnSuccessfulDownload();
+                    _billListOwner.OnSuccess(RequestType.GET, null);
 
                 } catch (JSONException je) {
                     je.printStackTrace();
                     _downloading = false;
-                    _billListOwner.OnFailedDownload("Failed to parse Bill list");
+                    _billListOwner.OnFail(RequestType.GET, "Failed to parse Bill list");
                 } catch(Exception e) {
                     _downloading = false;
-                    _billListOwner.OnFailedDownload("Unknown Error in Bill list download");
+                    _billListOwner.OnFail(RequestType.GET, "Unknown Error in Bill list download");
                 }
                 break;
 
@@ -348,15 +348,15 @@ public class WebHandler
                     ShoppingRepository.Instance().Set(items);
 
                     _downloading = false;
-                    _shoppingListOwner.OnSuccessfulDownload();
+                    _shoppingListOwner.OnSuccess(RequestType.GET, null);
 
                 } catch (JSONException je) {
                     je.printStackTrace();
                     _downloading = false;
-                    _shoppingListOwner.OnFailedDownload("Failed to parse Shopping list");
+                    _shoppingListOwner.OnFail(RequestType.GET, "Failed to parse Shopping list");
                 } catch(Exception e) {
                     _downloading = false;
-                    _shoppingListOwner.OnFailedDownload("Unknown Error in Shopping List download");
+                    _shoppingListOwner.OnFail(RequestType.GET, "Unknown Error in Shopping List download");
                 }
                 break;
 

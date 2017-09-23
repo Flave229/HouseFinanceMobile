@@ -24,18 +24,15 @@ import hoppingvikings.housefinancemobile.UserInterface.Activities.EditShoppingIt
 import hoppingvikings.housefinancemobile.UserInterface.Lists.ShoppingList.ShoppingListAdapter;
 import hoppingvikings.housefinancemobile.UserInterface.Items.ShoppingListObject;
 import hoppingvikings.housefinancemobile.UserInterface.MainActivity;
-import hoppingvikings.housefinancemobile.WebService.DownloadCallback;
+import hoppingvikings.housefinancemobile.WebService.CommunicationCallback;
+import hoppingvikings.housefinancemobile.WebService.RequestType;
 import hoppingvikings.housefinancemobile.WebService.WebHandler;
 
 import static android.app.Activity.RESULT_CANCELED;
 import static android.app.Activity.RESULT_OK;
 
-/**
- * Created by Josh on 24/09/2016.
- */
-
 public class ShoppingListFragment extends Fragment
-        implements DownloadCallback, ShoppingListAdapter.DeleteCallback, ShoppingListAdapter.EditPressedCallback {
+        implements CommunicationCallback, ShoppingListAdapter.DeleteCallback, ShoppingListAdapter.EditPressedCallback {
 
     CoordinatorLayout layout;
     Handler _handler;
@@ -221,16 +218,17 @@ public class ShoppingListFragment extends Fragment
     }
 
     @Override
-    public void OnSuccessfulDownload() {
-        // After calling the website, allow 3 seconds before we update the list. Can be reduced if needed
+    public void OnSuccess(RequestType requestType, Object o)
+    {
         _handler.postDelayed(updateList, 1000);
         lastRefreshedTime = new Date();
     }
 
     @Override
-    public void OnFailedDownload(String failReason) {
+    public void OnFail(RequestType requestType, String message)
+    {
         _handler.removeCallbacksAndMessages(null);
-        Snackbar.make(activity._layout, failReason, Snackbar.LENGTH_LONG).show();
+        Snackbar.make(activity._layout, message, Snackbar.LENGTH_LONG).show();
         swipeRefreshLayout.setRefreshing(false);
     }
 }
