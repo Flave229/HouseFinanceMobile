@@ -38,6 +38,20 @@ public class UserSelectAdapter extends RecyclerView.Adapter<UserSelectAdapter.Ca
             userImage = (ImageView) view.findViewById(R.id.userImage);
             userSelected = (CheckBox) view.findViewById(R.id.userSelected);
 
+            userSelected.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    if(_listener != null)
+                    {
+                        int pos = getAdapterPosition();
+                        if(pos != RecyclerView.NO_POSITION)
+                        {
+                            _listener.onUserClicked(v, pos);
+                        }
+                    }
+                }
+            });
+
             view.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
