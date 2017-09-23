@@ -20,8 +20,8 @@ public class AppServiceBinder {
         void OnUnbind();
     }
 
-    public static BackgroundService _service;
-    public static boolean IsBound = false;
+    private static BackgroundService _service;
+    private static boolean _isBound = false;
     public static OnBindInterface owner = null;
 
     public static boolean ConnectToBackgroundService(Context context)
@@ -38,12 +38,22 @@ public class AppServiceBinder {
         return true;
     }
 
+    public static boolean CheckIsBound()
+    {
+        return _isBound;
+    }
+
+    public static BackgroundService GetService()
+    {
+        return _service;
+    }
+
     private static ServiceConnection _connection = new ServiceConnection() {
         @Override
         public void onServiceConnected(ComponentName name, IBinder service) {
             BackgroundService.LocalBinder binder = (BackgroundService.LocalBinder) service;
             _service = binder.getService();
-            IsBound = true;
+            _isBound = true;
 
             if(owner != null)
             {
@@ -53,7 +63,7 @@ public class AppServiceBinder {
 
         @Override
         public void onServiceDisconnected(ComponentName name) {
-            IsBound = false;
+            _isBound = false;
             _service = null;
 
             if(owner != null)

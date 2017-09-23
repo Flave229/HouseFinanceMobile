@@ -10,6 +10,9 @@ public class GlobalObjects
 
     public static void ShowNotif(String text, String subtext, int notificationId)
     {
-        AppServiceBinder._service.ShowNotification(text, subtext, notificationId);
+        if(AppServiceBinder.CheckIsBound())
+        {
+            AppServiceBinder.GetService().ShowNotification(text, subtext, notificationId);
+        }
     }
 }
