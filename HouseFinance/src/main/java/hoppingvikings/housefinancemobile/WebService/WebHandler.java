@@ -36,8 +36,8 @@ public class WebHandler
     private static WebHandler _instance;
     private boolean _downloading;
     private DownloadCallback _billListOwner;
-    private DownloadDetailsCallback _billDetailsOwner;
-    private DownloadPeopleCallback _peopleDownloadOwner;
+    private CommunicationCallback _billDetailsOwner;
+    private CommunicationCallback _peopleDownloadOwner;
     private DownloadCallback _shoppingListOwner;
     private CommunicationCallback _itemDeleteOwner;
     private UploadCallback _uploadOwner;
@@ -102,7 +102,7 @@ public class WebHandler
         }
     }
 
-    public void RequestBillDetails(Context context, DownloadDetailsCallback owner, final int billId)
+    public void RequestBillDetails(Context context, CommunicationCallback owner, final int billId)
     {
         _debugging = 0 != (context.getApplicationInfo().flags & ApplicationInfo.FLAG_DEBUGGABLE);
         _billDetailsOwner = owner;
@@ -130,18 +130,18 @@ public class WebHandler
             }
             catch (JSONException e)
             {
-                _billDetailsOwner.OnDownloadFailed("Failed to create JSON for Bill Details");
+                _billDetailsOwner.OnFail(RequestType.GET, "Failed to create JSON for Bill Details");
             }
 
         }
         else
         {
             _downloading = false;
-            _billDetailsOwner.OnDownloadFailed("No Internet Connection");
+            _billDetailsOwner.OnFail(RequestType.GET, "No Internet Connection");
         }
     }
 
-    public void RequestUsers(Context context, DownloadPeopleCallback owner)
+    public void RequestUsers(Context context, CommunicationCallback owner)
     {
         _debugging = 0 != (context.getApplicationInfo().flags & ApplicationInfo.FLAG_DEBUGGABLE);
         _peopleDownloadOwner = owner;
@@ -163,7 +163,7 @@ public class WebHandler
         else
         {
             _downloading = false;
-            _peopleDownloadOwner.UsersDownloadFailed("No Internet Connection");
+            _peopleDownloadOwner.OnFail(RequestType.GET, "No Internet Connection");
         }
     }
 
@@ -380,13 +380,13 @@ public class WebHandler
                         parsedUsers.add(new Person(userObjects.get(j)));
                     }
 
-                    _peopleDownloadOwner.UsersDownloadSuccess(parsedUsers);
+                    _peopleDownloadOwner.OnSuccess(RequestType.GET, parsedUsers);
 
                 } catch (JSONException je)
                 {
                     je.printStackTrace();
                     _downloading = false;
-                    _peopleDownloadOwner.UsersDownloadFailed("Failed to parse Shopping list");
+                    _peopleDownloadOwner.OnFail(RequestType.GET, "Failed to parse Shopping list");
                 } catch (Exception e)
                 {
 
@@ -406,19 +406,19 @@ public class WebHandler
                 {
                     e.printStackTrace();
                     _downloading = false;
-                    _billDetailsOwner.OnDownloadFailed("Failed to parse Detailed Bill");
+                    _billDetailsOwner.OnFail(RequestType.POST, "Failed to parse Detailed Bill");
                     return;
                 }
                 catch (Exception e)
                 {
                     e.printStackTrace();
                     _downloading = false;
-                    _billDetailsOwner.OnDownloadFailed("Unknown error in Detailed Bill Download");
+                    _billDetailsOwner.OnFail(RequestType.POST, "Unknown error in Detailed Bill Download");
                     return;
                 }
 
                 _downloading = false;
-                _billDetailsOwner.OnDownloadSuccessful(detailedBill);
+                _billDetailsOwner.OnSuccess(RequestType.POST, detailedBill);
                 break;
         }
     }

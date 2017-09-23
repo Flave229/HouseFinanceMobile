@@ -20,19 +20,12 @@ import hoppingvikings.housefinancemobile.Person;
 import hoppingvikings.housefinancemobile.R;
 import hoppingvikings.housefinancemobile.UserInterface.Lists.UserSelectList.IUserClickedListener;
 import hoppingvikings.housefinancemobile.UserInterface.Lists.UserSelectList.UserSelectAdapter;
-import hoppingvikings.housefinancemobile.WebService.DownloadPeopleCallback;
+import hoppingvikings.housefinancemobile.WebService.CommunicationCallback;
+import hoppingvikings.housefinancemobile.WebService.RequestType;
 import hoppingvikings.housefinancemobile.WebService.WebHandler;
 
-/**
- * Created by iView on 24/08/2017.
- */
-
-public class SelectUsersActivity extends AppCompatActivity implements DownloadPeopleCallback {
-
-    /*
-    * Don't touch this yet. I'm still working on it
-    * */
-
+public class SelectUsersActivity extends AppCompatActivity implements CommunicationCallback<ArrayList<Person>>
+{
     private ArrayList<Person> _users;
     private boolean _multipleSelect;
     private HashMap<Integer, Integer> _selectedUserIds;
@@ -211,7 +204,8 @@ public class SelectUsersActivity extends AppCompatActivity implements DownloadPe
     }
 
     @Override
-    public void UsersDownloadSuccess(ArrayList<Person> users) {
+    public void OnSuccess(RequestType requestType, ArrayList<Person> users)
+    {
         _users.addAll(users);
 
         if(_selectedUserIds.size() > 0)
@@ -243,8 +237,8 @@ public class SelectUsersActivity extends AppCompatActivity implements DownloadPe
     }
 
     @Override
-    public void UsersDownloadFailed(String err) {
-        //_handler.postDelayed(requestUsers, 500);
+    public void OnFail(RequestType requestType, String message)
+    {
         _failedToGetUsers.setVisibility(View.VISIBLE);
     }
 }

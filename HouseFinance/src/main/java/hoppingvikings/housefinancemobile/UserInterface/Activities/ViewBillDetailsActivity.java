@@ -2,7 +2,6 @@ package hoppingvikings.housefinancemobile.UserInterface.Activities;
 
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.graphics.Color;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.annotation.Nullable;
@@ -14,12 +13,9 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
-import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.TableLayout;
-import android.widget.TableRow;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -36,15 +32,13 @@ import hoppingvikings.housefinancemobile.UserInterface.Items.BillObjectDetailed;
 import hoppingvikings.housefinancemobile.UserInterface.Items.BillObjectDetailedPayments;
 import hoppingvikings.housefinancemobile.UserInterface.PaymentsListAdapter;
 import hoppingvikings.housefinancemobile.WebService.CommunicationCallback;
-import hoppingvikings.housefinancemobile.WebService.DownloadDetailsCallback;
 import hoppingvikings.housefinancemobile.WebService.RequestType;
 import hoppingvikings.housefinancemobile.WebService.UploadCallback;
 import hoppingvikings.housefinancemobile.WebService.WebHandler;
 
 public class ViewBillDetailsActivity extends AppCompatActivity
-        implements DownloadDetailsCallback, UploadCallback, CommunicationCallback<String>,
-        PaymentsListAdapter.DeleteCallback, PaymentsListAdapter.EditPressedCallback{
-
+        implements UploadCallback, PaymentsListAdapter.DeleteCallback, PaymentsListAdapter.EditPressedCallback
+{
     TextView billAmountText;
     TextView totalPaidText;
     TextView dueDateText;
@@ -57,17 +51,19 @@ public class ViewBillDetailsActivity extends AppCompatActivity
     RecyclerView paymentsList;
     PaymentsListAdapter adapter;
 
-    //LinearLayout tableContainer;
     FloatingActionButton addPayment;
 
     boolean somethingChanged = false;
     CoordinatorLayout layout;
 
+    private CommunicationCallback _onDeleteCallback;
+    private CommunicationCallback _onGetCallback;
+
     BillObjectDetailed _currentBill = null;
     private Runnable contactWebsite = new Runnable() {
         @Override
         public void run() {
-            WebHandler.Instance().RequestBillDetails(ViewBillDetailsActivity.this, ViewBillDetailsActivity.this, billID);
+            WebHandler.Instance().RequestBillDetails(ViewBillDetailsActivity.this, _onGetCallback, billID);
         }
     };
 
@@ -109,6 +105,61 @@ public class ViewBillDetailsActivity extends AppCompatActivity
         paymentsList.setLayoutManager(new LinearLayoutManager(this));
         //paymentsList.addItemDecoration(new ListItemDivider(this));
 
+        _onGetCallback = new CommunicationCallback<BillObjectDetailed>()
+        {
+            @Override
+            public void OnSuccess(RequestType requestType, BillObjectDetailed billObjectDetailed)
+            {
+                _currentBill = billObjectDetailed;
+                getSupportActionBar().setTitle("Bill Details");
+                getSupportActionBar().setSubtitle(_currentBill.name);
+                ViewBillDetailsActivity.this.billAmountText.setText("£" + String.format(Locale.getDefault(), "%.2f", Double.valueOf(_currentBill.amountDue)));
+                ViewBillDetailsActivity.this.totalPaidText.setText("£" + String.format(Locale.getDefault(), "%.2f", Double.valueOf(_currentBill.amountPaid)));
+                ViewBillDetailsActivity.this.dueDateText.setText(_currentBill.dateDue);
+
+                adapter.AddPaymentsToList(billObjectDetailed.paymentDetails);
+
+                if(adapter.getItemCount() > 0)
+                {
+                    noPaymentsText.setVisibility(View.GONE);
+                }
+                else
+                {
+                    noPaymentsText.setVisibility(View.VISIBLE);
+                }
+
+                addPayment.show();
+            }
+
+            @Override
+            public void OnFail(RequestType requestType, String message)
+            {
+                Snackbar.make(layout, message, Snackbar.LENGTH_SHORT).show();
+                billAmountText.setText("N/A");
+                totalPaidText.setText("N/A");
+                dueDateText.setText("N/A");
+                getSupportActionBar().setTitle("Cannot load bill");
+            }
+        };
+
+        _onDeleteCallback = new CommunicationCallback()
+        {
+            @Override
+            public void OnSuccess(RequestType requestType, Object o)
+            {
+                Toast.makeText(getApplicationContext(), "Bill deleted", Toast.LENGTH_SHORT).show();
+                setResult(RESULT_OK);
+                finish();
+            }
+
+            @Override
+            public void OnFail(RequestType requestType, String message)
+            {
+                addPayment.show();
+                Snackbar.make(layout, message, Snackbar.LENGTH_SHORT).show();
+            }
+        };
+
         addPayment.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -149,55 +200,6 @@ public class ViewBillDetailsActivity extends AppCompatActivity
         _handler.postDelayed(contactWebsite, 200);
     }
 
-    private TableLayout CreateNewTable(String header)
-    {
-        LayoutInflater inflater = (LayoutInflater) getSystemService(LAYOUT_INFLATER_SERVICE);
-
-        View view = inflater.inflate(R.layout.table_template, null);
-
-        TextView title = (TextView) view.findViewById(R.id.paymentsTable_Header);
-        title.setText(header);
-        title.setPadding(2,2,2,2);
-
-        TableLayout table = (TableLayout)view.findViewById(R.id.paymentsTable);
-
-        //this.tableContainer.addView(view);
-
-        return table;
-    }
-
-    private void ClearTable()
-    {
-        //tableContainer.removeAllViews();
-    }
-
-    private void AddRow(TableLayout table, String header, String value)
-    {
-        TableRow row = new TableRow(this);
-        row.setLayoutParams(new TableRow.LayoutParams(TableRow.LayoutParams.MATCH_PARENT, TableRow.LayoutParams.WRAP_CONTENT));
-
-        TableRow.LayoutParams tvlayout = new TableRow.LayoutParams(0, TableRow.LayoutParams.WRAP_CONTENT);
-        tvlayout.weight = 1;
-
-        // Header
-        TextView th = new TextView(this);
-        th.setTextColor(Color.BLACK);
-        th.setLayoutParams(tvlayout);
-        th.setText(header);
-        row.addView(th);
-
-        // Value
-        tvlayout.weight = 2;
-        TextView tv = new TextView(this);
-        tv.setLayoutParams(tvlayout);
-        tv.setTextColor(Color.BLACK);
-        tv.setText(value);
-        row.addView(tv);
-
-        // Add the row
-        table.addView(row, new TableLayout.LayoutParams(TableLayout.LayoutParams.MATCH_PARENT, TableLayout.LayoutParams.WRAP_CONTENT));
-    }
-
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.viewdetailsmenu, menu);
@@ -229,7 +231,7 @@ public class ViewBillDetailsActivity extends AppCompatActivity
                         try {
                             JSONObject billidjson = new JSONObject();
                             billidjson.put("BillId", billID);
-                            WebHandler.Instance().DeleteItem(ViewBillDetailsActivity.this, ViewBillDetailsActivity.this, billidjson, ItemType.BILL);
+                            WebHandler.Instance().DeleteItem(ViewBillDetailsActivity.this, _onDeleteCallback, billidjson, ItemType.BILL);
                         } catch (Exception e)
                         {
                             addPayment.show();
@@ -262,38 +264,6 @@ public class ViewBillDetailsActivity extends AppCompatActivity
     }
 
     @Override
-    public void OnDownloadFailed(String err) {
-        Snackbar.make(layout, err, Snackbar.LENGTH_SHORT).show();
-        billAmountText.setText("N/A");
-        totalPaidText.setText("N/A");
-        dueDateText.setText("N/A");
-        getSupportActionBar().setTitle("Cannot load bill");
-    }
-
-    @Override
-    public void OnDownloadSuccessful(BillObjectDetailed billObjectDetailed) {
-        _currentBill = billObjectDetailed;
-        getSupportActionBar().setTitle("Bill Details");
-        getSupportActionBar().setSubtitle(_currentBill.name);
-        this.billAmountText.setText("£" + String.format(Locale.getDefault(), "%.2f", Double.valueOf(_currentBill.amountDue)));
-        this.totalPaidText.setText("£" + String.format(Locale.getDefault(), "%.2f", Double.valueOf(_currentBill.amountPaid)));
-        this.dueDateText.setText(_currentBill.dateDue);
-
-        adapter.AddPaymentsToList(billObjectDetailed.paymentDetails);
-
-        if(adapter.getItemCount() > 0)
-        {
-            noPaymentsText.setVisibility(View.GONE);
-        }
-        else
-        {
-            noPaymentsText.setVisibility(View.VISIBLE);
-        }
-
-        addPayment.show();
-    }
-
-    @Override
     public void OnSuccessfulUpload() {
 
     }
@@ -316,27 +286,6 @@ public class ViewBillDetailsActivity extends AppCompatActivity
             case RESULT_CANCELED:
 
                 break;
-        }
-    }
-
-    @Override
-    public void OnSuccess(RequestType requestType, String s)
-    {
-        if (requestType == RequestType.DELETE)
-        {
-            Toast.makeText(getApplicationContext(), "Bill deleted", Toast.LENGTH_SHORT).show();
-            setResult(RESULT_OK);
-            finish();
-        }
-    }
-
-    @Override
-    public void OnFail(RequestType requestType, String message)
-    {
-        if (requestType == RequestType.DELETE)
-        {
-            addPayment.show();
-            Snackbar.make(layout, message, Snackbar.LENGTH_SHORT).show();
         }
     }
 }

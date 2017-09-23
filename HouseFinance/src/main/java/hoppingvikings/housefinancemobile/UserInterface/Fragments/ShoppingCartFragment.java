@@ -27,15 +27,12 @@ import hoppingvikings.housefinancemobile.UserInterface.Activities.AddNewShopping
 import hoppingvikings.housefinancemobile.UserInterface.Fragments.Interfaces.ButtonPressedCallback;
 import hoppingvikings.housefinancemobile.UserInterface.Lists.ShoppingCartList.ShoppingCartAdapter;
 import hoppingvikings.housefinancemobile.UserInterface.Items.ShoppingCartItem;
-import hoppingvikings.housefinancemobile.WebService.DownloadPeopleCallback;
+import hoppingvikings.housefinancemobile.WebService.CommunicationCallback;
+import hoppingvikings.housefinancemobile.WebService.RequestType;
 import hoppingvikings.housefinancemobile.WebService.WebHandler;
 
-/**
- * Created by iView on 25/07/2017.
- */
-
 public class ShoppingCartFragment extends Fragment
-        implements ButtonPressedCallback, ShoppingCartAdapter.DeleteCallback, DownloadPeopleCallback {
+        implements ButtonPressedCallback, ShoppingCartAdapter.DeleteCallback, CommunicationCallback<ArrayList<Person>> {
     View currentView;
     TextView cartEmptyText;
     CoordinatorLayout layout;
@@ -44,47 +41,6 @@ public class ShoppingCartFragment extends Fragment
     ArrayList<ShoppingCartItem> items;
     AddNewShoppingItemActivity _activity;
     boolean submitting = false;
-
-    @Override
-    public void UsersDownloadFailed(String err) {
-
-    }
-
-    @Override
-    public void UsersDownloadSuccess(ArrayList<Person> users) {
-        try {
-            for (String jsonstring: _activity._shoppingItems) {
-                JSONObject json = new JSONObject(jsonstring);
-                items.add(new ShoppingCartItem(json));
-            }
-        } catch (Exception e)
-        {
-
-        }
-        adapter = new ShoppingCartAdapter(items, users, getContext());
-        rv.setAdapter(adapter);
-        rv.setLayoutManager(new LinearLayoutManager(getActivity()));
-        adapter.SetDeleteCallback(this);
-        adapter.setOnCartItemClickListener(new ShoppingCartAdapter.CartItemClickedListener() {
-            @Override
-            public void onCartItemClick(View itemView, int pos) {
-                if(!adapter.GetItem(pos).itemExpanded)
-                {
-                    adapter.GetItem(pos).itemExpanded = true;
-                }
-                else
-                {
-                    adapter.GetItem(pos).itemExpanded = false;
-                }
-                adapter.notifyItemChanged(pos);
-            }
-        });
-
-        if(adapter.getItemCount() > 0)
-        {
-            cartEmptyText.setVisibility(View.GONE);
-        }
-    }
 
     @Nullable
     @Override
@@ -148,7 +104,8 @@ public class ShoppingCartFragment extends Fragment
     }
 
     @Override
-    public void onItemDeleted(int item) {
+    public void onItemDeleted(int item)
+    {
         if(!submitting)
         {
             _activity._shoppingItems.remove(item);
@@ -164,4 +121,46 @@ public class ShoppingCartFragment extends Fragment
             Snackbar.make(layout, "Items have already been submitted", Snackbar.LENGTH_SHORT).show();
         }
     }
+
+    @Override
+    public void OnSuccess(RequestType requestType, ArrayList<Person> users)
+    {
+        try
+        {
+            for (String jsonstring: _activity._shoppingItems) {
+                JSONObject json = new JSONObject(jsonstring);
+                items.add(new ShoppingCartItem(json));
+            }
+        }
+        catch (Exception e)
+        { }
+
+        adapter = new ShoppingCartAdapter(items, users, getContext());
+        rv.setAdapter(adapter);
+        rv.setLayoutManager(new LinearLayoutManager(getActivity()));
+        adapter.SetDeleteCallback(this);
+        adapter.setOnCartItemClickListener(new ShoppingCartAdapter.CartItemClickedListener() {
+            @Override
+            public void onCartItemClick(View itemView, int pos) {
+                if(!adapter.GetItem(pos).itemExpanded)
+                {
+                    adapter.GetItem(pos).itemExpanded = true;
+                }
+                else
+                {
+                    adapter.GetItem(pos).itemExpanded = false;
+                }
+                adapter.notifyItemChanged(pos);
+            }
+        });
+
+        if(adapter.getItemCount() > 0)
+        {
+            cartEmptyText.setVisibility(View.GONE);
+        }
+    }
+
+    @Override
+    public void OnFail(RequestType requestType, String message)
+    { }
 }
