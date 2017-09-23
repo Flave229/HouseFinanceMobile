@@ -102,7 +102,7 @@ public class WebHandler
         }
     }
 
-    public void RequestBillDetails(Context context, DownloadDetailsCallback owner, int billID)
+    public void RequestBillDetails(Context context, DownloadDetailsCallback owner, final int billId)
     {
         _debugging = 0 != (context.getApplicationInfo().flags & ApplicationInfo.FLAG_DEBUGGABLE);
         _billDetailsOwner = owner;
@@ -112,7 +112,27 @@ public class WebHandler
 
         if(networkInfo != null && networkInfo.isConnected())
         {
-            new DownloadJsonString().execute(WEB_APIV2_URL + "Bills/", "BillDetails", String.valueOf(billID));
+            try
+            {
+                final JSONObject billDetailsRequest = new JSONObject()
+                {{
+                    put("BillId", billId);
+                }};
+
+                CommunicationRequest request = new CommunicationRequest()
+                {{
+                    ItemTypeData = ItemType.BILL_DETAILED;
+                    RequestTypeData = RequestType.POST;
+                    RequestBody = String.valueOf(billDetailsRequest);
+                    Owner = WebHandler.this;
+                }};
+                new WebService(_authToken).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, request);
+            }
+            catch (JSONException e)
+            {
+                _billDetailsOwner.OnDownloadFailed("Failed to create JSON for Bill Details");
+            }
+
         }
         else
         {
@@ -257,8 +277,13 @@ public class WebHandler
 
         if(networkInfo != null && networkInfo.isConnected())
         {
-            //Toast.makeText(getBaseContext(), "Obtaining list of bills", Toast.LENGTH_LONG).show();
-            new DownloadJsonString().executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, WEB_APIV2_URL + "Shopping/", "Shopping");
+            CommunicationRequest request = new CommunicationRequest()
+            {{
+                ItemTypeData = ItemType.SHOPPING;
+                RequestTypeData = RequestType.GET;
+                Owner = WebHandler.this;
+            }};
+            new WebService(_authToken).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, request);
         }
         else
         {

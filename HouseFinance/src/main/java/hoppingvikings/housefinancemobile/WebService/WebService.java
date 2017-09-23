@@ -58,6 +58,9 @@ public class WebService extends AsyncTask<CommunicationRequest, Void, JSONObject
             case SHOPPING:
                 type = "Shopping";
                 break;
+            case BILL_DETAILED:
+                type = "BillDetails";
+                break;
             default:
                 type = "";
         }
@@ -74,6 +77,7 @@ public class WebService extends AsyncTask<CommunicationRequest, Void, JSONObject
         switch (request.ItemTypeData)
         {
             case BILL:
+            case BILL_DETAILED:
                 subEndpoint = "Bills";
                 break;
             case SHOPPING:
@@ -106,8 +110,7 @@ public class WebService extends AsyncTask<CommunicationRequest, Void, JSONObject
                     conn.setDoOutput(true);
                     conn.setDoInput(true);
                     OutputStream os = conn.getOutputStream();
-                    JSONObject billIdJson = new JSONObject();
-                    os.write(billIdJson.toString().getBytes("UTF-8"));
+                    os.write(request.RequestBody.getBytes("UTF-8"));
                     os.close();
                     break;
             }
