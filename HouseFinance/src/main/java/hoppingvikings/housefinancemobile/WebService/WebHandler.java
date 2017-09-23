@@ -35,10 +35,6 @@ public class WebHandler
 
     private static WebHandler _instance;
     private boolean _downloading;
-    private CommunicationCallback _billListOwner;
-    private CommunicationCallback _billDetailsOwner;
-    private CommunicationCallback _peopleDownloadOwner;
-    private CommunicationCallback _shoppingListOwner;
     private CommunicationCallback _itemDeleteOwner;
     private CommunicationCallback _uploadOwner;
     private String _authToken = "";
@@ -77,10 +73,9 @@ public class WebHandler
         }
     }
 
-    public void contactWebsiteBills(Context context, final CommunicationCallback owner)
+    public void contactWebsiteBills(Context context, final CommunicationCallback callback)
     {
         _debugging = 0 != (context.getApplicationInfo().flags & ApplicationInfo.FLAG_DEBUGGABLE);
-        _billListOwner = owner;
         _downloading = true;
         ConnectivityManager connMgr = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
         NetworkInfo networkInfo = connMgr.getActiveNetworkInfo();
@@ -92,20 +87,20 @@ public class WebHandler
                 RequestTypeData = RequestType.GET;
                 ItemTypeData = ItemType.BILL;
                 Owner = WebHandler.this;
+                Callback = callback;
             }};
             new WebService(_authToken).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, request);
         }
         else
         {
             _downloading = false;
-            _billListOwner.OnFail(RequestType.GET, "No internet connection");
+            callback.OnFail(RequestType.GET, "No internet connection");
         }
     }
 
-    public void RequestBillDetails(Context context, CommunicationCallback owner, final int billId)
+    public void RequestBillDetails(Context context, final CommunicationCallback callback, final int billId)
     {
         _debugging = 0 != (context.getApplicationInfo().flags & ApplicationInfo.FLAG_DEBUGGABLE);
-        _billDetailsOwner = owner;
         _downloading = true;
         ConnectivityManager connMgr = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
         NetworkInfo networkInfo = connMgr.getActiveNetworkInfo();
@@ -125,26 +120,26 @@ public class WebHandler
                     RequestTypeData = RequestType.POST;
                     RequestBody = String.valueOf(billDetailsRequest);
                     Owner = WebHandler.this;
+                    Callback = callback;
                 }};
                 new WebService(_authToken).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, request);
             }
             catch (JSONException e)
             {
-                _billDetailsOwner.OnFail(RequestType.GET, "Failed to create JSON for Bill Details");
+                callback.OnFail(RequestType.GET, "Failed to create JSON for Bill Details");
             }
 
         }
         else
         {
             _downloading = false;
-            _billDetailsOwner.OnFail(RequestType.GET, "No Internet Connection");
+            callback.OnFail(RequestType.GET, "No Internet Connection");
         }
     }
 
-    public void RequestUsers(Context context, CommunicationCallback owner)
+    public void RequestUsers(Context context, final CommunicationCallback callback)
     {
         _debugging = 0 != (context.getApplicationInfo().flags & ApplicationInfo.FLAG_DEBUGGABLE);
-        _peopleDownloadOwner = owner;
         _downloading = true;
         ConnectivityManager connMgr = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
         NetworkInfo networkInfo = connMgr.getActiveNetworkInfo();
@@ -156,6 +151,7 @@ public class WebHandler
                 ItemTypeData = ItemType.PERSON;
                 RequestTypeData = RequestType.GET;
                 Owner = WebHandler.this;
+                Callback = callback;
             }};
 
             new WebService(_authToken).execute(request);
@@ -163,7 +159,7 @@ public class WebHandler
         else
         {
             _downloading = false;
-            _peopleDownloadOwner.OnFail(RequestType.GET, "No Internet Connection");
+            callback.OnFail(RequestType.GET, "No Internet Connection");
         }
     }
 
@@ -274,10 +270,9 @@ public class WebHandler
         }
     }
 
-    public void contactWebsiteShoppingItems(Context context, CommunicationCallback owner)
+    public void contactWebsiteShoppingItems(Context context, final CommunicationCallback callback)
     {
         _debugging = 0 != (context.getApplicationInfo().flags & ApplicationInfo.FLAG_DEBUGGABLE);
-        _shoppingListOwner = owner;
         _downloading = true;
         ConnectivityManager connMgr = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
         NetworkInfo networkInfo = connMgr.getActiveNetworkInfo();
@@ -289,23 +284,24 @@ public class WebHandler
                 ItemTypeData = ItemType.SHOPPING;
                 RequestTypeData = RequestType.GET;
                 Owner = WebHandler.this;
+                Callback = callback;
             }};
             new WebService(_authToken).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, request);
         }
         else
         {
             _downloading = false;
-            _shoppingListOwner.OnFail(RequestType.GET, "No internet connection");
+            callback.OnFail(RequestType.GET, "No internet connection");
         }
     }
 
-    public void websiteResult(JSONObject result, String type)
+    public void websiteResult(CommunicationResponse result, String type)
     {
         switch (type)
         {
             case "Bills":
                 try {
-                    JSONArray billJsonArray = result.getJSONArray("bills");
+                    JSONArray billJsonArray = result.Response.getJSONArray("bills");
 
                     ArrayList<BillListObject> bills = new ArrayList<>();
                     for(int k = 0; k < billJsonArray.length(); k++)
@@ -320,15 +316,15 @@ public class WebHandler
                     BillRepository.Instance().Set(bills);
                     _downloading = false;
 
-                    _billListOwner.OnSuccess(RequestType.GET, null);
+                    result.Callback.OnSuccess(RequestType.GET, null);
 
                 } catch (JSONException je) {
                     je.printStackTrace();
                     _downloading = false;
-                    _billListOwner.OnFail(RequestType.GET, "Failed to parse Bill list");
+                    result.Callback.OnFail(RequestType.GET, "Failed to parse Bill list");
                 } catch(Exception e) {
                     _downloading = false;
-                    _billListOwner.OnFail(RequestType.GET, "Unknown Error in Bill list download");
+                    result.Callback.OnFail(RequestType.GET, "Unknown Error in Bill list download");
                 }
                 break;
 
@@ -336,7 +332,7 @@ public class WebHandler
                 ArrayList<ShoppingListObject> items = new ArrayList<>();
                 ShoppingListObject item;
                 try {
-                    JSONObject itemsObject = result.getJSONObject("items");
+                    JSONObject itemsObject = result.Response.getJSONObject("items");
                     JSONArray shoppingList = itemsObject.getJSONArray("shoppingList");
 
                     for(int k = 0; k < shoppingList.length(); k++)
@@ -348,27 +344,25 @@ public class WebHandler
                     ShoppingRepository.Instance().Set(items);
 
                     _downloading = false;
-                    _shoppingListOwner.OnSuccess(RequestType.GET, null);
+                    result.Callback.OnSuccess(RequestType.GET, null);
 
                 } catch (JSONException je) {
                     je.printStackTrace();
                     _downloading = false;
-                    _shoppingListOwner.OnFail(RequestType.GET, "Failed to parse Shopping list");
+                    result.Callback.OnFail(RequestType.GET, "Failed to parse Shopping list");
                 } catch(Exception e) {
                     _downloading = false;
-                    _shoppingListOwner.OnFail(RequestType.GET, "Unknown Error in Shopping List download");
+                    result.Callback.OnFail(RequestType.GET, "Unknown Error in Shopping List download");
                 }
                 break;
 
             case "People":
-                Person newPerson = null;
-
                 JSONArray returnedObject;
                 ArrayList<JSONObject> userObjects = new ArrayList<>();
                 ArrayList<Person> parsedUsers = new ArrayList<>();
 
                 try {
-                    returnedObject = result.getJSONArray("people");
+                    returnedObject = result.Response.getJSONArray("people");
 
                     for(int i = 0; i < returnedObject.length(); i++)
                     {
@@ -380,13 +374,13 @@ public class WebHandler
                         parsedUsers.add(new Person(userObjects.get(j)));
                     }
 
-                    _peopleDownloadOwner.OnSuccess(RequestType.GET, parsedUsers);
+                    result.Callback.OnSuccess(RequestType.GET, parsedUsers);
 
                 } catch (JSONException je)
                 {
                     je.printStackTrace();
                     _downloading = false;
-                    _peopleDownloadOwner.OnFail(RequestType.GET, "Failed to parse Shopping list");
+                    result.Callback.OnFail(RequestType.GET, "Failed to parse Shopping list");
                 } catch (Exception e)
                 {
 
@@ -399,26 +393,26 @@ public class WebHandler
                 BillObjectDetailed detailedBill = null;
 
                 try {
-                    JSONObject detailedJson = result.getJSONObject("bill");
+                    JSONObject detailedJson = result.Response.getJSONObject("bill");
                     JSONArray paymentsArray = detailedJson.getJSONArray("payments");
                     detailedBill = new BillObjectDetailed(detailedJson, paymentsArray);
                 } catch (JSONException e)
                 {
                     e.printStackTrace();
                     _downloading = false;
-                    _billDetailsOwner.OnFail(RequestType.POST, "Failed to parse Detailed Bill");
+                    result.Callback.OnFail(RequestType.POST, "Failed to parse Detailed Bill");
                     return;
                 }
                 catch (Exception e)
                 {
                     e.printStackTrace();
                     _downloading = false;
-                    _billDetailsOwner.OnFail(RequestType.POST, "Unknown error in Detailed Bill Download");
+                    result.Callback.OnFail(RequestType.POST, "Unknown error in Detailed Bill Download");
                     return;
                 }
 
                 _downloading = false;
-                _billDetailsOwner.OnSuccess(RequestType.POST, detailedBill);
+                result.Callback.OnSuccess(RequestType.POST, detailedBill);
                 break;
         }
     }

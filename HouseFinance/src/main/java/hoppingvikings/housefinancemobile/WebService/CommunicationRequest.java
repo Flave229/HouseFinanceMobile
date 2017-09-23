@@ -8,4 +8,5 @@ public class CommunicationRequest
     public RequestType RequestTypeData;
     public String RequestBody;
     public WebHandler Owner;
+    public CommunicationCallback Callback;
 }

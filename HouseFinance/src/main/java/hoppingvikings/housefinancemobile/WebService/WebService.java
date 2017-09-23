@@ -13,7 +13,7 @@ import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
 
-public class WebService extends AsyncTask<CommunicationRequest, Void, JSONObject>
+public class WebService extends AsyncTask<CommunicationRequest, Void, CommunicationResponse>
 {
     private static final String WEB_APIV2_URL = "http://house.flave.co.uk/api/v2/";
     private String _authToken = "";
@@ -25,7 +25,7 @@ public class WebService extends AsyncTask<CommunicationRequest, Void, JSONObject
     }
 
     @Override
-    protected JSONObject doInBackground(CommunicationRequest... requests)
+    protected CommunicationResponse doInBackground(CommunicationRequest... requests)
     {
         try
         {
@@ -43,7 +43,7 @@ public class WebService extends AsyncTask<CommunicationRequest, Void, JSONObject
     }
 
     @Override
-    protected void onPostExecute(JSONObject result)
+    protected void onPostExecute(CommunicationResponse result)
     {
         String type;
         switch (_request.ItemTypeData)
@@ -67,9 +67,9 @@ public class WebService extends AsyncTask<CommunicationRequest, Void, JSONObject
         _request.Owner.websiteResult(result, type);
     }
 
-    private JSONObject DownloadUrl() throws IOException
+    private CommunicationResponse DownloadUrl() throws IOException
     {
-        JSONObject jsonObject;
+        CommunicationResponse response = new CommunicationResponse();
 
         String subEndpoint;
 
@@ -118,8 +118,9 @@ public class WebService extends AsyncTask<CommunicationRequest, Void, JSONObject
             }
 
             InputStream input = conn.getInputStream();
-            jsonObject = new JSONObject(ReadInputStream(input));
-            return jsonObject;
+            response.Response = new JSONObject(ReadInputStream(input));
+            response.Callback = _request.Callback;
+            return response;
         }
         catch (JSONException e)
         { }
