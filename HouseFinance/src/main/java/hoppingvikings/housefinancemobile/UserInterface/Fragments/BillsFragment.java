@@ -16,7 +16,6 @@ import android.view.ViewGroup;
 
 import java.util.ArrayList;
 
-import hoppingvikings.housefinancemobile.GlobalObjects;
 import hoppingvikings.housefinancemobile.MemoryRepositories.BillMemoryRepository;
 import hoppingvikings.housefinancemobile.R;
 import hoppingvikings.housefinancemobile.UserInterface.Activities.AddNewBillActivity;
@@ -28,6 +27,7 @@ import hoppingvikings.housefinancemobile.UserInterface.MainActivity;
 import hoppingvikings.housefinancemobile.UserInterface.Activities.ViewBillDetailsActivity;
 import hoppingvikings.housefinancemobile.UserInterface.PeoplePopup;
 import hoppingvikings.housefinancemobile.WebService.DownloadCallback;
+import hoppingvikings.housefinancemobile.WebService.WebHandler;
 
 import static android.app.Activity.RESULT_CANCELED;
 import static android.app.Activity.RESULT_OK;
@@ -53,14 +53,14 @@ public class BillsFragment extends Fragment
     private Runnable contactWebsite = new Runnable() {
         @Override
         public void run() {
-            GlobalObjects.WebHandler.contactWebsiteBills(getContext(), BillsFragment.this);
+            WebHandler.Instance().contactWebsiteBills(getContext(), BillsFragment.this);
         }
     };
 
     private Runnable updateList = new Runnable() {
         @Override
         public void run() {
-            if(!GlobalObjects.WebHandler.IsDownloading()) {
+            if(!WebHandler.Instance().IsDownloading()) {
                 BillMemoryRepository billRepository = BillMemoryRepository.Instance();
                 if (billRepository.Get() != null) {
                     if(_cards != null) {

@@ -16,12 +16,12 @@ import android.widget.TextView;
 import java.util.ArrayList;
 import java.util.HashMap;
 
-import hoppingvikings.housefinancemobile.GlobalObjects;
 import hoppingvikings.housefinancemobile.Person;
 import hoppingvikings.housefinancemobile.R;
 import hoppingvikings.housefinancemobile.UserInterface.Lists.UserSelectList.IUserClickedListener;
 import hoppingvikings.housefinancemobile.UserInterface.Lists.UserSelectList.UserSelectAdapter;
 import hoppingvikings.housefinancemobile.WebService.DownloadPeopleCallback;
+import hoppingvikings.housefinancemobile.WebService.WebHandler;
 
 /**
  * Created by iView on 24/08/2017.
@@ -49,7 +49,7 @@ public class SelectUsersActivity extends AppCompatActivity implements DownloadPe
     private Runnable requestUsers = new Runnable() {
         @Override
         public void run() {
-            GlobalObjects.WebHandler.RequestUsers(SelectUsersActivity.this, SelectUsersActivity.this);
+            WebHandler.Instance().RequestUsers(SelectUsersActivity.this, SelectUsersActivity.this);
         }
     };
 

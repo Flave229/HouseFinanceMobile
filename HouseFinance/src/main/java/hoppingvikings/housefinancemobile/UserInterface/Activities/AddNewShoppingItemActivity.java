@@ -1,6 +1,5 @@
 package hoppingvikings.housefinancemobile.UserInterface.Activities;
 
-import android.content.ClipData;
 import android.content.DialogInterface;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -30,6 +29,7 @@ import hoppingvikings.housefinancemobile.R;
 import hoppingvikings.housefinancemobile.UserInterface.Fragments.AddShoppingItemFragment;
 import hoppingvikings.housefinancemobile.UserInterface.Fragments.Interfaces.ButtonPressedCallback;
 import hoppingvikings.housefinancemobile.WebService.UploadCallback;
+import hoppingvikings.housefinancemobile.WebService.WebHandler;
 
 public class AddNewShoppingItemActivity extends AppCompatActivity implements UploadCallback {
 
@@ -206,7 +206,7 @@ public class AddNewShoppingItemActivity extends AppCompatActivity implements Upl
     public void UploadNextItem()
     {
         try {
-            GlobalObjects.WebHandler.UploadNewItem(this, new JSONObject(_shoppingItems.get(0)), this, ItemType.SHOPPING);
+            WebHandler.Instance().UploadNewItem(this, new JSONObject(_shoppingItems.get(0)), this, ItemType.SHOPPING);
         } catch (Exception e)
         {
 

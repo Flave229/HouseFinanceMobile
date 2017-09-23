@@ -29,10 +29,10 @@ import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.Locale;
 
-import hoppingvikings.housefinancemobile.GlobalObjects;
 import hoppingvikings.housefinancemobile.ItemType;
 import hoppingvikings.housefinancemobile.R;
 import hoppingvikings.housefinancemobile.WebService.UploadCallback;
+import hoppingvikings.housefinancemobile.WebService.WebHandler;
 
 /**
  * Created by iView on 16/08/2017.
@@ -216,7 +216,7 @@ public class EditPaymentActivity extends AppCompatActivity implements UploadCall
                         editedPayment.put("Created", new SimpleDateFormat("yyyy-MM-dd").format(editedDate));
                     }
 
-                    GlobalObjects.WebHandler.EditItem(EditPaymentActivity.this, editedPayment, EditPaymentActivity.this, ItemType.PAYMENT);
+                    WebHandler.Instance().EditItem(EditPaymentActivity.this, editedPayment, EditPaymentActivity.this, ItemType.PAYMENT);
 
                 } catch (Exception e)
                 {

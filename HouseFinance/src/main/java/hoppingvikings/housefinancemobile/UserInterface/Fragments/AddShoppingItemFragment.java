@@ -26,12 +26,12 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 
-import hoppingvikings.housefinancemobile.GlobalObjects;
 import hoppingvikings.housefinancemobile.ItemType;
 import hoppingvikings.housefinancemobile.R;
 import hoppingvikings.housefinancemobile.UserInterface.Activities.AddNewShoppingItemActivity;
 import hoppingvikings.housefinancemobile.UserInterface.Activities.SelectUsersActivity;
 import hoppingvikings.housefinancemobile.UserInterface.Fragments.Interfaces.ButtonPressedCallback;
+import hoppingvikings.housefinancemobile.WebService.WebHandler;
 
 import static android.app.Activity.RESULT_CANCELED;
 import static android.app.Activity.RESULT_OK;
@@ -248,7 +248,7 @@ public class AddShoppingItemFragment extends Fragment implements ButtonPressedCa
                     // Add the item to a file on the device
                     //GlobalObjects.WriteToFile(getContext(), newItem.toString());
 
-                    GlobalObjects.WebHandler.UploadNewItem(getContext(), newItem, _activity, ItemType.SHOPPING);
+                    WebHandler.Instance().UploadNewItem(getContext(), newItem, _activity, ItemType.SHOPPING);
                 } catch (JSONException je)
                 {
                     Snackbar.make(layout, "Failed to create Json", Snackbar.LENGTH_LONG).show();

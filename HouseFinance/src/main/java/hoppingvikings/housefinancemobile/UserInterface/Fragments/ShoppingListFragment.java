@@ -17,7 +17,6 @@ import android.view.ViewGroup;
 import java.util.ArrayList;
 import java.util.Date;
 
-import hoppingvikings.housefinancemobile.GlobalObjects;
 import hoppingvikings.housefinancemobile.MemoryRepositories.ShoppingMemoryRepository;
 import hoppingvikings.housefinancemobile.R;
 import hoppingvikings.housefinancemobile.UserInterface.Activities.AddNewShoppingItemActivity;
@@ -26,6 +25,7 @@ import hoppingvikings.housefinancemobile.UserInterface.Lists.ShoppingList.Shoppi
 import hoppingvikings.housefinancemobile.UserInterface.Items.ShoppingListObject;
 import hoppingvikings.housefinancemobile.UserInterface.MainActivity;
 import hoppingvikings.housefinancemobile.WebService.DownloadCallback;
+import hoppingvikings.housefinancemobile.WebService.WebHandler;
 
 import static android.app.Activity.RESULT_CANCELED;
 import static android.app.Activity.RESULT_OK;
@@ -52,7 +52,7 @@ public class ShoppingListFragment extends Fragment
     private Runnable contactWebsite = new Runnable() {
         @Override
         public void run() {
-            GlobalObjects.WebHandler.contactWebsiteShoppingItems(getContext(), ShoppingListFragment.this);
+            WebHandler.Instance().contactWebsiteShoppingItems(getContext(), ShoppingListFragment.this);
         }
     };
 
@@ -60,7 +60,7 @@ public class ShoppingListFragment extends Fragment
         @Override
         public void run() {
 
-            if(!GlobalObjects.WebHandler.IsDownloading())
+            if(!WebHandler.Instance().IsDownloading())
             {
                 ArrayList<ShoppingListObject> shoppingItems = ShoppingMemoryRepository.Instance().Get();
                 if (shoppingItems != null) {

@@ -20,7 +20,6 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.ArrayList;
 
-import hoppingvikings.housefinancemobile.GlobalObjects;
 import hoppingvikings.housefinancemobile.ItemType;
 import hoppingvikings.housefinancemobile.MemoryRepositories.BillMemoryRepository;
 import hoppingvikings.housefinancemobile.MemoryRepositories.ShoppingMemoryRepository;
@@ -34,6 +33,7 @@ public class WebHandler
 {
     private static final String WEB_APIV2_URL = "http://house.flave.co.uk/api/v2/";
 
+    private static WebHandler _instance;
     private boolean _downloading;
     private DownloadCallback _billListOwner;
     private DownloadDetailsCallback _billDetailsOwner;
@@ -43,6 +43,20 @@ public class WebHandler
     private UploadCallback _uploadOwner;
     private String _authToken = "";
     private boolean _debugging;
+
+    private WebHandler()
+    {}
+
+    public static WebHandler Instance()
+    {
+        if (_instance != null)
+        {
+            return _instance;
+        }
+
+        _instance = new WebHandler();
+        return _instance;
+    }
 
     public void SetAuthToken(Context context)
     {

@@ -28,6 +28,7 @@ import hoppingvikings.housefinancemobile.UserInterface.Fragments.Interfaces.Butt
 import hoppingvikings.housefinancemobile.UserInterface.Lists.ShoppingCartList.ShoppingCartAdapter;
 import hoppingvikings.housefinancemobile.UserInterface.Items.ShoppingCartItem;
 import hoppingvikings.housefinancemobile.WebService.DownloadPeopleCallback;
+import hoppingvikings.housefinancemobile.WebService.WebHandler;
 
 /**
  * Created by iView on 25/07/2017.
@@ -88,7 +89,7 @@ public class ShoppingCartFragment extends Fragment
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        GlobalObjects.WebHandler.RequestUsers(getContext(), this);
+        WebHandler.Instance().RequestUsers(getContext(), this);
         currentView = inflater.inflate(R.layout.fragment_shoppingcart, container, false);
         _activity = (AddNewShoppingItemActivity)getActivity();
         _activity.SetCallbackOwner(this);
@@ -130,7 +131,7 @@ public class ShoppingCartFragment extends Fragment
                 _activity.addToCartButton.setEnabled(false);
                 _activity.submitButton.setEnabled(false);
                 try {
-                    GlobalObjects.WebHandler.UploadNewItem(getContext(), new JSONObject(_activity._shoppingItems.get(0)), _activity, ItemType.SHOPPING);
+                    WebHandler.Instance().UploadNewItem(getContext(), new JSONObject(_activity._shoppingItems.get(0)), _activity, ItemType.SHOPPING);
                 } catch (Exception e)
                 {
 

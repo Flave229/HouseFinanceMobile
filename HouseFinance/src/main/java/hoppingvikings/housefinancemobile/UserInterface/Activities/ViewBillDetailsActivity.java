@@ -28,7 +28,6 @@ import org.json.JSONObject;
 import java.util.ArrayList;
 import java.util.Locale;
 
-import hoppingvikings.housefinancemobile.GlobalObjects;
 import hoppingvikings.housefinancemobile.ItemType;
 import hoppingvikings.housefinancemobile.MemoryRepositories.BillMemoryRepository;
 import hoppingvikings.housefinancemobile.R;
@@ -39,6 +38,7 @@ import hoppingvikings.housefinancemobile.UserInterface.PaymentsListAdapter;
 import hoppingvikings.housefinancemobile.WebService.DeleteItemCallback;
 import hoppingvikings.housefinancemobile.WebService.DownloadDetailsCallback;
 import hoppingvikings.housefinancemobile.WebService.UploadCallback;
+import hoppingvikings.housefinancemobile.WebService.WebHandler;
 
 /**
  * Created by iView on 06/07/2017.
@@ -70,7 +70,7 @@ public class ViewBillDetailsActivity extends AppCompatActivity
     private Runnable contactWebsite = new Runnable() {
         @Override
         public void run() {
-            GlobalObjects.WebHandler.RequestBillDetails(ViewBillDetailsActivity.this, ViewBillDetailsActivity.this, billID);
+            WebHandler.Instance().RequestBillDetails(ViewBillDetailsActivity.this, ViewBillDetailsActivity.this, billID);
         }
     };
 
@@ -232,7 +232,7 @@ public class ViewBillDetailsActivity extends AppCompatActivity
                         try {
                             JSONObject billidjson = new JSONObject();
                             billidjson.put("BillId", billID);
-                            GlobalObjects.WebHandler.DeleteItem(ViewBillDetailsActivity.this, ViewBillDetailsActivity.this, billidjson, ItemType.BILL);
+                            WebHandler.Instance().DeleteItem(ViewBillDetailsActivity.this, ViewBillDetailsActivity.this, billidjson, ItemType.BILL);
                         } catch (Exception e)
                         {
                             addPayment.show();

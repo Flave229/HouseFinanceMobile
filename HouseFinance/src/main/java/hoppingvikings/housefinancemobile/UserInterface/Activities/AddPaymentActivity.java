@@ -32,10 +32,10 @@ import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.Locale;
 
-import hoppingvikings.housefinancemobile.GlobalObjects;
 import hoppingvikings.housefinancemobile.ItemType;
 import hoppingvikings.housefinancemobile.R;
 import hoppingvikings.housefinancemobile.WebService.UploadCallback;
+import hoppingvikings.housefinancemobile.WebService.WebHandler;
 
 /**
  * Created by iView on 18/07/2017.
@@ -183,7 +183,7 @@ public class AddPaymentActivity extends AppCompatActivity implements UploadCallb
 
                             newPayment.put("PersonId", _selectedUserId);
 
-                            GlobalObjects.WebHandler.UploadNewItem(getApplicationContext(), newPayment, AddPaymentActivity.this, ItemType.PAYMENT);
+                            WebHandler.Instance().UploadNewItem(getApplicationContext(), newPayment, AddPaymentActivity.this, ItemType.PAYMENT);
                         } catch (Exception e)
                         {
                             Snackbar.make(layout, "Failed to create Json", Snackbar.LENGTH_LONG).show();

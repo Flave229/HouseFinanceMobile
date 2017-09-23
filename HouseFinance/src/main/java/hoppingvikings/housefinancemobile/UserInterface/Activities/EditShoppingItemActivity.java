@@ -25,12 +25,12 @@ import org.json.JSONObject;
 
 import java.util.ArrayList;
 
-import hoppingvikings.housefinancemobile.GlobalObjects;
 import hoppingvikings.housefinancemobile.ItemType;
 import hoppingvikings.housefinancemobile.MemoryRepositories.ShoppingMemoryRepository;
 import hoppingvikings.housefinancemobile.R;
 import hoppingvikings.housefinancemobile.UserInterface.Items.ShoppingListObject;
 import hoppingvikings.housefinancemobile.WebService.UploadCallback;
+import hoppingvikings.housefinancemobile.WebService.WebHandler;
 
 /**
  * Created by iView on 11/08/2017.
@@ -203,7 +203,7 @@ public class EditShoppingItemActivity extends AppCompatActivity implements Uploa
                         editedBill.put("ItemFor", people);
                     }
 
-                    GlobalObjects.WebHandler.EditItem(EditShoppingItemActivity.this, editedBill, EditShoppingItemActivity.this, ItemType.SHOPPING);
+                    WebHandler.Instance().EditItem(EditShoppingItemActivity.this, editedBill, EditShoppingItemActivity.this, ItemType.SHOPPING);
 
                 } catch (Exception e)
                 {

@@ -14,12 +14,12 @@ import org.json.JSONObject;
 import java.util.ArrayList;
 import java.util.Locale;
 
-import hoppingvikings.housefinancemobile.GlobalObjects;
 import hoppingvikings.housefinancemobile.ItemType;
 import hoppingvikings.housefinancemobile.R;
 import hoppingvikings.housefinancemobile.UserInterface.Items.BillObjectDetailedPayments;
 import hoppingvikings.housefinancemobile.WebService.DeleteItemCallback;
 import hoppingvikings.housefinancemobile.WebService.UploadCallback;
+import hoppingvikings.housefinancemobile.WebService.WebHandler;
 
 /**
  * Created by iView on 15/08/2017.
@@ -107,7 +107,7 @@ public class PaymentsListAdapter extends RecyclerView.Adapter<PaymentsListAdapte
                 try {
                     JSONObject paymentToDelete = new JSONObject();
                     paymentToDelete.put("PaymentId", item.PaymentID);
-                    GlobalObjects.WebHandler.DeleteItem(_context, PaymentsListAdapter.this, paymentToDelete, ItemType.PAYMENT);
+                    WebHandler.Instance().DeleteItem(_context, PaymentsListAdapter.this, paymentToDelete, ItemType.PAYMENT);
                 } catch (Exception e)
                 {
 

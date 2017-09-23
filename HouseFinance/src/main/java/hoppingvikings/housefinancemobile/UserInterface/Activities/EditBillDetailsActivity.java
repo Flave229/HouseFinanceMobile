@@ -37,16 +37,12 @@ import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.Locale;
 
-import hoppingvikings.housefinancemobile.GlobalObjects;
 import hoppingvikings.housefinancemobile.ItemType;
 import hoppingvikings.housefinancemobile.MemoryRepositories.BillMemoryRepository;
 import hoppingvikings.housefinancemobile.R;
 import hoppingvikings.housefinancemobile.UserInterface.Items.BillListObject;
 import hoppingvikings.housefinancemobile.WebService.UploadCallback;
-
-/**
- * Created by iView on 10/08/2017.
- */
+import hoppingvikings.housefinancemobile.WebService.WebHandler;
 
 public class EditBillDetailsActivity extends AppCompatActivity implements UploadCallback {
 
@@ -376,7 +372,7 @@ public class EditBillDetailsActivity extends AppCompatActivity implements Upload
                             editedBill.put("RecurringType", 0);
                     }
 
-                    GlobalObjects.WebHandler.EditItem(EditBillDetailsActivity.this, editedBill, EditBillDetailsActivity.this, ItemType.BILL);
+                    WebHandler.Instance().EditItem(EditBillDetailsActivity.this, editedBill, EditBillDetailsActivity.this, ItemType.BILL);
 
                 } catch (Exception e)
                 {
