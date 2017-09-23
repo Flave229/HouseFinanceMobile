@@ -13,7 +13,7 @@ import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.util.ArrayList;
 
-public class JsonFileIO
+public class FileIOHandler
 {
     public void WriteToFile(String fileName, String data)
     {
