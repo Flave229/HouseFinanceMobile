@@ -25,17 +25,12 @@ import hoppingvikings.housefinancemobile.R;
 import hoppingvikings.housefinancemobile.UserInterface.Items.ShoppingListObject;
 import hoppingvikings.housefinancemobile.WebService.CommunicationCallback;
 import hoppingvikings.housefinancemobile.WebService.RequestType;
-import hoppingvikings.housefinancemobile.WebService.UploadCallback;
 import hoppingvikings.housefinancemobile.WebService.WebHandler;
 
 import static android.content.Context.NOTIFICATION_SERVICE;
 
-/**
- * Created by Josh on 06/11/2016.
- */
-
 public class ShoppingListAdapter extends RecyclerView.Adapter<ShoppingListAdapter.CardViewHolder>
-            implements CommunicationCallback<String>, UploadCallback
+            implements CommunicationCallback
 {
     private static ShoppingItemClickedListener _listener;
 
@@ -238,7 +233,7 @@ public class ShoppingListAdapter extends RecyclerView.Adapter<ShoppingListAdapte
                                 man.cancel(_shoppingItems.get(cvh.getAdapterPosition()).Id);
                             } catch (Exception e)
                             {
-                                OnFailedUpload("");
+                                OnFail(RequestType.PATCH, "");
                             }
                         }
                     }
@@ -300,36 +295,35 @@ public class ShoppingListAdapter extends RecyclerView.Adapter<ShoppingListAdapte
     }
 
     @Override
-    public void OnSuccessfulUpload() {
-        completeAlreadyPressed = false;
-        _shoppingItems.get(selected).Purchased = !_shoppingItems.get(selected).Purchased;
-        notifyItemChanged(selected);
-    }
-
-    @Override
-    public void OnFailedUpload(String failReason) {
-        completeAlreadyPressed = false;
-        Toast.makeText(_context, "Failed to update shopping item.", Toast.LENGTH_SHORT).show();
-    }
-
-    @Override
-    public void OnSuccess(RequestType requestType, String s)
+    public void OnSuccess(RequestType requestType, Object s)
     {
-        if (requestType == RequestType.DELETE)
+        switch (requestType)
         {
-            Toast.makeText(_context, "Item deleted", Toast.LENGTH_SHORT).show();
-            _deletecallback.onItemDeleted();
+            case PATCH:
+                completeAlreadyPressed = false;
+                _shoppingItems.get(selected).Purchased = !_shoppingItems.get(selected).Purchased;
+                notifyItemChanged(selected);
+                break;
+            case DELETE:
+                Toast.makeText(_context, "Item deleted", Toast.LENGTH_SHORT).show();
+                _deletecallback.onItemDeleted();
+                break;
         }
     }
 
     @Override
     public void OnFail(RequestType requestType, String message)
     {
-        if (requestType == RequestType.DELETE)
+        switch (requestType)
         {
-            Toast.makeText(_context, "Failed to delete", Toast.LENGTH_SHORT).show();
-            _deletecallback.onItemDeleted();
+            case PATCH:
+                completeAlreadyPressed = false;
+                Toast.makeText(_context, "Failed to update shopping item.", Toast.LENGTH_SHORT).show();
+                break;
+            case DELETE:
+                Toast.makeText(_context, "Failed to delete", Toast.LENGTH_SHORT).show();
+                _deletecallback.onItemDeleted();
+                break;
         }
-
     }
 }

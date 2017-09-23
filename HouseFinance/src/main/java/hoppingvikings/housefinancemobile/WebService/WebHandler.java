@@ -40,7 +40,7 @@ public class WebHandler
     private CommunicationCallback _peopleDownloadOwner;
     private CommunicationCallback _shoppingListOwner;
     private CommunicationCallback _itemDeleteOwner;
-    private UploadCallback _uploadOwner;
+    private CommunicationCallback _uploadOwner;
     private String _authToken = "";
     private boolean _debugging;
 
@@ -201,7 +201,7 @@ public class WebHandler
         }
     }
 
-    public void UploadNewItem(Context context, JSONObject newItem, UploadCallback owner, ItemType itemType)
+    public void UploadNewItem(Context context, JSONObject newItem, CommunicationCallback owner, ItemType itemType)
     {
         _debugging = 0 != (context.getApplicationInfo().flags & ApplicationInfo.FLAG_DEBUGGABLE);
         _uploadOwner = owner;
@@ -226,18 +226,18 @@ public class WebHandler
                     break;
                 default:
                     _downloading = false;
-                    _uploadOwner.OnFailedUpload("Incorrect item type");
+                    _uploadOwner.OnFail(RequestType.POST, "Incorrect item type");
                     break;
             }
         }
         else
         {
             _downloading = false;
-            _uploadOwner.OnFailedUpload("No internet connection");
+            _uploadOwner.OnFail(RequestType.POST, "No internet connection");
         }
     }
 
-    public void EditItem(Context context, JSONObject editedItem, UploadCallback owner, ItemType itemType)
+    public void EditItem(Context context, JSONObject editedItem, CommunicationCallback owner, ItemType itemType)
     {
         _debugging = 0 != (context.getApplicationInfo().flags & ApplicationInfo.FLAG_DEBUGGABLE);
         _uploadOwner = owner;
@@ -263,14 +263,14 @@ public class WebHandler
                     break;
 
                 default:
-                    _uploadOwner.OnFailedUpload("Incorrect item type");
+                    _uploadOwner.OnFail(RequestType.PATCH, "Incorrect item type");
                     break;
             }
         }
         else
         {
             _downloading = false;
-            _uploadOwner.OnFailedUpload("No Internet Connection");
+            _uploadOwner.OnFail(RequestType.PATCH, "No Internet Connection");
         }
     }
 
@@ -446,11 +446,11 @@ public class WebHandler
         protected void onPostExecute(Boolean aBoolean) {
             if(aBoolean)
             {
-                _uploadOwner.OnSuccessfulUpload();
+                _uploadOwner.OnSuccess(RequestType.POST, null);
             }
             else
             {
-                _uploadOwner.OnFailedUpload("Failed to upload new Item. Please try again");
+                _uploadOwner.OnFail(RequestType.POST, "Failed to upload new Item. Please try again");
             }
         }
 
@@ -651,11 +651,11 @@ public class WebHandler
         protected void onPostExecute(Boolean aBoolean) {
             if(aBoolean)
             {
-                _uploadOwner.OnSuccessfulUpload();
+                _uploadOwner.OnSuccess(RequestType.PATCH, null);
             }
             else
             {
-                _uploadOwner.OnFailedUpload("Failed to edit item. Please try again");
+                _uploadOwner.OnFail(RequestType.PATCH, "Failed to edit item. Please try again");
             }
         }
     }

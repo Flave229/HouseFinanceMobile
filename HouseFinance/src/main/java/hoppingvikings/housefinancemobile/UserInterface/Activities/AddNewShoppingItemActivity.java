@@ -28,10 +28,11 @@ import hoppingvikings.housefinancemobile.FileIOHandler;
 import hoppingvikings.housefinancemobile.R;
 import hoppingvikings.housefinancemobile.UserInterface.Fragments.AddShoppingItemFragment;
 import hoppingvikings.housefinancemobile.UserInterface.Fragments.Interfaces.ButtonPressedCallback;
-import hoppingvikings.housefinancemobile.WebService.UploadCallback;
+import hoppingvikings.housefinancemobile.WebService.CommunicationCallback;
+import hoppingvikings.housefinancemobile.WebService.RequestType;
 import hoppingvikings.housefinancemobile.WebService.WebHandler;
 
-public class AddNewShoppingItemActivity extends AppCompatActivity implements UploadCallback {
+public class AddNewShoppingItemActivity extends AppCompatActivity implements CommunicationCallback {
 
     public Button submitButton;
     public Button addToCartButton;
@@ -178,14 +179,19 @@ public class AddNewShoppingItemActivity extends AppCompatActivity implements Upl
         submitButton.setEnabled(true);
     }
 
-    @Override
-    public void OnFailedUpload(String failReason) {
-        Snackbar.make(layout, failReason, Snackbar.LENGTH_LONG).show();
-        ReenableElements();
+    public void UploadNextItem()
+    {
+        try {
+            WebHandler.Instance().UploadNewItem(this, new JSONObject(_shoppingItems.get(0)), this, ItemType.SHOPPING);
+        } catch (Exception e)
+        {
+
+        }
     }
 
     @Override
-    public void OnSuccessfulUpload() {
+    public void OnSuccess(RequestType requestType, Object o)
+    {
         uploadProgress.setVisibility(View.VISIBLE);
         uploadProgress.setProgress(uploadProgress.getProgress() + progress);
         if(_shoppingItems.size() > 0)
@@ -203,14 +209,11 @@ public class AddNewShoppingItemActivity extends AppCompatActivity implements Upl
         finish();
     }
 
-    public void UploadNextItem()
+    @Override
+    public void OnFail(RequestType requestType, String message)
     {
-        try {
-            WebHandler.Instance().UploadNewItem(this, new JSONObject(_shoppingItems.get(0)), this, ItemType.SHOPPING);
-        } catch (Exception e)
-        {
-
-        }
+        Snackbar.make(layout, message, Snackbar.LENGTH_LONG).show();
+        ReenableElements();
     }
 
     private class LoadRecentItemsAsync extends AsyncTask<Void, Void, ArrayList<JSONObject>>

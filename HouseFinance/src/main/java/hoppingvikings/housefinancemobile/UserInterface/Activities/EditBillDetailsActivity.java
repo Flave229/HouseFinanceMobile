@@ -41,11 +41,12 @@ import hoppingvikings.housefinancemobile.ItemType;
 import hoppingvikings.housefinancemobile.Repositories.BillRepository;
 import hoppingvikings.housefinancemobile.R;
 import hoppingvikings.housefinancemobile.UserInterface.Items.BillListObject;
-import hoppingvikings.housefinancemobile.WebService.UploadCallback;
+import hoppingvikings.housefinancemobile.WebService.CommunicationCallback;
+import hoppingvikings.housefinancemobile.WebService.RequestType;
 import hoppingvikings.housefinancemobile.WebService.WebHandler;
 
-public class EditBillDetailsActivity extends AppCompatActivity implements UploadCallback {
-
+public class EditBillDetailsActivity extends AppCompatActivity implements CommunicationCallback
+{
     Button submitButton;
 
     CheckBox editName;
@@ -468,18 +469,6 @@ public class EditBillDetailsActivity extends AppCompatActivity implements Upload
     }
 
     @Override
-    public void OnSuccessfulUpload() {
-        Toast.makeText(getApplicationContext(), "Edit successfully uploaded", Toast.LENGTH_LONG).show();
-        setResult(RESULT_OK);
-        finish();
-    }
-
-    @Override
-    public void OnFailedUpload(String failReason) {
-        Snackbar.make(layout, failReason, Snackbar.LENGTH_LONG).show();
-    }
-
-    @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId())
         {
@@ -491,5 +480,19 @@ public class EditBillDetailsActivity extends AppCompatActivity implements Upload
                 return super.onOptionsItemSelected(item);
 
         }
+    }
+
+    @Override
+    public void OnSuccess(RequestType requestType, Object o)
+    {
+        Toast.makeText(getApplicationContext(), "Edit successfully uploaded", Toast.LENGTH_LONG).show();
+        setResult(RESULT_OK);
+        finish();
+    }
+
+    @Override
+    public void OnFail(RequestType requestType, String message)
+    {
+        Snackbar.make(layout, message, Snackbar.LENGTH_LONG).show();
     }
 }

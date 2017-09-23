@@ -33,11 +33,10 @@ import hoppingvikings.housefinancemobile.UserInterface.Items.BillObjectDetailedP
 import hoppingvikings.housefinancemobile.UserInterface.PaymentsListAdapter;
 import hoppingvikings.housefinancemobile.WebService.CommunicationCallback;
 import hoppingvikings.housefinancemobile.WebService.RequestType;
-import hoppingvikings.housefinancemobile.WebService.UploadCallback;
 import hoppingvikings.housefinancemobile.WebService.WebHandler;
 
 public class ViewBillDetailsActivity extends AppCompatActivity
-        implements CommunicationCallback, UploadCallback, PaymentsListAdapter.DeleteCallback, PaymentsListAdapter.EditPressedCallback
+        implements CommunicationCallback, PaymentsListAdapter.DeleteCallback, PaymentsListAdapter.EditPressedCallback
 {
     TextView billAmountText;
     TextView totalPaidText;
@@ -206,16 +205,6 @@ public class ViewBillDetailsActivity extends AppCompatActivity
     }
 
     @Override
-    public void OnSuccessfulUpload() {
-
-    }
-
-    @Override
-    public void OnFailedUpload(String failReason) {
-
-    }
-
-    @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         switch (resultCode)
@@ -237,7 +226,11 @@ public class ViewBillDetailsActivity extends AppCompatActivity
         switch (requestType)
         {
             case POST:
-                _currentBill = (BillObjectDetailed) result;
+                BillObjectDetailed billDetails = (BillObjectDetailed) result;
+                if (billDetails == null)
+                    return;
+
+                _currentBill = billDetails;
                 getSupportActionBar().setTitle("Bill Details");
                 getSupportActionBar().setSubtitle(_currentBill.name);
                 ViewBillDetailsActivity.this.billAmountText.setText("£" + String.format(Locale.getDefault(), "%.2f", Double.valueOf(_currentBill.amountDue)));

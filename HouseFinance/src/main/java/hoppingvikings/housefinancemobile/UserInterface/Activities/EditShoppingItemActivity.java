@@ -29,14 +29,11 @@ import hoppingvikings.housefinancemobile.ItemType;
 import hoppingvikings.housefinancemobile.Repositories.ShoppingRepository;
 import hoppingvikings.housefinancemobile.R;
 import hoppingvikings.housefinancemobile.UserInterface.Items.ShoppingListObject;
-import hoppingvikings.housefinancemobile.WebService.UploadCallback;
+import hoppingvikings.housefinancemobile.WebService.CommunicationCallback;
+import hoppingvikings.housefinancemobile.WebService.RequestType;
 import hoppingvikings.housefinancemobile.WebService.WebHandler;
 
-/**
- * Created by iView on 11/08/2017.
- */
-
-public class EditShoppingItemActivity extends AppCompatActivity implements UploadCallback {
+public class EditShoppingItemActivity extends AppCompatActivity implements CommunicationCallback {
 
     Button submitButton;
 
@@ -270,18 +267,6 @@ public class EditShoppingItemActivity extends AppCompatActivity implements Uploa
     }
 
     @Override
-    public void OnSuccessfulUpload() {
-        Toast.makeText(getApplicationContext(), "Edit successfully uploaded", Toast.LENGTH_LONG).show();
-        setResult(RESULT_OK);
-        finish();
-    }
-
-    @Override
-    public void OnFailedUpload(String failReason) {
-        Snackbar.make(layout, failReason, Snackbar.LENGTH_LONG).show();
-    }
-
-    @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId())
         {
@@ -293,5 +278,19 @@ public class EditShoppingItemActivity extends AppCompatActivity implements Uploa
                 return super.onOptionsItemSelected(item);
 
         }
+    }
+
+    @Override
+    public void OnSuccess(RequestType requestType, Object o)
+    {
+        Toast.makeText(getApplicationContext(), "Edit successfully uploaded", Toast.LENGTH_LONG).show();
+        setResult(RESULT_OK);
+        finish();
+    }
+
+    @Override
+    public void OnFail(RequestType requestType, String message)
+    {
+        Snackbar.make(layout, message, Snackbar.LENGTH_LONG).show();
     }
 }

@@ -39,14 +39,11 @@ import java.util.Locale;
 
 import hoppingvikings.housefinancemobile.ItemType;
 import hoppingvikings.housefinancemobile.R;
-import hoppingvikings.housefinancemobile.WebService.UploadCallback;
+import hoppingvikings.housefinancemobile.WebService.CommunicationCallback;
+import hoppingvikings.housefinancemobile.WebService.RequestType;
 import hoppingvikings.housefinancemobile.WebService.WebHandler;
 
-/**
- * Created by Josh on 11/02/2017.
- */
-
-public class AddNewBillActivity extends AppCompatActivity implements UploadCallback {
+public class AddNewBillActivity extends AppCompatActivity implements CommunicationCallback {
 
     Button submitButton;
     TextInputLayout billNameEntry;
@@ -388,15 +385,17 @@ public class AddNewBillActivity extends AppCompatActivity implements UploadCallb
     }
 
     @Override
-    public void OnSuccessfulUpload() {
+    public void OnSuccess(RequestType requestType, Object o)
+    {
         Toast.makeText(getApplicationContext(), "Bill successfully uploaded", Toast.LENGTH_LONG).show();
         setResult(RESULT_OK);
         finish();
     }
 
     @Override
-    public void OnFailedUpload(String failReason) {
-        Snackbar.make(layout, failReason, Snackbar.LENGTH_LONG).show();
+    public void OnFail(RequestType requestType, String message)
+    {
+        Snackbar.make(layout, message, Snackbar.LENGTH_LONG).show();
         ReenableElements();
     }
 }

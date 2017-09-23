@@ -34,14 +34,11 @@ import java.util.Locale;
 
 import hoppingvikings.housefinancemobile.ItemType;
 import hoppingvikings.housefinancemobile.R;
-import hoppingvikings.housefinancemobile.WebService.UploadCallback;
+import hoppingvikings.housefinancemobile.WebService.CommunicationCallback;
+import hoppingvikings.housefinancemobile.WebService.RequestType;
 import hoppingvikings.housefinancemobile.WebService.WebHandler;
 
-/**
- * Created by iView on 18/07/2017.
- */
-
-public class AddPaymentActivity extends AppCompatActivity implements UploadCallback {
+public class AddPaymentActivity extends AppCompatActivity implements CommunicationCallback {
 
     TextView billName;
     Button submitButton;
@@ -301,19 +298,6 @@ public class AddPaymentActivity extends AppCompatActivity implements UploadCallb
     }
 
     @Override
-    public void OnFailedUpload(String failReason) {
-        Snackbar.make(layout, failReason, Snackbar.LENGTH_LONG).show();
-        ReenableElements();
-    }
-
-    @Override
-    public void OnSuccessfulUpload() {
-        Toast.makeText(getApplicationContext(), "Payment added successfully", Toast.LENGTH_LONG).show();
-        setResult(RESULT_OK);
-        finish();
-    }
-
-    @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         switch (resultCode)
@@ -332,5 +316,20 @@ public class AddPaymentActivity extends AppCompatActivity implements UploadCallb
 
                 break;
         }
+    }
+
+    @Override
+    public void OnSuccess(RequestType requestType, Object o)
+    {
+        Toast.makeText(getApplicationContext(), "Payment added successfully", Toast.LENGTH_LONG).show();
+        setResult(RESULT_OK);
+        finish();
+    }
+
+    @Override
+    public void OnFail(RequestType requestType, String message)
+    {
+        Snackbar.make(layout, message, Snackbar.LENGTH_LONG).show();
+        ReenableElements();
     }
 }
