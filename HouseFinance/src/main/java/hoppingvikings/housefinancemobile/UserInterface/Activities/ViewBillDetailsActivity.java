@@ -29,7 +29,7 @@ import java.util.ArrayList;
 import java.util.Locale;
 
 import hoppingvikings.housefinancemobile.ItemType;
-import hoppingvikings.housefinancemobile.MemoryRepositories.BillMemoryRepository;
+import hoppingvikings.housefinancemobile.Repositories.BillRepository;
 import hoppingvikings.housefinancemobile.R;
 import hoppingvikings.housefinancemobile.UserInterface.Items.BillListObject;
 import hoppingvikings.housefinancemobile.UserInterface.Items.BillObjectDetailed;
@@ -115,7 +115,7 @@ public class ViewBillDetailsActivity extends AppCompatActivity
         addPayment.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                BillListObject bill = BillMemoryRepository.Instance().GetFromId(_currentBill.id);
+                BillListObject bill = BillRepository.Instance().GetFromId(_currentBill.id);
                 Intent i = new Intent(ViewBillDetailsActivity.this, AddPaymentActivity.class);
                 i.putExtra("bill_id", _currentBill.id);
                 i.putExtra("bill_name", _currentBill.name);

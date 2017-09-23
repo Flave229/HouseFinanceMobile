@@ -16,7 +16,7 @@ import android.view.ViewGroup;
 
 import java.util.ArrayList;
 
-import hoppingvikings.housefinancemobile.MemoryRepositories.BillMemoryRepository;
+import hoppingvikings.housefinancemobile.Repositories.BillRepository;
 import hoppingvikings.housefinancemobile.R;
 import hoppingvikings.housefinancemobile.UserInterface.Activities.AddNewBillActivity;
 import hoppingvikings.housefinancemobile.UserInterface.Items.BillListObjectPeople;
@@ -61,7 +61,7 @@ public class BillsFragment extends Fragment
         @Override
         public void run() {
             if(!WebHandler.Instance().IsDownloading()) {
-                BillMemoryRepository billRepository = BillMemoryRepository.Instance();
+                BillRepository billRepository = BillRepository.Instance();
                 if (billRepository.Get() != null) {
                     if(_cards != null) {
                         _cards.clear();
@@ -123,7 +123,7 @@ public class BillsFragment extends Fragment
         _recyclerView = (RecyclerView) view.findViewById(R.id.recycler_view);
         _recyclerView.setHasFixedSize(true);
 
-        ArrayList<BillListObject> bills = BillMemoryRepository.Instance().Get();
+        ArrayList<BillListObject> bills = BillRepository.Instance().Get();
         _cards = new ArrayList<>();
         if(bills != null && bills.size() != 0)
         {

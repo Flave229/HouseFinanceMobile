@@ -21,8 +21,8 @@ import java.net.URL;
 import java.util.ArrayList;
 
 import hoppingvikings.housefinancemobile.ItemType;
-import hoppingvikings.housefinancemobile.MemoryRepositories.BillMemoryRepository;
-import hoppingvikings.housefinancemobile.MemoryRepositories.ShoppingMemoryRepository;
+import hoppingvikings.housefinancemobile.Repositories.BillRepository;
+import hoppingvikings.housefinancemobile.Repositories.ShoppingRepository;
 import hoppingvikings.housefinancemobile.Person;
 import hoppingvikings.housefinancemobile.R;
 import hoppingvikings.housefinancemobile.UserInterface.Items.BillListObject;
@@ -277,7 +277,7 @@ public class WebHandler
                         bills.add(bill);
                     }
 
-                    BillMemoryRepository.Instance().Set(bills);
+                    BillRepository.Instance().Set(bills);
                     _downloading = false;
 
                     _billListOwner.OnSuccessfulDownload();
@@ -305,7 +305,7 @@ public class WebHandler
                         item = new ShoppingListObject(shoppingItem);
                         items.add(item);
                     }
-                    ShoppingMemoryRepository.Instance().Set(items);
+                    ShoppingRepository.Instance().Set(items);
 
                     _downloading = false;
                     _shoppingListOwner.OnSuccessfulDownload();

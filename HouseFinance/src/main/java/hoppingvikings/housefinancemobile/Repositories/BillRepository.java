@@ -1,25 +1,25 @@
-package hoppingvikings.housefinancemobile.MemoryRepositories;
+package hoppingvikings.housefinancemobile.Repositories;
 
 import java.util.ArrayList;
 
 import hoppingvikings.housefinancemobile.UserInterface.Items.BillListObject;
 
-public class BillMemoryRepository
+public class BillRepository
 {
-    private static BillMemoryRepository _instance;
+    private static BillRepository _instance;
     private ArrayList<BillListObject> _bills;
 
-    private BillMemoryRepository()
+    private BillRepository()
     {
         _bills = new ArrayList<>();
     }
 
-    public static BillMemoryRepository Instance()
+    public static BillRepository Instance()
     {
         if (_instance != null)
             return _instance;
 
-        _instance = new BillMemoryRepository();
+        _instance = new BillRepository();
         return _instance;
     }
 

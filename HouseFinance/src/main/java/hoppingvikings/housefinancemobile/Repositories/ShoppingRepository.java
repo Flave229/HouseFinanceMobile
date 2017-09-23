@@ -1,25 +1,25 @@
-package hoppingvikings.housefinancemobile.MemoryRepositories;
+package hoppingvikings.housefinancemobile.Repositories;
 
 import java.util.ArrayList;
 
 import hoppingvikings.housefinancemobile.UserInterface.Items.ShoppingListObject;
 
-public class ShoppingMemoryRepository
+public class ShoppingRepository
 {
-    private static ShoppingMemoryRepository _instance;
+    private static ShoppingRepository _instance;
     private ArrayList<ShoppingListObject> _shoppingItems = new ArrayList<>();
 
-    private ShoppingMemoryRepository()
+    private ShoppingRepository()
     {
 
     }
 
-    public static ShoppingMemoryRepository Instance()
+    public static ShoppingRepository Instance()
     {
         if (_instance != null)
             return _instance;
 
-        _instance = new ShoppingMemoryRepository();
+        _instance = new ShoppingRepository();
         return _instance;
     }
 
