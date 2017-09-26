@@ -56,32 +56,24 @@ public class ShoppingListFragment extends Fragment
     private Runnable updateList = new Runnable() {
         @Override
         public void run() {
-
-            if(!WebHandler.Instance().IsDownloading())
-            {
-                ArrayList<ShoppingListObject> shoppingItems = ShoppingRepository.Instance().Get();
-                if (shoppingItems != null) {
-                    if(items != null)
-                        items.clear();
-                    else
-                        items = new ArrayList<>();
-
-                    items.addAll(shoppingItems);
-                    adapter.addAll(items);
-
-                    if (adapter.getItemCount() != items.size())
-                        _handler.post(contactWebsite);
-                    else
-                        swipeRefreshLayout.setRefreshing(false);
-                }
+            ArrayList<ShoppingListObject> shoppingItems = ShoppingRepository.Instance().Get();
+            if (shoppingItems != null) {
+                if(items != null)
+                    items.clear();
                 else
-                {
+                    items = new ArrayList<>();
+
+                items.addAll(shoppingItems);
+                adapter.addAll(items);
+
+                if (adapter.getItemCount() != items.size())
                     _handler.post(contactWebsite);
-                }
+                else
+                    swipeRefreshLayout.setRefreshing(false);
             }
             else
             {
-                _handler.postDelayed(this, 3000);
+                _handler.post(contactWebsite);
             }
         }
     };

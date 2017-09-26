@@ -27,7 +27,6 @@ import hoppingvikings.housefinancemobile.UserInterface.Items.ShoppingListObject;
 public class WebHandler
 {
     private static WebHandler _instance;
-    private boolean _downloading;
     private String _authToken = "";
 
     private WebHandler()
@@ -63,7 +62,6 @@ public class WebHandler
 
     public void contactWebsiteBills(Context context, final CommunicationCallback callback)
     {
-        _downloading = true;
         ConnectivityManager connMgr = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
         NetworkInfo networkInfo = connMgr.getActiveNetworkInfo();
 
@@ -80,14 +78,12 @@ public class WebHandler
         }
         else
         {
-            _downloading = false;
             callback.OnFail(RequestType.GET, "No internet connection");
         }
     }
 
     public void RequestBillDetails(Context context, final CommunicationCallback callback, final int billId)
     {
-        _downloading = true;
         ConnectivityManager connMgr = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
         NetworkInfo networkInfo = connMgr.getActiveNetworkInfo();
 
@@ -117,14 +113,12 @@ public class WebHandler
         }
         else
         {
-            _downloading = false;
             callback.OnFail(RequestType.GET, "No Internet Connection");
         }
     }
 
     public void RequestUsers(Context context, final CommunicationCallback callback)
     {
-        _downloading = true;
         ConnectivityManager connMgr = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
         NetworkInfo networkInfo = connMgr.getActiveNetworkInfo();
 
@@ -142,14 +136,12 @@ public class WebHandler
         }
         else
         {
-            _downloading = false;
             callback.OnFail(RequestType.GET, "No Internet Connection");
         }
     }
 
     public void DeleteItem(Context context, final CommunicationCallback callback, final JSONObject itemJson, final ItemType itemType)
     {
-        _downloading = true;
         ConnectivityManager connMgr = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
         NetworkInfo networkInfo = connMgr.getActiveNetworkInfo();
 
@@ -167,14 +159,12 @@ public class WebHandler
         }
         else
         {
-            _downloading = false;
             callback.OnFail(RequestType.DELETE, "No Internet Connection");
         }
     }
 
     public void UploadNewItem(Context context, final JSONObject newItem, final CommunicationCallback callback, final ItemType itemType)
     {
-        _downloading = true;
 
         ConnectivityManager connMgr = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
         NetworkInfo networkInfo = connMgr.getActiveNetworkInfo();
@@ -193,7 +183,6 @@ public class WebHandler
         }
         else
         {
-            _downloading = false;
             callback.OnFail(RequestType.POST, "No internet connection");
         }
     }
@@ -218,14 +207,12 @@ public class WebHandler
         }
         else
         {
-            _downloading = false;
             callback.OnFail(RequestType.PATCH, "No Internet Connection");
         }
     }
 
     public void contactWebsiteShoppingItems(Context context, final CommunicationCallback callback)
     {
-        _downloading = true;
         ConnectivityManager connMgr = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
         NetworkInfo networkInfo = connMgr.getActiveNetworkInfo();
 
@@ -242,7 +229,6 @@ public class WebHandler
         }
         else
         {
-            _downloading = false;
             callback.OnFail(RequestType.GET, "No internet connection");
         }
     }
@@ -266,16 +252,13 @@ public class WebHandler
                     }
 
                     BillRepository.Instance().Set(bills);
-                    _downloading = false;
 
                     result.Callback.OnSuccess(RequestType.GET, null);
 
                 } catch (JSONException je) {
                     je.printStackTrace();
-                    _downloading = false;
                     result.Callback.OnFail(RequestType.GET, "Failed to parse Bill list");
                 } catch(Exception e) {
-                    _downloading = false;
                     result.Callback.OnFail(RequestType.GET, "Unknown Error in Bill list download");
                 }
                 break;
@@ -295,15 +278,12 @@ public class WebHandler
                     }
                     ShoppingRepository.Instance().Set(items);
 
-                    _downloading = false;
                     result.Callback.OnSuccess(RequestType.GET, null);
 
                 } catch (JSONException je) {
                     je.printStackTrace();
-                    _downloading = false;
                     result.Callback.OnFail(RequestType.GET, "Failed to parse Shopping list");
                 } catch(Exception e) {
-                    _downloading = false;
                     result.Callback.OnFail(RequestType.GET, "Unknown Error in Shopping List download");
                 }
                 break;
@@ -331,13 +311,11 @@ public class WebHandler
                 } catch (JSONException je)
                 {
                     je.printStackTrace();
-                    _downloading = false;
                     result.Callback.OnFail(RequestType.GET, "Failed to parse Shopping list");
                 } catch (Exception e)
                 {
 
                 }
-                _downloading = false;
 
                 break;
 
@@ -351,19 +329,16 @@ public class WebHandler
                 } catch (JSONException e)
                 {
                     e.printStackTrace();
-                    _downloading = false;
                     result.Callback.OnFail(RequestType.POST, "Failed to parse Detailed Bill");
                     return;
                 }
                 catch (Exception e)
                 {
                     e.printStackTrace();
-                    _downloading = false;
                     result.Callback.OnFail(RequestType.POST, "Unknown error in Detailed Bill Download");
                     return;
                 }
 
-                _downloading = false;
                 result.Callback.OnSuccess(RequestType.POST, detailedBill);
                 break;
             default:
@@ -387,13 +362,7 @@ public class WebHandler
                         result.Callback.OnFail(result.RequestTypeData, errorMessage);
                     }
                 }
-                _downloading = false;
                 break;
         }
-    }
-
-    public boolean IsDownloading()
-    {
-        return _downloading;
     }
 }

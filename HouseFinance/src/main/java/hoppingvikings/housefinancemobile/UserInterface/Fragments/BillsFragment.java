@@ -57,35 +57,28 @@ public class BillsFragment extends Fragment
     private Runnable updateList = new Runnable() {
         @Override
         public void run() {
-            if(!WebHandler.Instance().IsDownloading()) {
-                BillRepository billRepository = BillRepository.Instance();
-                if (billRepository.Get() != null) {
-                    if(_cards != null) {
-                        _cards.clear();
-                        _cards.addAll(billRepository.Get());
-                        _adapter.AddAll(_cards);
-                    }
-                    else {
-                        _cards = new ArrayList<>();
-                        _cards.addAll(billRepository.Get());
-                        _adapter.AddAll(_cards);
-                    }
+            BillRepository billRepository = BillRepository.Instance();
+            if (billRepository.Get() != null) {
+                if(_cards != null) {
+                    _cards.clear();
+                    _cards.addAll(billRepository.Get());
+                    _adapter.AddAll(_cards);
+                }
+                else {
+                    _cards = new ArrayList<>();
+                    _cards.addAll(billRepository.Get());
+                    _adapter.AddAll(_cards);
+                }
 
-                    if (_adapter.getItemCount() != _cards.size()) {
-                        _handler.post(contactWebsite);
-                    }
-                    else {
-                        _swipeRefreshLayout.setRefreshing(false);
-
-                    }
-                } else {
+                if (_adapter.getItemCount() != _cards.size()) {
                     _handler.post(contactWebsite);
                 }
-            }
-            else
-            {
-                // If we are already trying to talk to the website, wait 3 seconds before trying again
-                _handler.postDelayed(this, 3000);
+                else {
+                    _swipeRefreshLayout.setRefreshing(false);
+
+                }
+            } else {
+                _handler.post(contactWebsite);
             }
         }
     };
