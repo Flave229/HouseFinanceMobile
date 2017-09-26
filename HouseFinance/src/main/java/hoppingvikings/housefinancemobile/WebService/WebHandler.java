@@ -1,7 +1,6 @@
 package hoppingvikings.housefinancemobile.WebService;
 
 import android.content.Context;
-import android.content.pm.ApplicationInfo;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.AsyncTask;
@@ -12,12 +11,8 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.BufferedReader;
-import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.io.OutputStream;
-import java.net.HttpURLConnection;
-import java.net.URL;
 import java.util.ArrayList;
 
 import hoppingvikings.housefinancemobile.ItemType;
@@ -31,14 +26,9 @@ import hoppingvikings.housefinancemobile.UserInterface.Items.ShoppingListObject;
 
 public class WebHandler
 {
-    private static final String WEB_APIV2_URL = "http://house.flave.co.uk/api/v2/";
-
     private static WebHandler _instance;
     private boolean _downloading;
-    private CommunicationCallback _itemDeleteOwner;
-    private CommunicationCallback _uploadOwner;
     private String _authToken = "";
-    private boolean _debugging;
 
     private WebHandler()
     {}
@@ -46,9 +36,7 @@ public class WebHandler
     public static WebHandler Instance()
     {
         if (_instance != null)
-        {
             return _instance;
-        }
 
         _instance = new WebHandler();
         return _instance;
@@ -75,7 +63,6 @@ public class WebHandler
 
     public void contactWebsiteBills(Context context, final CommunicationCallback callback)
     {
-        _debugging = 0 != (context.getApplicationInfo().flags & ApplicationInfo.FLAG_DEBUGGABLE);
         _downloading = true;
         ConnectivityManager connMgr = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
         NetworkInfo networkInfo = connMgr.getActiveNetworkInfo();
@@ -100,7 +87,6 @@ public class WebHandler
 
     public void RequestBillDetails(Context context, final CommunicationCallback callback, final int billId)
     {
-        _debugging = 0 != (context.getApplicationInfo().flags & ApplicationInfo.FLAG_DEBUGGABLE);
         _downloading = true;
         ConnectivityManager connMgr = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
         NetworkInfo networkInfo = connMgr.getActiveNetworkInfo();
@@ -128,7 +114,6 @@ public class WebHandler
             {
                 callback.OnFail(RequestType.GET, "Failed to create JSON for Bill Details");
             }
-
         }
         else
         {
@@ -139,7 +124,6 @@ public class WebHandler
 
     public void RequestUsers(Context context, final CommunicationCallback callback)
     {
-        _debugging = 0 != (context.getApplicationInfo().flags & ApplicationInfo.FLAG_DEBUGGABLE);
         _downloading = true;
         ConnectivityManager connMgr = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
         NetworkInfo networkInfo = connMgr.getActiveNetworkInfo();
@@ -165,8 +149,6 @@ public class WebHandler
 
     public void DeleteItem(Context context, final CommunicationCallback callback, final JSONObject itemJson, final ItemType itemType)
     {
-        _debugging = 0 != (context.getApplicationInfo().flags & ApplicationInfo.FLAG_DEBUGGABLE);
-        _itemDeleteOwner = callback;
         _downloading = true;
         ConnectivityManager connMgr = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
         NetworkInfo networkInfo = connMgr.getActiveNetworkInfo();
@@ -186,14 +168,12 @@ public class WebHandler
         else
         {
             _downloading = false;
-            _itemDeleteOwner.OnFail(RequestType.DELETE, "No Internet Connection");
+            callback.OnFail(RequestType.DELETE, "No Internet Connection");
         }
     }
 
     public void UploadNewItem(Context context, final JSONObject newItem, final CommunicationCallback callback, final ItemType itemType)
     {
-        _debugging = 0 != (context.getApplicationInfo().flags & ApplicationInfo.FLAG_DEBUGGABLE);
-        _uploadOwner = callback;
         _downloading = true;
 
         ConnectivityManager connMgr = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
@@ -214,15 +194,12 @@ public class WebHandler
         else
         {
             _downloading = false;
-            _uploadOwner.OnFail(RequestType.POST, "No internet connection");
+            callback.OnFail(RequestType.POST, "No internet connection");
         }
     }
 
     public void EditItem(Context context, final JSONObject editedItem, final CommunicationCallback callback, final ItemType itemType)
     {
-        _debugging = 0 != (context.getApplicationInfo().flags & ApplicationInfo.FLAG_DEBUGGABLE);
-        _uploadOwner = callback;
-        String editedItemString = editedItem.toString();
 
         ConnectivityManager connMgr = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
         NetworkInfo networkInfo = connMgr.getActiveNetworkInfo();
@@ -242,13 +219,12 @@ public class WebHandler
         else
         {
             _downloading = false;
-            _uploadOwner.OnFail(RequestType.PATCH, "No Internet Connection");
+            callback.OnFail(RequestType.PATCH, "No Internet Connection");
         }
     }
 
     public void contactWebsiteShoppingItems(Context context, final CommunicationCallback callback)
     {
-        _debugging = 0 != (context.getApplicationInfo().flags & ApplicationInfo.FLAG_DEBUGGABLE);
         _downloading = true;
         ConnectivityManager connMgr = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
         NetworkInfo networkInfo = connMgr.getActiveNetworkInfo();
