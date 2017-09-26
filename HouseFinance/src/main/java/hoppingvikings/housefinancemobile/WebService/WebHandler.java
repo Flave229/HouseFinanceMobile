@@ -218,10 +218,10 @@ public class WebHandler
         }
     }
 
-    public void EditItem(Context context, JSONObject editedItem, CommunicationCallback owner, ItemType itemType)
+    public void EditItem(Context context, final JSONObject editedItem, final CommunicationCallback callback, final ItemType itemType)
     {
         _debugging = 0 != (context.getApplicationInfo().flags & ApplicationInfo.FLAG_DEBUGGABLE);
-        _uploadOwner = owner;
+        _uploadOwner = callback;
         String editedItemString = editedItem.toString();
 
         ConnectivityManager connMgr = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
@@ -229,24 +229,15 @@ public class WebHandler
 
         if(networkInfo != null && networkInfo.isConnected())
         {
-            switch (itemType)
-            {
-                case BILL:
-                    new EditItem().execute(WEB_APIV2_URL + "Bills/Update", editedItemString);
-                    break;
-
-                case SHOPPING:
-                    new EditItem().execute(WEB_APIV2_URL + "Shopping/", editedItemString);
-                    break;
-
-                case PAYMENT:
-                    new EditItem().execute(WEB_APIV2_URL + "Bills/Payments", editedItemString);
-                    break;
-
-                default:
-                    _uploadOwner.OnFail(RequestType.PATCH, "Incorrect item type");
-                    break;
-            }
+            CommunicationRequest request = new CommunicationRequest()
+            {{
+                ItemTypeData = itemType;
+                RequestTypeData = RequestType.PATCH;
+                RequestBody = String.valueOf(editedItem);
+                Owner = WebHandler.this;
+                Callback = callback;
+            }};
+            new WebService(_authToken).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, request);
         }
         else
         {
@@ -428,81 +419,5 @@ public class WebHandler
     public boolean IsDownloading()
     {
         return _downloading;
-    }
-
-    private class EditItem extends AsyncTask<String, Void, Boolean>
-    {
-        @Override
-        protected Boolean doInBackground(String... params) {
-            try {
-                return SendEditRequest(params[0], params[1]);
-            } catch (Exception e)
-            {
-                return false;
-            }
-        }
-
-        private boolean SendEditRequest(String weburl, String editeditemjson) throws IOException
-        {
-            JSONObject returnJson;
-            URL url = new URL(weburl);
-
-            HttpURLConnection connection = (HttpURLConnection) url.openConnection();
-            try {
-                connection.setRequestMethod("PATCH");
-                connection.setRequestProperty("Authorization", _authToken);
-                connection.setRequestProperty("Content-Type", "application/json; charset=UTF-8");
-                connection.setConnectTimeout(15000);
-                connection.setDoInput(true);
-                connection.setDoOutput(true);
-                connection.setChunkedStreamingMode(0);
-
-                OutputStream out = connection.getOutputStream();
-                out.write(editeditemjson.getBytes("UTF-8"));
-                out.close();
-
-                BufferedReader serverAnswer = new BufferedReader(new InputStreamReader(connection.getInputStream()));
-                String line;
-                String returnmessage = "";
-                while ((line = serverAnswer.readLine()) != null)
-                {
-                    returnmessage += line;
-                }
-
-                serverAnswer.close();
-
-                returnJson = new JSONObject(returnmessage);
-
-                if(returnJson.has("hasError"))
-                {
-                    if(returnJson.getBoolean("hasError"))
-                    {
-                        Log.e("Error", returnJson.getJSONObject("error").getString("message"));
-                        return false;
-                    }
-                }
-
-            } catch (Exception e)
-            {
-                Log.e("Error", "Problem editing item: " + e.getMessage());
-                return false;
-            }
-            finally {
-                connection.disconnect();
-            }
-            return true;
-        }
-
-        @Override
-        protected void onPostExecute(Boolean aBoolean) {
-            if(aBoolean)
-            {
-                _uploadOwner.OnSuccess(RequestType.PATCH, null);
-            }
-            else
-            {
-                _uploadOwner.OnFail(RequestType.PATCH, "Failed to edit item. Please try again");
-            }
-        }
     }
 }

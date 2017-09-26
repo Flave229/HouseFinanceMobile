@@ -90,6 +90,8 @@ public class WebService extends AsyncTask<CommunicationRequest, Void, Communicat
                     subEndpoint += "/Add";
                 else if (_request.RequestTypeData == RequestType.DELETE)
                     subEndpoint += "/Delete";
+                else if (_request.RequestTypeData == RequestType.PATCH)
+                    subEndpoint += "/Update";
                 break;
             case BILL_DETAILED:
                 subEndpoint = "Bills";
@@ -110,7 +112,8 @@ public class WebService extends AsyncTask<CommunicationRequest, Void, Communicat
         URL url = new URL(WEB_APIV2_URL + subEndpoint);
         HttpURLConnection connection = (HttpURLConnection) url.openConnection();
 
-        try {
+        try
+        {
             connection.setReadTimeout(15000);
             connection.setConnectTimeout(45000);
             connection.setDoInput(true);
@@ -118,28 +121,23 @@ public class WebService extends AsyncTask<CommunicationRequest, Void, Communicat
 
             connection.setRequestMethod(_request.RequestTypeData.toString());
 
-            switch (_request.RequestTypeData)
+            if (_request.RequestTypeData != RequestType.GET)
             {
-                case POST:
-                case DELETE:
-                    connection.setRequestProperty("Content-Type", "application/json; charset=UTF-8");
-                    connection.setDoOutput(true);
-                    OutputStream out = connection.getOutputStream();
-                    out.write(_request.RequestBody.getBytes("UTF-8"));
-                    out.close();
-                    break;
+                connection.setRequestProperty("Content-Type", "application/json; charset=UTF-8");
+                connection.setDoOutput(true);
+                OutputStream out = connection.getOutputStream();
+                out.write(_request.RequestBody.getBytes("UTF-8"));
+                out.close();
             }
 
             final InputStream input = connection.getInputStream();
 
-            CommunicationResponse response = new CommunicationResponse()
+            return new CommunicationResponse()
             {{
                 Response = new JSONObject(ReadInputStream(input));
                 Callback = _request.Callback;
                 RequestTypeData = _request.RequestTypeData;
             }};
-
-            return response;
         }
         catch (JSONException e)
         { }
