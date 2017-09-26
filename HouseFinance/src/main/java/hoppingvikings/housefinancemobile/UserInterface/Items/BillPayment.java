@@ -7,7 +7,7 @@ import java.util.Locale;
 
 import hoppingvikings.housefinancemobile.Person;
 
-public class BillObjectDetailedPayments
+public class BillPayment
 {
     public int BillID = 0;
     public String PaymentID = "";
@@ -17,7 +17,7 @@ public class BillObjectDetailedPayments
 
     private SimpleDateFormat _dateFormat = new SimpleDateFormat("yyyy-MM-dd", Locale.UK);
 
-    public BillObjectDetailedPayments(JSONObject paymentObject, int billID)
+    public BillPayment(JSONObject paymentObject, int billID)
     {
         try
         {

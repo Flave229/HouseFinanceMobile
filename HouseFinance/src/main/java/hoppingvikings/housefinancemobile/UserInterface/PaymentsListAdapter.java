@@ -16,7 +16,7 @@ import java.util.Locale;
 
 import hoppingvikings.housefinancemobile.ItemType;
 import hoppingvikings.housefinancemobile.R;
-import hoppingvikings.housefinancemobile.UserInterface.Items.BillObjectDetailedPayments;
+import hoppingvikings.housefinancemobile.UserInterface.Items.BillPayment;
 import hoppingvikings.housefinancemobile.WebService.CommunicationCallback;
 import hoppingvikings.housefinancemobile.WebService.RequestType;
 import hoppingvikings.housefinancemobile.WebService.WebHandler;
@@ -34,7 +34,7 @@ public class PaymentsListAdapter extends RecyclerView.Adapter<PaymentsListAdapte
 
     public interface EditPressedCallback
     {
-        void onEditPressed(BillObjectDetailedPayments item);
+        void onEditPressed(BillPayment item);
     }
 
     public static class CardViewHolder extends RecyclerView.ViewHolder
@@ -58,7 +58,7 @@ public class PaymentsListAdapter extends RecyclerView.Adapter<PaymentsListAdapte
         }
     }
 
-    ArrayList<BillObjectDetailedPayments> _payments = new ArrayList<>();
+    ArrayList<BillPayment> _payments = new ArrayList<>();
     Context _context;
 
     public void SetDeleteCallback(DeleteCallback owner)
@@ -71,7 +71,7 @@ public class PaymentsListAdapter extends RecyclerView.Adapter<PaymentsListAdapte
         _editCallback = owner;
     }
 
-    public PaymentsListAdapter(ArrayList<BillObjectDetailedPayments> payments, Context context)
+    public PaymentsListAdapter(ArrayList<BillPayment> payments, Context context)
     {
         _payments.addAll(payments);
         _context = context;
@@ -90,7 +90,7 @@ public class PaymentsListAdapter extends RecyclerView.Adapter<PaymentsListAdapte
 
     @Override
     public void onBindViewHolder(CardViewHolder holder, int position) {
-        final BillObjectDetailedPayments item = _payments.get(position);
+        final BillPayment item = _payments.get(position);
         holder.paymentName.setText(item.Person.FirstName + " " + item.Person.Surname);
         holder.paymentDate.setText("Date: " + item.Date);
         holder.paymentAmount.setText("Paid: £" + String.format(Locale.getDefault(), "%.2f", item.AmountPaid));
@@ -128,7 +128,7 @@ public class PaymentsListAdapter extends RecyclerView.Adapter<PaymentsListAdapte
         Toast.makeText(_context, message, Toast.LENGTH_SHORT).show();
     }
 
-    public void AddPaymentsToList(ArrayList<BillObjectDetailedPayments> newPayments)
+    public void AddPaymentsToList(ArrayList<BillPayment> newPayments)
     {
         if(_payments.size() > 0)
         {

@@ -3,10 +3,6 @@ package hoppingvikings.housefinancemobile.UserInterface.Items;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-/**
- * Created by Josh on 02/10/2016.
- */
-
 public class BillListObjectPeople {
     public int billID = 0;
     public int personID = 0;

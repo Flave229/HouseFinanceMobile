@@ -29,7 +29,7 @@ import hoppingvikings.housefinancemobile.Repositories.BillRepository;
 import hoppingvikings.housefinancemobile.R;
 import hoppingvikings.housefinancemobile.UserInterface.Items.BillListObject;
 import hoppingvikings.housefinancemobile.UserInterface.Items.BillObjectDetailed;
-import hoppingvikings.housefinancemobile.UserInterface.Items.BillObjectDetailedPayments;
+import hoppingvikings.housefinancemobile.UserInterface.Items.BillPayment;
 import hoppingvikings.housefinancemobile.UserInterface.PaymentsListAdapter;
 import hoppingvikings.housefinancemobile.WebService.CommunicationCallback;
 import hoppingvikings.housefinancemobile.WebService.RequestType;
@@ -70,7 +70,7 @@ public class ViewBillDetailsActivity extends AppCompatActivity
     }
 
     @Override
-    public void onEditPressed(BillObjectDetailedPayments itemid) {
+    public void onEditPressed(BillPayment itemid) {
         Intent edititem = new Intent(this, EditPaymentActivity.class);
         edititem.putExtra("payment_id", itemid.PaymentID);
         edititem.putExtra("payment_amount", itemid.AmountPaid);
@@ -94,7 +94,7 @@ public class ViewBillDetailsActivity extends AppCompatActivity
 
         paymentsList = (RecyclerView) findViewById(R.id.paymentsList);
         paymentsList.setNestedScrollingEnabled(true);
-        adapter = new PaymentsListAdapter(new ArrayList<BillObjectDetailedPayments>(), this);
+        adapter = new PaymentsListAdapter(new ArrayList<BillPayment>(), this);
         adapter.SetDeleteCallback(this);
         adapter.SetEditPressedCallback(this);
         paymentsList.setAdapter(adapter);

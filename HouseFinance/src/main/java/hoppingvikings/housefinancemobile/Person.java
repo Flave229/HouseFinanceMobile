@@ -2,10 +2,6 @@ package hoppingvikings.housefinancemobile;
 
 import org.json.JSONObject;
 
-/**
- * Created by iView on 23/08/2017.
- */
-
 public class Person {
 
     public int ID = 0;

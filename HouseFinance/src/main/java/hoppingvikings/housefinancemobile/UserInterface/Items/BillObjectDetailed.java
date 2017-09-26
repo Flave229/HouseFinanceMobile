@@ -18,7 +18,7 @@ public class BillObjectDetailed {
     public double amountDue = 0.0;
     public double amountTotal = 0.0;
     public double amountPaid = 0.0;
-    public ArrayList<BillObjectDetailedPayments> paymentDetails = new ArrayList<>();
+    public ArrayList<BillPayment> paymentDetails = new ArrayList<>();
     private SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd", Locale.UK);
 
     public BillObjectDetailed(JSONObject details, JSONArray payments)
@@ -34,7 +34,7 @@ public class BillObjectDetailed {
             {
                 for(int i = 0; i < payments.length(); i++)
                 {
-                    paymentDetails.add(new BillObjectDetailedPayments(payments.getJSONObject(i), id));
+                    paymentDetails.add(new BillPayment(payments.getJSONObject(i), id));
                 }
             }
         } catch (JSONException e)

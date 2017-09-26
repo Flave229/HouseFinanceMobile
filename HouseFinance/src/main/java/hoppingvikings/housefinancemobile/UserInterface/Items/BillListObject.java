@@ -12,9 +12,6 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.Locale;
 
-/**
- * Created by Josh on 17/09/2016.
- */
 public class BillListObject {
     public int id = 0;
     public String name = "";
