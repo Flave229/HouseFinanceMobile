@@ -14,6 +14,8 @@ import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
 
+import hoppingvikings.housefinancemobile.ItemType;
+
 public class WebService extends AsyncTask<CommunicationRequest, Void, CommunicationResponse>
 {
     private static final String WEB_APIV2_URL = "http://house.flave.co.uk/api/v2/";
@@ -47,12 +49,18 @@ public class WebService extends AsyncTask<CommunicationRequest, Void, Communicat
     protected void onPostExecute(CommunicationResponse result)
     {
         String type;
+
+        if (_request.RequestTypeData != RequestType.GET
+                && _request.ItemTypeData != ItemType.BILL_DETAILED)
+        {
+            _request.Owner.websiteResult(result, "");
+            return;
+        }
+
         switch (_request.ItemTypeData)
         {
             case BILL:
                 type = "Bills";
-                if (result.RequestTypeData == RequestType.POST)
-                    type = "";
                 break;
             case SHOPPING:
                 type = "Shopping";
@@ -80,6 +88,8 @@ public class WebService extends AsyncTask<CommunicationRequest, Void, Communicat
                 subEndpoint = "Bills";
                 if (_request.RequestTypeData == RequestType.POST)
                     subEndpoint += "/Add";
+                else if (_request.RequestTypeData == RequestType.DELETE)
+                    subEndpoint += "/Delete";
                 break;
             case BILL_DETAILED:
                 subEndpoint = "Bills";
@@ -98,31 +108,29 @@ public class WebService extends AsyncTask<CommunicationRequest, Void, Communicat
         }
 
         URL url = new URL(WEB_APIV2_URL + subEndpoint);
-        HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+        HttpURLConnection connection = (HttpURLConnection) url.openConnection();
 
         try {
-            conn.setReadTimeout(15000);
-            conn.setConnectTimeout(45000);
-            conn.setRequestProperty("Authorization", _authToken);
+            connection.setReadTimeout(15000);
+            connection.setConnectTimeout(45000);
+            connection.setDoInput(true);
+            connection.setRequestProperty("Authorization", _authToken);
 
-            conn.setRequestMethod(_request.RequestTypeData.toString());
+            connection.setRequestMethod(_request.RequestTypeData.toString());
 
             switch (_request.RequestTypeData)
             {
-                case GET:
-                    conn.setDoInput(true);
-                    break;
                 case POST:
-                    conn.setRequestProperty("Content-Type", "application/json; charset=UTF-8");
-                    conn.setDoOutput(true);
-                    conn.setDoInput(true);
-                    OutputStream os = conn.getOutputStream();
-                    os.write(_request.RequestBody.getBytes("UTF-8"));
-                    os.close();
+                case DELETE:
+                    connection.setRequestProperty("Content-Type", "application/json; charset=UTF-8");
+                    connection.setDoOutput(true);
+                    OutputStream out = connection.getOutputStream();
+                    out.write(_request.RequestBody.getBytes("UTF-8"));
+                    out.close();
                     break;
             }
 
-            final InputStream input = conn.getInputStream();
+            final InputStream input = connection.getInputStream();
 
             CommunicationResponse response = new CommunicationResponse()
             {{
@@ -137,7 +145,7 @@ public class WebService extends AsyncTask<CommunicationRequest, Void, Communicat
         { }
         finally
         {
-            conn.disconnect();
+            connection.disconnect();
         }
         return null;
     }

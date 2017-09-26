@@ -22,7 +22,7 @@ import hoppingvikings.housefinancemobile.WebService.RequestType;
 import hoppingvikings.housefinancemobile.WebService.WebHandler;
 
 public class PaymentsListAdapter extends RecyclerView.Adapter<PaymentsListAdapter.CardViewHolder>
-        implements CommunicationCallback<String>
+        implements CommunicationCallback
 {
     public interface DeleteCallback
     {
@@ -116,7 +116,7 @@ public class PaymentsListAdapter extends RecyclerView.Adapter<PaymentsListAdapte
     }
 
     @Override
-    public void OnSuccess(RequestType requestType, String s)
+    public void OnSuccess(RequestType requestType, Object s)
     {
         if (requestType == RequestType.DELETE)
             _deleteCallback.OnItemDeleted();

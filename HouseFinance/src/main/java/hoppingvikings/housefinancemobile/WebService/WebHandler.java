@@ -163,32 +163,25 @@ public class WebHandler
         }
     }
 
-    public void DeleteItem(Context context, CommunicationCallback owner, JSONObject itemjson, ItemType itemType)
+    public void DeleteItem(Context context, final CommunicationCallback callback, final JSONObject itemJson, final ItemType itemType)
     {
         _debugging = 0 != (context.getApplicationInfo().flags & ApplicationInfo.FLAG_DEBUGGABLE);
-        _itemDeleteOwner = owner;
+        _itemDeleteOwner = callback;
         _downloading = true;
         ConnectivityManager connMgr = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
         NetworkInfo networkInfo = connMgr.getActiveNetworkInfo();
 
         if(networkInfo != null && networkInfo.isConnected())
         {
-            switch (itemType)
-            {
-                case BILL:
-                    new DeleteItem().execute(WEB_APIV2_URL + "Bills/Delete", itemjson.toString());
-                    break;
-                case SHOPPING:
-                    new DeleteItem().execute(WEB_APIV2_URL + "Shopping/", itemjson.toString());
-                    break;
-                case PAYMENT:
-                    new DeleteItem().execute(WEB_APIV2_URL + "Bills/Payments", itemjson.toString());
-                    break;
-                default:
-                    _downloading = false;
-                    _itemDeleteOwner.OnFail(RequestType.DELETE, "Incorrect item type");
-                    break;
-            }
+            CommunicationRequest request = new CommunicationRequest()
+            {{
+                ItemTypeData = itemType;
+                RequestTypeData = RequestType.DELETE;
+                RequestBody = String.valueOf(itemJson);
+                Owner = WebHandler.this;
+                Callback = callback;
+            }};
+            new WebService(_authToken).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, request);
         }
         else
         {
@@ -435,82 +428,6 @@ public class WebHandler
     public boolean IsDownloading()
     {
         return _downloading;
-    }
-
-    private class DeleteItem extends AsyncTask<String, Void, Boolean>
-    {
-        @Override
-        protected Boolean doInBackground(String... params) {
-            try {
-                return SendItemDeleteRequest(params[0], params[1]);
-            } catch (Exception e)
-            {
-                return false;
-            }
-        }
-
-        private boolean SendItemDeleteRequest(String weburl, String itemjsonstring) throws IOException
-        {
-            JSONObject returnJson;
-            URL url = new URL(weburl);
-
-            HttpURLConnection connection = (HttpURLConnection) url.openConnection();
-            try {
-                connection.setRequestMethod("DELETE");
-                connection.setRequestProperty("Authorization", _authToken);
-                connection.setRequestProperty("Content-Type", "application/json; charset=UTF-8");
-                connection.setConnectTimeout(15000);
-                connection.setDoInput(true);
-                connection.setDoOutput(true);
-                connection.setChunkedStreamingMode(0);
-
-                OutputStream out = connection.getOutputStream();
-                out.write(itemjsonstring.getBytes("UTF-8"));
-                out.close();
-
-                BufferedReader serverAnswer = new BufferedReader(new InputStreamReader(connection.getInputStream()));
-                String line;
-                String returnmessage = "";
-                while ((line = serverAnswer.readLine()) != null)
-                {
-                    returnmessage += line;
-                }
-
-                serverAnswer.close();
-
-                returnJson = new JSONObject(returnmessage);
-
-                if(returnJson.has("hasError"))
-                {
-                    if(returnJson.getBoolean("hasError"))
-                    {
-                        Log.e("Error", returnJson.getJSONObject("error").getString("message"));
-                        return false;
-                    }
-                }
-            } catch (Exception e)
-            {
-                Log.e("Error", "Problem Sending payment: " + e.getMessage());
-                return false;
-            }
-            finally {
-                connection.disconnect();
-            }
-
-            return true;
-        }
-
-        @Override
-        protected void onPostExecute(Boolean aBoolean) {
-            if(aBoolean)
-            {
-                _itemDeleteOwner.OnSuccess(RequestType.DELETE, null);
-            }
-            else
-            {
-                _itemDeleteOwner.OnFail(RequestType.DELETE, "Failed to Delete Item. Please try again");
-            }
-        }
     }
 
     private class EditItem extends AsyncTask<String, Void, Boolean>
