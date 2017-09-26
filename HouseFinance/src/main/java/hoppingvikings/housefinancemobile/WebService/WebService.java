@@ -1,6 +1,7 @@
 package hoppingvikings.housefinancemobile.WebService;
 
 import android.os.AsyncTask;
+import android.telecom.Call;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -50,6 +51,8 @@ public class WebService extends AsyncTask<CommunicationRequest, Void, Communicat
         {
             case BILL:
                 type = "Bills";
+                if (result.RequestTypeData == RequestType.POST)
+                    type = "";
                 break;
             case SHOPPING:
                 type = "Shopping";
@@ -69,13 +72,15 @@ public class WebService extends AsyncTask<CommunicationRequest, Void, Communicat
 
     private CommunicationResponse DownloadUrl() throws IOException
     {
-        CommunicationResponse response = new CommunicationResponse();
-
         String subEndpoint;
 
         switch (_request.ItemTypeData)
         {
             case BILL:
+                subEndpoint = "Bills";
+                if (_request.RequestTypeData == RequestType.POST)
+                    subEndpoint += "/Add";
+                break;
             case BILL_DETAILED:
                 subEndpoint = "Bills";
                 break;
@@ -117,9 +122,15 @@ public class WebService extends AsyncTask<CommunicationRequest, Void, Communicat
                     break;
             }
 
-            InputStream input = conn.getInputStream();
-            response.Response = new JSONObject(ReadInputStream(input));
-            response.Callback = _request.Callback;
+            final InputStream input = conn.getInputStream();
+
+            CommunicationResponse response = new CommunicationResponse()
+            {{
+                Response = new JSONObject(ReadInputStream(input));
+                Callback = _request.Callback;
+                RequestTypeData = _request.RequestTypeData;
+            }};
+
             return response;
         }
         catch (JSONException e)

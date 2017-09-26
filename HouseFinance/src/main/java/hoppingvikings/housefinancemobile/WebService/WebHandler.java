@@ -197,11 +197,10 @@ public class WebHandler
         }
     }
 
-    public void UploadNewItem(Context context, JSONObject newItem, CommunicationCallback owner, ItemType itemType)
+    public void UploadNewItem(Context context, final JSONObject newItem, final CommunicationCallback callback, final ItemType itemType)
     {
         _debugging = 0 != (context.getApplicationInfo().flags & ApplicationInfo.FLAG_DEBUGGABLE);
-        _uploadOwner = owner;
-        String newItemString = newItem.toString();
+        _uploadOwner = callback;
         _downloading = true;
 
         ConnectivityManager connMgr = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
@@ -209,22 +208,15 @@ public class WebHandler
 
         if(networkInfo!= null && networkInfo.isConnected())
         {
-            switch (itemType)
-            {
-                case BILL:
-                    new UploadItem().execute(newItemString, WEB_APIV2_URL + "Bills/Add");
-                    break;
-                case SHOPPING:
-                    new UploadItem().execute(newItemString, WEB_APIV2_URL + "Shopping/");
-                    break;
-                case PAYMENT:
-                    new UploadItem().execute(newItemString, WEB_APIV2_URL + "Bills/Payments");
-                    break;
-                default:
-                    _downloading = false;
-                    _uploadOwner.OnFail(RequestType.POST, "Incorrect item type");
-                    break;
-            }
+            CommunicationRequest request = new CommunicationRequest()
+            {{
+                ItemTypeData = itemType;
+                RequestTypeData = RequestType.POST;
+                RequestBody = String.valueOf(newItem);
+                Owner = WebHandler.this;
+                Callback = callback;
+            }};
+            new WebService(_authToken).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, request);
         }
         else
         {
@@ -414,92 +406,35 @@ public class WebHandler
                 _downloading = false;
                 result.Callback.OnSuccess(RequestType.POST, detailedBill);
                 break;
+            default:
+                if(result.Response.has("hasError"))
+                {
+                    try
+                    {
+                        if(result.Response.getBoolean("hasError"))
+                        {
+                            String errorMessage = result.Response.getJSONObject("error").getString("message");
+                            Log.e("Error", errorMessage);
+                            result.Callback.OnFail(result.RequestTypeData, errorMessage);
+                        }
+
+                        result.Callback.OnSuccess(result.RequestTypeData, result.Response);
+                    }
+                    catch (JSONException e)
+                    {
+                        String errorMessage = "An error occurred while parsing the server response: " + e.getMessage();
+                        Log.e("Error", errorMessage);
+                        result.Callback.OnFail(result.RequestTypeData, errorMessage);
+                    }
+                }
+                _downloading = false;
+                break;
         }
     }
 
     public boolean IsDownloading()
     {
         return _downloading;
-    }
-
-    private class UploadItem extends AsyncTask<String, Void, Boolean>
-    {
-        @Override
-        protected Boolean doInBackground(String... params) {
-
-            try {
-                return UploadJsonObject(params[0], params[1]);
-            }
-            catch (IOException e)
-            {
-                return false;
-            }
-        }
-
-        @Override
-        protected void onPostExecute(Boolean aBoolean) {
-            if(aBoolean)
-            {
-                _uploadOwner.OnSuccess(RequestType.POST, null);
-            }
-            else
-            {
-                _uploadOwner.OnFail(RequestType.POST, "Failed to upload new Item. Please try again");
-            }
-        }
-
-        private boolean UploadJsonObject(String newItemString, String weburl) throws IOException
-        {
-            JSONObject returnJson;
-            URL url = new URL(weburl);
-
-            HttpURLConnection connection = (HttpURLConnection) url.openConnection();
-
-            try {
-                connection.setRequestMethod("POST");
-                connection.setRequestProperty("Authorization", _authToken);
-                connection.setRequestProperty("Content-Type", "application/json; charset=UTF-8");
-
-                connection.setConnectTimeout(15000);
-                connection.setDoInput(true);
-                connection.setDoOutput(true);
-                connection.setChunkedStreamingMode(0);
-
-                OutputStream out = connection.getOutputStream();
-                out.write(newItemString.getBytes("UTF-8"));
-                out.close();
-
-                BufferedReader serverAnswer = new BufferedReader(new InputStreamReader(connection.getInputStream()));
-                String line;
-                String returnMessage = "";
-                while ((line = serverAnswer.readLine()) != null)
-                {
-                    returnMessage += line;
-                }
-
-                serverAnswer.close();
-
-                returnJson = new JSONObject(returnMessage);
-
-                if(returnJson.has("hasError"))
-                {
-                    if(returnJson.getBoolean("hasError"))
-                    {
-                        Log.e("Error", returnJson.getJSONObject("error").getString("message"));
-                        return false;
-                    }
-                }
-            } catch (Exception e)
-            {
-                Log.e("Error", "Problem Sending Item: " + e.getMessage());
-                return false;
-            }
-            finally {
-                connection.disconnect();
-            }
-
-            return true;
-        }
     }
 
     private class DeleteItem extends AsyncTask<String, Void, Boolean>

@@ -6,4 +6,5 @@ public class CommunicationResponse
 {
     public CommunicationCallback Callback;
     public JSONObject Response;
+    public RequestType RequestTypeData;
 }
