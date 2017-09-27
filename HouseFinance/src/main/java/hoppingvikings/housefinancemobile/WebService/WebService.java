@@ -1,6 +1,7 @@
 package hoppingvikings.housefinancemobile.WebService;
 
 import android.os.AsyncTask;
+import android.util.Log;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -78,7 +79,8 @@ public class WebService extends AsyncTask<CommunicationRequest, Void, Communicat
         _request.Owner.websiteResult(result, type);
     }
 
-    private CommunicationResponse DownloadUrl() throws IOException, JSONException {
+    private CommunicationResponse DownloadUrl() throws IOException, JSONException
+    {
         String subEndpoint;
 
         switch (_request.ItemTypeData)
@@ -104,6 +106,11 @@ public class WebService extends AsyncTask<CommunicationRequest, Void, Communicat
 
         URL url = new URL(WEB_APIV2_URL + subEndpoint);
         HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+        CommunicationResponse response = new CommunicationResponse()
+        {{
+            Callback = _request.Callback;
+            RequestTypeData = _request.RequestTypeData;
+        }};
 
         try
         {
@@ -123,14 +130,12 @@ public class WebService extends AsyncTask<CommunicationRequest, Void, Communicat
                 out.close();
             }
 
-            final InputStream input = connection.getInputStream();
-
-            return new CommunicationResponse()
-            {{
-                Response = new JSONObject(ReadInputStream(input));
-                Callback = _request.Callback;
-                RequestTypeData = _request.RequestTypeData;
-            }};
+            InputStream input = connection.getInputStream();
+            response.Response = new JSONObject(ReadInputStream(input));
+        }
+        catch (IOException e)
+        {
+            Log.e("IO Error", "Error reading the input stream from '" + WEB_APIV2_URL + subEndpoint + "': " + e.getMessage());
         }
         catch (JSONException e)
         { }
@@ -138,7 +143,7 @@ public class WebService extends AsyncTask<CommunicationRequest, Void, Communicat
         {
             connection.disconnect();
         }
-        return null;
+        return response;
     }
 
     public String ReadInputStream(InputStream input)

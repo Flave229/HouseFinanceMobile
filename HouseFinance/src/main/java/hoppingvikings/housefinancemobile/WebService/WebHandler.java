@@ -254,10 +254,14 @@ public class WebHandler
 
                     result.Callback.OnSuccess(result.RequestTypeData, null);
 
-                } catch (JSONException je) {
+                }
+                catch (JSONException je)
+                {
                     je.printStackTrace();
                     result.Callback.OnFail(result.RequestTypeData, "Failed to parse Bill list");
-                } catch(Exception e) {
+                }
+                catch(Exception e)
+                {
                     result.Callback.OnFail(result.RequestTypeData, "Unknown Error in Bill list download");
                 }
                 break;
