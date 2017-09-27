@@ -99,7 +99,7 @@ public class WebHandler
                 CommunicationRequest request = new CommunicationRequest()
                 {{
                     ItemTypeData = ItemType.BILL_DETAILED;
-                    RequestTypeData = RequestType.POST;
+                    RequestTypeData = RequestType.GET;
                     RequestBody = String.valueOf(billDetailsRequest);
                     Owner = WebHandler.this;
                     Callback = callback;
@@ -189,7 +189,6 @@ public class WebHandler
 
     public void EditItem(Context context, final JSONObject editedItem, final CommunicationCallback callback, final ItemType itemType)
     {
-
         ConnectivityManager connMgr = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
         NetworkInfo networkInfo = connMgr.getActiveNetworkInfo();
 
@@ -253,13 +252,13 @@ public class WebHandler
 
                     BillRepository.Instance().Set(bills);
 
-                    result.Callback.OnSuccess(RequestType.GET, null);
+                    result.Callback.OnSuccess(result.RequestTypeData, null);
 
                 } catch (JSONException je) {
                     je.printStackTrace();
-                    result.Callback.OnFail(RequestType.GET, "Failed to parse Bill list");
+                    result.Callback.OnFail(result.RequestTypeData, "Failed to parse Bill list");
                 } catch(Exception e) {
-                    result.Callback.OnFail(RequestType.GET, "Unknown Error in Bill list download");
+                    result.Callback.OnFail(result.RequestTypeData, "Unknown Error in Bill list download");
                 }
                 break;
 
@@ -278,13 +277,13 @@ public class WebHandler
                     }
                     ShoppingRepository.Instance().Set(items);
 
-                    result.Callback.OnSuccess(RequestType.GET, null);
+                    result.Callback.OnSuccess(result.RequestTypeData, null);
 
                 } catch (JSONException je) {
                     je.printStackTrace();
-                    result.Callback.OnFail(RequestType.GET, "Failed to parse Shopping list");
+                    result.Callback.OnFail(result.RequestTypeData, "Failed to parse Shopping list");
                 } catch(Exception e) {
-                    result.Callback.OnFail(RequestType.GET, "Unknown Error in Shopping List download");
+                    result.Callback.OnFail(result.RequestTypeData, "Unknown Error in Shopping List download");
                 }
                 break;
 
@@ -306,12 +305,12 @@ public class WebHandler
                         parsedUsers.add(new Person(userObjects.get(j)));
                     }
 
-                    result.Callback.OnSuccess(RequestType.GET, parsedUsers);
+                    result.Callback.OnSuccess(result.RequestTypeData, parsedUsers);
 
                 } catch (JSONException je)
                 {
                     je.printStackTrace();
-                    result.Callback.OnFail(RequestType.GET, "Failed to parse Shopping list");
+                    result.Callback.OnFail(result.RequestTypeData, "Failed to parse Shopping list");
                 } catch (Exception e)
                 {
 
@@ -322,24 +321,27 @@ public class WebHandler
             case "BillDetails":
                 BillObjectDetailed detailedBill = null;
 
-                try {
-                    JSONObject detailedJson = result.Response.getJSONObject("bill");
+                try
+                {
+                    JSONArray billJsonArray = result.Response.getJSONArray("bills");
+                    JSONObject detailedJson = billJsonArray.getJSONObject(0);
                     JSONArray paymentsArray = detailedJson.getJSONArray("payments");
                     detailedBill = new BillObjectDetailed(detailedJson, paymentsArray);
-                } catch (JSONException e)
+                }
+                catch (JSONException e)
                 {
                     e.printStackTrace();
-                    result.Callback.OnFail(RequestType.POST, "Failed to parse Detailed Bill");
+                    result.Callback.OnFail(result.RequestTypeData, "Failed to parse Detailed Bill");
                     return;
                 }
                 catch (Exception e)
                 {
                     e.printStackTrace();
-                    result.Callback.OnFail(RequestType.POST, "Unknown error in Detailed Bill Download");
+                    result.Callback.OnFail(result.RequestTypeData, "Unknown error in Detailed Bill Download");
                     return;
                 }
 
-                result.Callback.OnSuccess(RequestType.POST, detailedBill);
+                result.Callback.OnSuccess(result.RequestTypeData, detailedBill);
                 break;
             default:
                 if(result.Response.has("hasError"))

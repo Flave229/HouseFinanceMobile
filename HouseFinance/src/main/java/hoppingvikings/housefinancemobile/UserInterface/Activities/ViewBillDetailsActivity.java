@@ -225,7 +225,7 @@ public class ViewBillDetailsActivity extends AppCompatActivity
     {
         switch (requestType)
         {
-            case POST:
+            case GET:
                 BillObjectDetailed billDetails = (BillObjectDetailed) result;
                 if (billDetails == null)
                     return;

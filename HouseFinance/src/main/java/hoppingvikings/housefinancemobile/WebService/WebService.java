@@ -13,8 +13,6 @@ import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
 
-import hoppingvikings.housefinancemobile.ItemType;
-
 public class WebService extends AsyncTask<CommunicationRequest, Void, CommunicationResponse>
 {
     private static final String WEB_APIV2_URL = "http://house.flave.co.uk/api/v2/";
@@ -42,6 +40,10 @@ public class WebService extends AsyncTask<CommunicationRequest, Void, Communicat
         {
             return null;
         }
+        catch (JSONException e)
+        {
+            return null;
+        }
     }
 
     @Override
@@ -49,8 +51,7 @@ public class WebService extends AsyncTask<CommunicationRequest, Void, Communicat
     {
         String type;
 
-        if (_request.RequestTypeData != RequestType.GET
-                && _request.ItemTypeData != ItemType.BILL_DETAILED)
+        if (_request.RequestTypeData != RequestType.GET)
         {
             _request.Owner.websiteResult(result, "");
             return;
@@ -77,23 +78,16 @@ public class WebService extends AsyncTask<CommunicationRequest, Void, Communicat
         _request.Owner.websiteResult(result, type);
     }
 
-    private CommunicationResponse DownloadUrl() throws IOException
-    {
+    private CommunicationResponse DownloadUrl() throws IOException, JSONException {
         String subEndpoint;
 
         switch (_request.ItemTypeData)
         {
             case BILL:
                 subEndpoint = "Bills";
-                if (_request.RequestTypeData == RequestType.POST)
-                    subEndpoint += "/Add";
-                else if (_request.RequestTypeData == RequestType.DELETE)
-                    subEndpoint += "/Delete";
-                else if (_request.RequestTypeData == RequestType.PATCH)
-                    subEndpoint += "/Update";
                 break;
             case BILL_DETAILED:
-                subEndpoint = "Bills";
+                subEndpoint = "Bills?id=" + new JSONObject(_request.RequestBody).getInt("BillId");
                 break;
             case SHOPPING:
                 subEndpoint = "Shopping";
