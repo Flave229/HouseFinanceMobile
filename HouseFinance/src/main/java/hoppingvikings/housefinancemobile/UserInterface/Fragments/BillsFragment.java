@@ -42,7 +42,6 @@ public class BillsFragment extends Fragment
     BillListAdapter _adapter;
     ArrayList<BillListObject> _cards;
     SwipeRefreshLayout _swipeRefreshLayout;
-    FloatingActionButton _addItemButton;
     MainActivity _activity;
 
     PeoplePopup _peopleListPopup;
@@ -107,7 +106,6 @@ public class BillsFragment extends Fragment
 
         _swipeRefreshLayout = (SwipeRefreshLayout) view.findViewById(R.id.swipeRefresh);
         _layout = (CoordinatorLayout)view.findViewById(R.id.coordlayout);
-        _addItemButton = (FloatingActionButton) view.findViewById(R.id.addItem);
 
         _handler = new Handler();
         _recyclerView = (RecyclerView) view.findViewById(R.id.recycler_view);

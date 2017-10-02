@@ -12,14 +12,15 @@ import hoppingvikings.housefinancemobile.R;
 import hoppingvikings.housefinancemobile.UserInterface.Fragments.BillsFragment;
 import hoppingvikings.housefinancemobile.UserInterface.Fragments.ShoppingListFragment;
 import hoppingvikings.housefinancemobile.UserInterface.Fragments.StatisticsFragment;
+import hoppingvikings.housefinancemobile.UserInterface.Fragments.TodoListFragment;
 
 /**
  * Created by Josh on 24/09/2016.
  */
 
 public class SimpleFragmentPagerAdapter extends FragmentPagerAdapter {
-    final int PAGE_COUNT = 2;
-    private String tabTitles[] = new String[] {"BILLS", "SHOPPING"};
+    final int PAGE_COUNT = 3;
+    private String tabTitles[] = new String[] {"BILLS", "SHOPPING", "TO-DO"};
     private Context context;
 
     public SimpleFragmentPagerAdapter(FragmentManager fm, Context context)
@@ -44,7 +45,7 @@ public class SimpleFragmentPagerAdapter extends FragmentPagerAdapter {
             case 1:
                 return new ShoppingListFragment();
             case 2:
-                return new StatisticsFragment();
+                return new TodoListFragment();
         }
         return null;
     }

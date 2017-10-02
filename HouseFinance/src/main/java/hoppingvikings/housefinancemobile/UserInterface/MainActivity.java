@@ -23,6 +23,7 @@ public class MainActivity extends AppCompatActivity {
     TabLayout tabLayout;
     public FloatingActionButton addBillFab;
     public FloatingActionButton addShoppingItemFab;
+    public FloatingActionButton addTodoItemFab;
     private Handler _handler;
     public CoordinatorLayout _layout;
 
@@ -40,6 +41,13 @@ public class MainActivity extends AppCompatActivity {
         }
     };
 
+    private Runnable showToDoButton = new Runnable() {
+        @Override
+        public void run() {
+            addTodoItemFab.show();
+        }
+    };
+
     public final static String EXTRA_MESSAGE = "com.example.myfirstapp.MESSAGE";
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -52,7 +60,9 @@ public class MainActivity extends AppCompatActivity {
         //_handler.post(runnable);
         addBillFab = (FloatingActionButton) findViewById(R.id.addBill);
         addShoppingItemFab = (FloatingActionButton) findViewById(R.id.addShoppingItem);
+        addTodoItemFab = (FloatingActionButton) findViewById(R.id.addTodoItem);
         addShoppingItemFab.hide();
+        addTodoItemFab.hide();
 
         Toolbar appToolbar = (Toolbar) findViewById(R.id.appToolbar);
         setSupportActionBar(appToolbar);
@@ -73,7 +83,7 @@ public class MainActivity extends AppCompatActivity {
                 {
                     case 0:
                         // Bills
-                        //addBillFab.show();
+                        addTodoItemFab.hide();
                         addShoppingItemFab.hide();
                         _handler.postDelayed(showBillButton, 200);
                         break;
@@ -81,10 +91,14 @@ public class MainActivity extends AppCompatActivity {
                         // shopping
                         //addShoppingItemFab.show();
                         addBillFab.hide();
+                        addTodoItemFab.hide();
                         _handler.postDelayed(showShoppingButton, 200);
                         break;
                     case 2:
-                        // stats
+                        // todo list
+                        addShoppingItemFab.hide();
+                        addBillFab.hide();
+                        _handler.postDelayed(showToDoButton, 200);
                         break;
                 }
             }
