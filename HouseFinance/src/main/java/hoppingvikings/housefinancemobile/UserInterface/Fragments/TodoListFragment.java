@@ -119,8 +119,6 @@ public class TodoListFragment extends Fragment
         _adapter.setOnTodoClickedListener(new TodoListAdapter.TodoItemClickedListener() {
             @Override
             public void onTodoClicked(View itemView, int pos) {
-
-
             }
         });
 
