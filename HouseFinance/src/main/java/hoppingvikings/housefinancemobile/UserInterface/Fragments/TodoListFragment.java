@@ -120,6 +120,7 @@ public class TodoListFragment extends Fragment
             @Override
             public void onTodoClicked(View itemView, int pos) {
 
+
             }
         });
 
