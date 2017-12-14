@@ -48,7 +48,7 @@
         <ImageView
             android:layout_width="30dp"
             android:layout_height="30dp"
-            android:id="@+id/addedBy"
+            android:id="@+id/todoPersonImage"
             android:contentDescription="generic card image"
             app:layout_constraintRight_toRightOf="parent"
             android:layout_marginTop="8dp"
