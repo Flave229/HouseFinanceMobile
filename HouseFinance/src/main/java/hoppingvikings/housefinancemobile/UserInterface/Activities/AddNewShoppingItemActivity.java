@@ -28,13 +28,13 @@ import hoppingvikings.housefinancemobile.FileIOHandler;
 import hoppingvikings.housefinancemobile.R;
 import hoppingvikings.housefinancemobile.UserInterface.Fragments.AddShoppingItemFragment;
 import hoppingvikings.housefinancemobile.UserInterface.Fragments.Interfaces.ButtonPressedCallback;
+import hoppingvikings.housefinancemobile.UserInterface.Fragments.ShoppingCartFragment;
 import hoppingvikings.housefinancemobile.WebService.CommunicationCallback;
 import hoppingvikings.housefinancemobile.WebService.RequestType;
 import hoppingvikings.housefinancemobile.WebService.WebHandler;
 
 public class AddNewShoppingItemActivity extends AppCompatActivity implements CommunicationCallback {
 
-    public Button submitButton;
     public Button addToCartButton;
     FrameLayout _fragmentContainer;
 
@@ -47,6 +47,8 @@ public class AddNewShoppingItemActivity extends AppCompatActivity implements Com
 
     ProgressBar uploadProgress;
     public int progress;
+
+    boolean disableCartButton;
 
     @Override
     protected void onSaveInstanceState(Bundle outState) {
@@ -65,17 +67,14 @@ public class AddNewShoppingItemActivity extends AppCompatActivity implements Com
         setSupportActionBar(toolbar);
         layout = (CoordinatorLayout) findViewById(R.id.coordlayout);
 
-        submitButton = (Button) findViewById(R.id.submitItem);
+        getSupportActionBar().setDisplayShowHomeEnabled(true);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        getSupportActionBar().setHomeButtonEnabled(true);
+
         addToCartButton = (Button) findViewById(R.id.addToList);
         _shoppingItems = new ArrayList<>();
 
-        submitButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                //submitButton.setEnabled(false);
-                _owner.SubmitPressed();
-            }
-        });
+        disableCartButton = false;
 
         addToCartButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -96,7 +95,7 @@ public class AddNewShoppingItemActivity extends AppCompatActivity implements Com
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.billentrytoolbar, menu);
+        getMenuInflater().inflate(R.menu.shopping_item_menu, menu);
         return super.onCreateOptionsMenu(menu);
     }
 
@@ -109,6 +108,7 @@ public class AddNewShoppingItemActivity extends AppCompatActivity implements Com
     public void onBackPressed() {
         if(getSupportFragmentManager().getBackStackEntryCount() > 1)
         {
+            disableCartButton = false;
             getSupportFragmentManager().popBackStack();
         }
         else
@@ -144,29 +144,21 @@ public class AddNewShoppingItemActivity extends AppCompatActivity implements Com
 
         switch (item.getItemId())
         {
-            case R.id.cancelButton:
-                final AlertDialog confirmCancel = new AlertDialog.Builder(this).create();
+            case R.id.view_cart:
+                if(!disableCartButton)
+                {
+                    getSupportFragmentManager().beginTransaction()
+                            .replace(R.id.fragment_container, new ShoppingCartFragment())
+                            .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE)
+                            .addToBackStack(null)
+                            .commit();
+                }
 
-                confirmCancel.setTitle("Cancel item entry?");
-                confirmCancel.setMessage("All details entered will be lost.");
+                disableCartButton = true;
+                return true;
 
-                confirmCancel.setButton(DialogInterface.BUTTON_POSITIVE, "Confirm", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialogInterface, int i) {
-                        confirmCancel.dismiss();
-                        setResult(RESULT_CANCELED);
-                        finish();
-                    }
-                });
-
-                confirmCancel.setButton(DialogInterface.BUTTON_NEGATIVE, "Stay Here", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialogInterface, int i) {
-                        confirmCancel.dismiss();
-                    }
-                });
-
-                confirmCancel.show();
+            case android.R.id.home:
+                onBackPressed();
                 return true;
 
             default:
@@ -176,7 +168,7 @@ public class AddNewShoppingItemActivity extends AppCompatActivity implements Com
 
     public void ReenableElements()
     {
-        submitButton.setEnabled(true);
+        addToCartButton.setEnabled(true);
     }
 
     public void UploadNextItem()

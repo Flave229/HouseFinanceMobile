@@ -5,5 +5,5 @@
     <item android:title="Cancel"
         app:showAsAction="always"
         android:id="@+id/cancelButton"
-        android:visible="true" />
+        android:visible="false" />
 </menu>

@@ -68,6 +68,8 @@ public class AddPaymentActivity extends AppCompatActivity implements Communicati
         setContentView(R.layout.activity_addpayment);
         Toolbar toolbar = (Toolbar) findViewById(R.id.appToolbar);
         setSupportActionBar(toolbar);
+        getSupportActionBar().setDisplayShowHomeEnabled(true);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
         Intent i = getIntent();
 
@@ -262,29 +264,8 @@ public class AddPaymentActivity extends AppCompatActivity implements Communicati
 
         switch (item.getItemId())
         {
-            case R.id.cancelButton:
-                final AlertDialog confirmCancel = new AlertDialog.Builder(this).create();
-
-                confirmCancel.setTitle("Cancel payment entry?");
-                confirmCancel.setMessage("All details entered will be lost.");
-
-                confirmCancel.setButton(DialogInterface.BUTTON_POSITIVE, "Confirm", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialogInterface, int i) {
-                        confirmCancel.dismiss();
-                        setResult(RESULT_CANCELED);
-                        finish();
-                    }
-                });
-
-                confirmCancel.setButton(DialogInterface.BUTTON_NEGATIVE, "Stay Here", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialogInterface, int i) {
-                        confirmCancel.dismiss();
-                    }
-                });
-
-                confirmCancel.show();
+            case android.R.id.home:
+                onBackPressed();
                 return true;
 
             default:
@@ -294,7 +275,28 @@ public class AddPaymentActivity extends AppCompatActivity implements Communicati
 
     @Override
     public void onBackPressed() {
-        super.onBackPressed();
+        final AlertDialog confirmCancel = new AlertDialog.Builder(this).create();
+
+        confirmCancel.setTitle("Cancel payment entry?");
+        confirmCancel.setMessage("All details entered will be lost.");
+
+        confirmCancel.setButton(DialogInterface.BUTTON_POSITIVE, "Confirm", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialogInterface, int i) {
+                confirmCancel.dismiss();
+                setResult(RESULT_CANCELED);
+                finish();
+            }
+        });
+
+        confirmCancel.setButton(DialogInterface.BUTTON_NEGATIVE, "Stay Here", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialogInterface, int i) {
+                confirmCancel.dismiss();
+            }
+        });
+
+        confirmCancel.show();
     }
 
     @Override

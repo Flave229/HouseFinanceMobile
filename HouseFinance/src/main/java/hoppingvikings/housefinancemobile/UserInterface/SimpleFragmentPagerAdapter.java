@@ -19,7 +19,7 @@ import hoppingvikings.housefinancemobile.UserInterface.Fragments.TodoListFragmen
  */
 
 public class SimpleFragmentPagerAdapter extends FragmentPagerAdapter {
-    final int PAGE_COUNT = 3;
+    final int PAGE_COUNT = 2;
     private String tabTitles[] = new String[] {"BILLS", "SHOPPING", "TO-DO"};
     private Context context;
 
@@ -44,8 +44,8 @@ public class SimpleFragmentPagerAdapter extends FragmentPagerAdapter {
                 return new BillsFragment();
             case 1:
                 return new ShoppingListFragment();
-            case 2:
-                return new TodoListFragment();
+//            case 2:
+//                return new TodoListFragment();
         }
         return null;
     }

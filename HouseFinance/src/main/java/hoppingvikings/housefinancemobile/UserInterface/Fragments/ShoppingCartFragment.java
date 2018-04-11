@@ -49,14 +49,19 @@ public class ShoppingCartFragment extends Fragment
         currentView = inflater.inflate(R.layout.fragment_shoppingcart, container, false);
         _activity = (AddNewShoppingItemActivity)getActivity();
         _activity.SetCallbackOwner(this);
-        _activity.submitButton.setText("Go Back");
-        _activity.addToCartButton.setText("Submit Items");
+        _activity.addToCartButton.setText("Submit");
         _activity.addToCartButton.setEnabled(true);
 
         cartEmptyText = (TextView) currentView.findViewById(R.id.cartEmptyText);
         layout = (CoordinatorLayout) currentView.findViewById(R.id.coordlayout);
         rv = (RecyclerView) currentView.findViewById(R.id.cartList);
         items = new ArrayList<>();
+
+        if(_activity._shoppingItems.size() < 1)
+        {
+            cartEmptyText.setVisibility(View.VISIBLE);
+            _activity.addToCartButton.setEnabled(false);
+        }
 
         return currentView;
     }
@@ -85,7 +90,6 @@ public class ShoppingCartFragment extends Fragment
                 submitting = true;
                 _activity.progress = 100 / _activity._shoppingItems.size();
                 _activity.addToCartButton.setEnabled(false);
-                _activity.submitButton.setEnabled(false);
                 try {
                     WebHandler.Instance().UploadNewItem(getContext(), new JSONObject(_activity._shoppingItems.get(0)), _activity, ItemType.SHOPPING);
                 } catch (Exception e)

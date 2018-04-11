@@ -80,6 +80,7 @@ public class AddShoppingItemFragment extends Fragment implements ButtonPressedCa
         _activity.SetCallbackOwner(this);
         _activity.addToCartButton.setEnabled(true);
         _activity.addToCartButton.setText("Add to Cart");
+        _activity.getSupportActionBar().setSubtitle("No items in cart");
 
         if(savedInstanceState != null)
         {
@@ -87,15 +88,6 @@ public class AddShoppingItemFragment extends Fragment implements ButtonPressedCa
             _selectedUserIds = savedInstanceState.getIntegerArrayList("user_ids");
             _selectedUserName = savedInstanceState.getString("user_name");
             _selectedUserNames = savedInstanceState.getStringArrayList("user_names");
-        }
-
-        if(_activity._shoppingItems.size() > 0)
-        {
-            _activity.submitButton.setText("View Cart");
-        }
-        else
-        {
-            _activity.submitButton.setText("Submit");
         }
 
         layout = (CoordinatorLayout) _currentView.findViewById(R.id.coordlayout);
@@ -288,7 +280,7 @@ public class AddShoppingItemFragment extends Fragment implements ButtonPressedCa
             Toast.makeText(getContext(), "Item added to cart", Toast.LENGTH_SHORT).show();
             _activity.getSupportActionBar().setSubtitle("Items in cart: " + String.valueOf(_activity._shoppingItems.size()));
 
-            _activity.submitButton.setText("View Cart");
+            shoppingItemNameEntry.setText("");
             //GlobalObjects.WebHandler.UploadNewShoppingItem(getApplicationContext(), newItem, AddNewShoppingItemActivity.this);
         } catch (JSONException je)
         {
