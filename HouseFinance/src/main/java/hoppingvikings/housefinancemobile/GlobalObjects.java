@@ -8,11 +8,17 @@ public class GlobalObjects
     public static BackgroundService BackgroundService;
     public static boolean Bound = false;
 
-    public static void ShowNotif(String text, String subtext, int notificationId)
+    public static void ShowNotif(NotificationType type, String text, String subtext, int notificationId)
     {
         if(AppServiceBinder.CheckIsBound())
         {
-            AppServiceBinder.GetService().ShowNotification(text, subtext, notificationId);
+            AppServiceBinder.GetService().ShowNotification(type, text, subtext, notificationId);
         }
+    }
+
+    public enum NotificationType
+    {
+        SHOPPING,
+        TODO
     }
 }

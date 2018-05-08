@@ -10,4 +10,12 @@
     <string name="shortcutShortLabelShopping">Add shopping item</string>
     <string name="shortcutLongLabelShopping">Add a new shopping item to the list</string>
     <string name="shortcutDisabledMessageShopping">Cannot add new shopping item right now</string>
+
+    <string name="notification_channel_id">Salt Vault Notifications</string>
+
+    <string name="shopping_notification_channel_name">Shopping Item Reminder</string>
+    <string name="todo_notification_channel_name">Todo Reminder</string>
+
+    <string name="shopping_notification_channel_desc">Notifications to remind you about pending shopping items</string>
+    <string name="todo_notification_channel_desc">Notifications to remind you about pending tasks</string>
 </resources>
