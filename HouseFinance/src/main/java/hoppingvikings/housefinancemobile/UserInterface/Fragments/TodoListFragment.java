@@ -18,6 +18,7 @@ import java.util.ArrayList;
 import hoppingvikings.housefinancemobile.R;
 import hoppingvikings.housefinancemobile.Repositories.TodoRepository;
 import hoppingvikings.housefinancemobile.UserInterface.Items.TodoListObject;
+import hoppingvikings.housefinancemobile.UserInterface.Lists.ListItemDivider;
 import hoppingvikings.housefinancemobile.UserInterface.Lists.TodoList.TodoListAdapter;
 import hoppingvikings.housefinancemobile.UserInterface.MainActivity;
 import hoppingvikings.housefinancemobile.WebService.CommunicationCallback;
@@ -114,6 +115,7 @@ public class TodoListFragment extends Fragment
             _adapter = new TodoListAdapter(_items, getContext());
             _recyclerView.setAdapter(_adapter);
             _recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
+            _recyclerView.addItemDecoration(new ListItemDivider(getContext()));
         }
 
         _adapter.setOnTodoClickedListener(new TodoListAdapter.TodoItemClickedListener() {
@@ -137,7 +139,7 @@ public class TodoListFragment extends Fragment
         _swipeRefreshLayout.setRefreshing(true);
         _handler.postDelayed(contactWebsite, 200);
 
-        return super.onCreateView(inflater, container, savedInstanceState);
+        return view;
     }
 
     @Override

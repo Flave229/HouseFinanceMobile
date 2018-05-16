@@ -14,6 +14,8 @@ import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
 
+import hoppingvikings.housefinancemobile.ItemType;
+
 public class WebService extends AsyncTask<CommunicationRequest, Void, CommunicationResponse>
 {
     private static final String WEB_APIV2_URL = "http://house.flave.co.uk/api/v2/";
@@ -54,29 +56,11 @@ public class WebService extends AsyncTask<CommunicationRequest, Void, Communicat
 
         if (_request.RequestTypeData != RequestType.GET)
         {
-            _request.Owner.websiteResult(result, "");
+            _request.Owner.ApiResult(result, ItemType.NONE);
             return;
         }
 
-        switch (_request.ItemTypeData)
-        {
-            case BILL:
-                type = "Bills";
-                break;
-            case SHOPPING:
-                type = "Shopping";
-                break;
-            case BILL_DETAILED:
-                type = "BillDetails";
-                break;
-            case PERSON:
-                type = "People";
-                break;
-            default:
-                type = "";
-        }
-
-        _request.Owner.websiteResult(result, type);
+        _request.Owner.ApiResult(result, _request.ItemTypeData);
     }
 
     private CommunicationResponse DownloadUrl() throws IOException, JSONException
@@ -99,6 +83,9 @@ public class WebService extends AsyncTask<CommunicationRequest, Void, Communicat
                 break;
             case PERSON:
                 subEndpoint = "Users";
+                break;
+            case TODO:
+                subEndpoint = "ToDo";
                 break;
             default:
                 subEndpoint = "";

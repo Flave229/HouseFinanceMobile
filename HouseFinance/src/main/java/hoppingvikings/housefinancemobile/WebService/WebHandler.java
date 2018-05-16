@@ -20,9 +20,11 @@ import hoppingvikings.housefinancemobile.Repositories.BillRepository;
 import hoppingvikings.housefinancemobile.Repositories.ShoppingRepository;
 import hoppingvikings.housefinancemobile.Person;
 import hoppingvikings.housefinancemobile.R;
+import hoppingvikings.housefinancemobile.Repositories.TodoRepository;
 import hoppingvikings.housefinancemobile.UserInterface.Items.BillListObject;
 import hoppingvikings.housefinancemobile.UserInterface.Items.BillObjectDetailed;
 import hoppingvikings.housefinancemobile.UserInterface.Items.ShoppingListObject;
+import hoppingvikings.housefinancemobile.UserInterface.Items.TodoListObject;
 
 public class WebHandler
 {
@@ -254,11 +256,11 @@ public class WebHandler
         }
     }
 
-    public void ApiResult(CommunicationResponse result, String type)
+    public void ApiResult(CommunicationResponse result, ItemType type)
     {
         switch (type)
         {
-            case "Bills":
+            case BILL:
                 try {
                     JSONArray billJsonArray = result.Response.getJSONArray("bills");
 
@@ -288,7 +290,7 @@ public class WebHandler
                 }
                 break;
 
-            case "Shopping":
+            case SHOPPING:
                 ArrayList<ShoppingListObject> items = new ArrayList<>();
                 ShoppingListObject item;
                 try {
@@ -313,7 +315,7 @@ public class WebHandler
                 }
                 break;
 
-            case "People":
+            case PERSON:
                 JSONArray returnedObject;
                 ArrayList<JSONObject> userObjects = new ArrayList<>();
                 ArrayList<Person> parsedUsers = new ArrayList<>();
@@ -344,7 +346,7 @@ public class WebHandler
 
                 break;
 
-            case "BillDetails":
+            case BILL_DETAILED:
                 BillObjectDetailed detailedBill = null;
 
                 try
@@ -369,6 +371,36 @@ public class WebHandler
 
                 result.Callback.OnSuccess(result.RequestTypeData, detailedBill);
                 break;
+
+            case TODO:
+                try {
+                    JSONArray todoArray = result.Response.getJSONArray("toDoTasks");
+
+                    ArrayList<TodoListObject> todos = new ArrayList<>();
+                    for(int k = 0; k < todoArray.length(); k++)
+                    {
+                        JSONObject toDoJson = todoArray.getJSONObject(k);
+
+                        TodoListObject todo = new TodoListObject(toDoJson);
+                        todos.add(todo);
+                    }
+
+                    TodoRepository.Instance().Set(todos);
+
+                    result.Callback.OnSuccess(result.RequestTypeData, null);
+
+                }
+                catch (JSONException je)
+                {
+                    je.printStackTrace();
+                    result.Callback.OnFail(result.RequestTypeData, "Failed to parse Todo list");
+                }
+                catch(Exception e)
+                {
+                    result.Callback.OnFail(result.RequestTypeData, "Unknown Error in Todo list download");
+                }
+                break;
+
             default:
                 if(result.Response.has("hasError"))
                 {

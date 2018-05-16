@@ -7,5 +7,6 @@ public enum ItemType
     TODO,
     BILL_DETAILED,
     PERSON,
-    PAYMENT
+    PAYMENT,
+    NONE
 }

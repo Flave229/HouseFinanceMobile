@@ -6,7 +6,10 @@ import org.json.JSONObject;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Locale;
+
+import hoppingvikings.housefinancemobile.Person;
 
 /**
  * Created by Josh on 02/10/2017.
@@ -14,16 +17,22 @@ import java.util.Locale;
 
 public class TodoListObject {
     public int id = 0;
-    public String name = "";
-    public String date = "";
+    public String title = "";
+    public String dueDate = "";
+    public boolean completed = false;
+    public ArrayList<Person> peopleForTask = new ArrayList<>();
     private SimpleDateFormat _dateFormat = new SimpleDateFormat("yyyy-MM-dd", Locale.UK);
 
-    public TodoListObject(JSONObject jsonObject, JSONArray peopleObjects)
+    public TodoListObject(JSONObject jsonObject)
     {
         try {
             id = jsonObject.getInt("id");
-            name = jsonObject.getString("name");
-            date = _dateFormat.format(_dateFormat.parse(jsonObject.getString("fullDate")));
+            title = jsonObject.getString("title");
+            dueDate = _dateFormat.format(_dateFormat.parse(jsonObject.getString("due")));
+            completed = jsonObject.getBoolean("complete");
+            JSONArray addedFor = jsonObject.getJSONArray("peopleForTask");
+            for (int i = 0; i < addedFor.length(); i++)
+                peopleForTask.add(new Person(addedFor.getJSONObject(i)));
         } catch (JSONException je)
         {
 
