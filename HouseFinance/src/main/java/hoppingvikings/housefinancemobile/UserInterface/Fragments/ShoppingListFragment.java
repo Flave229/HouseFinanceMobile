@@ -49,7 +49,7 @@ public class ShoppingListFragment extends Fragment
     private Runnable contactWebsite = new Runnable() {
         @Override
         public void run() {
-            WebHandler.Instance().contactWebsiteShoppingItems(getContext(), ShoppingListFragment.this);
+            WebHandler.Instance().GetShoppingItems(getContext(), ShoppingListFragment.this);
         }
     };
 

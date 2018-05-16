@@ -43,7 +43,7 @@ public class TodoListFragment extends Fragment
         @Override
         public void run() {
             // todo create and call the api endpoint for todo items
-            OnFail(null, "No endpoint set up");
+            WebHandler.Instance().GetToDoItems(getContext(), TodoListFragment.this);
         }
     };
 

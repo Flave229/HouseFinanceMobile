@@ -4,6 +4,8 @@ public enum ItemType
 {
     SHOPPING,
     BILL,
+    TODO,
     BILL_DETAILED,
-    PERSON, PAYMENT
+    PERSON,
+    PAYMENT
 }

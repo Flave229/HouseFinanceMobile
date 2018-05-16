@@ -60,7 +60,7 @@ public class WebHandler
         }
     }
 
-    public void contactWebsiteBills(Context context, final CommunicationCallback callback)
+    public void GetBills(Context context, final CommunicationCallback callback)
     {
         ConnectivityManager connMgr = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
         NetworkInfo networkInfo = connMgr.getActiveNetworkInfo();
@@ -71,6 +71,50 @@ public class WebHandler
             {{
                 RequestTypeData = RequestType.GET;
                 ItemTypeData = ItemType.BILL;
+                Owner = WebHandler.this;
+                Callback = callback;
+            }};
+            new WebService(_authToken).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, request);
+        }
+        else
+        {
+            callback.OnFail(RequestType.GET, "No internet connection");
+        }
+    }
+
+    public void GetShoppingItems(Context context, final CommunicationCallback callback)
+    {
+        ConnectivityManager connMgr = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo networkInfo = connMgr.getActiveNetworkInfo();
+
+        if(networkInfo != null && networkInfo.isConnected())
+        {
+            CommunicationRequest request = new CommunicationRequest()
+            {{
+                ItemTypeData = ItemType.SHOPPING;
+                RequestTypeData = RequestType.GET;
+                Owner = WebHandler.this;
+                Callback = callback;
+            }};
+            new WebService(_authToken).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, request);
+        }
+        else
+        {
+            callback.OnFail(RequestType.GET, "No internet connection");
+        }
+    }
+
+    public void GetToDoItems(Context context, final CommunicationCallback callback)
+    {
+        ConnectivityManager connMgr = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo networkInfo = connMgr.getActiveNetworkInfo();
+
+        if(networkInfo != null && networkInfo.isConnected())
+        {
+            CommunicationRequest request = new CommunicationRequest()
+            {{
+                ItemTypeData = ItemType.TODO;
+                RequestTypeData = RequestType.GET;
                 Owner = WebHandler.this;
                 Callback = callback;
             }};
@@ -210,29 +254,7 @@ public class WebHandler
         }
     }
 
-    public void contactWebsiteShoppingItems(Context context, final CommunicationCallback callback)
-    {
-        ConnectivityManager connMgr = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
-        NetworkInfo networkInfo = connMgr.getActiveNetworkInfo();
-
-        if(networkInfo != null && networkInfo.isConnected())
-        {
-            CommunicationRequest request = new CommunicationRequest()
-            {{
-                ItemTypeData = ItemType.SHOPPING;
-                RequestTypeData = RequestType.GET;
-                Owner = WebHandler.this;
-                Callback = callback;
-            }};
-            new WebService(_authToken).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, request);
-        }
-        else
-        {
-            callback.OnFail(RequestType.GET, "No internet connection");
-        }
-    }
-
-    public void websiteResult(CommunicationResponse result, String type)
+    public void ApiResult(CommunicationResponse result, String type)
     {
         switch (type)
         {

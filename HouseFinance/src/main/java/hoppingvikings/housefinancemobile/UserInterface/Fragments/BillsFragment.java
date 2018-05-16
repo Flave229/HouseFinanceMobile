@@ -49,7 +49,7 @@ public class BillsFragment extends Fragment
     private Runnable contactWebsite = new Runnable() {
         @Override
         public void run() {
-            WebHandler.Instance().contactWebsiteBills(getContext(), BillsFragment.this);
+            WebHandler.Instance().GetBills(getContext(), BillsFragment.this);
         }
     };
 
