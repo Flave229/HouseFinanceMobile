@@ -1,5 +1,6 @@
 package hoppingvikings.housefinancemobile.UserInterface.Fragments;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.annotation.Nullable;
@@ -17,6 +18,8 @@ import java.util.ArrayList;
 
 import hoppingvikings.housefinancemobile.R;
 import hoppingvikings.housefinancemobile.Repositories.TodoRepository;
+import hoppingvikings.housefinancemobile.UserInterface.Activities.AddNewToDoActivity;
+import hoppingvikings.housefinancemobile.UserInterface.Activities.EditShoppingItemActivity;
 import hoppingvikings.housefinancemobile.UserInterface.Items.TodoListObject;
 import hoppingvikings.housefinancemobile.UserInterface.Lists.ListItemDivider;
 import hoppingvikings.housefinancemobile.UserInterface.Lists.TodoList.TodoListAdapter;
@@ -25,12 +28,15 @@ import hoppingvikings.housefinancemobile.WebService.CommunicationCallback;
 import hoppingvikings.housefinancemobile.WebService.RequestType;
 import hoppingvikings.housefinancemobile.WebService.WebHandler;
 
+import static android.app.Activity.RESULT_CANCELED;
+import static android.app.Activity.RESULT_OK;
+
 /**
  * Created by Josh on 02/10/2017.
  */
 
 public class TodoListFragment extends Fragment
-        implements CommunicationCallback{
+        implements CommunicationCallback, TodoListAdapter.DeleteCallback, TodoListAdapter.EditPressedCallback{
 
     CoordinatorLayout _layout;
     Handler _handler;
@@ -106,7 +112,8 @@ public class TodoListFragment extends Fragment
         _activity.addTodoItemFab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
+                Intent addTask = new Intent(getContext(), AddNewToDoActivity.class);
+                startActivityForResult(addTask, 0);
             }
         });
 
@@ -115,14 +122,24 @@ public class TodoListFragment extends Fragment
             _adapter = new TodoListAdapter(_items, getContext());
             _recyclerView.setAdapter(_adapter);
             _recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
-            _recyclerView.addItemDecoration(new ListItemDivider(getContext()));
         }
 
         _adapter.setOnTodoClickedListener(new TodoListAdapter.TodoItemClickedListener() {
             @Override
             public void onTodoClicked(View itemView, int pos) {
+                TodoListObject task = _adapter.GetItem(pos);
+
+                if(task.ItemExpanded)
+                    task.ItemExpanded = false;
+                else
+                    task.ItemExpanded = true;
+
+                _adapter.notifyItemChanged(pos);
             }
         });
+
+        _adapter.SetDeleteCallback(this);
+        _adapter.SetEditPressedCallback(this);
 
         _swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
@@ -140,6 +157,36 @@ public class TodoListFragment extends Fragment
         _handler.postDelayed(contactWebsite, 200);
 
         return view;
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        switch (resultCode)
+        {
+            case RESULT_OK:
+                _handler.removeCallbacksAndMessages(null);
+                _swipeRefreshLayout.setRefreshing(true);
+                _handler.postDelayed(contactWebsite, 200);
+                break;
+
+            case RESULT_CANCELED:
+
+                break;
+        }
+    }
+
+    @Override
+    public void onItemDeleted() {
+        _swipeRefreshLayout.setRefreshing(true);
+        _handler.postDelayed(contactWebsite, 200);
+    }
+
+    @Override
+    public void onEditPressed(int itemid) {
+        Intent edititem = new Intent(getContext(), EditShoppingItemActivity.class);
+        edititem.putExtra("id", itemid);
+        startActivityForResult(edititem, 0);
     }
 
     @Override

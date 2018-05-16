@@ -18,4 +18,9 @@
 
     <string name="shopping_notification_channel_desc">Notifications to remind you about pending shopping items</string>
     <string name="todo_notification_channel_desc">Notifications to remind you about pending tasks</string>
+    
+    <string name="signin_welcome_text">Welcome to Salt Vault. To begin, please sign in with the button below</string>
+
+    <string name="backend_id">275819077838-um75nrsq0i7d9adv8hble3bsc8ffjtf7.apps.googleusercontent.com</string>
+    <string name="backend_id_dave">721536060068-ttp53hprd7qhsjm25fmpl94toht291nm.apps.googleusercontent.com</string>
 </resources>

@@ -23,6 +23,8 @@ public class TodoListObject {
     public ArrayList<Person> peopleForTask = new ArrayList<>();
     private SimpleDateFormat _dateFormat = new SimpleDateFormat("yyyy-MM-dd", Locale.UK);
 
+    public boolean ItemExpanded = false;
+
     public TodoListObject(JSONObject jsonObject)
     {
         try {

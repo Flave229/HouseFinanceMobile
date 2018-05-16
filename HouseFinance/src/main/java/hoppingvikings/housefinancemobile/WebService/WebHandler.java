@@ -411,6 +411,7 @@ public class WebHandler
                             String errorMessage = result.Response.getJSONObject("error").getString("message");
                             Log.e("Error", errorMessage);
                             result.Callback.OnFail(result.RequestTypeData, errorMessage);
+                            return;
                         }
 
                         result.Callback.OnSuccess(result.RequestTypeData, result.Response);

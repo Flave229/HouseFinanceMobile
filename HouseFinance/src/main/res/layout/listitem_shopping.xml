@@ -20,14 +20,15 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_alignParentTop="true"
+            android:layout_marginEnd="8dp"
+            android:layout_marginRight="8dp"
             android:text="Shopping Item"
             android:textColor="#000"
             android:textSize="20sp"
-            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintEnd_toStartOf="@+id/addedFor3"
+            app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintVertical_chainStyle="packed"
-            app:layout_constraintRight_toLeftOf="@+id/addedByText"
-            android:layout_marginRight="8dp" />
+            app:layout_constraintVertical_chainStyle="spread" />
 
         <TextView
             android:layout_width="wrap_content"
@@ -75,7 +76,7 @@
         <ImageView
             android:layout_width="30dp"
             android:layout_height="30dp"
-            android:id="@+id/addedFor1"
+            android:id="@+id/addedFor3"
             android:contentDescription="generic card image"
             app:layout_constraintRight_toLeftOf="@+id/addedFor2"
             android:layout_marginEnd="8dp"
@@ -88,7 +89,7 @@
             android:layout_height="30dp"
             android:id="@+id/addedFor2"
             android:contentDescription="generic card image"
-            app:layout_constraintRight_toLeftOf="@+id/addedFor3"
+            app:layout_constraintRight_toLeftOf="@+id/addedFor1"
             android:layout_marginEnd="8dp"
             android:layout_marginRight="8dp"
             android:layout_marginTop="8dp"
@@ -97,7 +98,7 @@
         <ImageView
             android:layout_width="30dp"
             android:layout_height="30dp"
-            android:id="@+id/addedFor3"
+            android:id="@+id/addedFor1"
             android:contentDescription="generic card image"
             app:layout_constraintRight_toRightOf="parent"
             android:layout_marginTop="8dp"

@@ -166,7 +166,7 @@ public class ShoppingListAdapter extends RecyclerView.Adapter<ShoppingListAdapte
             imgCache.PutBitmap(_shoppingItems.get(cvh.getAdapterPosition()).AddedFor.get(0).ImageUrl, cvh.addedFor1);
 
             if (_shoppingItems.get(cvh.getAdapterPosition()).AddedFor.size() < 2) {
-                cvh.addedFor2.setVisibility(View.GONE);
+                cvh.addedFor2.setVisibility(View.INVISIBLE);
             } else
             {
                 cvh.addedFor2.setVisibility(View.VISIBLE);
@@ -174,7 +174,7 @@ public class ShoppingListAdapter extends RecyclerView.Adapter<ShoppingListAdapte
             }
 
             if (_shoppingItems.get(cvh.getAdapterPosition()).AddedFor.size() < 3) {
-                cvh.addedFor3.setVisibility(View.GONE);
+                cvh.addedFor3.setVisibility(View.INVISIBLE);
             } else
             {
                 cvh.addedFor3.setVisibility(View.VISIBLE);
