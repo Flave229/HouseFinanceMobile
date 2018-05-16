@@ -20,6 +20,7 @@ import hoppingvikings.housefinancemobile.R;
 import hoppingvikings.housefinancemobile.Repositories.TodoRepository;
 import hoppingvikings.housefinancemobile.UserInterface.Activities.AddNewToDoActivity;
 import hoppingvikings.housefinancemobile.UserInterface.Activities.EditShoppingItemActivity;
+import hoppingvikings.housefinancemobile.UserInterface.Activities.EditTodoItemActivity;
 import hoppingvikings.housefinancemobile.UserInterface.Items.TodoListObject;
 import hoppingvikings.housefinancemobile.UserInterface.Lists.ListItemDivider;
 import hoppingvikings.housefinancemobile.UserInterface.Lists.TodoList.TodoListAdapter;
@@ -184,7 +185,7 @@ public class TodoListFragment extends Fragment
 
     @Override
     public void onEditPressed(int itemid) {
-        Intent edititem = new Intent(getContext(), EditShoppingItemActivity.class);
+        Intent edititem = new Intent(getContext(), EditTodoItemActivity.class);
         edititem.putExtra("id", itemid);
         startActivityForResult(edititem, 0);
     }

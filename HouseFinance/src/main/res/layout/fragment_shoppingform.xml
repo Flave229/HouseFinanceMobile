@@ -35,7 +35,7 @@
                     android:layout_height="wrap_content"
                     android:hint="Item Name..."
                     android:textColorHint="#88ffffff"
-                    android:inputType="text|textCapWords"
+                    android:inputType="text|textCapWords|textAutoCorrect"
                     android:maxLines="1"
                     android:textColor="#fff"/>
             </android.support.design.widget.TextInputLayout>

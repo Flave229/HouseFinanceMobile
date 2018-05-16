@@ -58,6 +58,9 @@
 
         <activity android:name=".UserInterface.Activities.AddNewToDoActivity"
             android:label="Add Task"/>
+
+        <activity android:name=".UserInterface.Activities.EditTodoItemActivity"
+            android:label="Edit Task"/>
     </application>
 
 </manifest>

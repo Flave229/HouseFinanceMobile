@@ -33,33 +33,69 @@
             <CheckBox
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:id="@+id/editNameCheck"
+                android:id="@+id/editTitleCheck"
                 app:layout_constraintLeft_toLeftOf="parent"
-                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintTop_toTopOf="@id/taskTitleEntry"
                 android:layout_marginLeft="8dp"
                 android:layout_marginTop="8dp"
                 android:layout_marginStart="8dp"
-                app:layout_constraintBottom_toBottomOf="@+id/itemNameLayout"
+                app:layout_constraintBottom_toBottomOf="@+id/taskTitleEntry"
                 android:layout_marginBottom="8dp" />
 
             <android.support.design.widget.TextInputLayout
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_margin="16dp"
-                android:id="@+id/itemNameLayout"
+                android:id="@+id/taskTitleEntry"
                 app:hintAnimationEnabled="true"
                 app:hintEnabled="true"
                 app:errorEnabled="true"
                 app:layout_constraintTop_toTopOf="parent"
                 app:layout_constraintRight_toRightOf="parent"
-                app:layout_constraintLeft_toRightOf="@+id/editNameCheck"
+                app:layout_constraintLeft_toRightOf="@+id/editTitleCheck"
                 android:layout_marginLeft="8dp">
 
                 <android.support.design.widget.TextInputEditText
-                    android:id="@+id/ShoppingItemNameEntry"
+                    android:id="@+id/taskTitleEntryText"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:hint="Item Name..."
+                    android:hint="Task Title"
+                    android:textColorHint="#88ffffff"
+                    android:inputType="text|textCapWords|textAutoCorrect"
+                    android:maxLines="1"
+                    android:textColor="#fff"/>
+            </android.support.design.widget.TextInputLayout>
+
+            <CheckBox
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/editDueDateCheck"
+                android:layout_marginLeft="8dp"
+                android:layout_marginTop="8dp"
+                android:layout_marginStart="8dp"
+                android:layout_marginBottom="8dp"
+                app:layout_constraintLeft_toLeftOf="parent"
+                app:layout_constraintTop_toTopOf="@id/taskDueDateEntry"
+                app:layout_constraintBottom_toBottomOf="@id/taskDueDateEntry"/>
+
+            <android.support.design.widget.TextInputLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_margin="16dp"
+                android:id="@+id/taskDueDateEntry"
+                app:hintAnimationEnabled="true"
+                app:hintEnabled="true"
+                app:errorEnabled="true"
+                app:layout_constraintTop_toBottomOf="@id/taskTitleEntry"
+                app:layout_constraintRight_toRightOf="parent"
+                app:layout_constraintLeft_toRightOf="@id/editDueDateCheck"
+                android:layout_marginLeft="8dp">
+
+                <android.support.design.widget.TextInputEditText
+                    android:id="@+id/taskDueDateEntryText"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:hint="Task Due Date (optional)"
                     android:textColorHint="#88ffffff"
                     android:inputType="text|textCapWords|textAutoCorrect"
                     android:maxLines="1"
@@ -84,7 +120,7 @@
                 android:layout_height="wrap_content"
                 android:text="Who is this for?"
                 android:textSize="16sp"
-                app:layout_constraintTop_toBottomOf="@+id/itemNameLayout"
+                app:layout_constraintTop_toBottomOf="@+id/taskDueDateEntry"
                 app:layout_constraintVertical_chainStyle="spread_inside"
                 android:layout_marginTop="32dp"
                 android:layout_marginStart="16dp"
@@ -124,7 +160,7 @@
         app:layout_dodgeInsetEdges="bottom">
 
         <Button
-            android:id="@+id/submitBill"
+            android:id="@+id/submitTask"
             style="@style/Widget.AppCompat.Button.Borderless"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
