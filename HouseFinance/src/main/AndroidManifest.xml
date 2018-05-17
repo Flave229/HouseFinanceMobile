@@ -39,6 +39,7 @@
             android:stopWithTask="false"/>
 
         <activity android:name=".UserInterface.Activities.ViewListActivity"
+            android:parentActivityName=".UserInterface.MainMenuActivity"
             android:label="List"/>
 
         <activity android:name=".UserInterface.Activities.AddNewBillActivity"

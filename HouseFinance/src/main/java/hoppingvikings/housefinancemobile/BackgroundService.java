@@ -5,13 +5,16 @@ import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.app.Service;
+import android.app.TaskStackBuilder;
 import android.content.Intent;
 import android.os.Binder;
 import android.os.Build;
 import android.os.IBinder;
 import android.support.annotation.Nullable;
 import android.support.v4.app.NotificationCompat;
+import android.support.v4.app.NotificationManagerCompat;
 
+import hoppingvikings.housefinancemobile.UserInterface.Activities.ViewListActivity;
 import hoppingvikings.housefinancemobile.UserInterface.MainActivity;
 
 /**
@@ -37,14 +40,22 @@ public class BackgroundService extends Service {
 
     public void ShowNotification(GlobalObjects.NotificationType type, String text, String subtext, int notifid)
     {
-        NotificationManager man = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
-        Intent i = new Intent(this, MainActivity.class);
+        NotificationManagerCompat man = NotificationManagerCompat.from(this);
+        //Intent i = new Intent(this, MainActivity.class);
         String channelID = getString(R.string.notification_channel_id);
-        Notification not;
+        NotificationCompat.Builder not;
 
+        Intent resultIntent = new Intent(this, ViewListActivity.class);
+        TaskStackBuilder stackBuilder = TaskStackBuilder.create(this);
+        PendingIntent resultPendingIntent;
         switch (type)
         {
             case SHOPPING:
+                resultIntent.putExtra("ItemType", ItemType.SHOPPING);
+                stackBuilder.addNextIntentWithParentStack(resultIntent);
+                //stackBuilder.editIntentAt(0).putExtra("ItemType", ItemType.SHOPPING);
+                resultPendingIntent = stackBuilder.getPendingIntent((int) System.currentTimeMillis(), PendingIntent.FLAG_UPDATE_CURRENT);
+
                 CreateNotificationChannel(GlobalObjects.NotificationType.SHOPPING);
 
                 not = new NotificationCompat.Builder(this, channelID)
@@ -52,25 +63,27 @@ public class BackgroundService extends Service {
                         .setContentText(text)
                         .setSubText(subtext)
                         .setSmallIcon(R.drawable.ic_app_notif)
-                        .setContentIntent(PendingIntent.getActivity(this, 1, i, PendingIntent.FLAG_UPDATE_CURRENT))
-                        .setStyle(new NotificationCompat.BigTextStyle().bigText(text))
-                        .build();
+                        .setContentIntent(resultPendingIntent)
+                        .setStyle(new NotificationCompat.BigTextStyle().bigText(text));
 
-                man.notify(notifid, not);
+                man.notify(notifid, not.build());
                 break;
 
             case TODO:
+                resultIntent.putExtra("ItemType", ItemType.TODO);
+                stackBuilder.addNextIntentWithParentStack(resultIntent);
+                resultPendingIntent = stackBuilder.getPendingIntent((int) System.currentTimeMillis(), PendingIntent.FLAG_UPDATE_CURRENT);
+
                 CreateNotificationChannel(GlobalObjects.NotificationType.TODO);
                 not = new NotificationCompat.Builder(this, channelID)
                         .setContentTitle("Salt Vault Todo")
                         .setContentText(text)
                         .setSubText(subtext)
                         .setSmallIcon(R.drawable.ic_app_notif)
-                        .setContentIntent(PendingIntent.getActivity(this, 1, i, PendingIntent.FLAG_UPDATE_CURRENT))
-                        .setStyle(new NotificationCompat.BigTextStyle().bigText(text))
-                        .build();
+                        .setContentIntent(resultPendingIntent)
+                        .setStyle(new NotificationCompat.BigTextStyle().bigText(text));
 
-                man.notify(notifid, not);
+                man.notify(notifid, not.build());
                 break;
         }
     }
