@@ -30,7 +30,10 @@ public class TodoListObject {
         try {
             id = jsonObject.getInt("id");
             title = jsonObject.getString("title");
-            dueDate = _dateFormat.format(_dateFormat.parse(jsonObject.getString("due")));
+
+            if(!jsonObject.getString("due").equals("null"))
+                dueDate = _dateFormat.format(_dateFormat.parse(jsonObject.getString("due")));
+
             completed = jsonObject.getBoolean("complete");
             JSONArray addedFor = jsonObject.getJSONArray("peopleForTask");
             for (int i = 0; i < addedFor.length(); i++)

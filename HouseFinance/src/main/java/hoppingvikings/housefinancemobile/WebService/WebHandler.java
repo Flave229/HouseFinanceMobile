@@ -396,7 +396,7 @@ public class WebHandler
                 catch (JSONException je)
                 {
                     je.printStackTrace();
-                    result.Callback.OnFail(result.RequestTypeData, "Failed to parse Todo list");
+                    result.Callback.OnFail(result.RequestTypeData, "Failed to obtain Todo list");
                 }
                 catch(Exception e)
                 {
