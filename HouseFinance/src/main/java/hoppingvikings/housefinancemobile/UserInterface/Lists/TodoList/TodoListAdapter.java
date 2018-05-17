@@ -222,8 +222,8 @@ public class TodoListAdapter extends RecyclerView.Adapter<TodoListAdapter.CardVi
                         JSONObject editedTask = new JSONObject();
                         try {
                             editedTask.put("Id", _todos.get(holder.getAdapterPosition()).id);
-                            editedTask.put("Completed", !_todos.get(holder.getAdapterPosition()).completed);
-                            WebHandler.Instance().EditItem(_context, editedTask, TodoListAdapter.this, ItemType.SHOPPING);
+                            editedTask.put("Complete", !_todos.get(holder.getAdapterPosition()).completed);
+                            WebHandler.Instance().EditItem(_context, editedTask, TodoListAdapter.this, ItemType.TODO);
                             NotificationManager man = (NotificationManager) _context.getSystemService(NOTIFICATION_SERVICE);
                             man.cancel(_todos.get(holder.getAdapterPosition()).id);
                         } catch (Exception e)

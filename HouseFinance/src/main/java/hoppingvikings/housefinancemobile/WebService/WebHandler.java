@@ -291,27 +291,30 @@ public class WebHandler
                 break;
 
             case SHOPPING:
-                ArrayList<ShoppingListObject> items = new ArrayList<>();
-                ShoppingListObject item;
                 try {
-                    JSONObject itemsObject = result.Response.getJSONObject("items");
-                    JSONArray shoppingList = itemsObject.getJSONArray("shoppingList");
+                    JSONArray shoppingItems = result.Response.getJSONArray("shoppingList");
 
-                    for(int k = 0; k < shoppingList.length(); k++)
+                    ArrayList<ShoppingListObject> items = new ArrayList<>();
+                    for(int k = 0; k < shoppingItems.length(); k++)
                     {
-                        JSONObject shoppingItem = shoppingList.getJSONObject(k);
-                        item = new ShoppingListObject(shoppingItem);
+                        JSONObject itemJson = shoppingItems.getJSONObject(k);
+                        ShoppingListObject item = new ShoppingListObject(itemJson);
                         items.add(item);
                     }
+
                     ShoppingRepository.Instance().Set(items);
 
                     result.Callback.OnSuccess(result.RequestTypeData, null);
 
-                } catch (JSONException je) {
+                }
+                catch (JSONException je)
+                {
                     je.printStackTrace();
                     result.Callback.OnFail(result.RequestTypeData, "Failed to parse Shopping list");
-                } catch(Exception e) {
-                    result.Callback.OnFail(result.RequestTypeData, "Unknown Error in Shopping List download");
+                }
+                catch(Exception e)
+                {
+                    result.Callback.OnFail(result.RequestTypeData, "Unknown Error in Shopping list download");
                 }
                 break;
 
