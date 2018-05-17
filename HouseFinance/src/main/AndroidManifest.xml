@@ -38,6 +38,9 @@
             android:exported="false"
             android:stopWithTask="false"/>
 
+        <activity android:name=".UserInterface.Activities.ViewListActivity"
+            android:label="List"/>
+
         <activity android:name=".UserInterface.Activities.AddNewBillActivity"
             android:label="Add Bill"/>
 

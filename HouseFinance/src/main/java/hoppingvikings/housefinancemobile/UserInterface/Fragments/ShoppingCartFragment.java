@@ -81,11 +81,11 @@ public class ShoppingCartFragment extends Fragment
             public void onClick(DialogInterface dialog, int which) {
                 submitcheck.dismiss();
 
-                FileIOHandler fileIO = new FileIOHandler();
-
-                for (String item: _activity._shoppingItems) {
-                    fileIO.WriteToFile(FileName.SHOPPING_RECENT_ITEMS, item);
-                }
+//                FileIOHandler fileIO = new FileIOHandler();
+//
+//                for (String item: _activity._shoppingItems) {
+//                    //fileIO.WriteToFile(FileName.SHOPPING_RECENT_ITEMS, item);
+//                }
 
                 submitting = true;
                 _activity.progress = 100 / _activity._shoppingItems.size();

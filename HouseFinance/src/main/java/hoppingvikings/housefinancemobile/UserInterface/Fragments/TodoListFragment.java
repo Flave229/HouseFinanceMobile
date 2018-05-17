@@ -199,7 +199,7 @@ public class TodoListFragment extends Fragment
     @Override
     public void OnFail(RequestType requestType, String message) {
         _handler.removeCallbacksAndMessages(null);
-        Snackbar.make(_activity._layout, message, Snackbar.LENGTH_LONG).show();
+        //Snackbar.make(_activity._layout, message, Snackbar.LENGTH_LONG).show();
         _swipeRefreshLayout.setRefreshing(false);
     }
 }

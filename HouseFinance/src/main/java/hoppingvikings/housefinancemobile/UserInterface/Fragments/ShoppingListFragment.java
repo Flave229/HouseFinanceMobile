@@ -221,7 +221,7 @@ public class ShoppingListFragment extends Fragment
     public void OnFail(RequestType requestType, String message)
     {
         _handler.removeCallbacksAndMessages(null);
-        Snackbar.make(activity._layout, message, Snackbar.LENGTH_LONG).show();
+        //Snackbar.make(activity._layout, message, Snackbar.LENGTH_LONG).show();
         swipeRefreshLayout.setRefreshing(false);
     }
 }

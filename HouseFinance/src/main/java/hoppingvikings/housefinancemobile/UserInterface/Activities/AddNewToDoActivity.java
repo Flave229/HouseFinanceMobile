@@ -181,6 +181,16 @@ public class AddNewToDoActivity extends AppCompatActivity implements Communicati
 
     @Override
     public void onBackPressed() {
+
+        if(taskTitleEntryText.getText().length() == 0
+                && taskDueDateEntryText.getText().length() == 0
+                && selectedPeopleIDs.size() == 0)
+        {
+            setResult(RESULT_CANCELED);
+            super.onBackPressed();
+            return;
+        }
+
         final AlertDialog confirmCancel = new AlertDialog.Builder(this).create();
 
         confirmCancel.setTitle("Cancel task entry?");

@@ -113,10 +113,16 @@ public class AddNewShoppingItemActivity extends AppCompatActivity implements Com
         }
         else
         {
+            if(_shoppingItems.size() == 0)
+            {
+                setResult(RESULT_CANCELED);
+                finish();
+                return;
+            }
             final AlertDialog confirmCancel = new AlertDialog.Builder(this).create();
 
             confirmCancel.setTitle("Cancel item entry?");
-            confirmCancel.setMessage("All details entered will be lost.");
+            confirmCancel.setMessage("All items in the cart will be lost.");
 
             confirmCancel.setButton(DialogInterface.BUTTON_POSITIVE, "Confirm", new DialogInterface.OnClickListener() {
                 @Override

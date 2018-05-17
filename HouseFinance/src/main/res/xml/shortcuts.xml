@@ -10,7 +10,7 @@
         <intent
             android:action="android.intent.action.VIEW"
             android:targetPackage="hoppingvikings.housefinancemobile"
-            android:targetClass="hoppingvikings.housefinancemobile.UserInterface.MainActivity"/>
+            android:targetClass="hoppingvikings.housefinancemobile.UserInterface.MainMenuActivity"/>
         <intent
             android:action="android.intent.action.VIEW"
             android:targetPackage="hoppingvikings.housefinancemobile"
@@ -27,7 +27,7 @@
         <intent
             android:action="android.intent.action.VIEW"
             android:targetPackage="hoppingvikings.housefinancemobile"
-            android:targetClass="hoppingvikings.housefinancemobile.UserInterface.MainActivity"/>
+            android:targetClass="hoppingvikings.housefinancemobile.UserInterface.MainMenuActivity"/>
         <intent
             android:action="android.intent.action.VIEW"
             android:targetPackage="hoppingvikings.housefinancemobile"

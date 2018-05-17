@@ -233,6 +233,15 @@ public class AddNewBillActivity extends AppCompatActivity implements Communicati
 
     @Override
     public void onBackPressed() {
+        if(billNameEntryText.getText().length() == 0
+                && billAmountEntryText.getText().length() == 0
+                && billDueDateEntryText.getText().length() == 0
+                && _selectedUserIds.size() == 0)
+        {
+            setResult(RESULT_CANCELED);
+            super.onBackPressed();
+            return;
+        }
         final AlertDialog confirmCancel = new AlertDialog.Builder(this).create();
 
         confirmCancel.setTitle("Cancel bill entry?");
