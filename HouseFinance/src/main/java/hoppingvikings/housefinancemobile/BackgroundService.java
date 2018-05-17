@@ -13,6 +13,7 @@ import android.os.IBinder;
 import android.support.annotation.Nullable;
 import android.support.v4.app.NotificationCompat;
 import android.support.v4.app.NotificationManagerCompat;
+import android.support.v4.content.ContextCompat;
 
 import hoppingvikings.housefinancemobile.UserInterface.Activities.ViewListActivity;
 import hoppingvikings.housefinancemobile.UserInterface.MainActivity;
@@ -42,7 +43,8 @@ public class BackgroundService extends Service {
     {
         NotificationManagerCompat man = NotificationManagerCompat.from(this);
         //Intent i = new Intent(this, MainActivity.class);
-        String channelID = getString(R.string.notification_channel_id);
+        String shoppingChannelID = getString(R.string.notification_shopping_channel_id);
+        String todoChannelID = getString(R.string.notification_todo_channel_id);
         NotificationCompat.Builder not;
 
         Intent resultIntent = new Intent(this, ViewListActivity.class);
@@ -51,18 +53,19 @@ public class BackgroundService extends Service {
         switch (type)
         {
             case SHOPPING:
-                resultIntent.putExtra("ItemType", ItemType.SHOPPING);
+                resultIntent.putExtra("ItemType", ItemType.SHOPPING.name());
                 stackBuilder.addNextIntentWithParentStack(resultIntent);
                 //stackBuilder.editIntentAt(0).putExtra("ItemType", ItemType.SHOPPING);
                 resultPendingIntent = stackBuilder.getPendingIntent((int) System.currentTimeMillis(), PendingIntent.FLAG_UPDATE_CURRENT);
 
                 CreateNotificationChannel(GlobalObjects.NotificationType.SHOPPING);
 
-                not = new NotificationCompat.Builder(this, channelID)
-                        .setContentTitle("Salt Vault Shopping")
+                not = new NotificationCompat.Builder(this, shoppingChannelID)
+                        .setContentTitle("Shopping")
                         .setContentText(text)
                         .setSubText(subtext)
-                        .setSmallIcon(R.drawable.ic_app_notif)
+                        .setSmallIcon(R.drawable.ic_notification_shopping)
+                        .setColor(ContextCompat.getColor(this, R.color.appAccentColour))
                         .setContentIntent(resultPendingIntent)
                         .setStyle(new NotificationCompat.BigTextStyle().bigText(text));
 
@@ -70,16 +73,17 @@ public class BackgroundService extends Service {
                 break;
 
             case TODO:
-                resultIntent.putExtra("ItemType", ItemType.TODO);
+                resultIntent.putExtra("ItemType", ItemType.TODO.name());
                 stackBuilder.addNextIntentWithParentStack(resultIntent);
                 resultPendingIntent = stackBuilder.getPendingIntent((int) System.currentTimeMillis(), PendingIntent.FLAG_UPDATE_CURRENT);
 
                 CreateNotificationChannel(GlobalObjects.NotificationType.TODO);
-                not = new NotificationCompat.Builder(this, channelID)
-                        .setContentTitle("Salt Vault Todo")
+                not = new NotificationCompat.Builder(this, todoChannelID)
+                        .setContentTitle("Todo")
                         .setContentText(text)
                         .setSubText(subtext)
-                        .setSmallIcon(R.drawable.ic_app_notif)
+                        .setSmallIcon(R.drawable.ic_notification_task)
+                        .setColor(ContextCompat.getColor(this, R.color.appAccentColour))
                         .setContentIntent(resultPendingIntent)
                         .setStyle(new NotificationCompat.BigTextStyle().bigText(text));
 
@@ -99,7 +103,7 @@ public class BackgroundService extends Service {
                     CharSequence name = getString(R.string.shopping_notification_channel_name);
                     String desc = getString(R.string.shopping_notification_channel_desc);
                     int importance = NotificationManager.IMPORTANCE_LOW;
-                    NotificationChannel channel = new NotificationChannel(getString(R.string.notification_channel_id), name, importance);
+                    NotificationChannel channel = new NotificationChannel(getString(R.string.notification_shopping_channel_id), name, importance);
                     channel.setDescription(desc);
                     mgr.createNotificationChannel(channel);
                     break;
@@ -108,7 +112,7 @@ public class BackgroundService extends Service {
                     CharSequence todoName = getString(R.string.todo_notification_channel_name);
                     String todoDesc = getString(R.string.todo_notification_channel_desc);
                     int todoImportance = NotificationManager.IMPORTANCE_DEFAULT;
-                    NotificationChannel todoChannel = new NotificationChannel(getString(R.string.notification_channel_id), todoName, todoImportance);
+                    NotificationChannel todoChannel = new NotificationChannel(getString(R.string.notification_todo_channel_id), todoName, todoImportance);
                     todoChannel.setDescription(todoDesc);
                     mgr.createNotificationChannel(todoChannel);
                     break;

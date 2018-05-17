@@ -71,6 +71,7 @@ public class TodoListAdapter extends RecyclerView.Adapter<TodoListAdapter.CardVi
         LinearLayout cardObject;
         TextView todoTitle;
         TextView todoDueDate;
+        TextView todoFor;
         ImageView todoPerson1;
         ImageView todoPerson2;
         ImageView todoPerson3;
@@ -89,6 +90,7 @@ public class TodoListAdapter extends RecyclerView.Adapter<TodoListAdapter.CardVi
             cardObject = v.findViewById(R.id.todoItemCard);
             todoTitle = v.findViewById(R.id.todoTitle);
             todoDueDate = v.findViewById(R.id.todoDueDate);
+            todoFor = v.findViewById(R.id.taskFor);
             todoPerson1 = v.findViewById(R.id.todoPerson1);
             todoPerson2 = v.findViewById(R.id.todoPerson2);
             todoPerson3 = v.findViewById(R.id.todoPerson3);
@@ -151,11 +153,22 @@ public class TodoListAdapter extends RecyclerView.Adapter<TodoListAdapter.CardVi
         {
             holder.cardObject.setBackgroundResource(R.color.bill_paid);
             holder.todoDueDate.setText("Task Completed");
+
+            holder.todoDueDate.setTextColor(_context.getResources().getColor(R.color.bill_paid_text));
+            holder.todoTitle.setTextColor(_context.getResources().getColor(R.color.bill_paid_text));
+            holder.infoText.setTextColor(_context.getResources().getColor(R.color.bill_paid_text));
+            holder.todoFor.setTextColor(_context.getResources().getColor(R.color.bill_paid_text));
+
         }
         else
         {
             holder.cardObject.setBackgroundColor(Color.WHITE);
             holder.todoDueDate.setText(_todos.get(position).dueDate + " (In Progress)");
+
+            holder.todoDueDate.setTextColor(Color.BLACK);
+            holder.todoTitle.setTextColor(Color.BLACK);
+            holder.infoText.setTextColor(Color.BLACK);
+            holder.todoFor.setTextColor(Color.BLACK);
         }
 
         try {
@@ -247,7 +260,7 @@ public class TodoListAdapter extends RecyclerView.Adapter<TodoListAdapter.CardVi
                 holder.notifyButton.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        GlobalObjects.ShowNotif(GlobalObjects.NotificationType.TODO,_todos.get(holder.getAdapterPosition()).title, "Pending Task", _todos.get(holder.getAdapterPosition()).id);
+                        GlobalObjects.ShowNotif(GlobalObjects.NotificationType.TODO,_todos.get(holder.getAdapterPosition()).title, "Reminder", _todos.get(holder.getAdapterPosition()).id);
                     }
                 });
             }

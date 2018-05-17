@@ -127,18 +127,30 @@ public class BillListAdapter extends RecyclerView.Adapter<BillListAdapter.CardVi
             cvh.cardObject.setBackgroundResource(R.color.bill_paid);
             cvh.cardAmount.setText("PAID");
             cvh.cardDate.setText(_cards.get(i).date);
+
+            cvh.cardName.setTextColor(_context.getResources().getColor(R.color.bill_paid_text));
+            cvh.cardAmount.setTextColor(_context.getResources().getColor(R.color.bill_paid_text));
+            cvh.cardDate.setTextColor(_context.getResources().getColor(R.color.bill_paid_text));
         }
         else if(_cards.get(i).overdue)
         {
             cvh.cardObject.setBackgroundResource(R.color.bill_overdue);
             cvh.cardDate.setText(_cards.get(i).date + " OVERDUE");
             cvh.cardAmount.setText("£" + String.format(Locale.getDefault(), "%.2f", _cards.get(i).remainingAmount));
+
+            cvh.cardName.setTextColor(Color.BLACK);
+            cvh.cardAmount.setTextColor(Color.BLACK);
+            cvh.cardDate.setTextColor(Color.BLACK);
         }
         else
         {
             cvh.cardDate.setText(_cards.get(i).date);
             cvh.cardAmount.setText("£" + String.format(Locale.getDefault(), "%.2f", _cards.get(i).remainingAmount));
             cvh.cardObject.setBackgroundColor(Color.WHITE);
+
+            cvh.cardName.setTextColor(Color.BLACK);
+            cvh.cardAmount.setTextColor(Color.BLACK);
+            cvh.cardDate.setTextColor(Color.BLACK);
         }
 
         try {

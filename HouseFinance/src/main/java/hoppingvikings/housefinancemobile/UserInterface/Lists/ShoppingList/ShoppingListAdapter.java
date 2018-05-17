@@ -155,10 +155,22 @@ public class ShoppingListAdapter extends RecyclerView.Adapter<ShoppingListAdapte
         if(_shoppingItems.get(cvh.getAdapterPosition()).Purchased)
         {
             cvh.cardView.setBackgroundResource(R.color.bill_paid);
+
+            cvh.addedByText.setTextColor(_context.getResources().getColor(R.color.bill_paid_text));
+            cvh.addedDate.setTextColor(_context.getResources().getColor(R.color.bill_paid_text));
+            cvh.addedForText.setTextColor(_context.getResources().getColor(R.color.bill_paid_text));
+            cvh.shoppingItemName.setTextColor(_context.getResources().getColor(R.color.bill_paid_text));
+            cvh.infoText.setTextColor(_context.getResources().getColor(R.color.bill_paid_text));
         }
         else
         {
             cvh.cardView.setBackgroundColor(Color.WHITE);
+
+            cvh.addedByText.setTextColor(Color.BLACK);
+            cvh.addedDate.setTextColor(Color.BLACK);
+            cvh.addedForText.setTextColor(Color.BLACK);
+            cvh.shoppingItemName.setTextColor(Color.BLACK);
+            cvh.infoText.setTextColor(Color.BLACK);
         }
 
         try
