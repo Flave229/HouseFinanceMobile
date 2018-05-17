@@ -3,7 +3,7 @@
     <shortcut
         android:shortcutId="AddBill"
         android:enabled="true"
-        android:icon="@drawable/ic_shortcut_create"
+        android:icon="@drawable/ic_shortcut_add_bill_item"
         android:shortcutShortLabel="@string/shortcutShortLabelBill"
         android:shortcutLongLabel="@string/shortcutLongLabelBill"
         android:shortcutDisabledMessage="@string/shortcutDisabledMessageBill">
@@ -14,13 +14,19 @@
         <intent
             android:action="android.intent.action.VIEW"
             android:targetPackage="hoppingvikings.housefinancemobile"
+            android:targetClass="hoppingvikings.housefinancemobile.UserInterface.Activities.ViewListActivity">
+            <extra android:name="ItemType" android:value="BILL"/>
+        </intent>
+        <intent
+            android:action="android.intent.action.VIEW"
+            android:targetPackage="hoppingvikings.housefinancemobile"
             android:targetClass="hoppingvikings.housefinancemobile.UserInterface.Activities.AddNewBillActivity"/>
     </shortcut>
 
     <shortcut
         android:shortcutId="AddShoppingItem"
         android:enabled="true"
-        android:icon="@drawable/ic_shortcut_add_shopping_cart"
+        android:icon="@drawable/ic_shortcut_add_shopping_item"
         android:shortcutShortLabel="@string/shortcutShortLabelShopping"
         android:shortcutLongLabel="@string/shortcutLongLabelShopping"
         android:shortcutDisabledMessage="@string/shortcutDisabledMessageShopping">
@@ -31,6 +37,35 @@
         <intent
             android:action="android.intent.action.VIEW"
             android:targetPackage="hoppingvikings.housefinancemobile"
+            android:targetClass="hoppingvikings.housefinancemobile.UserInterface.Activities.ViewListActivity">
+            <extra android:name="ItemType" android:value="SHOPPING"/>
+        </intent>
+        <intent
+            android:action="android.intent.action.VIEW"
+            android:targetPackage="hoppingvikings.housefinancemobile"
             android:targetClass="hoppingvikings.housefinancemobile.UserInterface.Activities.AddNewShoppingItemActivity"/>
+    </shortcut>
+
+    <shortcut
+        android:shortcutId="AddTodoItem"
+        android:enabled="true"
+        android:icon="@drawable/ic_shortcut_add_todo_item"
+        android:shortcutShortLabel="@string/shortcutShortLabelTodo"
+        android:shortcutLongLabel="@string/shortcutLongLabelTodo"
+        android:shortcutDisabledMessage="@string/shortcutDisabledMessageTodo">
+        <intent
+            android:action="android.intent.action.VIEW"
+            android:targetPackage="hoppingvikings.housefinancemobile"
+            android:targetClass="hoppingvikings.housefinancemobile.UserInterface.MainMenuActivity"/>
+        <intent
+            android:action="android.intent.action.VIEW"
+            android:targetPackage="hoppingvikings.housefinancemobile"
+            android:targetClass="hoppingvikings.housefinancemobile.UserInterface.Activities.ViewListActivity">
+            <extra android:name="ItemType" android:value="TODO"/>
+        </intent>
+        <intent
+            android:action="android.intent.action.VIEW"
+            android:targetPackage="hoppingvikings.housefinancemobile"
+            android:targetClass="hoppingvikings.housefinancemobile.UserInterface.Activities.AddNewToDoActivity"/>
     </shortcut>
 </shortcuts>

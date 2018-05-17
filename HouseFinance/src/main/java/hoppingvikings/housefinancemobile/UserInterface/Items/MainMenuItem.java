@@ -6,9 +6,9 @@ public class MainMenuItem {
 
     public int itemImageID;
     public String itemNameString;
-    public ItemType menuItemType;
+    public String menuItemType;
 
-    public MainMenuItem(String itemName, int imageID, ItemType type)
+    public MainMenuItem(String itemName, int imageID, String type)
     {
         itemImageID = imageID;
         itemNameString = itemName;

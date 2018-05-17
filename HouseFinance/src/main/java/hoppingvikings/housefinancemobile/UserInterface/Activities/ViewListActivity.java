@@ -16,6 +16,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 
 import hoppingvikings.housefinancemobile.ItemType;
@@ -54,7 +55,7 @@ public class ViewListActivity extends AppCompatActivity
     FloatingActionButton _fab;
     PeoplePopup _peopleListPopup;
 
-    ItemType _currentType;
+    String _currentType;
 
     ArrayList<BillListObject> _bills;
     ArrayList<ShoppingListObject> _shopping;
@@ -67,15 +68,15 @@ public class ViewListActivity extends AppCompatActivity
         public void run() {
             switch (_currentType)
             {
-                case BILL:
+                case "BILL":
                     WebHandler.Instance().GetBills(ViewListActivity.this, ViewListActivity.this);
                     break;
 
-                case SHOPPING:
+                case "SHOPPING":
                     WebHandler.Instance().GetShoppingItems(ViewListActivity.this, ViewListActivity.this);
                     break;
 
-                case TODO:
+                case "TODO":
                     WebHandler.Instance().GetToDoItems(ViewListActivity.this, ViewListActivity.this);
                     break;
             }
@@ -87,7 +88,7 @@ public class ViewListActivity extends AppCompatActivity
         public void run() {
             switch (_currentType)
             {
-                case BILL:
+                case "BILL":
                     if(BillRepository.Instance().Get() != null)
                     {
                         if(_bills == null)
@@ -108,7 +109,7 @@ public class ViewListActivity extends AppCompatActivity
                     }
                     break;
 
-                case SHOPPING:
+                case "SHOPPING":
                     if(ShoppingRepository.Instance().Get() != null)
                     {
                         if(_shopping == null)
@@ -129,7 +130,7 @@ public class ViewListActivity extends AppCompatActivity
                     }
                     break;
 
-                case TODO:
+                case "TODO":
                     if(TodoRepository.Instance().Get() != null)
                     {
                         if(_tasks == null)
@@ -168,10 +169,11 @@ public class ViewListActivity extends AppCompatActivity
 
         if(getIntent() != null)
         {
-            _currentType = (ItemType)getIntent().getSerializableExtra("ItemType");
+            _currentType = getIntent().getStringExtra("ItemType");
+
             switch (_currentType)
             {
-                case BILL:
+                case "BILL":
                     _toolbar.setTitle("Bills List");
                     _bills = new ArrayList<>();
 
@@ -205,7 +207,7 @@ public class ViewListActivity extends AppCompatActivity
                     });
                     break;
 
-                case SHOPPING:
+                case "SHOPPING":
                     _toolbar.setTitle("Shopping List");
                     _shopping = new ArrayList<>();
 
@@ -243,7 +245,7 @@ public class ViewListActivity extends AppCompatActivity
                     });
                     break;
 
-                case TODO:
+                case "TODO":
                     _toolbar.setTitle("Todo List");
                     _tasks = new ArrayList<>();
 
@@ -345,13 +347,13 @@ public class ViewListActivity extends AppCompatActivity
         Intent edititem;
         switch (_currentType)
         {
-            case SHOPPING:
+            case "SHOPPING":
                 edititem = new Intent(this, EditShoppingItemActivity.class);
                 edititem.putExtra("id", itemid);
                 startActivityForResult(edititem, 0);
                 break;
 
-            case TODO:
+            case "TODO":
                 edititem = new Intent(this, EditTodoItemActivity.class);
                 edititem.putExtra("id", itemid);
                 startActivityForResult(edititem, 0);

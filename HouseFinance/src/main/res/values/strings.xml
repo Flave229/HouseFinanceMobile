@@ -3,13 +3,17 @@
     <string name="edit_message">Enter a message</string>
     <string name="button_send">Send</string>
 
-    <string name="shortcutShortLabelBill">Add bill</string>
+    <string name="shortcutShortLabelBill">Add new bill</string>
     <string name="shortcutLongLabelBill">Add a new bill to the list</string>
     <string name="shortcutDisabledMessageBill">Cannot add new bill right now</string>
 
-    <string name="shortcutShortLabelShopping">Add shopping item</string>
+    <string name="shortcutShortLabelShopping">Add new shopping item</string>
     <string name="shortcutLongLabelShopping">Add a new shopping item to the list</string>
     <string name="shortcutDisabledMessageShopping">Cannot add new shopping item right now</string>
+
+    <string name="shortcutShortLabelTodo">Add new task</string>
+    <string name="shortcutLongLabelTodo">Add a new task to the list</string>
+    <string name="shortcutDisabledMessageTodo">Cannot add new task right now</string>
 
     <string name="notification_channel_id">Salt Vault Notifications</string>
 
