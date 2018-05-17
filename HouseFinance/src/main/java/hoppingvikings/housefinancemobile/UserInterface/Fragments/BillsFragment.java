@@ -25,6 +25,7 @@ import hoppingvikings.housefinancemobile.UserInterface.Items.BillListObject;
 import hoppingvikings.housefinancemobile.UserInterface.Lists.ListItemDivider;
 import hoppingvikings.housefinancemobile.UserInterface.MainActivity;
 import hoppingvikings.housefinancemobile.UserInterface.Activities.ViewBillDetailsActivity;
+import hoppingvikings.housefinancemobile.UserInterface.MainMenuActivity;
 import hoppingvikings.housefinancemobile.UserInterface.PeoplePopup;
 import hoppingvikings.housefinancemobile.WebService.CommunicationCallback;
 import hoppingvikings.housefinancemobile.WebService.RequestType;
@@ -42,7 +43,7 @@ public class BillsFragment extends Fragment
     BillListAdapter _adapter;
     ArrayList<BillListObject> _cards;
     SwipeRefreshLayout _swipeRefreshLayout;
-    MainActivity _activity;
+    MainMenuActivity _activity;
 
     PeoplePopup _peopleListPopup;
 
@@ -101,7 +102,7 @@ public class BillsFragment extends Fragment
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
     {
-        _activity = ((MainActivity)getActivity());
+        _activity = ((MainMenuActivity)getActivity());
         View view = inflater.inflate(R.layout.fragment_blank, container, false);
 
         _swipeRefreshLayout = (SwipeRefreshLayout) view.findViewById(R.id.swipeRefresh);

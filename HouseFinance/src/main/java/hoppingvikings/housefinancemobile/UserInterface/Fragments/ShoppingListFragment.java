@@ -24,6 +24,7 @@ import hoppingvikings.housefinancemobile.UserInterface.Activities.EditShoppingIt
 import hoppingvikings.housefinancemobile.UserInterface.Lists.ShoppingList.ShoppingListAdapter;
 import hoppingvikings.housefinancemobile.UserInterface.Items.ShoppingListObject;
 import hoppingvikings.housefinancemobile.UserInterface.MainActivity;
+import hoppingvikings.housefinancemobile.UserInterface.MainMenuActivity;
 import hoppingvikings.housefinancemobile.WebService.CommunicationCallback;
 import hoppingvikings.housefinancemobile.WebService.RequestType;
 import hoppingvikings.housefinancemobile.WebService.WebHandler;
@@ -42,7 +43,7 @@ public class ShoppingListFragment extends Fragment
     SwipeRefreshLayout swipeRefreshLayout;
     FloatingActionButton addItemButton;
 
-    MainActivity activity;
+    MainMenuActivity activity;
 
     Date lastRefreshedTime = new Date();
 
@@ -118,7 +119,7 @@ public class ShoppingListFragment extends Fragment
     @Override
     public View onCreateView(LayoutInflater inflater, final ViewGroup container, Bundle savedInstanceState)
     {
-        activity = ((MainActivity)getActivity());
+        activity = ((MainMenuActivity)getActivity());
         View view = inflater.inflate(R.layout.fragment_blank, container, false);
         swipeRefreshLayout = (SwipeRefreshLayout) view.findViewById(R.id.swipeRefresh);
         layout = (CoordinatorLayout)view.findViewById(R.id.coordlayout);

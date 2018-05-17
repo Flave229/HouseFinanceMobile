@@ -28,6 +28,12 @@
                 android:resource="@xml/shortcuts"/>
         </activity>
 
+        <activity android:name=".UserInterface.SignInActivity"
+            android:label="Sign In"/>
+
+        <activity android:name=".UserInterface.MainMenuActivity"
+            android:label="Salt Vault"/>
+
         <service android:name="hoppingvikings.housefinancemobile.BackgroundService"
             android:exported="false"
             android:stopWithTask="false"/>

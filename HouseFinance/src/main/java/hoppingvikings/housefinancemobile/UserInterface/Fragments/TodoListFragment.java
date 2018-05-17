@@ -25,6 +25,7 @@ import hoppingvikings.housefinancemobile.UserInterface.Items.TodoListObject;
 import hoppingvikings.housefinancemobile.UserInterface.Lists.ListItemDivider;
 import hoppingvikings.housefinancemobile.UserInterface.Lists.TodoList.TodoListAdapter;
 import hoppingvikings.housefinancemobile.UserInterface.MainActivity;
+import hoppingvikings.housefinancemobile.UserInterface.MainMenuActivity;
 import hoppingvikings.housefinancemobile.WebService.CommunicationCallback;
 import hoppingvikings.housefinancemobile.WebService.RequestType;
 import hoppingvikings.housefinancemobile.WebService.WebHandler;
@@ -45,7 +46,7 @@ public class TodoListFragment extends Fragment
     TodoListAdapter _adapter;
     ArrayList<TodoListObject> _items;
     SwipeRefreshLayout _swipeRefreshLayout;
-    MainActivity _activity;
+    MainMenuActivity _activity;
 
     private Runnable contactWebsite = new Runnable() {
         @Override
@@ -93,7 +94,7 @@ public class TodoListFragment extends Fragment
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable final ViewGroup container, Bundle savedInstanceState) {
-        _activity = (MainActivity) getActivity();
+        _activity = (MainMenuActivity) getActivity();
         View view = inflater.inflate(R.layout.fragment_blank, container, false);
 
         _swipeRefreshLayout = (SwipeRefreshLayout) view.findViewById(R.id.swipeRefresh);
