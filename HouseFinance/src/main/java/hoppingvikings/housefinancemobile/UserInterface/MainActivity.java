@@ -166,7 +166,7 @@ public class MainActivity extends AppCompatActivity implements CommunicationCall
 
     @Override
     public void OnFail(RequestType requestType, String message) {
-        Toast.makeText(this, "Could not obtain session", Toast.LENGTH_LONG).show();
+        //Toast.makeText(this, "Could not obtain session", Toast.LENGTH_LONG).show();
         GoToSignInPage();
     }
 }

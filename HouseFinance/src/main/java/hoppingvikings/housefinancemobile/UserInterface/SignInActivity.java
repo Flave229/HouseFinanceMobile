@@ -10,6 +10,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.View;
+import android.widget.TextView;
 
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
@@ -32,6 +33,7 @@ public class SignInActivity extends AppCompatActivity implements CommunicationCa
     SignInButton signInButton;
     Toolbar _toolbar;
     CoordinatorLayout _layout;
+    TextView _welcomeText;
 
     GoogleSignInClient _signInClient;
 
@@ -41,8 +43,8 @@ public class SignInActivity extends AppCompatActivity implements CommunicationCa
         setContentView(R.layout.activity_signin);
 
         _toolbar = findViewById(R.id.appToolbar);
-        _toolbar.setTitle("Welcome");
-        _toolbar.setSubtitle("Please sign in to continue");
+        _welcomeText = findViewById(R.id.welcomeText);
+        _toolbar.setTitle("Salt Vault");
         _layout = findViewById(R.id.coordlayout);
         setSupportActionBar(_toolbar);
 
@@ -53,6 +55,7 @@ public class SignInActivity extends AppCompatActivity implements CommunicationCa
                 SignIn();
             }
         });
+        signInButton.setVisibility(View.INVISIBLE);
 
         GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
                 .requestIdToken(getString(R.string.backend_id))
@@ -64,6 +67,7 @@ public class SignInActivity extends AppCompatActivity implements CommunicationCa
     @Override
     protected void onStart() {
         super.onStart();
+        _welcomeText.setText("Attempting to sign in...");
         GoogleSignInAccount account = GoogleSignIn.getLastSignedInAccount(this);
 
         if(account != null)
@@ -76,6 +80,11 @@ public class SignInActivity extends AppCompatActivity implements CommunicationCa
 
             }
             WebHandler.Instance().GetSessionID(this, this, tokenJson);
+        }
+        else
+        {
+            _welcomeText.setText(R.string.signin_welcome_text);
+            signInButton.setVisibility(View.VISIBLE);
         }
         //HandleAccount(account);
     }
@@ -90,6 +99,8 @@ public class SignInActivity extends AppCompatActivity implements CommunicationCa
 
     private void SignIn()
     {
+        signInButton.setEnabled(false);
+        _welcomeText.setText("Attempting to sign in...");
         Intent signInIntent = _signInClient.getSignInIntent();
         startActivityForResult(signInIntent, 0);
     }
@@ -99,6 +110,8 @@ public class SignInActivity extends AppCompatActivity implements CommunicationCa
         try {
             GoogleSignInAccount account = completeTask.getResult(ApiException.class);
             String idToken = account.getIdToken();
+
+            _welcomeText.setText("Authenticating...");
 
             JSONObject tokenJson = new JSONObject();
             try {
@@ -115,7 +128,9 @@ public class SignInActivity extends AppCompatActivity implements CommunicationCa
         } catch (ApiException e)
         {
             Log.e("Error: ", "signInResult:failed code=" + e.getStatusCode());
-            HandleAccount(null);
+            _welcomeText.setText("Failed to sign in. Please try again.");
+            signInButton.setEnabled(true);
+            //HandleAccount(null);
         }
     }
 
@@ -137,6 +152,7 @@ public class SignInActivity extends AppCompatActivity implements CommunicationCa
 
     @Override
     public void OnFail(RequestType requestType, String message) {
-        Snackbar.make(_layout, message, Snackbar.LENGTH_LONG).show();
+        _welcomeText.setText("Failed to sign in. " + message);
+        signInButton.setEnabled(true);
     }
 }
