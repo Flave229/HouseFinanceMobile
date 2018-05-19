@@ -135,7 +135,10 @@ public class MainMenuActivity extends AppCompatActivity {
                 .addOnCompleteListener(this, new OnCompleteListener<Void>() {
                     @Override
                     public void onComplete(@NonNull Task<Void> task) {
-                        onBackPressed();
+                        Intent signInScreen = new Intent(MainMenuActivity.this, SignInActivity.class);
+                        startActivity(signInScreen);
+
+                        finish();
                     }
                 });
     }
