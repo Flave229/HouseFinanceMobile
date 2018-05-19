@@ -15,6 +15,7 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewGroup;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -205,6 +206,9 @@ public class ViewListActivity extends AppCompatActivity
                             startActivityForResult(addBill, 0);
                         }
                     });
+
+                    _peopleListPopup = new PeoplePopup(this, (ViewGroup)findViewById(android.R.id.content));
+
                     break;
 
                 case "SHOPPING":

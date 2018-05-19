@@ -67,7 +67,7 @@ public class SignInActivity extends AppCompatActivity implements CommunicationCa
     @Override
     protected void onStart() {
         super.onStart();
-        _welcomeText.setText("Attempting to sign in...");
+        _welcomeText.setText("Signing in...");
         GoogleSignInAccount account = GoogleSignIn.getLastSignedInAccount(this);
 
         if(account != null)
@@ -100,7 +100,7 @@ public class SignInActivity extends AppCompatActivity implements CommunicationCa
     private void SignIn()
     {
         signInButton.setEnabled(false);
-        _welcomeText.setText("Attempting to sign in...");
+        _welcomeText.setText("Signing in...");
         Intent signInIntent = _signInClient.getSignInIntent();
         startActivityForResult(signInIntent, 0);
     }
