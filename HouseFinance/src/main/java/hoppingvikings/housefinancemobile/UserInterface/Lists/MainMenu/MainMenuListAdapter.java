@@ -84,7 +84,7 @@ public class MainMenuListAdapter extends RecyclerView.Adapter<MainMenuListAdapte
         holder.itemImage.setBackgroundResource(_menuItems.get(position).itemImageID);
         holder.itemText.setText(_menuItems.get(position).itemNameString);
 
-        holder.itemLayout.setBackgroundColor(Color.WHITE);
+        //holder.itemLayout.setBackgroundColor(Color.WHITE);
     }
 
     public void AddAll(ArrayList<MainMenuItem> newItems)

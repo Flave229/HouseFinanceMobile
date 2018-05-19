@@ -6,4 +6,8 @@
         android:title="Close App"
         app:showAsAction="never"/>
 
+    <item android:id="@+id/sign_out"
+        android:title="Sign Out"
+        app:showAsAction="never"/>
+
 </menu>

@@ -10,7 +10,7 @@ public class HouseFinanceClass extends Application implements AppServiceBinder.O
     @Override
     public void OnBind() {
       // AppServiceBinder._service.ShowNotification("Started", NotificationManager.IMPORTANCE_DEFAULT);
-        WebHandler.Instance().SetAuthToken(getApplicationContext());
+        WebHandler.Instance().SetClientID(getApplicationContext());
     }
 
     @Override

@@ -29,7 +29,8 @@ import hoppingvikings.housefinancemobile.UserInterface.Items.TodoListObject;
 public class WebHandler
 {
     private static WebHandler _instance;
-    private String _authToken = "";
+    private String _clientID = "";
+    private String _sessionID = "";
 
     private WebHandler()
     {}
@@ -43,22 +44,36 @@ public class WebHandler
         return _instance;
     }
 
-    public void SetAuthToken(Context context)
+    public void SetClientID(Context context)
     {
-        InputStream inputStream = context.getResources().openRawResource(R.raw.api_authtoken);
-        BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream));
+        _clientID = context.getString(R.string.backend_id);
+    }
 
-        try
+    public void SetSessionID(String sessionID)
+    {
+        _sessionID = sessionID;
+    }
+
+    public void GetSessionID(Context context, final CommunicationCallback callback, final JSONObject idToken)
+    {
+        ConnectivityManager connMgr = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo networkInfo = connMgr.getActiveNetworkInfo();
+
+        if(networkInfo != null && networkInfo.isConnected())
         {
-            String line = reader.readLine();
-            if(line != null)
-            {
-                _authToken = line;
-            }
+            CommunicationRequest request = new CommunicationRequest()
+            {{
+                RequestTypeData = RequestType.POST;
+                ItemTypeData = ItemType.LOG_IN;
+                RequestBody = String.valueOf(idToken);
+                Owner = WebHandler.this;
+                Callback = callback;
+            }};
+            new WebService(_clientID, _sessionID).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, request);
         }
-        catch (Exception e)
+        else
         {
-            Log.i("Read Error", "Failed to read file. " + e.getMessage());
+            callback.OnFail(RequestType.POST, "No internet connection");
         }
     }
 
@@ -76,7 +91,7 @@ public class WebHandler
                 Owner = WebHandler.this;
                 Callback = callback;
             }};
-            new WebService(_authToken).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, request);
+            new WebService(_clientID, _sessionID).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, request);
         }
         else
         {
@@ -98,7 +113,7 @@ public class WebHandler
                 Owner = WebHandler.this;
                 Callback = callback;
             }};
-            new WebService(_authToken).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, request);
+            new WebService(_clientID, _sessionID).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, request);
         }
         else
         {
@@ -120,7 +135,7 @@ public class WebHandler
                 Owner = WebHandler.this;
                 Callback = callback;
             }};
-            new WebService(_authToken).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, request);
+            new WebService(_clientID, _sessionID).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, request);
         }
         else
         {
@@ -150,7 +165,7 @@ public class WebHandler
                     Owner = WebHandler.this;
                     Callback = callback;
                 }};
-                new WebService(_authToken).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, request);
+                new WebService(_clientID, _sessionID).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, request);
             }
             catch (JSONException e)
             {
@@ -178,7 +193,7 @@ public class WebHandler
                 Callback = callback;
             }};
 
-            new WebService(_authToken).execute(request);
+            new WebService(_clientID, _sessionID).execute(request);
         }
         else
         {
@@ -201,7 +216,7 @@ public class WebHandler
                 Owner = WebHandler.this;
                 Callback = callback;
             }};
-            new WebService(_authToken).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, request);
+            new WebService(_clientID, _sessionID).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, request);
         }
         else
         {
@@ -225,7 +240,7 @@ public class WebHandler
                 Owner = WebHandler.this;
                 Callback = callback;
             }};
-            new WebService(_authToken).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, request);
+            new WebService(_clientID, _sessionID).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, request);
         }
         else
         {
@@ -248,7 +263,7 @@ public class WebHandler
                 Owner = WebHandler.this;
                 Callback = callback;
             }};
-            new WebService(_authToken).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, request);
+            new WebService(_clientID, _sessionID).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, request);
         }
         else
         {
@@ -262,6 +277,14 @@ public class WebHandler
         {
             case BILL:
                 try {
+                    if(result.Response.has("hasError") && result.Response.getBoolean("hasError"))
+                    {
+                        String errorMessage = result.Response.getJSONObject("error").getString("message");
+                        Log.e("Error", errorMessage);
+                        result.Callback.OnFail(result.RequestTypeData, errorMessage);
+                        return;
+                    }
+
                     JSONArray billJsonArray = result.Response.getJSONArray("bills");
 
                     ArrayList<BillListObject> bills = new ArrayList<>();
@@ -292,6 +315,14 @@ public class WebHandler
 
             case SHOPPING:
                 try {
+                    if(result.Response.has("hasError") && result.Response.getBoolean("hasError"))
+                    {
+                        String errorMessage = result.Response.getJSONObject("error").getString("message");
+                        Log.e("Error", errorMessage);
+                        result.Callback.OnFail(result.RequestTypeData, errorMessage);
+                        return;
+                    }
+
                     JSONArray shoppingItems = result.Response.getJSONArray("shoppingList");
 
                     ArrayList<ShoppingListObject> items = new ArrayList<>();
@@ -324,6 +355,14 @@ public class WebHandler
                 ArrayList<Person> parsedUsers = new ArrayList<>();
 
                 try {
+                    if(result.Response.has("hasError") && result.Response.getBoolean("hasError"))
+                    {
+                        String errorMessage = result.Response.getJSONObject("error").getString("message");
+                        Log.e("Error", errorMessage);
+                        result.Callback.OnFail(result.RequestTypeData, errorMessage);
+                        return;
+                    }
+
                     returnedObject = result.Response.getJSONArray("people");
 
                     for(int i = 0; i < returnedObject.length(); i++)
@@ -354,6 +393,14 @@ public class WebHandler
 
                 try
                 {
+                    if(result.Response.has("hasError") && result.Response.getBoolean("hasError"))
+                    {
+                        String errorMessage = result.Response.getJSONObject("error").getString("message");
+                        Log.e("Error", errorMessage);
+                        result.Callback.OnFail(result.RequestTypeData, errorMessage);
+                        return;
+                    }
+
                     JSONArray billJsonArray = result.Response.getJSONArray("bills");
                     JSONObject detailedJson = billJsonArray.getJSONObject(0);
                     JSONArray paymentsArray = detailedJson.getJSONArray("payments");
@@ -377,6 +424,14 @@ public class WebHandler
 
             case TODO:
                 try {
+                    if(result.Response.has("hasError") && result.Response.getBoolean("hasError"))
+                    {
+                        String errorMessage = result.Response.getJSONObject("error").getString("message");
+                        Log.e("Error", errorMessage);
+                        result.Callback.OnFail(result.RequestTypeData, errorMessage);
+                        return;
+                    }
+
                     JSONArray todoArray = result.Response.getJSONArray("toDoTasks");
 
                     ArrayList<TodoListObject> todos = new ArrayList<>();
@@ -402,6 +457,34 @@ public class WebHandler
                 {
                     result.Callback.OnFail(result.RequestTypeData, "Unknown Error in Todo list download");
                 }
+                break;
+
+            case LOG_IN:
+                try {
+                    if(result.Response.has("hasError")) {
+                        if(result.Response.getBoolean("hasError"))
+                        {
+                            String errorMessage = result.Response.getJSONObject("error").getString("message");
+                            Log.e("Error", errorMessage);
+                            result.Callback.OnFail(result.RequestTypeData, errorMessage);
+                            return;
+                        }
+
+                        if (result.Response.has("sessionId"))
+                        {
+                            String sessionID = result.Response.getString("sessionId");
+                            SetSessionID(sessionID);
+                            result.Callback.OnSuccess(result.RequestTypeData, sessionID);
+                        }
+                        else {
+                            result.Callback.OnFail(result.RequestTypeData, "Could not obtain session");
+                        }
+                    }
+                } catch (JSONException je)
+                {
+                    result.Callback.OnFail(result.RequestTypeData, "Could not obtain session");
+                }
+
                 break;
 
             default:

@@ -16,16 +16,40 @@ import android.support.v4.content.ContextCompat;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.Toast;
+
+import com.google.android.gms.auth.api.signin.GoogleSignIn;
+import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
+import com.google.android.gms.auth.api.signin.GoogleSignInClient;
+import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
+import com.google.android.gms.common.api.ApiException;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
+
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import hoppingvikings.housefinancemobile.R;
+import hoppingvikings.housefinancemobile.WebService.CommunicationCallback;
+import hoppingvikings.housefinancemobile.WebService.RequestType;
+import hoppingvikings.housefinancemobile.WebService.WebHandler;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements CommunicationCallback {
+
+    GoogleSignInClient _signInClient;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
+                .requestIdToken(getString(R.string.backend_id))
+                .build();
+
+        _signInClient = GoogleSignIn.getClient(this, gso);
 
         // TODO: Need to keep this around for when "We want to write stuff to a file". I asked what specifically... Ha
         if((ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED)
@@ -35,8 +59,26 @@ public class MainActivity extends AppCompatActivity {
         }
         else
         {
-            GoToMainMenu();
+            HandleSilentSignIn();
         }
+    }
+
+    private void HandleSilentSignIn()
+    {
+        _signInClient.silentSignIn().addOnCompleteListener(this, new OnCompleteListener<GoogleSignInAccount>() {
+            @Override
+            public void onComplete(@NonNull Task<GoogleSignInAccount> task) {
+                HandleSignInResult(task);
+            }
+        });
+    }
+
+    private void GoToSignInPage()
+    {
+        Intent signIn = new Intent(this, SignInActivity.class);
+        startActivity(signIn);
+
+        finish();
     }
 
     private void GoToMainMenu()
@@ -45,6 +87,30 @@ public class MainActivity extends AppCompatActivity {
         startActivity(mainMenu);
 
         finish();
+    }
+
+    private void HandleSignInResult(@NonNull Task<GoogleSignInAccount> completeTask)
+    {
+        try {
+            GoogleSignInAccount account = completeTask.getResult(ApiException.class);
+            String idToken = account.getIdToken();
+
+            JSONObject tokenJson = new JSONObject();
+            try {
+                tokenJson.put("Token", idToken);
+            } catch (JSONException e)
+            {
+
+            }
+
+            WebHandler.Instance().GetSessionID(this, this, tokenJson);
+            // Send the token to dave to confirm
+            //GoToMainMenu();
+        } catch (ApiException e)
+        {
+            Log.e("Error: ", "signInResult:failed code=" + e.getStatusCode());
+            GoToSignInPage();
+        }
     }
 
     @Override
@@ -81,7 +147,8 @@ public class MainActivity extends AppCompatActivity {
                 if(grantResults.length > 0
                         && grantResults[0] == PackageManager.PERMISSION_GRANTED)
                 {
-                    GoToMainMenu();
+                    //GoToMainMenu();
+                    HandleSilentSignIn();
                 }
                 else
                 {
@@ -90,5 +157,16 @@ public class MainActivity extends AppCompatActivity {
                 }
                 break;
         }
+    }
+
+    @Override
+    public void OnSuccess(RequestType requestType, Object o) {
+        GoToMainMenu();
+    }
+
+    @Override
+    public void OnFail(RequestType requestType, String message) {
+        Toast.makeText(this, "Could not obtain session", Toast.LENGTH_LONG).show();
+        GoToSignInPage();
     }
 }

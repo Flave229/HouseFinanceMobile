@@ -8,5 +8,6 @@ public enum ItemType
     BILL_DETAILED,
     PERSON,
     PAYMENT,
+    LOG_IN,
     NONE
 }

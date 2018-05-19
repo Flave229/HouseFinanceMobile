@@ -19,12 +19,16 @@ import hoppingvikings.housefinancemobile.ItemType;
 public class WebService extends AsyncTask<CommunicationRequest, Void, CommunicationResponse>
 {
     private static final String WEB_APIV2_URL = "http://house.flave.co.uk/api/v2/";
-    private String _authToken = "";
+    private String _clientID = "";
+    private String _sessionID = "";
+    private String _fullAuthToken = "";
     private CommunicationRequest _request;
 
-    public WebService(String authToken)
+    public WebService(String clientID, String sessionID)
     {
-        _authToken = authToken;
+        _clientID = clientID;
+        _sessionID = sessionID;
+        _fullAuthToken = "ClientID " + _clientID + ", Token " + _sessionID;
     }
 
     @Override
@@ -56,6 +60,11 @@ public class WebService extends AsyncTask<CommunicationRequest, Void, Communicat
 
         if (_request.RequestTypeData != RequestType.GET)
         {
+            if(_request.ItemTypeData == ItemType.LOG_IN)
+            {
+                _request.Owner.ApiResult(result, ItemType.LOG_IN);
+                return;
+            }
             _request.Owner.ApiResult(result, ItemType.NONE);
             return;
         }
@@ -87,6 +96,9 @@ public class WebService extends AsyncTask<CommunicationRequest, Void, Communicat
             case TODO:
                 subEndpoint = "ToDo";
                 break;
+            case LOG_IN:
+                subEndpoint = "LogIn";
+                break;
             default:
                 subEndpoint = "";
         }
@@ -104,7 +116,11 @@ public class WebService extends AsyncTask<CommunicationRequest, Void, Communicat
             connection.setReadTimeout(15000);
             connection.setConnectTimeout(45000);
             connection.setDoInput(true);
-            connection.setRequestProperty("Authorization", _authToken);
+
+            if(_request.ItemTypeData != ItemType.LOG_IN)
+                connection.setRequestProperty("Authorization", _fullAuthToken);
+            else
+                connection.setRequestProperty("Authorization", "ClientID " + _clientID);
 
             connection.setRequestMethod(_request.RequestTypeData.toString());
 

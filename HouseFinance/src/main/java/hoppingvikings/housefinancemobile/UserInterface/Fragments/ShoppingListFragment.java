@@ -182,14 +182,6 @@ public class ShoppingListFragment extends Fragment
         swipeRefreshLayout.setRefreshing(true);
         _handler.postDelayed(contactWebsite, 200);
 
-        activity.addShoppingItemFab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent addItem = new Intent(getContext(), AddNewShoppingItemActivity.class);
-                startActivityForResult(addItem, 0);
-            }
-        });
-
         return view;
     }
 

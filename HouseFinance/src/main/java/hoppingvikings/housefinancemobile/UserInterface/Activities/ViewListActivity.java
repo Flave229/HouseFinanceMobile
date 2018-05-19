@@ -160,7 +160,7 @@ public class ViewListActivity extends AppCompatActivity
         setContentView(R.layout.activity_viewlist);
 
         _toolbar = findViewById(R.id.appToolbar);
-        _layout = findViewById(R.id.coordlayout);
+        _layout = findViewById(R.id.coordLayout);
         _fab = findViewById(R.id.addItem);
         _rv = findViewById(R.id.recycler_view);
         _rv.setHasFixedSize(false);

@@ -111,14 +111,6 @@ public class TodoListFragment extends Fragment
             _items.addAll(todos);
         }
 
-        _activity.addTodoItemFab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent addTask = new Intent(getContext(), AddNewToDoActivity.class);
-                startActivityForResult(addTask, 0);
-            }
-        });
-
         if(_recyclerView != null)
         {
             _adapter = new TodoListAdapter(_items, getContext());

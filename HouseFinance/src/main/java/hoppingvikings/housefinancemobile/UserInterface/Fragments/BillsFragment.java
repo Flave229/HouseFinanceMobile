@@ -119,14 +119,6 @@ public class BillsFragment extends Fragment
             _cards.addAll(bills);
         }
 
-        _activity.addBillFab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent addBill = new Intent(getContext(), AddNewBillActivity.class);
-                startActivityForResult(addBill, 0);
-            }
-        });
-
         if(_recyclerView != null) {
             _adapter = new BillListAdapter(_cards, getContext());
             _recyclerView.setAdapter(_adapter);

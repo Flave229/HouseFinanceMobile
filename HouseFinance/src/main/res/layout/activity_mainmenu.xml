@@ -4,7 +4,8 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/coordLayout"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:background="#fff">
 
     <android.support.v7.widget.Toolbar
         android:id="@+id/appToolbar"
@@ -17,11 +18,13 @@
 
     <android.support.v7.widget.RecyclerView
         android:id="@+id/mainMenuRecyclerView"
-        android:layout_width="match_parent"
+        android:layout_width="wrap_content"
         android:layout_height="match_parent"
         android:layout_marginTop="56dp"
         android:scrollbars="vertical"
         tools:listitem="@layout/listitem_mainmenu"
-        android:background="#eee"/>
+        android:background="#fff"
+        android:clipToPadding="false"
+        android:layout_gravity="center"/>
 
 </android.support.design.widget.CoordinatorLayout>
