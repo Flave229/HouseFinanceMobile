@@ -1,11 +1,14 @@
 package hoppingvikings.housefinancemobile.UserInterface.Activities;
 
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.Snackbar;
+import android.support.design.widget.TextInputEditText;
+import android.support.design.widget.TextInputLayout;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
@@ -15,12 +18,18 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.FrameLayout;
+import android.widget.ImageButton;
 import android.widget.ProgressBar;
+import android.widget.TextView;
 import android.widget.Toast;
 
+import org.json.JSONArray;
+import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 
 import hoppingvikings.housefinancemobile.FileName;
 import hoppingvikings.housefinancemobile.ItemType;
@@ -35,24 +44,25 @@ import hoppingvikings.housefinancemobile.WebService.WebHandler;
 
 public class AddNewShoppingItemActivity extends AppCompatActivity implements CommunicationCallback {
 
-    public Button addToCartButton;
-    FrameLayout _fragmentContainer;
+    Button submitButton;
 
     CoordinatorLayout layout;
 
-    public ArrayList<String> _shoppingItems;
-    public ArrayList<JSONObject> _recentShoppingItems;
+    TextInputLayout itemNameLayout;
+    TextInputEditText shoppingItemNameEntry;
 
-    ButtonPressedCallback _owner;
+    TextView selectUsers;
+    ImageButton editPeople;
 
-    ProgressBar uploadProgress;
-    public int progress;
+    String itemName;
 
-    boolean disableCartButton;
+    ArrayList<Integer> _selectedUserIds = new ArrayList<>();
+    ArrayList<String> _selectedUserNames = new ArrayList<>();
 
     @Override
     protected void onSaveInstanceState(Bundle outState) {
-        outState.putStringArrayList("shopping_items", _shoppingItems);
+        outState.putStringArrayList("user_names",_selectedUserNames);
+        outState.putIntegerArrayList("user_ids", _selectedUserIds);
         super.onSaveInstanceState(outState);
     }
 
@@ -60,10 +70,15 @@ public class AddNewShoppingItemActivity extends AppCompatActivity implements Com
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_addnewshoppingitem);
-        _fragmentContainer = (FrameLayout) findViewById(R.id.fragment_container);
-        uploadProgress = (ProgressBar) findViewById(R.id.uploadProgress);
+
+        if(savedInstanceState != null)
+        {
+            _selectedUserIds = savedInstanceState.getIntegerArrayList("user_ids");
+            _selectedUserNames = savedInstanceState.getStringArrayList("user_names");
+        }
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.appToolbar);
+        toolbar.setTitle("Add Shopping Item");
         setSupportActionBar(toolbar);
         layout = (CoordinatorLayout) findViewById(R.id.coordlayout);
 
@@ -71,26 +86,98 @@ public class AddNewShoppingItemActivity extends AppCompatActivity implements Com
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setHomeButtonEnabled(true);
 
-        addToCartButton = (Button) findViewById(R.id.addToList);
-        _shoppingItems = new ArrayList<>();
+        submitButton = (Button) findViewById(R.id.submitShoppingItem);
 
-        disableCartButton = false;
+        itemNameLayout = findViewById(R.id.itemNameLayout);
+        shoppingItemNameEntry = findViewById(R.id.ShoppingItemNameEntry);
 
-        addToCartButton.setOnClickListener(new View.OnClickListener() {
+        selectUsers = findViewById(R.id.selectUsers);
+        editPeople = findViewById(R.id.editPeople);
+        editPeople.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                _owner.AddToCartPressed();
+                Intent selectusers = new Intent(AddNewShoppingItemActivity.this, SelectUsersActivity.class);
+                selectusers.putExtra("multiple_user_selection", true);
+                if(_selectedUserIds.size() > 0)
+                {
+                    selectusers.putExtra("currently_selected_ids", _selectedUserIds);
+                }
+                startActivityForResult(selectusers, 0);
             }
         });
 
-        getSupportFragmentManager().beginTransaction()
-                .replace(R.id.fragment_container, new AddShoppingItemFragment())
-                .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE)
-                .addToBackStack(null)
-                .commit();
+        if(_selectedUserNames.size() > 0)
+        {
+            StringBuilder namesString = new StringBuilder();
+            int index = 0;
+            for (String name:_selectedUserNames) {
+                if(index != _selectedUserNames.size() - 1)
+                    namesString.append(name).append(", ");
+                else
+                    namesString.append(name);
 
-        /*LoadRecentItemsAsync task = new LoadRecentItemsAsync();
-        task.execute();*/
+                index++;
+            }
+            selectUsers.setText(namesString);
+        }
+
+        submitButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if(!ValidateFields())
+                {
+                    ReenableElements();
+                    return;
+                }
+
+                final AlertDialog confirmCancel = new AlertDialog.Builder(AddNewShoppingItemActivity.this).create();
+
+                confirmCancel.setTitle("Submit Item?");
+                confirmCancel.setMessage("Please check all details are correct before continuing");
+
+                confirmCancel.setButton(DialogInterface.BUTTON_NEGATIVE, "Cancel", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        confirmCancel.dismiss();
+                    }
+                });
+
+                confirmCancel.setButton(DialogInterface.BUTTON_POSITIVE, "Confirm", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        confirmCancel.dismiss();
+
+                        shoppingItemNameEntry.setEnabled(false);
+                        editPeople.setEnabled(false);
+
+                        JSONObject newItem = new JSONObject();
+
+                        try{
+                            newItem.put("Name", itemName);
+
+                            JSONArray people = new JSONArray();
+
+                            for (int id : _selectedUserIds) {
+                                people.put(id);
+                            }
+
+                            newItem.put("ItemFor", people);
+
+                            // Add the item to a file on the device
+                            //GlobalObjects.WriteToFile(getContext(), newItem.toString());
+
+                            WebHandler.Instance().UploadNewItem(AddNewShoppingItemActivity.this, newItem, AddNewShoppingItemActivity.this, ItemType.SHOPPING);
+                        } catch (JSONException je)
+                        {
+                            Snackbar.make(layout, "Failed to create Json", Snackbar.LENGTH_LONG).show();
+                            ReenableElements();
+                        }
+                    }
+                });
+
+                confirmCancel.show();
+            }
+        });
     }
 
     @Override
@@ -98,51 +185,37 @@ public class AddNewShoppingItemActivity extends AppCompatActivity implements Com
         getMenuInflater().inflate(R.menu.shopping_item_menu, menu);
         return super.onCreateOptionsMenu(menu);
     }
-
-    public void SetCallbackOwner(ButtonPressedCallback owner)
-    {
-        _owner = owner;
-    }
-
     @Override
     public void onBackPressed() {
-        if(getSupportFragmentManager().getBackStackEntryCount() > 1)
-        {
-            disableCartButton = false;
-            getSupportFragmentManager().popBackStack();
+
+        if(shoppingItemNameEntry.getText().length() == 0
+                && _selectedUserIds.size() == 0) {
+
         }
-        else
-        {
-            if(_shoppingItems.size() == 0)
-            {
+        final AlertDialog confirmCancel = new AlertDialog.Builder(this).create();
+
+        confirmCancel.setTitle("Cancel item entry?");
+        confirmCancel.setMessage("Any entered details will be lost.");
+
+        confirmCancel.setButton(DialogInterface.BUTTON_POSITIVE, "Confirm", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialogInterface, int i) {
+                confirmCancel.dismiss();
                 setResult(RESULT_CANCELED);
                 finish();
-                return;
+                //AddNewShoppingItemActivity.super.onBackPressed();
             }
-            final AlertDialog confirmCancel = new AlertDialog.Builder(this).create();
+        });
 
-            confirmCancel.setTitle("Cancel item entry?");
-            confirmCancel.setMessage("All items in the cart will be lost.");
+        confirmCancel.setButton(DialogInterface.BUTTON_NEGATIVE, "Stay Here", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialogInterface, int i) {
+                confirmCancel.dismiss();
+            }
+        });
 
-            confirmCancel.setButton(DialogInterface.BUTTON_POSITIVE, "Confirm", new DialogInterface.OnClickListener() {
-                @Override
-                public void onClick(DialogInterface dialogInterface, int i) {
-                    confirmCancel.dismiss();
-                    setResult(RESULT_CANCELED);
-                    finish();
-                    //AddNewShoppingItemActivity.super.onBackPressed();
-                }
-            });
+        confirmCancel.show();
 
-            confirmCancel.setButton(DialogInterface.BUTTON_NEGATIVE, "Stay Here", new DialogInterface.OnClickListener() {
-                @Override
-                public void onClick(DialogInterface dialogInterface, int i) {
-                    confirmCancel.dismiss();
-                }
-            });
-
-            confirmCancel.show();
-        }
     }
 
     @Override
@@ -150,19 +223,6 @@ public class AddNewShoppingItemActivity extends AppCompatActivity implements Com
 
         switch (item.getItemId())
         {
-            case R.id.view_cart:
-                if(!disableCartButton)
-                {
-                    getSupportFragmentManager().beginTransaction()
-                            .replace(R.id.fragment_container, new ShoppingCartFragment())
-                            .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE)
-                            .addToBackStack(null)
-                            .commit();
-                }
-
-                disableCartButton = true;
-                return true;
-
             case android.R.id.home:
                 onBackPressed();
                 return true;
@@ -174,37 +234,36 @@ public class AddNewShoppingItemActivity extends AppCompatActivity implements Com
 
     public void ReenableElements()
     {
-        addToCartButton.setEnabled(true);
+        shoppingItemNameEntry.setEnabled(true);
+
+        editPeople.setEnabled(true);
+        submitButton.setEnabled(true);
     }
 
-    public void UploadNextItem()
+    private boolean ValidateFields()
     {
-        try {
-            WebHandler.Instance().UploadNewItem(this, new JSONObject(_shoppingItems.get(0)), this, ItemType.SHOPPING);
-        } catch (Exception e)
-        {
-
+        if(shoppingItemNameEntry.getText().length() > 0) {
+            itemName = shoppingItemNameEntry.getText().toString();
+            itemNameLayout.setError(null);
+        } else {
+            itemNameLayout.setError("Please enter a valid Item name");
+            return false;
         }
+
+        if(_selectedUserIds.size() < 1)
+        {
+            Snackbar.make(layout, "Please select at least one person for this item", Snackbar.LENGTH_LONG).show();
+            return false;
+        }
+        return true;
     }
 
     @Override
     public void OnSuccess(RequestType requestType, Object o)
     {
-        uploadProgress.setVisibility(View.VISIBLE);
-        uploadProgress.setProgress(uploadProgress.getProgress() + progress);
-        if(_shoppingItems.size() > 0)
-        {
-            _shoppingItems.remove(0);
-        }
-
-        if(_shoppingItems.size() > 0)
-        {
-            UploadNextItem();
-            return;
-        }
-        Toast.makeText(getApplicationContext(), "Item successfully added", Toast.LENGTH_LONG).show();
-        setResult(RESULT_OK);
-        finish();
+        Snackbar.make(layout, "Item successfully added", Snackbar.LENGTH_LONG).show();
+        shoppingItemNameEntry.setText("");
+        ReenableElements();
     }
 
     @Override
@@ -212,6 +271,43 @@ public class AddNewShoppingItemActivity extends AppCompatActivity implements Com
     {
         Snackbar.make(layout, message, Snackbar.LENGTH_LONG).show();
         ReenableElements();
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
+        switch (requestCode)
+        {
+            case 0:
+                switch (resultCode)
+                {
+                    case RESULT_OK:
+                        if(data != null)
+                        {
+                            _selectedUserIds = data.getIntegerArrayListExtra("selected_ids");
+                            _selectedUserNames = data.getStringArrayListExtra("selected_names");
+
+                            StringBuilder namesString = new StringBuilder();
+                            int index = 0;
+                            for (String name:_selectedUserNames) {
+                                if(index != _selectedUserNames.size() - 1)
+                                    namesString.append(name).append(", ");
+                                else
+                                    namesString.append(name);
+
+                                index++;
+                            }
+                            selectUsers.setText(namesString);
+                        }
+                        break;
+
+                    case RESULT_CANCELED:
+
+                        break;
+                }
+                break;
+        }
     }
 
     private class LoadRecentItemsAsync extends AsyncTask<Void, Void, ArrayList<JSONObject>>
@@ -225,11 +321,11 @@ public class AddNewShoppingItemActivity extends AppCompatActivity implements Com
         protected void onPostExecute(ArrayList<JSONObject> arrayList) {
             if(arrayList != null)
             {
-                _recentShoppingItems = arrayList;
+                //_recentShoppingItems = arrayList;
             }
             else
             {
-                _recentShoppingItems = new ArrayList<>();
+                //_recentShoppingItems = new ArrayList<>();
             }
         }
     }

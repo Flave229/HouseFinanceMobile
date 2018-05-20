@@ -32,6 +32,7 @@ import hoppingvikings.housefinancemobile.UserInterface.Activities.ViewListActivi
 import hoppingvikings.housefinancemobile.UserInterface.Items.MainMenuItem;
 import hoppingvikings.housefinancemobile.UserInterface.Lists.MainMenu.MainMenuListAdapter;
 import hoppingvikings.housefinancemobile.UserInterface.Lists.MainMenu.MarginDecoration;
+import hoppingvikings.housefinancemobile.WebService.WebHandler;
 
 public class MainMenuActivity extends AppCompatActivity {
 
@@ -135,6 +136,7 @@ public class MainMenuActivity extends AppCompatActivity {
                 .addOnCompleteListener(this, new OnCompleteListener<Void>() {
                     @Override
                     public void onComplete(@NonNull Task<Void> task) {
+                        WebHandler.Instance().SetSessionID("");
                         Intent signInScreen = new Intent(MainMenuActivity.this, SignInActivity.class);
                         startActivity(signInScreen);
 

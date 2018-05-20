@@ -76,15 +76,6 @@ public class AddShoppingItemFragment extends Fragment implements ButtonPressedCa
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         _currentView = inflater.inflate(R.layout.fragment_shoppingform, container, false);
-        _activity = (AddNewShoppingItemActivity)getActivity();
-        _activity.SetCallbackOwner(this);
-        _activity.addToCartButton.setEnabled(true);
-        _activity.addToCartButton.setText("Add to Cart");
-
-        if(_activity._shoppingItems.size() > 0)
-            _activity.getSupportActionBar().setSubtitle("Items in cart: " + _activity._shoppingItems.size());
-        else
-            _activity.getSupportActionBar().setSubtitle("No items in cart");
 
         if(savedInstanceState != null)
         {
@@ -93,8 +84,6 @@ public class AddShoppingItemFragment extends Fragment implements ButtonPressedCa
             _selectedUserName = savedInstanceState.getString("user_name");
             _selectedUserNames = savedInstanceState.getStringArrayList("user_names");
         }
-
-        layout = (CoordinatorLayout) _currentView.findViewById(R.id.coordlayout);
 
         itemNameLayout = (TextInputLayout)  _currentView.findViewById(R.id.itemNameLayout);
         shoppingItemNameEntry = (TextInputEditText)  _currentView.findViewById(R.id.ShoppingItemNameEntry);
@@ -187,17 +176,6 @@ public class AddShoppingItemFragment extends Fragment implements ButtonPressedCa
 
     @Override
     public void SubmitPressed() {
-        if(_activity._shoppingItems.size() > 0)
-        {
-            getActivity().getSupportFragmentManager().beginTransaction()
-                    .replace(R.id.fragment_container, new ShoppingCartFragment())
-                    .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE)
-                    .addToBackStack(null)
-                    .commit();
-
-            return;
-        }
-
         if(!ValidateFields())
         {
             _activity.ReenableElements();
@@ -270,7 +248,7 @@ public class AddShoppingItemFragment extends Fragment implements ButtonPressedCa
             newItem.put("Name", itemName);
             newItem.put("Added", new SimpleDateFormat("yyyy-MM-dd").format(new Date()));
 
-            newItem.put("AddedBy", _selectedUserId);
+            //newItem.put("AddedBy", _selectedUserId);
 
             JSONArray people = new JSONArray();
 
@@ -280,9 +258,9 @@ public class AddShoppingItemFragment extends Fragment implements ButtonPressedCa
 
             newItem.put("ItemFor", people);
 
-            _activity._shoppingItems.add(newItem.toString());
+           // _activity._shoppingItems.add(newItem.toString());
             Toast.makeText(getContext(), "Item added to cart", Toast.LENGTH_SHORT).show();
-            _activity.getSupportActionBar().setSubtitle("Items in cart: " + String.valueOf(_activity._shoppingItems.size()));
+            //_activity.getSupportActionBar().setSubtitle("Items in cart: " + String.valueOf(_activity._shoppingItems.size()));
 
             shoppingItemNameEntry.setText("");
             //GlobalObjects.WebHandler.UploadNewShoppingItem(getApplicationContext(), newItem, AddNewShoppingItemActivity.this);

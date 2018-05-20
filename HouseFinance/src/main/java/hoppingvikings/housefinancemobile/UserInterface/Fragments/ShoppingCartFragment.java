@@ -48,20 +48,20 @@ public class ShoppingCartFragment extends Fragment
         WebHandler.Instance().RequestUsers(getContext(), this);
         currentView = inflater.inflate(R.layout.fragment_shoppingcart, container, false);
         _activity = (AddNewShoppingItemActivity)getActivity();
-        _activity.SetCallbackOwner(this);
-        _activity.addToCartButton.setText("Submit");
-        _activity.addToCartButton.setEnabled(true);
+        //_activity.SetCallbackOwner(this);
+        //_activity.addToCartButton.setText("Submit");
+        //_activity.addToCartButton.setEnabled(true);
 
         cartEmptyText = (TextView) currentView.findViewById(R.id.cartEmptyText);
         layout = (CoordinatorLayout) currentView.findViewById(R.id.coordlayout);
         rv = (RecyclerView) currentView.findViewById(R.id.cartList);
         items = new ArrayList<>();
 
-        if(_activity._shoppingItems.size() < 1)
-        {
-            cartEmptyText.setVisibility(View.VISIBLE);
-            _activity.addToCartButton.setEnabled(false);
-        }
+//        if(_activity._shoppingItems.size() < 1)
+//        {
+//            cartEmptyText.setVisibility(View.VISIBLE);
+//            _activity.addToCartButton.setEnabled(false);
+//        }
 
         return currentView;
     }
@@ -88,10 +88,10 @@ public class ShoppingCartFragment extends Fragment
 //                }
 
                 submitting = true;
-                _activity.progress = 100 / _activity._shoppingItems.size();
-                _activity.addToCartButton.setEnabled(false);
+                //_activity.progress = 100 / _activity._shoppingItems.size();
+                //_activity.addToCartButton.setEnabled(false);
                 try {
-                    WebHandler.Instance().UploadNewItem(getContext(), new JSONObject(_activity._shoppingItems.get(0)), _activity, ItemType.SHOPPING);
+                    //WebHandler.Instance().UploadNewItem(getContext(), new JSONObject(_activity._shoppingItems.get(0)), _activity, ItemType.SHOPPING);
                 } catch (Exception e)
                 {
 
@@ -112,13 +112,13 @@ public class ShoppingCartFragment extends Fragment
     {
         if(!submitting)
         {
-            _activity._shoppingItems.remove(item);
-            if(_activity._shoppingItems.size() < 1)
-            {
-                cartEmptyText.setVisibility(View.VISIBLE);
-                _activity.addToCartButton.setEnabled(false);
-            }
-            _activity.getSupportActionBar().setSubtitle("Items in cart: " + _activity._shoppingItems.size());
+            //_activity._shoppingItems.remove(item);
+//            if(_activity._shoppingItems.size() < 1)
+//            {
+//                cartEmptyText.setVisibility(View.VISIBLE);
+//                _activity.addToCartButton.setEnabled(false);
+//            }
+            //_activity.getSupportActionBar().setSubtitle("Items in cart: " + _activity._shoppingItems.size());
         }
         else
         {
@@ -131,10 +131,10 @@ public class ShoppingCartFragment extends Fragment
     {
         try
         {
-            for (String jsonstring: _activity._shoppingItems) {
-                JSONObject json = new JSONObject(jsonstring);
-                items.add(new ShoppingCartItem(json));
-            }
+//            for (String jsonstring: _activity._shoppingItems) {
+//                JSONObject json = new JSONObject(jsonstring);
+//                items.add(new ShoppingCartItem(json));
+//            }
         }
         catch (Exception e)
         { }

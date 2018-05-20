@@ -7,5 +7,6 @@
         android:id="@+id/view_cart"
         android:icon="@drawable/baseline_shopping_basket_white_24"
         android:title="View Cart"
-        app:showAsAction="ifRoom" />
+        app:showAsAction="ifRoom"
+        android:visible="false"/>
 </menu>

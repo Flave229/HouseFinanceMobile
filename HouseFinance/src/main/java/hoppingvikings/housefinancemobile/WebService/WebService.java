@@ -28,7 +28,7 @@ public class WebService extends AsyncTask<CommunicationRequest, Void, Communicat
     {
         _clientID = clientID;
         _sessionID = sessionID;
-        _fullAuthToken = "ClientID " + _clientID + ", Token " + _sessionID;
+        _fullAuthToken = "Token " + _sessionID;
     }
 
     @Override
@@ -120,7 +120,7 @@ public class WebService extends AsyncTask<CommunicationRequest, Void, Communicat
             if(_request.ItemTypeData != ItemType.LOG_IN)
                 connection.setRequestProperty("Authorization", _fullAuthToken);
             else
-                connection.setRequestProperty("Authorization", "ClientID " + _clientID);
+                connection.setRequestProperty("Authorization", "");
 
             connection.setRequestMethod(_request.RequestTypeData.toString());
 
