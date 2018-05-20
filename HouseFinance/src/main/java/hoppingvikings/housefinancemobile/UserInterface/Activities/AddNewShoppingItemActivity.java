@@ -59,6 +59,8 @@ public class AddNewShoppingItemActivity extends AppCompatActivity implements Com
     ArrayList<Integer> _selectedUserIds = new ArrayList<>();
     ArrayList<String> _selectedUserNames = new ArrayList<>();
 
+    int _totalAddedItems = 0;
+
     @Override
     protected void onSaveInstanceState(Bundle outState) {
         outState.putStringArrayList("user_names",_selectedUserNames);
@@ -191,6 +193,13 @@ public class AddNewShoppingItemActivity extends AppCompatActivity implements Com
         if(shoppingItemNameEntry.getText().length() == 0
                 && _selectedUserIds.size() == 0) {
 
+            if(_totalAddedItems > 0)
+                setResult(RESULT_OK);
+            else
+                setResult(RESULT_CANCELED);
+
+            finish();
+            return;
         }
         final AlertDialog confirmCancel = new AlertDialog.Builder(this).create();
 
@@ -201,7 +210,12 @@ public class AddNewShoppingItemActivity extends AppCompatActivity implements Com
             @Override
             public void onClick(DialogInterface dialogInterface, int i) {
                 confirmCancel.dismiss();
-                setResult(RESULT_CANCELED);
+
+                if(_totalAddedItems > 0)
+                    setResult(RESULT_OK);
+                else
+                    setResult(RESULT_CANCELED);
+
                 finish();
                 //AddNewShoppingItemActivity.super.onBackPressed();
             }
@@ -264,6 +278,7 @@ public class AddNewShoppingItemActivity extends AppCompatActivity implements Com
         Snackbar.make(layout, "Item successfully added", Snackbar.LENGTH_LONG).show();
         shoppingItemNameEntry.setText("");
         ReenableElements();
+        _totalAddedItems++;
     }
 
     @Override
