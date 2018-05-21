@@ -305,11 +305,11 @@ public class WebHandler
                 catch (JSONException je)
                 {
                     je.printStackTrace();
-                    result.Callback.OnFail(result.RequestTypeData, "Failed to parse Bill list");
+                    result.Callback.OnFail(result.RequestTypeData, "Could not obtain Bills list");
                 }
                 catch(Exception e)
                 {
-                    result.Callback.OnFail(result.RequestTypeData, "Unknown Error in Bill list download");
+                    result.Callback.OnFail(result.RequestTypeData, "Could not obtain Bills list");
                 }
                 break;
 
@@ -341,11 +341,11 @@ public class WebHandler
                 catch (JSONException je)
                 {
                     je.printStackTrace();
-                    result.Callback.OnFail(result.RequestTypeData, "Failed to parse Shopping list");
+                    result.Callback.OnFail(result.RequestTypeData, "Could not obtain Shopping list");
                 }
                 catch(Exception e)
                 {
-                    result.Callback.OnFail(result.RequestTypeData, "Unknown Error in Shopping list download");
+                    result.Callback.OnFail(result.RequestTypeData, "Could not obtain Shopping list");
                 }
                 break;
 
@@ -380,10 +380,11 @@ public class WebHandler
                 } catch (JSONException je)
                 {
                     je.printStackTrace();
-                    result.Callback.OnFail(result.RequestTypeData, "Failed to parse Shopping list");
-                } catch (Exception e)
+                    result.Callback.OnFail(result.RequestTypeData, "Could not obtain People");
+                }
+                catch(Exception e)
                 {
-
+                    result.Callback.OnFail(result.RequestTypeData, "Could not obtain People");
                 }
 
                 break;
@@ -406,17 +407,14 @@ public class WebHandler
                     JSONArray paymentsArray = detailedJson.getJSONArray("payments");
                     detailedBill = new BillObjectDetailed(detailedJson, paymentsArray);
                 }
-                catch (JSONException e)
+                catch (JSONException je)
                 {
-                    e.printStackTrace();
-                    result.Callback.OnFail(result.RequestTypeData, "Failed to parse Detailed Bill");
-                    return;
+                    je.printStackTrace();
+                    result.Callback.OnFail(result.RequestTypeData, "Could not obtain Bill details");
                 }
-                catch (Exception e)
+                catch(Exception e)
                 {
-                    e.printStackTrace();
-                    result.Callback.OnFail(result.RequestTypeData, "Unknown error in Detailed Bill Download");
-                    return;
+                    result.Callback.OnFail(result.RequestTypeData, "Could not obtain Bill details");
                 }
 
                 result.Callback.OnSuccess(result.RequestTypeData, detailedBill);
@@ -451,11 +449,11 @@ public class WebHandler
                 catch (JSONException je)
                 {
                     je.printStackTrace();
-                    result.Callback.OnFail(result.RequestTypeData, "Failed to obtain Todo list");
+                    result.Callback.OnFail(result.RequestTypeData, "Could not obtain Todo list");
                 }
                 catch(Exception e)
                 {
-                    result.Callback.OnFail(result.RequestTypeData, "Unknown Error in Todo list download");
+                    result.Callback.OnFail(result.RequestTypeData, "Could not obtain Todo list");
                 }
                 break;
 
@@ -481,6 +479,11 @@ public class WebHandler
                         }
                     }
                 } catch (JSONException je)
+                {
+                    je.printStackTrace();
+                    result.Callback.OnFail(result.RequestTypeData, "Could not obtain session");
+                }
+                catch(Exception e)
                 {
                     result.Callback.OnFail(result.RequestTypeData, "Could not obtain session");
                 }
