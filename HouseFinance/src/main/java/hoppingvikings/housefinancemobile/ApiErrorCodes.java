@@ -1,7 +1,8 @@
 package hoppingvikings.housefinancemobile;
 
 public enum ApiErrorCodes {
-    SESSION_EXPIRED(100001);
+    SESSION_EXPIRED(100001),
+    SESSION_INVALID(100002);
 
     private int value;
 

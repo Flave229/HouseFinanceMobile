@@ -154,5 +154,6 @@ public class SignInActivity extends AppCompatActivity implements CommunicationCa
     public void OnFail(RequestType requestType, String message) {
         _welcomeText.setText("Failed to sign in. " + message);
         signInButton.setEnabled(true);
+        signInButton.setVisibility(View.VISIBLE);
     }
 }
