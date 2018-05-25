@@ -496,9 +496,8 @@ public class WebHandler
                 break;
 
             default:
-                if(result.Response.has("hasError"))
-                {
-                    try
+                try {
+                    if(result.Response.has("hasError"))
                     {
                         if(result.Response.getBoolean("hasError"))
                         {
@@ -510,13 +509,18 @@ public class WebHandler
 
                         result.Callback.OnSuccess(result.RequestTypeData, result.Response);
                     }
-                    catch (JSONException e)
-                    {
-                        String errorMessage = "An error occurred while parsing the server response: " + e.getMessage();
-                        Log.e("Error", errorMessage);
-                        result.Callback.OnFail(result.RequestTypeData, errorMessage);
-                    }
+                    
                 }
+                catch (JSONException e)
+                {
+                    Log.e("Error", e.getMessage());
+                    result.Callback.OnFail(result.RequestTypeData, "Could not read server response");
+                }
+                catch (Exception e)
+                {
+                    result.Callback.OnFail(result.RequestTypeData, "Failed to get a response from the server");
+                }
+
                 break;
         }
     }
