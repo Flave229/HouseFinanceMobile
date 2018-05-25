@@ -89,10 +89,13 @@ public class SignInActivity extends AppCompatActivity implements CommunicationCa
         //HandleAccount(account);
     }
 
-    private void HandleAccount(GoogleSignInAccount account)
+    private void HandleAccount()
     {
-        Intent goToMainMenu = new Intent(this, MainMenuActivity.class);
-        startActivity(goToMainMenu);
+        if(!getIntent().hasExtra("IrregularStart"))
+        {
+            Intent goToMainMenu = new Intent(this, MainMenuActivity.class);
+            startActivity(goToMainMenu);
+        }
 
         finish();
     }
@@ -147,7 +150,7 @@ public class SignInActivity extends AppCompatActivity implements CommunicationCa
 
     @Override
     public void OnSuccess(RequestType requestType, Object o) {
-        HandleAccount(null);
+        HandleAccount();
     }
 
     @Override

@@ -23,6 +23,9 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.android.gms.auth.api.signin.GoogleSignIn;
+import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
+
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -38,6 +41,7 @@ import hoppingvikings.housefinancemobile.R;
 import hoppingvikings.housefinancemobile.UserInterface.Fragments.AddShoppingItemFragment;
 import hoppingvikings.housefinancemobile.UserInterface.Fragments.Interfaces.ButtonPressedCallback;
 import hoppingvikings.housefinancemobile.UserInterface.Fragments.ShoppingCartFragment;
+import hoppingvikings.housefinancemobile.UserInterface.SignInActivity;
 import hoppingvikings.housefinancemobile.WebService.CommunicationCallback;
 import hoppingvikings.housefinancemobile.WebService.RequestType;
 import hoppingvikings.housefinancemobile.WebService.WebHandler;
@@ -60,6 +64,7 @@ public class AddNewShoppingItemActivity extends AppCompatActivity implements Com
     ArrayList<String> _selectedUserNames = new ArrayList<>();
 
     int _totalAddedItems = 0;
+    boolean _obtainingSession = false;
 
     @Override
     protected void onSaveInstanceState(Bundle outState) {
@@ -132,7 +137,33 @@ public class AddNewShoppingItemActivity extends AppCompatActivity implements Com
                     return;
                 }
 
-                final AlertDialog confirmCancel = new AlertDialog.Builder(AddNewShoppingItemActivity.this).create();
+                shoppingItemNameEntry.setEnabled(false);
+                editPeople.setEnabled(false);
+
+                JSONObject newItem = new JSONObject();
+
+                try{
+                    newItem.put("Name", itemName);
+
+                    JSONArray people = new JSONArray();
+
+                    for (int id : _selectedUserIds) {
+                        people.put(id);
+                    }
+
+                    newItem.put("ItemFor", people);
+
+                    // Add the item to a file on the device
+                    //GlobalObjects.WriteToFile(getContext(), newItem.toString());
+
+                    WebHandler.Instance().UploadNewItem(AddNewShoppingItemActivity.this, newItem, AddNewShoppingItemActivity.this, ItemType.SHOPPING);
+                } catch (JSONException je)
+                {
+                    Snackbar.make(layout, "Failed to create Json", Snackbar.LENGTH_LONG).show();
+                    ReenableElements();
+                }
+
+                /*final AlertDialog confirmCancel = new AlertDialog.Builder(AddNewShoppingItemActivity.this).create();
 
                 confirmCancel.setTitle("Submit Item?");
                 confirmCancel.setMessage("Please check all details are correct before continuing");
@@ -149,35 +180,11 @@ public class AddNewShoppingItemActivity extends AppCompatActivity implements Com
                     public void onClick(DialogInterface dialog, int which) {
                         confirmCancel.dismiss();
 
-                        shoppingItemNameEntry.setEnabled(false);
-                        editPeople.setEnabled(false);
 
-                        JSONObject newItem = new JSONObject();
-
-                        try{
-                            newItem.put("Name", itemName);
-
-                            JSONArray people = new JSONArray();
-
-                            for (int id : _selectedUserIds) {
-                                people.put(id);
-                            }
-
-                            newItem.put("ItemFor", people);
-
-                            // Add the item to a file on the device
-                            //GlobalObjects.WriteToFile(getContext(), newItem.toString());
-
-                            WebHandler.Instance().UploadNewItem(AddNewShoppingItemActivity.this, newItem, AddNewShoppingItemActivity.this, ItemType.SHOPPING);
-                        } catch (JSONException je)
-                        {
-                            Snackbar.make(layout, "Failed to create Json", Snackbar.LENGTH_LONG).show();
-                            ReenableElements();
-                        }
                     }
                 });
 
-                confirmCancel.show();
+                confirmCancel.show();*/
             }
         });
     }
@@ -275,6 +282,11 @@ public class AddNewShoppingItemActivity extends AppCompatActivity implements Com
     @Override
     public void OnSuccess(RequestType requestType, Object o)
     {
+        if(_obtainingSession)
+        {
+            _obtainingSession = false;
+            return;
+        }
         Snackbar.make(layout, "Item successfully added", Snackbar.LENGTH_LONG).show();
         shoppingItemNameEntry.setText("");
         ReenableElements();
@@ -325,22 +337,30 @@ public class AddNewShoppingItemActivity extends AppCompatActivity implements Com
         }
     }
 
-    private class LoadRecentItemsAsync extends AsyncTask<Void, Void, ArrayList<JSONObject>>
-    {
-        @Override
-        protected ArrayList<JSONObject> doInBackground(Void... params) {
-            return new FileIOHandler().ReadFile(FileName.SHOPPING_RECENT_ITEMS);
-        }
+    @Override
+    protected void onStart() {
+        super.onStart();
+        if(WebHandler.Instance().GetSessionID().equals(""))
+        {
+            _obtainingSession = true;
+            GoogleSignInAccount account = GoogleSignIn.getLastSignedInAccount(this);
 
-        @Override
-        protected void onPostExecute(ArrayList<JSONObject> arrayList) {
-            if(arrayList != null)
+            if(account != null)
             {
-                //_recentShoppingItems = arrayList;
+                JSONObject tokenJson = new JSONObject();
+                try {
+                    tokenJson.put("Token", account.getIdToken());
+                } catch (JSONException e)
+                {
+
+                }
+                WebHandler.Instance().GetSessionID(this, this, tokenJson);
             }
             else
             {
-                //_recentShoppingItems = new ArrayList<>();
+                Intent signIn = new Intent(this, SignInActivity.class);
+                signIn.putExtra("IrregularStart", true);
+                startActivity(signIn);
             }
         }
     }

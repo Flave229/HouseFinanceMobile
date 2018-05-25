@@ -54,6 +54,11 @@ public class WebHandler
         _sessionID = sessionID;
     }
 
+    public String GetSessionID()
+    {
+        return _sessionID;
+    }
+
     public void GetSessionID(Context context, final CommunicationCallback callback, final JSONObject idToken)
     {
         ConnectivityManager connMgr = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);

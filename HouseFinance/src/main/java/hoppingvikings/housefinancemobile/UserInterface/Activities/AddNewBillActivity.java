@@ -24,6 +24,9 @@ import android.widget.RadioButton;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.android.gms.auth.api.signin.GoogleSignIn;
+import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
+
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -39,6 +42,7 @@ import java.util.Locale;
 
 import hoppingvikings.housefinancemobile.ItemType;
 import hoppingvikings.housefinancemobile.R;
+import hoppingvikings.housefinancemobile.UserInterface.SignInActivity;
 import hoppingvikings.housefinancemobile.WebService.CommunicationCallback;
 import hoppingvikings.housefinancemobile.WebService.RequestType;
 import hoppingvikings.housefinancemobile.WebService.WebHandler;
@@ -70,6 +74,8 @@ public class AddNewBillActivity extends AppCompatActivity implements Communicati
 
     ArrayList<Integer> _selectedUserIds = new ArrayList<>();
     ArrayList<String> _selectedUserNames = new ArrayList<>();
+
+    boolean _obtainingSession = false;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -377,6 +383,11 @@ public class AddNewBillActivity extends AppCompatActivity implements Communicati
     @Override
     public void OnSuccess(RequestType requestType, Object o)
     {
+        if(_obtainingSession)
+        {
+            _obtainingSession = false;
+            return;
+        }
         Toast.makeText(getApplicationContext(), "Bill successfully uploaded", Toast.LENGTH_LONG).show();
         setResult(RESULT_OK);
         finish();
@@ -387,5 +398,33 @@ public class AddNewBillActivity extends AppCompatActivity implements Communicati
     {
         Snackbar.make(layout, message, Snackbar.LENGTH_LONG).show();
         ReenableElements();
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        if(WebHandler.Instance().GetSessionID().equals(""))
+        {
+            _obtainingSession = true;
+            GoogleSignInAccount account = GoogleSignIn.getLastSignedInAccount(this);
+
+            if(account != null)
+            {
+                JSONObject tokenJson = new JSONObject();
+                try {
+                    tokenJson.put("Token", account.getIdToken());
+                } catch (JSONException e)
+                {
+
+                }
+                WebHandler.Instance().GetSessionID(this, this, tokenJson);
+            }
+            else
+            {
+                Intent signIn = new Intent(this, SignInActivity.class);
+                signIn.putExtra("IrregularStart", true);
+                startActivity(signIn);
+            }
+        }
     }
 }

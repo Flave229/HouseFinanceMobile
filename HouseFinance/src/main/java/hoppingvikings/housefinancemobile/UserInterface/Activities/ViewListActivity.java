@@ -17,6 +17,12 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.google.android.gms.auth.api.signin.GoogleSignIn;
+import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
+
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.io.Serializable;
 import java.util.ArrayList;
 
@@ -33,6 +39,7 @@ import hoppingvikings.housefinancemobile.UserInterface.Lists.BillList.BillListAd
 import hoppingvikings.housefinancemobile.UserInterface.Lists.ShoppingList.ShoppingListAdapter;
 import hoppingvikings.housefinancemobile.UserInterface.Lists.TodoList.TodoListAdapter;
 import hoppingvikings.housefinancemobile.UserInterface.PeoplePopup;
+import hoppingvikings.housefinancemobile.UserInterface.SignInActivity;
 import hoppingvikings.housefinancemobile.WebService.CommunicationCallback;
 import hoppingvikings.housefinancemobile.WebService.RequestType;
 import hoppingvikings.housefinancemobile.WebService.WebHandler;
@@ -63,6 +70,8 @@ public class ViewListActivity extends AppCompatActivity
     ArrayList<TodoListObject> _tasks;
 
     Handler _handler;
+
+    boolean _obtainingSession = false;
 
     private Runnable ConnectToApi = new Runnable() {
         @Override
@@ -367,6 +376,12 @@ public class ViewListActivity extends AppCompatActivity
 
     @Override
     public void OnSuccess(RequestType requestType, Object o) {
+        if(_obtainingSession)
+        {
+            _handler.post(ConnectToApi);
+            _obtainingSession = false;
+            return;
+        }
         _handler.postDelayed(updateList, 1000);
     }
 
@@ -393,6 +408,34 @@ public class ViewListActivity extends AppCompatActivity
 
             default:
                 return super.onOptionsItemSelected(item);
+        }
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        if(WebHandler.Instance().GetSessionID().equals(""))
+        {
+            _obtainingSession = true;
+            GoogleSignInAccount account = GoogleSignIn.getLastSignedInAccount(this);
+
+            if(account != null)
+            {
+                JSONObject tokenJson = new JSONObject();
+                try {
+                    tokenJson.put("Token", account.getIdToken());
+                } catch (JSONException e)
+                {
+
+                }
+                WebHandler.Instance().GetSessionID(this, this, tokenJson);
+            }
+            else
+            {
+                Intent signIn = new Intent(this, SignInActivity.class);
+                signIn.putExtra("IrregularStart", true);
+                startActivity(signIn);
+            }
         }
     }
 }
