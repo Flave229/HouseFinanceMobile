@@ -15,6 +15,20 @@ import java.util.ArrayList;
 
 public class FileIOHandler
 {
+    private static FileIOHandler instance;
+
+    private FileIOHandler()
+    {
+    }
+
+    public static FileIOHandler Instance()
+    {
+        if(instance == null)
+            instance = new FileIOHandler();
+
+        return instance;
+    }
+
     public void WriteToFile(String fileName, String data)
     {
         try {
@@ -29,11 +43,10 @@ public class FileIOHandler
             if(!recentsPath.exists())
                 recentsPath.createNewFile();
 
-            FileOutputStream fos = new FileOutputStream(recentsPath, true);
+            FileOutputStream fos = new FileOutputStream(recentsPath, false);
             OutputStreamWriter writer = new OutputStreamWriter(fos);
 
-            writer.append(data);
-            writer.append("\n");
+            writer.write(data);
             writer.close();
 
             fos.flush();
@@ -43,6 +56,43 @@ public class FileIOHandler
         {
             Log.e("Write Error: ", e.getMessage());
         }
+    }
+
+    public String ReadFileAsString(String filename)
+    {
+        String fileString = "";
+        String path = Environment.getExternalStorageDirectory().getAbsolutePath() + "/HouseFinance/";
+        File dir = new File(path);
+
+        if(dir.exists())
+        {
+            File file = new File(dir, filename);
+
+            if(file.exists())
+            {
+                try {
+                    FileInputStream fis = new FileInputStream(file);
+                    BufferedReader reader = new BufferedReader(new InputStreamReader(fis));
+
+                    String line = reader.readLine();
+                    while (line != null)
+                    {
+                        fileString = line;
+                        line = reader.readLine();
+                    }
+                    reader.close();
+                    fis.close();
+
+                    return fileString;
+                } catch (Exception e)
+                {
+                    Log.e("Read Error:", e.getMessage());
+                    return null;
+                }
+            }
+        }
+
+        return fileString;
     }
 
     public ArrayList<JSONObject> ReadFile(String fileName)
