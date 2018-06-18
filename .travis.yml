@@ -3,4 +3,4 @@ android:
     components:
         - build-tools-27.0.3
         - android-27
-script: gradle wrapper build connectedCheck
+script: ./gradlew build connectedCheck
