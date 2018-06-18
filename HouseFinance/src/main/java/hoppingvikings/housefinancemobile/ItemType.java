@@ -9,5 +9,7 @@ public enum ItemType
     PERSON,
     PAYMENT,
     LOG_IN,
+    HOUSEHOLD,
+    HOUSEHOLD_INVITE,
     NONE
 }

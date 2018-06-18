@@ -15,6 +15,9 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
 
+import hoppingvikings.housefinancemobile.ApiErrorCodes;
+import hoppingvikings.housefinancemobile.FileIOHandler;
+import hoppingvikings.housefinancemobile.GlobalObjects;
 import hoppingvikings.housefinancemobile.ItemType;
 import hoppingvikings.housefinancemobile.Repositories.BillRepository;
 import hoppingvikings.housefinancemobile.Repositories.ShoppingRepository;
@@ -276,6 +279,74 @@ public class WebHandler
         }
     }
 
+    public void GetHousehold(Context context, final CommunicationCallback callback)
+    {
+        ConnectivityManager connMgr = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo networkInfo = connMgr.getActiveNetworkInfo();
+
+        if(networkInfo != null && networkInfo.isConnected())
+        {
+            CommunicationRequest request = new CommunicationRequest()
+            {{
+                RequestTypeData = RequestType.GET;
+                ItemTypeData = ItemType.HOUSEHOLD;
+                Owner = WebHandler.this;
+                Callback = callback;
+            }};
+            new WebService(_clientID, _sessionID).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, request);
+        }
+        else
+        {
+            callback.OnFail(RequestType.GET, "No internet connection");
+        }
+    }
+
+    public void AddHousehold(Context context, final JSONObject requestJson, final CommunicationCallback callback)
+    {
+        ConnectivityManager connMgr = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo networkInfo = connMgr.getActiveNetworkInfo();
+
+        if(networkInfo != null && networkInfo.isConnected())
+        {
+            CommunicationRequest request = new CommunicationRequest()
+            {{
+                RequestTypeData = RequestType.POST;
+                ItemTypeData = ItemType.HOUSEHOLD;
+                RequestBody = String.valueOf(requestJson);
+                Owner = WebHandler.this;
+                Callback = callback;
+            }};
+            new WebService(_clientID, _sessionID).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, request);
+        }
+        else
+        {
+            callback.OnFail(RequestType.GET, "No internet connection");
+        }
+    }
+
+    public void DeleteHousehold(Context context, final JSONObject requestJson, final CommunicationCallback callback)
+    {
+        ConnectivityManager connMgr = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo networkInfo = connMgr.getActiveNetworkInfo();
+
+        if(networkInfo != null && networkInfo.isConnected())
+        {
+            CommunicationRequest request = new CommunicationRequest()
+            {{
+                RequestTypeData = RequestType.DELETE;
+                ItemTypeData = ItemType.HOUSEHOLD;
+                RequestBody = String.valueOf(requestJson);
+                Owner = WebHandler.this;
+                Callback = callback;
+            }};
+            new WebService(_clientID, _sessionID).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, request);
+        }
+        else
+        {
+            callback.OnFail(RequestType.GET, "No internet connection");
+        }
+    }
+
     public void ApiResult(CommunicationResponse result, ItemType type)
     {
         switch (type)
@@ -284,6 +355,12 @@ public class WebHandler
                 try {
                     if(result.Response.has("hasError") && result.Response.getBoolean("hasError"))
                     {
+                        /*JSONObject error = result.Response.getJSONObject("error");
+                        if(error.has("errorCode"))
+                        {
+                            result.Callback.OnFail(result.RequestTypeData, error.getString("errorCode"));
+                            return;
+                        }*/
                         String errorMessage = result.Response.getJSONObject("error").getString("message");
                         Log.e("Error", errorMessage);
                         result.Callback.OnFail(result.RequestTypeData, errorMessage);
@@ -495,6 +572,41 @@ public class WebHandler
 
                 break;
 
+            case HOUSEHOLD:
+                try {
+                    if(result.Response.has("hasError")) {
+                        if(result.Response.getBoolean("hasError"))
+                        {
+                            String errorMessage = result.Response.getJSONObject("error").getString("message");
+                            Log.e("Error", errorMessage);
+                            result.Callback.OnFail(result.RequestTypeData, errorMessage);
+                            return;
+                        }
+
+                        if (result.Response.has("house"))
+                        {
+                            JSONObject house = result.Response.getJSONObject("house");
+
+                            //SetSessionID(sessionID);
+                            FileIOHandler.Instance().WriteToFile("CurrentHousehold", house.toString());
+                            result.Callback.OnSuccess(result.RequestTypeData, house.getString("id"));
+                        }
+                        else {
+                            result.Callback.OnFail(result.RequestTypeData, "Could not obtain session");
+                        }
+                    }
+                } catch (JSONException je)
+                {
+                    je.printStackTrace();
+                    result.Callback.OnFail(result.RequestTypeData, "Could not obtain session");
+                }
+                catch(Exception e)
+                {
+                    result.Callback.OnFail(result.RequestTypeData, "Could not obtain session");
+                }
+
+                break;
+
             default:
                 try {
                     if(result.Response.has("hasError"))
@@ -509,7 +621,7 @@ public class WebHandler
 
                         result.Callback.OnSuccess(result.RequestTypeData, result.Response);
                     }
-                    
+
                 }
                 catch (JSONException e)
                 {

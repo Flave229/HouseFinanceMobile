@@ -99,6 +99,12 @@ public class WebService extends AsyncTask<CommunicationRequest, Void, Communicat
             case LOG_IN:
                 subEndpoint = "LogIn";
                 break;
+            case HOUSEHOLD:
+                subEndpoint = "Household";
+                break;
+            case HOUSEHOLD_INVITE:
+                subEndpoint = "Household/InviteLink";
+                break;
             default:
                 subEndpoint = "";
         }
