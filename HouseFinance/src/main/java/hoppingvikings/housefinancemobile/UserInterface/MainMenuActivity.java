@@ -7,6 +7,7 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.FloatingActionButton;
+import android.support.design.widget.Snackbar;
 import android.support.design.widget.TabLayout;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
@@ -24,17 +25,24 @@ import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.io.File;
 import java.util.ArrayList;
 
+import hoppingvikings.housefinancemobile.FileIOHandler;
 import hoppingvikings.housefinancemobile.ItemType;
 import hoppingvikings.housefinancemobile.R;
 import hoppingvikings.housefinancemobile.UserInterface.Activities.ViewListActivity;
 import hoppingvikings.housefinancemobile.UserInterface.Items.MainMenuItem;
 import hoppingvikings.housefinancemobile.UserInterface.Lists.MainMenu.MainMenuListAdapter;
 import hoppingvikings.housefinancemobile.UserInterface.Lists.MainMenu.MarginDecoration;
+import hoppingvikings.housefinancemobile.WebService.CommunicationCallback;
+import hoppingvikings.housefinancemobile.WebService.RequestType;
 import hoppingvikings.housefinancemobile.WebService.WebHandler;
 
-public class MainMenuActivity extends AppCompatActivity {
+public class MainMenuActivity extends AppCompatActivity implements CommunicationCallback {
 
     CoordinatorLayout _layout;
     MainMenuListAdapter _listAdapter;
@@ -48,7 +56,7 @@ public class MainMenuActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_mainmenu);
 
-        _layout = findViewById(R.id.coordlayout);
+        _layout = findViewById(R.id.coordLayout);
 
         Toolbar appToolbar = findViewById(R.id.appToolbar);
         setSupportActionBar(appToolbar);
@@ -83,15 +91,30 @@ public class MainMenuActivity extends AppCompatActivity {
 
     private void CreateMainMenuListItems()
     {
-        _mainMenuItems = new ArrayList<>();
+        try {
+            JSONObject house = new JSONObject(FileIOHandler.Instance().ReadFileAsString("CurrentHousehold"));
+            if(house.has("id"))
+            {
+                _mainMenuItems = new ArrayList<>();
 
-        MainMenuItem bills = new MainMenuItem("Bills", R.drawable.baseline_receipt_black_36, ItemType.BILL.name());
-        MainMenuItem shopping = new MainMenuItem("Shopping", R.drawable.baseline_local_grocery_store_black_36, ItemType.SHOPPING.name());
-        MainMenuItem tasks = new MainMenuItem("Tasks", R.drawable.baseline_notification_important_black_36, ItemType.TODO.name());
+                MainMenuItem bills = new MainMenuItem("Bills", R.drawable.baseline_receipt_black_36, ItemType.BILL.name());
+                MainMenuItem shopping = new MainMenuItem("Shopping", R.drawable.baseline_local_grocery_store_black_36, ItemType.SHOPPING.name());
+                MainMenuItem tasks = new MainMenuItem("Tasks", R.drawable.baseline_notification_important_black_36, ItemType.TODO.name());
 
-        _mainMenuItems.add(bills);
-        _mainMenuItems.add(shopping);
-        _mainMenuItems.add(tasks);
+                _mainMenuItems.add(bills);
+                _mainMenuItems.add(shopping);
+                _mainMenuItems.add(tasks);
+            }
+            else
+            {
+                _mainMenuItems = new ArrayList<>();
+                WebHandler.Instance().GetHousehold(this, this);
+            }
+        } catch (JSONException je)
+        {
+            _mainMenuItems = new ArrayList<>();
+            WebHandler.Instance().GetHousehold(this, this);
+        }
     }
 
     @Override
@@ -143,5 +166,26 @@ public class MainMenuActivity extends AppCompatActivity {
                         finish();
                     }
                 });
+    }
+
+    @Override
+    public void OnSuccess(RequestType requestType, Object o) {
+        String returnedID = o.toString();
+        if(!returnedID.equals(""))
+        {
+            MainMenuItem bills = new MainMenuItem("Bills", R.drawable.baseline_receipt_black_36, ItemType.BILL.name());
+            MainMenuItem shopping = new MainMenuItem("Shopping", R.drawable.baseline_local_grocery_store_black_36, ItemType.SHOPPING.name());
+            MainMenuItem tasks = new MainMenuItem("Tasks", R.drawable.baseline_notification_important_black_36, ItemType.TODO.name());
+
+            _mainMenuItems.add(bills);
+            _mainMenuItems.add(shopping);
+            _mainMenuItems.add(tasks);
+            _listAdapter.AddAll(_mainMenuItems);
+        }
+    }
+
+    @Override
+    public void OnFail(RequestType requestType, String message) {
+        Snackbar.make(_layout, "Failed to obtain the household ID", Snackbar.LENGTH_LONG).show();
     }
 }
