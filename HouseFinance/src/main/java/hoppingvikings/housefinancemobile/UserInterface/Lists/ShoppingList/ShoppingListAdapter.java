@@ -21,6 +21,7 @@ import java.util.ArrayList;
 import hoppingvikings.housefinancemobile.BitmapCache;
 import hoppingvikings.housefinancemobile.GlobalObjects;
 import hoppingvikings.housefinancemobile.ItemType;
+import hoppingvikings.housefinancemobile.NotificationType;
 import hoppingvikings.housefinancemobile.R;
 import hoppingvikings.housefinancemobile.UserInterface.Items.ShoppingListObject;
 import hoppingvikings.housefinancemobile.WebService.CommunicationCallback;
@@ -264,7 +265,7 @@ public class ShoppingListAdapter extends RecyclerView.Adapter<ShoppingListAdapte
                     cvh.notifyButton.setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View v) {
-                            GlobalObjects.ShowNotif(GlobalObjects.NotificationType.SHOPPING,_shoppingItems.get(cvh.getAdapterPosition()).ItemName, "Reminder", _shoppingItems.get(cvh.getAdapterPosition()).Id);
+                            GlobalObjects.ShowNotif(NotificationType.SHOPPING,_shoppingItems.get(cvh.getAdapterPosition()).ItemName, "Reminder", _shoppingItems.get(cvh.getAdapterPosition()).Id);
                         }
                     });
                 }

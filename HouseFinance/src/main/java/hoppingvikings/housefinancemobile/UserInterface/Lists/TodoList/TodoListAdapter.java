@@ -25,6 +25,7 @@ import java.util.EmptyStackException;
 import hoppingvikings.housefinancemobile.BitmapCache;
 import hoppingvikings.housefinancemobile.GlobalObjects;
 import hoppingvikings.housefinancemobile.ItemType;
+import hoppingvikings.housefinancemobile.NotificationType;
 import hoppingvikings.housefinancemobile.R;
 import hoppingvikings.housefinancemobile.UserInterface.Items.TodoListObject;
 import hoppingvikings.housefinancemobile.WebService.CommunicationCallback;
@@ -260,7 +261,7 @@ public class TodoListAdapter extends RecyclerView.Adapter<TodoListAdapter.CardVi
                 holder.notifyButton.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        GlobalObjects.ShowNotif(GlobalObjects.NotificationType.TODO,_todos.get(holder.getAdapterPosition()).title, "Reminder", _todos.get(holder.getAdapterPosition()).id);
+                        GlobalObjects.ShowNotif(NotificationType.TODO,_todos.get(holder.getAdapterPosition()).title, "Reminder", _todos.get(holder.getAdapterPosition()).id);
                     }
                 });
             }

@@ -14,12 +14,5 @@ public class GlobalObjects
         {
             AppServiceBinder.GetService().ShowNotification(type, text, subtext, notificationId);
         }
-
-    }
-
-    public enum NotificationType
-    {
-        SHOPPING,
-        TODO
     }
 }

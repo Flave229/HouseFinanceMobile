@@ -39,7 +39,7 @@ public class BackgroundService extends Service {
         return _binder;
     }
 
-    public void ShowNotification(GlobalObjects.NotificationType type, String text, String subtext, int notifid)
+    public void ShowNotification(NotificationType type, String text, String subtext, int notifid)
     {
         NotificationManagerCompat man = NotificationManagerCompat.from(this);
         //Intent i = new Intent(this, MainActivity.class);
@@ -58,7 +58,7 @@ public class BackgroundService extends Service {
                 //stackBuilder.editIntentAt(0).putExtra("ItemType", ItemType.SHOPPING);
                 resultPendingIntent = stackBuilder.getPendingIntent((int) System.currentTimeMillis(), PendingIntent.FLAG_UPDATE_CURRENT);
 
-                CreateNotificationChannel(GlobalObjects.NotificationType.SHOPPING);
+                CreateNotificationChannel(NotificationType.SHOPPING);
 
                 not = new NotificationCompat.Builder(this, shoppingChannelID)
                         .setContentTitle("Shopping")
@@ -77,7 +77,7 @@ public class BackgroundService extends Service {
                 stackBuilder.addNextIntentWithParentStack(resultIntent);
                 resultPendingIntent = stackBuilder.getPendingIntent((int) System.currentTimeMillis(), PendingIntent.FLAG_UPDATE_CURRENT);
 
-                CreateNotificationChannel(GlobalObjects.NotificationType.TODO);
+                CreateNotificationChannel(NotificationType.TODO);
                 not = new NotificationCompat.Builder(this, todoChannelID)
                         .setContentTitle("Todo")
                         .setContentText(text)
@@ -92,7 +92,7 @@ public class BackgroundService extends Service {
         }
     }
 
-    private void CreateNotificationChannel(GlobalObjects.NotificationType type)
+    private void CreateNotificationChannel(NotificationType type)
     {
         if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.O)
         {
