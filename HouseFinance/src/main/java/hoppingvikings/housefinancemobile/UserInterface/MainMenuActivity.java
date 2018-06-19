@@ -3,6 +3,7 @@ package hoppingvikings.housefinancemobile.UserInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
+import android.os.Parcelable;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.CoordinatorLayout;
@@ -33,6 +34,7 @@ import java.util.ArrayList;
 
 import hoppingvikings.housefinancemobile.FileIOHandler;
 import hoppingvikings.housefinancemobile.ItemType;
+import hoppingvikings.housefinancemobile.NotificationWrapper;
 import hoppingvikings.housefinancemobile.R;
 import hoppingvikings.housefinancemobile.UserInterface.Activities.ViewListActivity;
 import hoppingvikings.housefinancemobile.UserInterface.Items.MainMenuItem;
@@ -50,6 +52,7 @@ public class MainMenuActivity extends AppCompatActivity implements Communication
     ArrayList<MainMenuItem> _mainMenuItems;
 
     GoogleSignInClient _signInClient;
+    NotificationWrapper _notificationWrapper;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -71,6 +74,8 @@ public class MainMenuActivity extends AppCompatActivity implements Communication
         _rv.setLayoutManager(new GridLayoutManager(this, 3));
         _rv.setItemViewCacheSize(10);
 
+        _notificationWrapper = new NotificationWrapper();
+
         _listAdapter.SetMainMenuItemClickedListener(new MainMenuListAdapter.MainMenuItemClickedListener() {
             @Override
             public void onItemClicked(View itemView, int pos) {
@@ -78,6 +83,7 @@ public class MainMenuActivity extends AppCompatActivity implements Communication
 
                 Intent openList = new Intent(MainMenuActivity.this, ViewListActivity.class);
                 openList.putExtra("ItemType", selectedItem.menuItemType);
+                openList.putExtra("NotificationWrapper", _notificationWrapper);
                 startActivity(openList);
             }
         });

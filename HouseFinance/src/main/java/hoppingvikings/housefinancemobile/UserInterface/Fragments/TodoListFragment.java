@@ -113,7 +113,7 @@ public class TodoListFragment extends Fragment
 
         if(_recyclerView != null)
         {
-            _adapter = new TodoListAdapter(_items, getContext());
+            _adapter = new TodoListAdapter(_items, getContext(), null);
             _recyclerView.setAdapter(_adapter);
             _recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
         }

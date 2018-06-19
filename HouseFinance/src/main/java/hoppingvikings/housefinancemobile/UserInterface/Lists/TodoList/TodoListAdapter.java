@@ -20,12 +20,11 @@ import android.widget.Toast;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
-import java.util.EmptyStackException;
 
 import hoppingvikings.housefinancemobile.BitmapCache;
-import hoppingvikings.housefinancemobile.GlobalObjects;
 import hoppingvikings.housefinancemobile.ItemType;
 import hoppingvikings.housefinancemobile.NotificationType;
+import hoppingvikings.housefinancemobile.NotificationWrapper;
 import hoppingvikings.housefinancemobile.R;
 import hoppingvikings.housefinancemobile.UserInterface.Items.TodoListObject;
 import hoppingvikings.housefinancemobile.WebService.CommunicationCallback;
@@ -42,6 +41,7 @@ public class TodoListAdapter extends RecyclerView.Adapter<TodoListAdapter.CardVi
         implements CommunicationCallback {
 
     private static TodoItemClickedListener _listener;
+    private final NotificationWrapper _notificationWrapper;
 
     public interface TodoItemClickedListener
     {
@@ -132,12 +132,13 @@ public class TodoListAdapter extends RecyclerView.Adapter<TodoListAdapter.CardVi
     public void SetEditPressedCallback(EditPressedCallback owner)
     {_editCallback = owner;}
 
-    public TodoListAdapter(ArrayList<TodoListObject> items, Context context)
+    public TodoListAdapter(ArrayList<TodoListObject> items, Context context, NotificationWrapper notificationWrapper)
     {
         _todos.addAll(items);
         _context = context;
         long maxMem = (Runtime.getRuntime().maxMemory() / 1024 / 1024);
         imgCache = new BitmapCache((maxMem / 4L) * 1024L * 1024L, _context);
+        _notificationWrapper = notificationWrapper;
     }
 
     @Override
@@ -261,7 +262,7 @@ public class TodoListAdapter extends RecyclerView.Adapter<TodoListAdapter.CardVi
                 holder.notifyButton.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        GlobalObjects.ShowNotif(NotificationType.TODO,_todos.get(holder.getAdapterPosition()).title, "Reminder", _todos.get(holder.getAdapterPosition()).id);
+                        _notificationWrapper.ShowNotification(NotificationType.TODO,_todos.get(holder.getAdapterPosition()).title, "Reminder", _todos.get(holder.getAdapterPosition()).id);
                     }
                 });
             }

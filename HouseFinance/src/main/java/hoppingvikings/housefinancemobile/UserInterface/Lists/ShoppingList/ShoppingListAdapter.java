@@ -19,9 +19,9 @@ import org.json.JSONObject;
 import java.util.ArrayList;
 
 import hoppingvikings.housefinancemobile.BitmapCache;
-import hoppingvikings.housefinancemobile.GlobalObjects;
 import hoppingvikings.housefinancemobile.ItemType;
 import hoppingvikings.housefinancemobile.NotificationType;
+import hoppingvikings.housefinancemobile.NotificationWrapper;
 import hoppingvikings.housefinancemobile.R;
 import hoppingvikings.housefinancemobile.UserInterface.Items.ShoppingListObject;
 import hoppingvikings.housefinancemobile.WebService.CommunicationCallback;
@@ -34,6 +34,7 @@ public class ShoppingListAdapter extends RecyclerView.Adapter<ShoppingListAdapte
             implements CommunicationCallback
 {
     private static ShoppingItemClickedListener _listener;
+    private final NotificationWrapper _notificationWrapper;
 
     public interface ShoppingItemClickedListener
     {
@@ -126,11 +127,13 @@ public class ShoppingListAdapter extends RecyclerView.Adapter<ShoppingListAdapte
     public void SetEditPressedCallback(EditPressedCallback owner)
     {_editCallback = owner;}
 
-    public ShoppingListAdapter(ArrayList<ShoppingListObject> items, Context context) {
+    public ShoppingListAdapter(ArrayList<ShoppingListObject> items, Context context, NotificationWrapper notificationWrapper)
+    {
         _shoppingItems.addAll(items);
         _context = context;
         long maxMem = (Runtime.getRuntime().maxMemory() / 1024 / 1024);
         imgCache = new BitmapCache((maxMem / 4L) * 1024L * 1024L, _context);
+        _notificationWrapper = notificationWrapper;
     }
 
     @Override
@@ -265,7 +268,7 @@ public class ShoppingListAdapter extends RecyclerView.Adapter<ShoppingListAdapte
                     cvh.notifyButton.setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View v) {
-                            GlobalObjects.ShowNotif(NotificationType.SHOPPING,_shoppingItems.get(cvh.getAdapterPosition()).ItemName, "Reminder", _shoppingItems.get(cvh.getAdapterPosition()).Id);
+                            _notificationWrapper.ShowNotification(NotificationType.SHOPPING,_shoppingItems.get(cvh.getAdapterPosition()).ItemName, "Reminder", _shoppingItems.get(cvh.getAdapterPosition()).Id);
                         }
                     });
                 }

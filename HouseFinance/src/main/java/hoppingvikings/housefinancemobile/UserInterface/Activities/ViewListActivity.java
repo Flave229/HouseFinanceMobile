@@ -27,6 +27,7 @@ import java.io.Serializable;
 import java.util.ArrayList;
 
 import hoppingvikings.housefinancemobile.ItemType;
+import hoppingvikings.housefinancemobile.NotificationWrapper;
 import hoppingvikings.housefinancemobile.R;
 import hoppingvikings.housefinancemobile.Repositories.BillRepository;
 import hoppingvikings.housefinancemobile.Repositories.ShoppingRepository;
@@ -169,6 +170,7 @@ public class ViewListActivity extends AppCompatActivity
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_viewlist);
 
+        NotificationWrapper notificationWrapper = (NotificationWrapper)getIntent().getSerializableExtra("NotificationWrapper");
         _toolbar = findViewById(R.id.appToolbar);
         _layout = findViewById(R.id.coordLayout);
         _fab = findViewById(R.id.addItem);
@@ -227,7 +229,7 @@ public class ViewListActivity extends AppCompatActivity
                     if(ShoppingRepository.Instance().Get().size() > 0)
                         _shopping.addAll(ShoppingRepository.Instance().Get());
 
-                    _shoppingAdapter = new ShoppingListAdapter(_shopping, this);
+                    _shoppingAdapter = new ShoppingListAdapter(_shopping, this, notificationWrapper);
                     _rv.setAdapter(_shoppingAdapter);
                     _rv.setLayoutManager(new LinearLayoutManager(this));
                     _rv.setItemViewCacheSize(20);
@@ -265,7 +267,7 @@ public class ViewListActivity extends AppCompatActivity
                     if(TodoRepository.Instance().Get().size() > 0)
                         _tasks.addAll(TodoRepository.Instance().Get());
 
-                    _todoAdapter = new TodoListAdapter(_tasks, this);
+                    _todoAdapter = new TodoListAdapter(_tasks, this, notificationWrapper);
                     _rv.setAdapter(_todoAdapter);
                     _rv.setLayoutManager(new LinearLayoutManager(this));
                     _rv.setItemViewCacheSize(20);
