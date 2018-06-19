@@ -3,6 +3,7 @@ package hoppingvikings.housefinancemobile.UserInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
+import android.os.Parcelable;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.CoordinatorLayout;
@@ -27,6 +28,7 @@ import com.google.android.gms.tasks.Task;
 import java.util.ArrayList;
 
 import hoppingvikings.housefinancemobile.ItemType;
+import hoppingvikings.housefinancemobile.NotificationWrapper;
 import hoppingvikings.housefinancemobile.R;
 import hoppingvikings.housefinancemobile.UserInterface.Activities.ViewListActivity;
 import hoppingvikings.housefinancemobile.UserInterface.Items.MainMenuItem;
@@ -34,14 +36,15 @@ import hoppingvikings.housefinancemobile.UserInterface.Lists.MainMenu.MainMenuLi
 import hoppingvikings.housefinancemobile.UserInterface.Lists.MainMenu.MarginDecoration;
 import hoppingvikings.housefinancemobile.WebService.WebHandler;
 
-public class MainMenuActivity extends AppCompatActivity {
-
+public class MainMenuActivity extends AppCompatActivity
+{
     CoordinatorLayout _layout;
     MainMenuListAdapter _listAdapter;
     RecyclerView _rv;
     ArrayList<MainMenuItem> _mainMenuItems;
 
     GoogleSignInClient _signInClient;
+    NotificationWrapper _notificationWrapper;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -63,6 +66,8 @@ public class MainMenuActivity extends AppCompatActivity {
         _rv.setLayoutManager(new GridLayoutManager(this, 3));
         _rv.setItemViewCacheSize(10);
 
+        _notificationWrapper = new NotificationWrapper();
+
         _listAdapter.SetMainMenuItemClickedListener(new MainMenuListAdapter.MainMenuItemClickedListener() {
             @Override
             public void onItemClicked(View itemView, int pos) {
@@ -70,6 +75,7 @@ public class MainMenuActivity extends AppCompatActivity {
 
                 Intent openList = new Intent(MainMenuActivity.this, ViewListActivity.class);
                 openList.putExtra("ItemType", selectedItem.menuItemType);
+                openList.putExtra("NotificationWrapper", _notificationWrapper);
                 startActivity(openList);
             }
         });

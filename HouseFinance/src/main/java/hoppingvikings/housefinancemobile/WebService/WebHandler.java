@@ -10,14 +10,9 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.io.BufferedReader;
-import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.util.ArrayList;
 
-import hoppingvikings.housefinancemobile.ApiErrorCodes;
 import hoppingvikings.housefinancemobile.FileIOHandler;
-import hoppingvikings.housefinancemobile.GlobalObjects;
 import hoppingvikings.housefinancemobile.ItemType;
 import hoppingvikings.housefinancemobile.Repositories.BillRepository;
 import hoppingvikings.housefinancemobile.Repositories.ShoppingRepository;

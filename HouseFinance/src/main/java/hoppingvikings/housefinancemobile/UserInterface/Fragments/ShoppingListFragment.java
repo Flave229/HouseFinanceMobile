@@ -142,7 +142,7 @@ public class ShoppingListFragment extends Fragment
 
         if(rv != null)
         {
-            adapter = new ShoppingListAdapter(items, getActivity());
+            adapter = new ShoppingListAdapter(items, getActivity(), null);
             rv.setAdapter(adapter);
             rv.setLayoutManager(new LinearLayoutManager(getActivity()));
             //rv.addItemDecoration(new ListItemDivider(getContext()));
