@@ -408,24 +408,21 @@ public class WebHandler
 
     public void ApiResult(CommunicationResponse result, ItemType type)
     {
-        switch (type)
+        try
         {
-            case BILL:
-                try {
-                    if(result.Response.has("hasError") && result.Response.getBoolean("hasError"))
-                    {
-                        /*JSONObject error = result.Response.getJSONObject("error");
-                        if(error.has("errorCode"))
-                        {
-                            result.Callback.OnFail(result.RequestTypeData, error.getString("errorCode"));
-                            return;
-                        }*/
-                        String errorMessage = result.Response.getJSONObject("error").getString("message");
-                        Log.e("Error", errorMessage);
-                        result.Callback.OnFail(result.RequestTypeData, errorMessage);
-                        return;
-                    }
+            if(result.Response.has("hasError") && result.Response.getBoolean("hasError"))
+            {
+                String errorMessage = result.Response.getJSONObject("error").getString("message");
+                Log.e("Error", errorMessage);
+                result.Callback.OnFail(result.RequestTypeData, errorMessage);
+                return;
+            }
 
+            switch (type)
+            {
+            case BILL:
+                try
+                {
                     JSONArray billJsonArray = result.Response.getJSONArray("bills");
 
                     ArrayList<BillListObject> bills = new ArrayList<>();
@@ -456,14 +453,6 @@ public class WebHandler
 
             case SHOPPING:
                 try {
-                    if(result.Response.has("hasError") && result.Response.getBoolean("hasError"))
-                    {
-                        String errorMessage = result.Response.getJSONObject("error").getString("message");
-                        Log.e("Error", errorMessage);
-                        result.Callback.OnFail(result.RequestTypeData, errorMessage);
-                        return;
-                    }
-
                     JSONArray shoppingItems = result.Response.getJSONArray("shoppingList");
 
                     ArrayList<ShoppingListObject> items = new ArrayList<>();
@@ -496,14 +485,6 @@ public class WebHandler
                 ArrayList<Person> parsedUsers = new ArrayList<>();
 
                 try {
-                    if(result.Response.has("hasError") && result.Response.getBoolean("hasError"))
-                    {
-                        String errorMessage = result.Response.getJSONObject("error").getString("message");
-                        Log.e("Error", errorMessage);
-                        result.Callback.OnFail(result.RequestTypeData, errorMessage);
-                        return;
-                    }
-
                     returnedObject = result.Response.getJSONArray("people");
 
                     for(int i = 0; i < returnedObject.length(); i++)
@@ -535,14 +516,6 @@ public class WebHandler
 
                 try
                 {
-                    if(result.Response.has("hasError") && result.Response.getBoolean("hasError"))
-                    {
-                        String errorMessage = result.Response.getJSONObject("error").getString("message");
-                        Log.e("Error", errorMessage);
-                        result.Callback.OnFail(result.RequestTypeData, errorMessage);
-                        return;
-                    }
-
                     JSONArray billJsonArray = result.Response.getJSONArray("bills");
                     JSONObject detailedJson = billJsonArray.getJSONObject(0);
                     JSONArray paymentsArray = detailedJson.getJSONArray("payments");
@@ -562,15 +535,8 @@ public class WebHandler
                 break;
 
             case TODO:
-                try {
-                    if(result.Response.has("hasError") && result.Response.getBoolean("hasError"))
-                    {
-                        String errorMessage = result.Response.getJSONObject("error").getString("message");
-                        Log.e("Error", errorMessage);
-                        result.Callback.OnFail(result.RequestTypeData, errorMessage);
-                        return;
-                    }
-
+                try
+                {
                     JSONArray todoArray = result.Response.getJSONArray("toDoTasks");
 
                     ArrayList<TodoListObject> todos = new ArrayList<>();
@@ -585,7 +551,6 @@ public class WebHandler
                     TodoRepository.Instance().Set(todos);
 
                     result.Callback.OnSuccess(result.RequestTypeData, null);
-
                 }
                 catch (JSONException je)
                 {
@@ -599,27 +564,20 @@ public class WebHandler
                 break;
 
             case LOG_IN:
-                try {
-                    if(result.Response.has("hasError")) {
-                        if(result.Response.getBoolean("hasError"))
-                        {
-                            String errorMessage = result.Response.getJSONObject("error").getString("message");
-                            Log.e("Error", errorMessage);
-                            result.Callback.OnFail(result.RequestTypeData, errorMessage);
-                            return;
-                        }
-
-                        if (result.Response.has("sessionId"))
-                        {
-                            String sessionID = result.Response.getString("sessionId");
-                            SetSessionID(sessionID);
-                            result.Callback.OnSuccess(result.RequestTypeData, sessionID);
-                        }
-                        else {
-                            result.Callback.OnFail(result.RequestTypeData, "Could not obtain session");
-                        }
+                try
+                {
+                    if (result.Response.has("sessionId"))
+                    {
+                        String sessionID = result.Response.getString("sessionId");
+                        SetSessionID(sessionID);
+                        result.Callback.OnSuccess(result.RequestTypeData, sessionID);
                     }
-                } catch (JSONException je)
+                    else
+                    {
+                        result.Callback.OnFail(result.RequestTypeData, "Could not obtain session");
+                    }
+                }
+                catch (JSONException je)
                 {
                     je.printStackTrace();
                     result.Callback.OnFail(result.RequestTypeData, "Could not obtain session");
@@ -633,28 +591,20 @@ public class WebHandler
 
             case HOUSEHOLD:
                 try {
-                    if(result.Response.has("hasError")) {
-                        if(result.Response.getBoolean("hasError"))
-                        {
-                            String errorMessage = result.Response.getJSONObject("error").getString("message");
-                            Log.e("Error", errorMessage);
-                            result.Callback.OnFail(result.RequestTypeData, errorMessage);
-                            return;
-                        }
+                    if (result.Response.has("house"))
+                    {
+                        JSONObject house = result.Response.getJSONObject("house");
 
-                        if (result.Response.has("house"))
-                        {
-                            JSONObject house = result.Response.getJSONObject("house");
-
-                            //SetSessionID(sessionID);
-                            FileIOHandler.Instance().WriteToFile("CurrentHousehold", house.toString());
-                            result.Callback.OnSuccess(result.RequestTypeData, house.getString("id"));
-                        }
-                        else {
-                            result.Callback.OnFail(result.RequestTypeData, "Could not obtain session");
-                        }
+                        //SetSessionID(sessionID);
+                        FileIOHandler.Instance().WriteToFile("CurrentHousehold", house.toString());
+                        result.Callback.OnSuccess(result.RequestTypeData, house.getString("id"));
                     }
-                } catch (JSONException je)
+                    else
+                    {
+                        result.Callback.OnFail(result.RequestTypeData, "Could not obtain session");
+                    }
+                }
+                catch (JSONException je)
                 {
                     je.printStackTrace();
                     result.Callback.OnFail(result.RequestTypeData, "Could not obtain session");
@@ -665,27 +615,10 @@ public class WebHandler
                 }
 
                 break;
-
             default:
-                try {
-                    if(result.Response.has("hasError"))
-                    {
-                        if(result.Response.getBoolean("hasError"))
-                        {
-                            String errorMessage = result.Response.getJSONObject("error").getString("message");
-                            Log.e("Error", errorMessage);
-                            result.Callback.OnFail(result.RequestTypeData, errorMessage);
-                            return;
-                        }
-
-                        result.Callback.OnSuccess(result.RequestTypeData, result.Response);
-                    }
-
-                }
-                catch (JSONException e)
+                try
                 {
-                    Log.e("Error", e.getMessage());
-                    result.Callback.OnFail(result.RequestTypeData, "Could not read server response");
+                    result.Callback.OnSuccess(result.RequestTypeData, result.Response);
                 }
                 catch (Exception e)
                 {
@@ -693,6 +626,11 @@ public class WebHandler
                 }
 
                 break;
+            }
+        }
+        catch (Exception e)
+        {
+            result.Callback.OnFail(result.RequestTypeData, "Failed to get a response from the server");
         }
     }
 }
