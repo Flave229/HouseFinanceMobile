@@ -394,12 +394,65 @@ public class WebHandler
         }
     }
 
+    public void GetHouseholdInviteCode(Context context, final CommunicationCallback callback)
+    {
+        ConnectivityManager connMgr = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo networkInfo = connMgr.getActiveNetworkInfo();
+
+        if(networkInfo != null && networkInfo.isConnected())
+        {
+            CommunicationRequest request = new CommunicationRequest()
+            {{
+                ItemTypeData = ItemType.HOUSEHOLD_INVITE;
+                Endpoint = WEB_APIV2_URL + API_HOUSEHOLD_INVITE;
+                RequestTypeData = RequestType.GET;
+                Owner = WebHandler.this;
+                Callback = callback;
+            }};
+            new WebService(_clientID, _sessionID).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, request);
+        }
+        else
+        {
+            callback.OnFail(RequestType.GET, "No internet connection");
+        }
+    }
+
+    public void JoinHousehole(Context context, final JSONObject jsonObject, final CommunicationCallback callback)
+    {
+        ConnectivityManager connMgr = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo networkInfo = connMgr.getActiveNetworkInfo();
+
+        if(networkInfo != null && networkInfo.isConnected())
+        {
+            CommunicationRequest request = new CommunicationRequest()
+            {{
+                ItemTypeData = ItemType.HOUSEHOLD_INVITE;
+                Endpoint = WEB_APIV2_URL + API_HOUSEHOLD_INVITE;
+                RequestBody = jsonObject.toString();
+                RequestTypeData = RequestType.POST;
+                Owner = WebHandler.this;
+                Callback = callback;
+            }};
+            new WebService(_clientID, _sessionID).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, request);
+        }
+        else
+        {
+            callback.OnFail(RequestType.GET, "No internet connection");
+        }
+    }
+
     public void ApiResult(CommunicationResponse result, ItemType type)
     {
         try
         {
             if(result.Response.has("hasError") && result.Response.getBoolean("hasError"))
             {
+                if(result.Response.getJSONObject("error").getInt("errorCode") == ApiErrorCodes.USER_NOT_IN_HOUSEHOLD.getValue())
+                {
+                    result.Callback.OnFail(result.RequestTypeData, ApiErrorCodes.USER_NOT_IN_HOUSEHOLD.name());
+                    return;
+                }
+
                 String errorMessage = result.Response.getJSONObject("error").getString("message");
                 Log.e("Error", errorMessage);
                 result.Callback.OnFail(result.RequestTypeData, errorMessage);
@@ -572,6 +625,24 @@ public class WebHandler
                 }
 
                 break;
+
+                case HOUSEHOLD_INVITE:
+                    try {
+                        if(result.Response.has("inviteLink"))
+                        {
+                            result.Callback.OnSuccess(result.RequestTypeData, result.Response.getString("inviteLink"));
+                            return;
+                        }
+
+                        result.Callback.OnFail(result.RequestTypeData, "Failed to obtain invite link");
+                    } catch (JSONException je)
+                    {
+                        result.Callback.OnFail(result.RequestTypeData, "Failed to obtain invite link");
+                    } catch (Exception e)
+                    {
+                        result.Callback.OnFail(result.RequestTypeData, "Failed to obtain invite link");
+                    }
+                    break;
             default:
                 try
                 {

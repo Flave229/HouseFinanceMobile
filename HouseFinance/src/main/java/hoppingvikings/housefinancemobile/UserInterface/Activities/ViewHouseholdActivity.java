@@ -1,9 +1,16 @@
 package hoppingvikings.housefinancemobile.UserInterface.Activities;
 
+import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.CoordinatorLayout;
+import android.support.design.widget.Snackbar;
+import android.support.design.widget.TextInputEditText;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.Toolbar;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
@@ -22,26 +29,45 @@ public class ViewHouseholdActivity extends AppCompatActivity implements Communic
     CoordinatorLayout _layout;
     Button _leftButton;
     Button _rightButton;
-    TextView _houseName;
+    TextView _houseNameText;
+
+    TextView _inviteLinkDesc;
+    TextView _inviteCode;
 
     boolean _hasHousehold;
 
     boolean _addingDeletingHouse;
     boolean _joiningHouse;
 
+    boolean _joinedHouse = false;
+
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_household);
         _layout = findViewById(R.id.householdCoordLayout);
-        _houseName = findViewById(R.id.houseNameText);
+        _houseNameText = findViewById(R.id.houseNameText);
+        _inviteLinkDesc = findViewById(R.id.inviteLinkDesc);
+        _inviteCode = findViewById(R.id.inviteCode);
+        Toolbar toolbar = findViewById(R.id.appToolbar);
+
+        toolbar.setTitle("Household");
+        setSupportActionBar(toolbar);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        getSupportActionBar().setDisplayShowHomeEnabled(true);
+
+        _inviteLinkDesc.setVisibility(View.GONE);
+        _inviteCode.setVisibility(View.GONE);
+
         _leftButton = findViewById(R.id.leftButton);
         _rightButton = findViewById(R.id.rightButton);
 
-        setResult(RESULT_CANCELED);
-
         if(getIntent().hasExtra("HasHousehold"))
             _hasHousehold = getIntent().getBooleanExtra("HasHousehold", false);
+        else
+        {
+
+        }
 
         SetupPage();
     }
@@ -63,13 +89,13 @@ public class ViewHouseholdActivity extends AppCompatActivity implements Communic
 
             }
 
-            _houseName.setText(houseName);
+            _houseNameText.setText(houseName);
 
             SetupButtons();
         }
         else
         {
-            _houseName.setText("Join or create a house below");
+            _houseNameText.setText("Create or join a household below");
             SetupButtons();
         }
     }
@@ -78,14 +104,17 @@ public class ViewHouseholdActivity extends AppCompatActivity implements Communic
     {
         if(_hasHousehold)
         {
-            _leftButton.setText("Invite Tenants");
+            _leftButton.setText("Get Invite Code");
             _rightButton.setText("Delete Household");
+
+            // TODO Enable this once proper checking is in place
+            _rightButton.setEnabled(false);
 
             // Invite Tenant
             _leftButton.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-
+                    WebHandler.Instance().GetHouseholdInviteCode(ViewHouseholdActivity.this, ViewHouseholdActivity.this);
                 }
             });
 
@@ -114,16 +143,45 @@ public class ViewHouseholdActivity extends AppCompatActivity implements Communic
             _leftButton.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    try {
-                        _addingDeletingHouse = true;
-                        JSONObject house = new JSONObject();
-                        house.put("Name", "Test");
-                        WebHandler.Instance().AddHousehold(ViewHouseholdActivity.this, house, ViewHouseholdActivity.this);
-                    } catch (JSONException je)
-                    {
+                    final View createHouseDialog = getLayoutInflater().inflate(R.layout.dialog_create_house, null);
+                    final AlertDialog createHouseAlert = new AlertDialog.Builder(ViewHouseholdActivity.this).create();
+                    createHouseAlert.setTitle("Create Household");
+                    createHouseAlert.setCancelable(true);
 
-                    }
+                    final TextInputEditText houseNameText = createHouseDialog.findViewById(R.id.createHouseEntryText);
 
+                    createHouseAlert.setButton(DialogInterface.BUTTON_POSITIVE, "OK", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            if(houseNameText.getText().toString().length() > 0)
+                            {
+                                try {
+                                    _addingDeletingHouse = true;
+                                    JSONObject house = new JSONObject();
+                                    house.put("Name", houseNameText.getText().toString());
+                                    WebHandler.Instance().AddHousehold(ViewHouseholdActivity.this, house, ViewHouseholdActivity.this);
+                                    createHouseAlert.dismiss();
+                                } catch (JSONException je)
+                                {
+
+                                }
+                            }
+                            else
+                            {
+                                houseNameText.setError("Please enter an invite code");
+                            }
+                        }
+                    });
+
+                    createHouseAlert.setButton(DialogInterface.BUTTON_NEGATIVE, "Cancel", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            createHouseAlert.dismiss();
+                        }
+                    });
+
+                    createHouseAlert.setView(createHouseDialog);
+                    createHouseAlert.show();
                 }
             });
 
@@ -131,7 +189,45 @@ public class ViewHouseholdActivity extends AppCompatActivity implements Communic
             _rightButton.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
+                    final View joinHouseDialog = getLayoutInflater().inflate(R.layout.dialog_join_house, null);
+                    final AlertDialog joinHouseAlert = new AlertDialog.Builder(ViewHouseholdActivity.this).create();
+                    joinHouseAlert.setTitle("Join Household");
+                    joinHouseAlert.setCancelable(true);
 
+                    final TextInputEditText inviteInputText = joinHouseDialog.findViewById(R.id.joinHouseEntryText);
+
+                    joinHouseAlert.setButton(DialogInterface.BUTTON_POSITIVE, "OK", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            if(inviteInputText.getText().toString().length() > 0)
+                            {
+                                try {
+                                    _joiningHouse = true;
+                                    JSONObject joinHouse = new JSONObject();
+                                    joinHouse.put("InviteLink", inviteInputText.getText().toString());
+                                    WebHandler.Instance().JoinHousehole(ViewHouseholdActivity.this, joinHouse, ViewHouseholdActivity.this);
+                                    joinHouseAlert.dismiss();
+                                } catch (JSONException je)
+                                {
+
+                                }
+                            }
+                            else
+                            {
+                                inviteInputText.setError("Please enter an invite code");
+                            }
+                        }
+                    });
+
+                    joinHouseAlert.setButton(DialogInterface.BUTTON_NEGATIVE, "Cancel", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            joinHouseAlert.dismiss();
+                        }
+                    });
+
+                    joinHouseAlert.setView(joinHouseDialog);
+                    joinHouseAlert.show();
                 }
             });
         }
@@ -139,7 +235,27 @@ public class ViewHouseholdActivity extends AppCompatActivity implements Communic
 
     @Override
     public void onBackPressed() {
+        if(_joinedHouse)
+            setResult(RESULT_OK);
         finish();
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.billentrytoolbar, menu);
+        return super.onCreateOptionsMenu(menu);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId())
+        {
+            case android.R.id.home:
+                onBackPressed();
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
+        }
     }
 
     @Override
@@ -147,25 +263,33 @@ public class ViewHouseholdActivity extends AppCompatActivity implements Communic
         if(requestType == RequestType.DELETE)
         {
             _hasHousehold = false;
-            setResult(RESULT_OK);
+            setResult(20);
 
             FileIOHandler.Instance().WriteToFile("CurrentHousehold", new JSONObject().toString());
-            SetupPage();
+            finish();
             return;
         }
         else if(requestType == RequestType.GET)
         {
-            if(!o.toString().equals(""))
+            if(_addingDeletingHouse || _joiningHouse)
             {
+                _addingDeletingHouse = false;
+                _joiningHouse = false;
+                _joinedHouse = true;
                 _hasHousehold = true;
                 SetupPage();
+                return;
             }
+
+            String inviteCode = o.toString();
+            _inviteCode.setText(inviteCode);
+            _inviteCode.setVisibility(View.VISIBLE);
+            _inviteLinkDesc.setVisibility(View.VISIBLE);
         }
         else
         {
-            if(_addingDeletingHouse)
+            if(_addingDeletingHouse || _joiningHouse)
             {
-                _addingDeletingHouse = false;
                 WebHandler.Instance().GetHousehold(this, this);
                 return;
             }
@@ -174,6 +298,6 @@ public class ViewHouseholdActivity extends AppCompatActivity implements Communic
 
     @Override
     public void OnFail(RequestType requestType, String message) {
-
+        Snackbar.make(_layout, message, Snackbar.LENGTH_LONG).show();
     }
 }
