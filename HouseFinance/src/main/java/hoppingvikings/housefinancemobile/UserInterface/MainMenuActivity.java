@@ -125,7 +125,7 @@ public class MainMenuActivity extends AppCompatActivity implements Communication
                 MainMenuItem bills = new MainMenuItem("Bills", R.drawable.baseline_receipt_black_36, ItemType.BILL.name());
                 MainMenuItem shopping = new MainMenuItem("Shopping", R.drawable.baseline_local_grocery_store_black_36, ItemType.SHOPPING.name());
                 MainMenuItem tasks = new MainMenuItem("Tasks", R.drawable.baseline_notification_important_black_36, ItemType.TODO.name());
-                MainMenuItem household = new MainMenuItem("Household", R.drawable.ic_home_white_48dp, ItemType.HOUSEHOLD.name());
+                MainMenuItem household = new MainMenuItem("Household", R.drawable.baseline_home_black_36, ItemType.HOUSEHOLD.name());
 
                 _mainMenuItems.add(bills);
                 _mainMenuItems.add(shopping);
@@ -204,7 +204,7 @@ public class MainMenuActivity extends AppCompatActivity implements Communication
     public void OnFail(RequestType requestType, String message) {
         if(message.equals(ApiErrorCodes.USER_NOT_IN_HOUSEHOLD.name()))
         {
-            MainMenuItem house = new MainMenuItem("Household", R.drawable.ic_home_white_48dp, ItemType.HOUSEHOLD.name());
+            MainMenuItem house = new MainMenuItem("Household", R.drawable.baseline_home_black_36, ItemType.HOUSEHOLD.name());
             _mainMenuItems.add(house);
             _listAdapter.AddAll(_mainMenuItems);
         }
