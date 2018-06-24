@@ -9,6 +9,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
+import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.TextView;
@@ -95,7 +96,7 @@ public class SelectUsersActivity extends AppCompatActivity implements Communicat
             toolbar.setTitle("Select person for this item");
 
         setSupportActionBar(toolbar);
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        //getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
         _adapter = new UserSelectAdapter(_users, this);
         _adapter.setOnUserClickedListener(new IUserClickedListener() {
@@ -191,10 +192,16 @@ public class SelectUsersActivity extends AppCompatActivity implements Communicat
     }
 
     @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.toolbar_select_users, menu);
+        return super.onCreateOptionsMenu(menu);
+    }
+
+    @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId())
         {
-            case android.R.id.home:
+            case R.id.toolbar_selected_users:
                 onBackPressed();
                 return true;
 

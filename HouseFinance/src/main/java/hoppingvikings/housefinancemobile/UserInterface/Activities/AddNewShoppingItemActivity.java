@@ -197,8 +197,7 @@ public class AddNewShoppingItemActivity extends AppCompatActivity implements Com
     @Override
     public void onBackPressed() {
 
-        if(shoppingItemNameEntry.getText().length() == 0
-                && _selectedUserIds.size() == 0) {
+        if(shoppingItemNameEntry.getText().length() == 0) {
 
             if(_totalAddedItems > 0)
                 setResult(RESULT_OK);
