@@ -72,7 +72,7 @@
             android:layout_marginLeft="16dp"
             android:layout_marginRight="16dp"
             android:gravity="center"
-            android:text="Use this invite code to invite others to your house. They will need to enter it in the on-screen prompt when using the 'Join Household' button on this page"
+            android:text="Use this invite code to invite others to your house. They will need to enter it in the on-screen prompt when using the 'Join Household' button on this page.\nTap the code to copy to clipboard"
             android:textColor="#000"
             android:textSize="18sp"
             app:layout_constraintTop_toBottomOf="@id/rightButton"
@@ -80,6 +80,7 @@
             app:layout_constraintRight_toRightOf="parent" />
 
         <android.support.v7.widget.CardView
+            android:id="@+id/inviteCodeBackground"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginEnd="16dp"
@@ -101,6 +102,7 @@
                 android:text="Invite Code"
                 android:textColor="#000"
                 android:textSize="46sp"
+                android:textIsSelectable="true"
                 app:layout_constraintLeft_toLeftOf="parent"
                 app:layout_constraintRight_toRightOf="parent" />
         </android.support.v7.widget.CardView>

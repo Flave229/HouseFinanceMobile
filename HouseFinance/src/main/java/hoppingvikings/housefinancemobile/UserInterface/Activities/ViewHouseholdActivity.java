@@ -1,5 +1,8 @@
 package hoppingvikings.housefinancemobile.UserInterface.Activities;
 
+import android.content.ClipData;
+import android.content.ClipboardManager;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -8,12 +11,14 @@ import android.support.design.widget.Snackbar;
 import android.support.design.widget.TextInputEditText;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.CardView;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -32,6 +37,7 @@ public class ViewHouseholdActivity extends AppCompatActivity implements Communic
     TextView _houseNameText;
 
     TextView _inviteLinkDesc;
+    CardView _inviteCodeBackground;
     TextView _inviteCode;
 
     boolean _hasHousehold;
@@ -49,6 +55,7 @@ public class ViewHouseholdActivity extends AppCompatActivity implements Communic
         _houseNameText = findViewById(R.id.houseNameText);
         _inviteLinkDesc = findViewById(R.id.inviteLinkDesc);
         _inviteCode = findViewById(R.id.inviteCode);
+        _inviteCodeBackground = findViewById(R.id.inviteCodeBackground);
         Toolbar toolbar = findViewById(R.id.appToolbar);
 
         toolbar.setTitle("Household");
@@ -58,6 +65,16 @@ public class ViewHouseholdActivity extends AppCompatActivity implements Communic
 
         _inviteLinkDesc.setVisibility(View.GONE);
         _inviteCode.setVisibility(View.GONE);
+        _inviteCode.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                ClipboardManager clipboardManager = (ClipboardManager) getSystemService(Context.CLIPBOARD_SERVICE);
+                ClipData clip = ClipData.newPlainText("", _inviteCode.getText().toString());
+                clipboardManager.setPrimaryClip(clip);
+                Toast.makeText(ViewHouseholdActivity.this, "Invite link copied", Toast.LENGTH_LONG).show();
+            }
+        });
+        _inviteCodeBackground.setVisibility(View.GONE);
 
         _leftButton = findViewById(R.id.leftButton);
         _rightButton = findViewById(R.id.rightButton);
@@ -285,6 +302,7 @@ public class ViewHouseholdActivity extends AppCompatActivity implements Communic
             _inviteCode.setText(inviteCode);
             _inviteCode.setVisibility(View.VISIBLE);
             _inviteLinkDesc.setVisibility(View.VISIBLE);
+            _inviteCodeBackground.setVisibility(View.VISIBLE);
         }
         else
         {
