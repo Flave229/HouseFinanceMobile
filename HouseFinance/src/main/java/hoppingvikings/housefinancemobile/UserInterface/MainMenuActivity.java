@@ -1,5 +1,6 @@
 package hoppingvikings.housefinancemobile.UserInterface;
 
+import android.app.PendingIntent;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
@@ -36,6 +37,7 @@ import hoppingvikings.housefinancemobile.FileIOHandler;
 import hoppingvikings.housefinancemobile.ItemType;
 import hoppingvikings.housefinancemobile.NotificationWrapper;
 import hoppingvikings.housefinancemobile.R;
+import hoppingvikings.housefinancemobile.UserInterface.Activities.ViewHouseholdActivity;
 import hoppingvikings.housefinancemobile.UserInterface.Activities.ViewListActivity;
 import hoppingvikings.housefinancemobile.UserInterface.Items.MainMenuItem;
 import hoppingvikings.housefinancemobile.UserInterface.Lists.MainMenu.MainMenuListAdapter;
@@ -64,6 +66,8 @@ public class MainMenuActivity extends AppCompatActivity implements Communication
         Toolbar appToolbar = findViewById(R.id.appToolbar);
         setSupportActionBar(appToolbar);
 
+        _mainMenuItems = new ArrayList<>();
+
         CreateMainMenuListItems();
 
         _rv =  findViewById(R.id.mainMenuRecyclerView);
@@ -80,6 +84,22 @@ public class MainMenuActivity extends AppCompatActivity implements Communication
             @Override
             public void onItemClicked(View itemView, int pos) {
                 MainMenuItem selectedItem = _listAdapter.GetItem(pos);
+
+                if(selectedItem.menuItemType.equals("HOUSEHOLD"))
+                {
+                    Intent openHouseholdPage = new Intent(MainMenuActivity.this, ViewHouseholdActivity.class);
+                    boolean hasHouse = false;
+                    try {
+                        JSONObject house = new JSONObject(FileIOHandler.Instance().ReadFileAsString("CurrentHousehold"));
+                        hasHouse = house.has("id");
+                    } catch (JSONException je) {
+
+                    }
+
+                    openHouseholdPage.putExtra("HasHousehold", hasHouse);
+                    startActivityForResult(openHouseholdPage, 0);
+                    return;
+                }
 
                 Intent openList = new Intent(MainMenuActivity.this, ViewListActivity.class);
                 openList.putExtra("ItemType", selectedItem.menuItemType);
@@ -101,24 +121,22 @@ public class MainMenuActivity extends AppCompatActivity implements Communication
             JSONObject house = new JSONObject(FileIOHandler.Instance().ReadFileAsString("CurrentHousehold"));
             if(house.has("id"))
             {
-                _mainMenuItems = new ArrayList<>();
-
                 MainMenuItem bills = new MainMenuItem("Bills", R.drawable.baseline_receipt_black_36, ItemType.BILL.name());
                 MainMenuItem shopping = new MainMenuItem("Shopping", R.drawable.baseline_local_grocery_store_black_36, ItemType.SHOPPING.name());
                 MainMenuItem tasks = new MainMenuItem("Tasks", R.drawable.baseline_notification_important_black_36, ItemType.TODO.name());
+                MainMenuItem household = new MainMenuItem("Household", R.drawable.ic_home_white_48dp, ItemType.HOUSEHOLD.name());
 
                 _mainMenuItems.add(bills);
                 _mainMenuItems.add(shopping);
                 _mainMenuItems.add(tasks);
+                _mainMenuItems.add(household);
             }
             else
             {
-                _mainMenuItems = new ArrayList<>();
                 WebHandler.Instance().GetHousehold(this, this);
             }
         } catch (JSONException je)
         {
-            _mainMenuItems = new ArrayList<>();
             WebHandler.Instance().GetHousehold(this, this);
         }
     }
@@ -179,13 +197,13 @@ public class MainMenuActivity extends AppCompatActivity implements Communication
         String returnedID = o.toString();
         if(!returnedID.equals(""))
         {
-            MainMenuItem bills = new MainMenuItem("Bills", R.drawable.baseline_receipt_black_36, ItemType.BILL.name());
-            MainMenuItem shopping = new MainMenuItem("Shopping", R.drawable.baseline_local_grocery_store_black_36, ItemType.SHOPPING.name());
-            MainMenuItem tasks = new MainMenuItem("Tasks", R.drawable.baseline_notification_important_black_36, ItemType.TODO.name());
-
-            _mainMenuItems.add(bills);
-            _mainMenuItems.add(shopping);
-            _mainMenuItems.add(tasks);
+           CreateMainMenuListItems();
+            _listAdapter.AddAll(_mainMenuItems);
+        }
+        else
+        {
+            MainMenuItem house = new MainMenuItem("Household", R.drawable.ic_home_white_48dp, ItemType.HOUSEHOLD.name());
+            _mainMenuItems.add(house);
             _listAdapter.AddAll(_mainMenuItems);
         }
     }
@@ -193,5 +211,21 @@ public class MainMenuActivity extends AppCompatActivity implements Communication
     @Override
     public void OnFail(RequestType requestType, String message) {
         Snackbar.make(_layout, "Failed to obtain the household ID", Snackbar.LENGTH_LONG).show();
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
+        switch (resultCode)
+        {
+            case RESULT_OK:
+                CreateMainMenuListItems();
+                break;
+
+            case RESULT_CANCELED:
+
+                break;
+        }
     }
 }

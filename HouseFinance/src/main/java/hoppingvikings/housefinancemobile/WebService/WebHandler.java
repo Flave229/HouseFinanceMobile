@@ -15,6 +15,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import hoppingvikings.housefinancemobile.Endpoints.SaltVault.BillEndpoint;
+import hoppingvikings.housefinancemobile.ApiErrorCodes;
 import hoppingvikings.housefinancemobile.FileIOHandler;
 import hoppingvikings.housefinancemobile.ItemType;
 import hoppingvikings.housefinancemobile.Repositories.BillRepository;
