@@ -12,6 +12,7 @@ import org.json.JSONObject;
 
 import java.util.ArrayList;
 
+import hoppingvikings.housefinancemobile.Endpoints.SaltVault.BillEndpoint;
 import hoppingvikings.housefinancemobile.FileIOHandler;
 import hoppingvikings.housefinancemobile.ItemType;
 import hoppingvikings.housefinancemobile.Repositories.BillRepository;
@@ -39,8 +40,12 @@ public class WebHandler
     private String _clientID = "";
     private String _sessionID = "";
 
+    private BillEndpoint _billEndpoint;
+
     private WebHandler()
-    {}
+    {
+        _billEndpoint = new BillEndpoint();
+    }
 
     public static WebHandler Instance()
     {
@@ -92,25 +97,7 @@ public class WebHandler
 
     public void GetBills(Context context, final CommunicationCallback callback)
     {
-        ConnectivityManager connMgr = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
-        NetworkInfo networkInfo = connMgr.getActiveNetworkInfo();
-
-        if(networkInfo != null && networkInfo.isConnected())
-        {
-            CommunicationRequest request = new CommunicationRequest()
-            {{
-                RequestTypeData = RequestType.GET;
-                ItemTypeData = ItemType.BILL;
-                Endpoint = WEB_APIV2_URL + API_BILLS;
-                Owner = WebHandler.this;
-                Callback = callback;
-            }};
-            new WebService(_clientID, _sessionID).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, request);
-        }
-        else
-        {
-            callback.OnFail(RequestType.GET, "No internet connection");
-        }
+        _billEndpoint.Get(context, callback, _clientID, _sessionID);
     }
 
     public void GetShoppingItems(Context context, final CommunicationCallback callback)
@@ -420,37 +407,6 @@ public class WebHandler
 
             switch (type)
             {
-            case BILL:
-                try
-                {
-                    JSONArray billJsonArray = result.Response.getJSONArray("bills");
-
-                    ArrayList<BillListObject> bills = new ArrayList<>();
-                    for(int k = 0; k < billJsonArray.length(); k++)
-                    {
-                        JSONObject billJson = billJsonArray.getJSONObject(k);
-                        JSONArray peopleArray = billJson.getJSONArray("people");
-
-                        BillListObject bill = new BillListObject(billJson, peopleArray);
-                        bills.add(bill);
-                    }
-
-                    BillRepository.Instance().Set(bills);
-
-                    result.Callback.OnSuccess(result.RequestTypeData, null);
-
-                }
-                catch (JSONException je)
-                {
-                    je.printStackTrace();
-                    result.Callback.OnFail(result.RequestTypeData, "Could not obtain Bills list");
-                }
-                catch(Exception e)
-                {
-                    result.Callback.OnFail(result.RequestTypeData, "Could not obtain Bills list");
-                }
-                break;
-
             case SHOPPING:
                 try {
                     JSONArray shoppingItems = result.Response.getJSONArray("shoppingList");

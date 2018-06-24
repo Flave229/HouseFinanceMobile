@@ -16,14 +16,14 @@ import java.net.URL;
 
 import hoppingvikings.housefinancemobile.ItemType;
 
-public class WebService extends AsyncTask<CommunicationRequest, Void, CommunicationResponse>
+public class HTTPCommunicationTask extends AsyncTask<CommunicationRequest, Void, CommunicationResponse>
 {
     private String _clientID = "";
     private String _sessionID = "";
     private String _fullAuthToken = "";
     private CommunicationRequest _request;
 
-    public WebService(String clientID, String sessionID)
+    public HTTPCommunicationTask(String clientID, String sessionID)
     {
         _clientID = clientID;
         _sessionID = sessionID;
@@ -46,22 +46,12 @@ public class WebService extends AsyncTask<CommunicationRequest, Void, Communicat
         {
             return null;
         }
-        catch (JSONException e)
-        {
-            return null;
-        }
     }
 
     @Override
     protected void onPostExecute(CommunicationResponse result)
     {
         String type;
-
-        if (_request.OwnerV2 != null)
-        {
-            _request.OwnerV2.HandleGetResponse(result);
-            return;
-        }
 
         if (_request.RequestTypeData != RequestType.GET)
         {
@@ -77,7 +67,7 @@ public class WebService extends AsyncTask<CommunicationRequest, Void, Communicat
         _request.Owner.ApiResult(result, _request.ItemTypeData);
     }
 
-    private CommunicationResponse DownloadUrl() throws IOException, JSONException
+    private CommunicationResponse DownloadUrl() throws IOException
     {
         URL url = new URL(_request.Endpoint);
         HttpURLConnection connection = (HttpURLConnection) url.openConnection();

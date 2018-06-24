@@ -9,5 +9,6 @@ public class CommunicationRequest
     public RequestType RequestTypeData;
     public String RequestBody;
     public WebHandler Owner;
+    public HTTPHandler OwnerV2;
     public CommunicationCallback Callback;
 }
