@@ -33,7 +33,7 @@ public class BillEndpoint extends HTTPHandler
     }
 
     @Override
-    public void HandleGetResponse(CommunicationResponse result)
+    public void HandleResponse(CommunicationResponse result)
     {
         try
         {
@@ -44,19 +44,10 @@ public class BillEndpoint extends HTTPHandler
                 result.Callback.OnFail(result.RequestTypeData, errorMessage);
                 return;
             }
-            JSONArray billJsonArray = result.Response.getJSONArray("bills");
 
-            ArrayList<BillListObject> bills = new ArrayList<>();
-            for(int k = 0; k < billJsonArray.length(); k++)
-            {
-                JSONObject billJson = billJsonArray.getJSONObject(k);
-                JSONArray peopleArray = billJson.getJSONArray("people");
+            if (result.RequestTypeData == RequestType.GET)
+                HandleGetResponse(result);
 
-                BillListObject bill = new BillListObject(billJson, peopleArray);
-                bills.add(bill);
-            }
-
-            BillRepository.Instance().Set(bills);
             result.Callback.OnSuccess(result.RequestTypeData, null);
         }
         catch (JSONException je)
@@ -68,5 +59,22 @@ public class BillEndpoint extends HTTPHandler
         {
             result.Callback.OnFail(result.RequestTypeData, "Could not obtain Bills list");
         }
+    }
+
+    private void HandleGetResponse(CommunicationResponse result) throws JSONException
+    {
+        JSONArray billJsonArray = result.Response.getJSONArray("bills");
+
+        ArrayList<BillListObject> bills = new ArrayList<>();
+        for(int k = 0; k < billJsonArray.length(); k++)
+        {
+            JSONObject billJson = billJsonArray.getJSONObject(k);
+            JSONArray peopleArray = billJson.getJSONArray("people");
+
+            BillListObject bill = new BillListObject(billJson, peopleArray);
+            bills.add(bill);
+        }
+
+        BillRepository.Instance().Set(bills);
     }
 }

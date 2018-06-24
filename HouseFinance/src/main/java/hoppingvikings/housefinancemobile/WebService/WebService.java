@@ -59,7 +59,7 @@ public class WebService extends AsyncTask<CommunicationRequest, Void, Communicat
 
         if (_request.OwnerV2 != null)
         {
-            _request.OwnerV2.HandleGetResponse(result);
+            _request.OwnerV2.HandleResponse(result);
             return;
         }
 

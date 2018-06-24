@@ -32,5 +32,5 @@ abstract public class HTTPHandler
         }
     }
 
-    public abstract void HandleGetResponse(CommunicationResponse result);
+    public abstract void HandleResponse(CommunicationResponse result);
 }
