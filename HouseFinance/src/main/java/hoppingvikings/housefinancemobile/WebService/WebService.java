@@ -13,21 +13,19 @@ import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.util.Map;
 
 import hoppingvikings.housefinancemobile.ItemType;
 
 public class WebService extends AsyncTask<CommunicationRequest, Void, CommunicationResponse>
 {
-    private String _clientID = "";
-    private String _sessionID = "";
+    private final Map<String, String> _requestProperties;
     private String _fullAuthToken = "";
     private CommunicationRequest _request;
 
-    public WebService(String clientID, String sessionID)
+    public WebService(Map<String, String> requestProperties)
     {
-        _clientID = clientID;
-        _sessionID = sessionID;
-        _fullAuthToken = "Token " + _sessionID;
+        _requestProperties = requestProperties;
     }
 
     @Override
@@ -93,10 +91,10 @@ public class WebService extends AsyncTask<CommunicationRequest, Void, Communicat
             connection.setConnectTimeout(45000);
             connection.setDoInput(true);
 
-            if(_request.ItemTypeData != ItemType.LOG_IN)
-                connection.setRequestProperty("Authorization", _fullAuthToken);
-            else
-                connection.setRequestProperty("Authorization", "");
+            for (String requestPropertyKey : _requestProperties.keySet())
+            {
+                connection.setRequestProperty(requestPropertyKey, _requestProperties.get(requestPropertyKey));
+            }
 
             connection.setRequestMethod(_request.RequestTypeData.toString());
 
