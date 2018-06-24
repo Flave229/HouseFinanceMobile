@@ -205,7 +205,7 @@ public class ViewHouseholdActivity extends AppCompatActivity implements Communic
                                     _joiningHouse = true;
                                     JSONObject joinHouse = new JSONObject();
                                     joinHouse.put("InviteLink", inviteInputText.getText().toString());
-                                    WebHandler.Instance().JoinHousehole(ViewHouseholdActivity.this, joinHouse, ViewHouseholdActivity.this);
+                                    WebHandler.Instance().JoinHousehold(ViewHouseholdActivity.this, joinHouse, ViewHouseholdActivity.this);
                                     joinHouseAlert.dismiss();
                                 } catch (JSONException je)
                                 {

@@ -433,7 +433,9 @@ public class WebHandler
                 Owner = WebHandler.this;
                 Callback = callback;
             }};
-            new WebService(_clientID, _sessionID).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, request);
+            Map<String, String> authenticationProperty = new HashMap<>();
+            authenticationProperty.put("Authorization", _sessionID);
+            new WebService(authenticationProperty).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, request);
         }
         else
         {
@@ -441,7 +443,7 @@ public class WebHandler
         }
     }
 
-    public void JoinHousehole(Context context, final JSONObject jsonObject, final CommunicationCallback callback)
+    public void JoinHousehold(Context context, final JSONObject jsonObject, final CommunicationCallback callback)
     {
         ConnectivityManager connMgr = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
         NetworkInfo networkInfo = connMgr.getActiveNetworkInfo();
@@ -457,7 +459,9 @@ public class WebHandler
                 Owner = WebHandler.this;
                 Callback = callback;
             }};
-            new WebService(_clientID, _sessionID).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, request);
+            Map<String, String> authenticationProperty = new HashMap<>();
+            authenticationProperty.put("Authorization", _sessionID);
+            new WebService(authenticationProperty).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, request);
         }
         else
         {
