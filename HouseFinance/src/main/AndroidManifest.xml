@@ -71,6 +71,7 @@
 
         <activity android:name=".UserInterface.Activities.EditTodoItemActivity"
             android:label="Edit Task"/>
+        <activity android:name=".UserInterface.Activities.ViewHouseholdActivity" />
     </application>
 
 </manifest>

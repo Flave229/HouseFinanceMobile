@@ -12,6 +12,7 @@ import org.json.JSONObject;
 
 import java.util.ArrayList;
 
+import hoppingvikings.housefinancemobile.ApiErrorCodes;
 import hoppingvikings.housefinancemobile.FileIOHandler;
 import hoppingvikings.housefinancemobile.ItemType;
 import hoppingvikings.housefinancemobile.Repositories.BillRepository;
@@ -573,9 +574,17 @@ public class WebHandler
                         if(result.Response.getBoolean("hasError"))
                         {
                             String errorMessage = result.Response.getJSONObject("error").getString("message");
-                            Log.e("Error", errorMessage);
-                            result.Callback.OnFail(result.RequestTypeData, errorMessage);
-                            return;
+                            if(result.Response.getJSONObject("error").getInt("errorCode") == ApiErrorCodes.USER_NOT_IN_HOUSEHOLD.getValue())
+                            {
+                                result.Callback.OnSuccess(result.RequestTypeData, "");
+                                return;
+                            }
+                            else
+                            {
+                                Log.e("Error", errorMessage);
+                                result.Callback.OnFail(result.RequestTypeData, errorMessage);
+                                return;
+                            }
                         }
 
                         if (result.Response.has("house"))
