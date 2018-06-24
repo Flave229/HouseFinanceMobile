@@ -18,7 +18,6 @@ import hoppingvikings.housefinancemobile.ItemType;
 
 public class WebService extends AsyncTask<CommunicationRequest, Void, CommunicationResponse>
 {
-    private static final String WEB_APIV2_URL = "http://house.flave.co.uk/api/v2/";
     private String _clientID = "";
     private String _sessionID = "";
     private String _fullAuthToken = "";
@@ -74,42 +73,7 @@ public class WebService extends AsyncTask<CommunicationRequest, Void, Communicat
 
     private CommunicationResponse DownloadUrl() throws IOException, JSONException
     {
-        String subEndpoint;
-
-        switch (_request.ItemTypeData)
-        {
-            case BILL:
-                subEndpoint = "Bills";
-                break;
-            case BILL_DETAILED:
-                subEndpoint = "Bills?id=" + new JSONObject(_request.RequestBody).getInt("BillId");
-                break;
-            case SHOPPING:
-                subEndpoint = "Shopping";
-                break;
-            case PAYMENT:
-                subEndpoint = "Bills/Payments";
-                break;
-            case PERSON:
-                subEndpoint = "Users";
-                break;
-            case TODO:
-                subEndpoint = "ToDo";
-                break;
-            case LOG_IN:
-                subEndpoint = "LogIn";
-                break;
-            case HOUSEHOLD:
-                subEndpoint = "Household";
-                break;
-            case HOUSEHOLD_INVITE:
-                subEndpoint = "Household/InviteLink";
-                break;
-            default:
-                subEndpoint = "";
-        }
-
-        URL url = new URL(WEB_APIV2_URL + subEndpoint);
+        URL url = new URL(_request.Endpoint);
         HttpURLConnection connection = (HttpURLConnection) url.openConnection();
         CommunicationResponse response = new CommunicationResponse()
         {{
@@ -144,7 +108,7 @@ public class WebService extends AsyncTask<CommunicationRequest, Void, Communicat
         }
         catch (IOException e)
         {
-            Log.e("IO Error", "Error reading the input stream from '" + WEB_APIV2_URL + subEndpoint + "': " + e.getMessage());
+            Log.e("IO Error", "Error reading the input stream from '" + _request.Endpoint + "': " + e.getMessage());
         }
         catch (JSONException e)
         { }

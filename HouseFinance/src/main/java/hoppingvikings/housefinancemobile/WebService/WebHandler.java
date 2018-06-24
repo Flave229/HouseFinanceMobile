@@ -26,6 +26,15 @@ import hoppingvikings.housefinancemobile.UserInterface.Items.TodoListObject;
 
 public class WebHandler
 {
+    private static final String WEB_APIV2_URL = "http://house.flave.co.uk/api/v2/";
+    private static final String API_BILLS = "Bills";
+    private static final String API_PAYMENTS = "Bills/Payments";
+    private static final String API_SHOPPING = "Shopping";
+    private static final String API_USERS = "Users";
+    private static final String API_TODO = "ToDo";
+    private static final String API_LOGIN = "LogIn";
+    private static final String API_HOUSEHOLD = "Household";
+    private static final String API_HOUSEHOLD_INVITE = "Household/InviteLink";
     private static WebHandler _instance;
     private String _clientID = "";
     private String _sessionID = "";
@@ -68,6 +77,7 @@ public class WebHandler
             {{
                 RequestTypeData = RequestType.POST;
                 ItemTypeData = ItemType.LOG_IN;
+                Endpoint = WEB_APIV2_URL + API_LOGIN;
                 RequestBody = String.valueOf(idToken);
                 Owner = WebHandler.this;
                 Callback = callback;
@@ -91,6 +101,7 @@ public class WebHandler
             {{
                 RequestTypeData = RequestType.GET;
                 ItemTypeData = ItemType.BILL;
+                Endpoint = WEB_APIV2_URL + API_BILLS;
                 Owner = WebHandler.this;
                 Callback = callback;
             }};
@@ -112,6 +123,7 @@ public class WebHandler
             CommunicationRequest request = new CommunicationRequest()
             {{
                 ItemTypeData = ItemType.SHOPPING;
+                Endpoint = WEB_APIV2_URL + API_SHOPPING;
                 RequestTypeData = RequestType.GET;
                 Owner = WebHandler.this;
                 Callback = callback;
@@ -134,6 +146,7 @@ public class WebHandler
             CommunicationRequest request = new CommunicationRequest()
             {{
                 ItemTypeData = ItemType.TODO;
+                Endpoint = WEB_APIV2_URL + API_TODO;
                 RequestTypeData = RequestType.GET;
                 Owner = WebHandler.this;
                 Callback = callback;
@@ -153,27 +166,15 @@ public class WebHandler
 
         if(networkInfo != null && networkInfo.isConnected())
         {
-            try
-            {
-                final JSONObject billDetailsRequest = new JSONObject()
-                {{
-                    put("BillId", billId);
-                }};
-
-                CommunicationRequest request = new CommunicationRequest()
-                {{
-                    ItemTypeData = ItemType.BILL_DETAILED;
-                    RequestTypeData = RequestType.GET;
-                    RequestBody = String.valueOf(billDetailsRequest);
-                    Owner = WebHandler.this;
-                    Callback = callback;
-                }};
-                new WebService(_clientID, _sessionID).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, request);
-            }
-            catch (JSONException e)
-            {
-                callback.OnFail(RequestType.GET, "Failed to create JSON for Bill Details");
-            }
+            CommunicationRequest request = new CommunicationRequest()
+            {{
+                ItemTypeData = ItemType.BILL_DETAILED;
+                Endpoint = WEB_APIV2_URL + API_BILLS + "?id=" + billId;
+                RequestTypeData = RequestType.GET;
+                Owner = WebHandler.this;
+                Callback = callback;
+            }};
+            new WebService(_clientID, _sessionID).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, request);
         }
         else
         {
@@ -191,6 +192,7 @@ public class WebHandler
             CommunicationRequest request = new CommunicationRequest()
             {{
                 ItemTypeData = ItemType.PERSON;
+                Endpoint = WEB_APIV2_URL + API_USERS;
                 RequestTypeData = RequestType.GET;
                 Owner = WebHandler.this;
                 Callback = callback;
@@ -211,9 +213,29 @@ public class WebHandler
 
         if(networkInfo != null && networkInfo.isConnected())
         {
+            String apiEndpoint = "";
+
+            switch (itemType)
+            {
+                case PAYMENT:
+                    apiEndpoint += API_PAYMENTS;
+                    break;
+                case BILL:
+                    apiEndpoint += API_BILLS;
+                    break;
+                case SHOPPING:
+                    apiEndpoint += API_SHOPPING;
+                    break;
+                case TODO:
+                    apiEndpoint += API_TODO;
+                    break;
+            }
+
+            final String finalEndpointUrl = WEB_APIV2_URL + apiEndpoint;
             CommunicationRequest request = new CommunicationRequest()
             {{
                 ItemTypeData = itemType;
+                Endpoint = finalEndpointUrl;
                 RequestTypeData = RequestType.DELETE;
                 RequestBody = String.valueOf(itemJson);
                 Owner = WebHandler.this;
@@ -229,15 +251,34 @@ public class WebHandler
 
     public void UploadNewItem(Context context, final JSONObject newItem, final CommunicationCallback callback, final ItemType itemType)
     {
-
         ConnectivityManager connMgr = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
         NetworkInfo networkInfo = connMgr.getActiveNetworkInfo();
 
         if(networkInfo!= null && networkInfo.isConnected())
         {
+            String apiEndpoint = "";
+
+            switch (itemType)
+            {
+                case PAYMENT:
+                    apiEndpoint += API_PAYMENTS;
+                    break;
+                case BILL:
+                    apiEndpoint += API_BILLS;
+                    break;
+                case SHOPPING:
+                    apiEndpoint += API_SHOPPING;
+                    break;
+                case TODO:
+                    apiEndpoint += API_TODO;
+                    break;
+            }
+
+            final String finalEndpointUrl = WEB_APIV2_URL + apiEndpoint;
             CommunicationRequest request = new CommunicationRequest()
             {{
                 ItemTypeData = itemType;
+                Endpoint = finalEndpointUrl;
                 RequestTypeData = RequestType.POST;
                 RequestBody = String.valueOf(newItem);
                 Owner = WebHandler.this;
@@ -258,9 +299,29 @@ public class WebHandler
 
         if(networkInfo != null && networkInfo.isConnected())
         {
+            String apiEndpoint = "";
+
+            switch (itemType)
+            {
+                case PAYMENT:
+                    apiEndpoint += API_PAYMENTS;
+                    break;
+                case BILL:
+                    apiEndpoint += API_BILLS;
+                    break;
+                case SHOPPING:
+                    apiEndpoint += API_SHOPPING;
+                    break;
+                case TODO:
+                    apiEndpoint += API_TODO;
+                    break;
+            }
+
+            final String finalEndpointUrl = WEB_APIV2_URL + apiEndpoint;
             CommunicationRequest request = new CommunicationRequest()
             {{
                 ItemTypeData = itemType;
+                Endpoint = finalEndpointUrl;
                 RequestTypeData = RequestType.PATCH;
                 RequestBody = String.valueOf(editedItem);
                 Owner = WebHandler.this;
@@ -283,8 +344,9 @@ public class WebHandler
         {
             CommunicationRequest request = new CommunicationRequest()
             {{
-                RequestTypeData = RequestType.GET;
                 ItemTypeData = ItemType.HOUSEHOLD;
+                Endpoint = WEB_APIV2_URL + API_HOUSEHOLD;
+                RequestTypeData = RequestType.GET;
                 Owner = WebHandler.this;
                 Callback = callback;
             }};
@@ -305,8 +367,9 @@ public class WebHandler
         {
             CommunicationRequest request = new CommunicationRequest()
             {{
-                RequestTypeData = RequestType.POST;
                 ItemTypeData = ItemType.HOUSEHOLD;
+                Endpoint = WEB_APIV2_URL + API_HOUSEHOLD;
+                RequestTypeData = RequestType.POST;
                 RequestBody = String.valueOf(requestJson);
                 Owner = WebHandler.this;
                 Callback = callback;
@@ -328,8 +391,9 @@ public class WebHandler
         {
             CommunicationRequest request = new CommunicationRequest()
             {{
-                RequestTypeData = RequestType.DELETE;
                 ItemTypeData = ItemType.HOUSEHOLD;
+                Endpoint = WEB_APIV2_URL + API_HOUSEHOLD;
+                RequestTypeData = RequestType.DELETE;
                 RequestBody = String.valueOf(requestJson);
                 Owner = WebHandler.this;
                 Callback = callback;
