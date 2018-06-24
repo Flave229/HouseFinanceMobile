@@ -11,6 +11,8 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 
 import hoppingvikings.housefinancemobile.Endpoints.SaltVault.BillEndpoint;
 import hoppingvikings.housefinancemobile.ApiErrorCodes;
@@ -88,7 +90,9 @@ public class WebHandler
                 Owner = WebHandler.this;
                 Callback = callback;
             }};
-            new WebService(_clientID, _sessionID).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, request);
+            Map<String, String> authenticationProperty = new HashMap<>();
+            authenticationProperty.put("Authorization", _sessionID);
+            new WebService(authenticationProperty).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, request);
         }
         else
         {
@@ -98,6 +102,7 @@ public class WebHandler
 
     public void GetBills(Context context, final CommunicationCallback callback)
     {
+        _billEndpoint.SetRequestProperty("Authorization", _sessionID);
         _billEndpoint.Get(context, callback, _clientID, _sessionID);
     }
 
@@ -116,7 +121,9 @@ public class WebHandler
                 Owner = WebHandler.this;
                 Callback = callback;
             }};
-            new WebService(_clientID, _sessionID).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, request);
+            Map<String, String> authenticationProperty = new HashMap<>();
+            authenticationProperty.put("Authorization", _sessionID);
+            new WebService(authenticationProperty).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, request);
         }
         else
         {
@@ -139,7 +146,9 @@ public class WebHandler
                 Owner = WebHandler.this;
                 Callback = callback;
             }};
-            new WebService(_clientID, _sessionID).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, request);
+            Map<String, String> authenticationProperty = new HashMap<>();
+            authenticationProperty.put("Authorization", _sessionID);
+            new WebService(authenticationProperty).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, request);
         }
         else
         {
@@ -162,7 +171,9 @@ public class WebHandler
                 Owner = WebHandler.this;
                 Callback = callback;
             }};
-            new WebService(_clientID, _sessionID).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, request);
+            Map<String, String> authenticationProperty = new HashMap<>();
+            authenticationProperty.put("Authorization", _sessionID);
+            new WebService(authenticationProperty).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, request);
         }
         else
         {
@@ -185,8 +196,9 @@ public class WebHandler
                 Owner = WebHandler.this;
                 Callback = callback;
             }};
-
-            new WebService(_clientID, _sessionID).execute(request);
+            Map<String, String> authenticationProperty = new HashMap<>();
+            authenticationProperty.put("Authorization", _sessionID);
+            new WebService(authenticationProperty).execute(request);
         }
         else
         {
@@ -229,7 +241,9 @@ public class WebHandler
                 Owner = WebHandler.this;
                 Callback = callback;
             }};
-            new WebService(_clientID, _sessionID).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, request);
+            Map<String, String> authenticationProperty = new HashMap<>();
+            authenticationProperty.put("Authorization", _sessionID);
+            new WebService(authenticationProperty).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, request);
         }
         else
         {
@@ -272,7 +286,9 @@ public class WebHandler
                 Owner = WebHandler.this;
                 Callback = callback;
             }};
-            new WebService(_clientID, _sessionID).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, request);
+            Map<String, String> authenticationProperty = new HashMap<>();
+            authenticationProperty.put("Authorization", _sessionID);
+            new WebService(authenticationProperty).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, request);
         }
         else
         {
@@ -315,7 +331,9 @@ public class WebHandler
                 Owner = WebHandler.this;
                 Callback = callback;
             }};
-            new WebService(_clientID, _sessionID).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, request);
+            Map<String, String> authenticationProperty = new HashMap<>();
+            authenticationProperty.put("Authorization", _sessionID);
+            new WebService(authenticationProperty).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, request);
         }
         else
         {
@@ -338,7 +356,9 @@ public class WebHandler
                 Owner = WebHandler.this;
                 Callback = callback;
             }};
-            new WebService(_clientID, _sessionID).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, request);
+            Map<String, String> authenticationProperty = new HashMap<>();
+            authenticationProperty.put("Authorization", _sessionID);
+            new WebService(authenticationProperty).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, request);
         }
         else
         {
@@ -362,7 +382,9 @@ public class WebHandler
                 Owner = WebHandler.this;
                 Callback = callback;
             }};
-            new WebService(_clientID, _sessionID).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, request);
+            Map<String, String> authenticationProperty = new HashMap<>();
+            authenticationProperty.put("Authorization", _sessionID);
+            new WebService(authenticationProperty).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, request);
         }
         else
         {
@@ -386,7 +408,9 @@ public class WebHandler
                 Owner = WebHandler.this;
                 Callback = callback;
             }};
-            new WebService(_clientID, _sessionID).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, request);
+            Map<String, String> authenticationProperty = new HashMap<>();
+            authenticationProperty.put("Authorization", _sessionID);
+            new WebService(authenticationProperty).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, request);
         }
         else
         {
