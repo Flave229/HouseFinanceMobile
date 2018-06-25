@@ -6,11 +6,13 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.lang.reflect.Method;
 import java.util.ArrayList;
 
 import hoppingvikings.housefinancemobile.ItemType;
 import hoppingvikings.housefinancemobile.Repositories.BillRepository;
 import hoppingvikings.housefinancemobile.UserInterface.Items.BillListObject;
+import hoppingvikings.housefinancemobile.UserInterface.Items.BillObjectDetailed;
 import hoppingvikings.housefinancemobile.WebService.CommunicationRequest;
 import hoppingvikings.housefinancemobile.WebService.CommunicationResponse;
 import hoppingvikings.housefinancemobile.WebService.HTTPHandler;
@@ -21,13 +23,13 @@ public class BillEndpoint extends HTTPHandler
     private final String BILL_ENDPOINT = "http://house.flave.co.uk/api/v2/Bills";
 
     @Override
-    protected CommunicationRequest ConstructGet()
+    protected CommunicationRequest ConstructGet(final String urlAdditions)
     {
         return new CommunicationRequest()
         {{
             RequestTypeData = RequestType.GET;
-            ItemTypeData = ItemType.BILL;
-            Endpoint = BILL_ENDPOINT;
+            ItemTypeData = (urlAdditions == "") ? ItemType.BILL : ItemType.BILL_DETAILED;
+            Endpoint = BILL_ENDPOINT + urlAdditions;
             OwnerV2 = BillEndpoint.this;
         }};
     }
@@ -46,9 +48,14 @@ public class BillEndpoint extends HTTPHandler
             }
 
             if (result.RequestTypeData == RequestType.GET)
-                HandleGetResponse(result);
-
-            result.Callback.OnSuccess(result.RequestTypeData, null);
+            {
+                if (result.ItemTypeData == ItemType.BILL)
+                    HandleBillListResponse(result);
+                else if (result.ItemTypeData == ItemType.BILL_DETAILED)
+                    HandleDetailedBillResponse(result);
+            }
+            else
+                HandleNormalResponse(result);
         }
         catch (JSONException je)
         {
@@ -61,7 +68,12 @@ public class BillEndpoint extends HTTPHandler
         }
     }
 
-    private void HandleGetResponse(CommunicationResponse result) throws JSONException
+    public static void HandleNormalResponse(CommunicationResponse result)
+    {
+        result.Callback.OnSuccess(result.RequestTypeData, null);
+    }
+
+    public static void HandleBillListResponse(CommunicationResponse result) throws JSONException
     {
         JSONArray billJsonArray = result.Response.getJSONArray("bills");
 
@@ -76,5 +88,18 @@ public class BillEndpoint extends HTTPHandler
         }
 
         BillRepository.Instance().Set(bills);
+        HandleNormalResponse(result);
+    }
+
+    public static void HandleDetailedBillResponse(CommunicationResponse result) throws JSONException
+    {
+        BillObjectDetailed detailedBill;
+
+        JSONArray billJsonArray = result.Response.getJSONArray("bills");
+        JSONObject detailedJson = billJsonArray.getJSONObject(0);
+        JSONArray paymentsArray = detailedJson.getJSONArray("payments");
+        detailedBill = new BillObjectDetailed(detailedJson, paymentsArray);
+
+        result.Callback.OnSuccess(result.RequestTypeData, detailedBill);
     }
 }

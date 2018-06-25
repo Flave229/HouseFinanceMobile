@@ -103,7 +103,7 @@ public class WebHandler
     public void GetBills(Context context, final CommunicationCallback callback)
     {
         _billEndpoint.SetRequestProperty("Authorization", _sessionID);
-        _billEndpoint.Get(context, callback, _clientID, _sessionID);
+        _billEndpoint.Get(context, callback);
     }
 
     public void GetShoppingItems(Context context, final CommunicationCallback callback)
@@ -158,27 +158,10 @@ public class WebHandler
 
     public void RequestBillDetails(Context context, final CommunicationCallback callback, final int billId)
     {
-        ConnectivityManager connMgr = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
-        NetworkInfo networkInfo = connMgr.getActiveNetworkInfo();
-
-        if(networkInfo != null && networkInfo.isConnected())
-        {
-            CommunicationRequest request = new CommunicationRequest()
-            {{
-                ItemTypeData = ItemType.BILL_DETAILED;
-                Endpoint = WEB_APIV2_URL + API_BILLS + "?id=" + billId;
-                RequestTypeData = RequestType.GET;
-                Owner = WebHandler.this;
-                Callback = callback;
-            }};
-            Map<String, String> authenticationProperty = new HashMap<>();
-            authenticationProperty.put("Authorization", _sessionID);
-            new WebService(authenticationProperty).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, request);
-        }
-        else
-        {
-            callback.OnFail(RequestType.GET, "No Internet Connection");
-        }
+        _billEndpoint.SetRequestProperty("Authorization", _sessionID);
+        Map<String, String> urlParameters = new HashMap<>();
+        urlParameters.put("id", Integer.toString(billId));
+        _billEndpoint.Get(context, callback, urlParameters);
     }
 
     public void RequestUsers(Context context, final CommunicationCallback callback)
@@ -491,30 +474,6 @@ public class WebHandler
                 }
 
                 break;
-
-            case BILL_DETAILED:
-                BillObjectDetailed detailedBill = null;
-
-                try
-                {
-                    JSONArray billJsonArray = result.Response.getJSONArray("bills");
-                    JSONObject detailedJson = billJsonArray.getJSONObject(0);
-                    JSONArray paymentsArray = detailedJson.getJSONArray("payments");
-                    detailedBill = new BillObjectDetailed(detailedJson, paymentsArray);
-                }
-                catch (JSONException je)
-                {
-                    je.printStackTrace();
-                    result.Callback.OnFail(result.RequestTypeData, "Could not obtain Bill details");
-                }
-                catch(Exception e)
-                {
-                    result.Callback.OnFail(result.RequestTypeData, "Could not obtain Bill details");
-                }
-
-                result.Callback.OnSuccess(result.RequestTypeData, detailedBill);
-                break;
-
             case TODO:
                 try
                 {
