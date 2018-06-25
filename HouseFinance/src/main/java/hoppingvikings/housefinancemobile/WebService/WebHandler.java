@@ -236,6 +236,13 @@ public class WebHandler
 
     public void UploadNewItem(Context context, final JSONObject newItem, final CommunicationCallback callback, final ItemType itemType)
     {
+        if (itemType == ItemType.BILL)
+        {
+            _billEndpoint.SetRequestProperty("Authorization", _sessionID);
+            _billEndpoint.Post(context, callback, newItem);
+            return;
+        }
+
         ConnectivityManager connMgr = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
         NetworkInfo networkInfo = connMgr.getActiveNetworkInfo();
 
@@ -247,9 +254,6 @@ public class WebHandler
             {
                 case PAYMENT:
                     apiEndpoint += API_PAYMENTS;
-                    break;
-                case BILL:
-                    apiEndpoint += API_BILLS;
                     break;
                 case SHOPPING:
                     apiEndpoint += API_SHOPPING;

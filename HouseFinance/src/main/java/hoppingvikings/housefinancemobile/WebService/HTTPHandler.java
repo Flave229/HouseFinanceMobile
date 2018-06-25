@@ -6,6 +6,8 @@ import android.net.NetworkInfo;
 import android.os.AsyncTask;
 import android.util.Log;
 
+import org.json.JSONObject;
+
 import java.util.HashMap;
 import java.util.Map;
 
@@ -38,6 +40,7 @@ abstract public class HTTPHandler
     }
 
     protected abstract CommunicationRequest ConstructGet(String urlAdditions);
+    protected abstract CommunicationRequest ConstructPost(final JSONObject postData);
 
     public final void SetRequestProperty(String key, String value)
     {
@@ -49,19 +52,36 @@ abstract public class HTTPHandler
         Get(context, callback, null);
     }
 
-    // TODO: Don't pass the clientID and sessionID here. Should have an option to pass custom authentication headers to the HTTPHandler
     public final void Get(Context context, final CommunicationCallback callback, Map<String, String> urlProperties)
     {
+        RequestType requestType = RequestType.GET;
         if(CheckInternetConnection(context))
         {
             String urlPropertyString = ConstructURLPropertyString(urlProperties);
             CommunicationRequest request = ConstructGet(urlPropertyString);
+            request.RequestTypeData = requestType;
             request.Callback = callback;
             new WebService(_requestProperties).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, request);
         }
         else
         {
-            callback.OnFail(RequestType.GET, "No internet connection");
+            callback.OnFail(requestType, "No internet connection");
+        }
+    }
+
+    public final void Post(Context context, final CommunicationCallback callback, final JSONObject postData)
+    {
+        RequestType requestType = RequestType.POST;
+        if(CheckInternetConnection(context))
+        {
+            CommunicationRequest request = ConstructPost(postData);
+            request.RequestTypeData = requestType;
+            request.Callback = callback;
+            new WebService(_requestProperties).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, request);
+        }
+        else
+        {
+            callback.OnFail(requestType, "No internet connection");
         }
     }
 

@@ -6,7 +6,6 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.lang.reflect.Method;
 import java.util.ArrayList;
 
 import hoppingvikings.housefinancemobile.ItemType;
@@ -27,9 +26,20 @@ public class BillEndpoint extends HTTPHandler
     {
         return new CommunicationRequest()
         {{
-            RequestTypeData = RequestType.GET;
             ItemTypeData = (urlAdditions == "") ? ItemType.BILL : ItemType.BILL_DETAILED;
             Endpoint = BILL_ENDPOINT + urlAdditions;
+            OwnerV2 = BillEndpoint.this;
+        }};
+    }
+
+    @Override
+    protected CommunicationRequest ConstructPost(final JSONObject postData)
+    {
+        return new CommunicationRequest()
+        {{
+            ItemTypeData = ItemType.BILL;
+            Endpoint = BILL_ENDPOINT;
+            RequestBody = String.valueOf(postData);
             OwnerV2 = BillEndpoint.this;
         }};
     }
