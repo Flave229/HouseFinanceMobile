@@ -44,6 +44,18 @@ public class ShoppingEndpoint extends HTTPHandler
     }
 
     @Override
+    protected CommunicationRequest ConstructPatch(final JSONObject patchData)
+    {
+        return new CommunicationRequest()
+        {{
+            ItemTypeData = ItemType.SHOPPING;
+            Endpoint = SHOPPING_ENDPOINT;
+            RequestBody = String.valueOf(patchData);
+            OwnerV2 = ShoppingEndpoint.this;
+        }};
+    }
+
+    @Override
     public void HandleResponse(CommunicationResponse result)
     {
         try

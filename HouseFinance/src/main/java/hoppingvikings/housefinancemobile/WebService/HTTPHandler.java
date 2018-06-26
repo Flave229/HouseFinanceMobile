@@ -43,6 +43,7 @@ abstract public class HTTPHandler
     // Only added it because the bill details have different logic depending on if url params are provided
     protected abstract CommunicationRequest ConstructGet(String urlAdditions) throws UnsupportedOperationException;
     protected abstract CommunicationRequest ConstructPost(final JSONObject postData) throws UnsupportedOperationException;
+    protected abstract CommunicationRequest ConstructPatch(final JSONObject patchData) throws UnsupportedOperationException;
 
     public final void SetRequestProperty(String key, String value)
     {
@@ -98,6 +99,29 @@ abstract public class HTTPHandler
         catch (UnsupportedOperationException exception)
         {
             callback.OnFail(requestType, "HTTP Post not supported by endpoint");
+        }
+    }
+
+    public final void Patch(Context context, final CommunicationCallback callback, final JSONObject patchData)
+    {
+        RequestType requestType = RequestType.PATCH;
+        try
+        {
+            if(CheckInternetConnection(context))
+            {
+                CommunicationRequest request = ConstructPatch(patchData);
+                request.RequestTypeData = requestType;
+                request.Callback = callback;
+                new WebService(_requestProperties).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, request);
+            }
+            else
+            {
+                callback.OnFail(requestType, "No internet connection");
+            }
+        }
+        catch (UnsupportedOperationException exception)
+        {
+            callback.OnFail(requestType, "HTTP Patch not supported by endpoint");
         }
     }
 

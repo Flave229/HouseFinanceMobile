@@ -243,46 +243,29 @@ public class WebHandler
 
     public void EditItem(Context context, final JSONObject editedItem, final CommunicationCallback callback, final ItemType itemType)
     {
-        ConnectivityManager connMgr = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
-        NetworkInfo networkInfo = connMgr.getActiveNetworkInfo();
-
-        if(networkInfo != null && networkInfo.isConnected())
+        if (itemType == ItemType.BILL)
         {
-            String apiEndpoint = "";
-
-            switch (itemType)
-            {
-                case PAYMENT:
-                    apiEndpoint += API_PAYMENTS;
-                    break;
-                case BILL:
-                    apiEndpoint += API_BILLS;
-                    break;
-                case SHOPPING:
-                    apiEndpoint += API_SHOPPING;
-                    break;
-                case TODO:
-                    apiEndpoint += API_TODO;
-                    break;
-            }
-
-            final String finalEndpointUrl = WEB_APIV2_URL + apiEndpoint;
-            CommunicationRequest request = new CommunicationRequest()
-            {{
-                ItemTypeData = itemType;
-                Endpoint = finalEndpointUrl;
-                RequestTypeData = RequestType.PATCH;
-                RequestBody = String.valueOf(editedItem);
-                Owner = WebHandler.this;
-                Callback = callback;
-            }};
-            Map<String, String> authenticationProperty = new HashMap<>();
-            authenticationProperty.put("Authorization", _sessionID);
-            new WebService(authenticationProperty).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, request);
+            _billEndpoint.SetRequestProperty("Authorization", _sessionID);
+            _billEndpoint.Patch(context, callback, editedItem);
+            return;
         }
-        else
+        if (itemType == ItemType.PAYMENT)
         {
-            callback.OnFail(RequestType.PATCH, "No Internet Connection");
+            _paymentsEndpoint.SetRequestProperty("Authorization", _sessionID);
+            _paymentsEndpoint.Patch(context, callback, editedItem);
+            return;
+        }
+        if (itemType == ItemType.SHOPPING)
+        {
+            _shoppingEndpoint.SetRequestProperty("Authorization", _sessionID);
+            _shoppingEndpoint.Patch(context, callback, editedItem);
+            return;
+        }
+        if (itemType == ItemType.TODO)
+        {
+            _toDoEndpoint.SetRequestProperty("Authorization", _sessionID);
+            _toDoEndpoint.Patch(context, callback, editedItem);
+            return;
         }
     }
 

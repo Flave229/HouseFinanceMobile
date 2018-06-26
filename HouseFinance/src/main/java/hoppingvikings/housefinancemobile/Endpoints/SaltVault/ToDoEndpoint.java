@@ -44,6 +44,18 @@ public class ToDoEndpoint extends HTTPHandler
     }
 
     @Override
+    protected CommunicationRequest ConstructPatch(final JSONObject patchData)
+    {
+        return new CommunicationRequest()
+        {{
+            ItemTypeData = ItemType.TODO;
+            Endpoint = TODO_ENDPOINT;
+            RequestBody = String.valueOf(patchData);
+            OwnerV2 = ToDoEndpoint.this;
+        }};
+    }
+
+    @Override
     public void HandleResponse(CommunicationResponse result)
     {
         try

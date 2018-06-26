@@ -45,6 +45,12 @@ public class HouseholdEndpoint extends HTTPHandler
     }
 
     @Override
+    protected CommunicationRequest ConstructPatch(JSONObject patchData) throws UnsupportedOperationException
+    {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
     public void HandleResponse(CommunicationResponse result)
     {
         try

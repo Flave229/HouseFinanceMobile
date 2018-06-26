@@ -25,9 +25,21 @@ public class PaymentsEndpoint extends HTTPHandler
     {
         return new CommunicationRequest()
         {{
-            ItemTypeData = ItemType.BILL;
+            ItemTypeData = ItemType.PAYMENT;
             Endpoint = PAYMENT_ENDPOINT;
             RequestBody = String.valueOf(postData);
+            OwnerV2 = PaymentsEndpoint.this;
+        }};
+    }
+
+    @Override
+    protected CommunicationRequest ConstructPatch(final JSONObject patchData)
+    {
+        return new CommunicationRequest()
+        {{
+            ItemTypeData = ItemType.PAYMENT;
+            Endpoint = PAYMENT_ENDPOINT;
+            RequestBody = String.valueOf(patchData);
             OwnerV2 = PaymentsEndpoint.this;
         }};
     }

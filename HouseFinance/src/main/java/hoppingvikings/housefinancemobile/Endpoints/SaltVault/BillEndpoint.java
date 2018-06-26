@@ -45,6 +45,18 @@ public class BillEndpoint extends HTTPHandler
     }
 
     @Override
+    protected CommunicationRequest ConstructPatch(final JSONObject patchData) throws UnsupportedOperationException
+    {
+        return new CommunicationRequest()
+        {{
+            ItemTypeData = ItemType.BILL;
+            Endpoint = BILL_ENDPOINT;
+            RequestBody = String.valueOf(patchData);
+            OwnerV2 = BillEndpoint.this;
+        }};
+    }
+
+    @Override
     public void HandleResponse(CommunicationResponse result)
     {
         try
