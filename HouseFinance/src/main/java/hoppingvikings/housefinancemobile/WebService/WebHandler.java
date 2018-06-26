@@ -271,27 +271,8 @@ public class WebHandler
 
     public void GetHousehold(Context context, final CommunicationCallback callback)
     {
-        ConnectivityManager connMgr = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
-        NetworkInfo networkInfo = connMgr.getActiveNetworkInfo();
-
-        if(networkInfo != null && networkInfo.isConnected())
-        {
-            CommunicationRequest request = new CommunicationRequest()
-            {{
-                ItemTypeData = ItemType.HOUSEHOLD;
-                Endpoint = WEB_APIV2_URL + API_HOUSEHOLD;
-                RequestTypeData = RequestType.GET;
-                Owner = WebHandler.this;
-                Callback = callback;
-            }};
-            Map<String, String> authenticationProperty = new HashMap<>();
-            authenticationProperty.put("Authorization", _sessionID);
-            new WebService(authenticationProperty).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, request);
-        }
-        else
-        {
-            callback.OnFail(RequestType.GET, "No internet connection");
-        }
+        _householdEndpoint.SetRequestProperty("Authorization", _sessionID);
+        _householdEndpoint.Get(context, callback);
     }
 
     public void DeleteHousehold(Context context, final JSONObject requestJson, final CommunicationCallback callback)

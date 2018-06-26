@@ -10,8 +10,6 @@ import java.util.ArrayList;
 
 import hoppingvikings.housefinancemobile.FileIOHandler;
 import hoppingvikings.housefinancemobile.ItemType;
-import hoppingvikings.housefinancemobile.Repositories.ShoppingRepository;
-import hoppingvikings.housefinancemobile.UserInterface.Items.ShoppingListObject;
 import hoppingvikings.housefinancemobile.WebService.CommunicationRequest;
 import hoppingvikings.housefinancemobile.WebService.CommunicationResponse;
 import hoppingvikings.housefinancemobile.WebService.HTTPHandler;
