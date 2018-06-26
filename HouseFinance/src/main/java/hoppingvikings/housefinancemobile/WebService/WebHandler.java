@@ -213,19 +213,19 @@ public class WebHandler
             _billEndpoint.Post(context, callback, newItem);
             return;
         }
-        else if (itemType == ItemType.PAYMENT)
+        if (itemType == ItemType.PAYMENT)
         {
             _paymentsEndpoint.SetRequestProperty("Authorization", _sessionID);
             _paymentsEndpoint.Post(context, callback, newItem);
             return;
         }
-        else if (itemType == ItemType.SHOPPING)
+        if (itemType == ItemType.SHOPPING)
         {
             _shoppingEndpoint.SetRequestProperty("Authorization", _sessionID);
             _shoppingEndpoint.Post(context, callback, newItem);
             return;
         }
-        else if (itemType == ItemType.TODO)
+        if (itemType == ItemType.TODO)
         {
             _toDoEndpoint.SetRequestProperty("Authorization", _sessionID);
             _toDoEndpoint.Post(context, callback, newItem);
