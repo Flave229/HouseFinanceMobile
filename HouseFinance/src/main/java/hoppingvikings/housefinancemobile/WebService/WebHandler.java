@@ -16,6 +16,7 @@ import java.util.Map;
 
 import hoppingvikings.housefinancemobile.Endpoints.SaltVault.BillEndpoint;
 import hoppingvikings.housefinancemobile.ApiErrorCodes;
+import hoppingvikings.housefinancemobile.Endpoints.SaltVault.PaymentsEndpoint;
 import hoppingvikings.housefinancemobile.FileIOHandler;
 import hoppingvikings.housefinancemobile.ItemType;
 import hoppingvikings.housefinancemobile.Repositories.BillRepository;
@@ -44,10 +45,12 @@ public class WebHandler
     private String _sessionID = "";
 
     private BillEndpoint _billEndpoint;
+    private PaymentsEndpoint _paymentsEndpoint;
 
     private WebHandler()
     {
         _billEndpoint = new BillEndpoint();
+        _paymentsEndpoint = new PaymentsEndpoint();
     }
 
     public static WebHandler Instance()
@@ -242,6 +245,12 @@ public class WebHandler
             _billEndpoint.Post(context, callback, newItem);
             return;
         }
+        else if (itemType == ItemType.PAYMENT)
+        {
+            _paymentsEndpoint.SetRequestProperty("Authorization", _sessionID);
+            _paymentsEndpoint.Post(context, callback, newItem);
+            return;
+        }
 
         ConnectivityManager connMgr = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
         NetworkInfo networkInfo = connMgr.getActiveNetworkInfo();
@@ -252,9 +261,6 @@ public class WebHandler
 
             switch (itemType)
             {
-                case PAYMENT:
-                    apiEndpoint += API_PAYMENTS;
-                    break;
                 case SHOPPING:
                     apiEndpoint += API_SHOPPING;
                     break;

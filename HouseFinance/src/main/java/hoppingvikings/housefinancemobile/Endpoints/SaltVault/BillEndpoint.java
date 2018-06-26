@@ -70,11 +70,11 @@ public class BillEndpoint extends HTTPHandler
         catch (JSONException je)
         {
             je.printStackTrace();
-            result.Callback.OnFail(result.RequestTypeData, "Could not obtain Bills list");
+            result.Callback.OnFail(result.RequestTypeData, "Failed to parse the response from the server");
         }
         catch(Exception e)
         {
-            result.Callback.OnFail(result.RequestTypeData, "Could not obtain Bills list");
+            result.Callback.OnFail(result.RequestTypeData, "Failed to handle the response from the server");
         }
     }
 
