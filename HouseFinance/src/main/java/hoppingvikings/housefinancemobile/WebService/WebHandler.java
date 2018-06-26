@@ -16,6 +16,7 @@ import java.util.Map;
 
 import hoppingvikings.housefinancemobile.Endpoints.SaltVault.BillEndpoint;
 import hoppingvikings.housefinancemobile.ApiErrorCodes;
+import hoppingvikings.housefinancemobile.Endpoints.SaltVault.HouseholdEndpoint;
 import hoppingvikings.housefinancemobile.Endpoints.SaltVault.PaymentsEndpoint;
 import hoppingvikings.housefinancemobile.Endpoints.SaltVault.ShoppingEndpoint;
 import hoppingvikings.housefinancemobile.Endpoints.SaltVault.ToDoEndpoint;
@@ -50,6 +51,7 @@ public class WebHandler
     private PaymentsEndpoint _paymentsEndpoint;
     private ShoppingEndpoint _shoppingEndpoint;
     private ToDoEndpoint _toDoEndpoint;
+    private HouseholdEndpoint _householdEndpoint;
 
     private WebHandler()
     {
@@ -57,6 +59,7 @@ public class WebHandler
         _paymentsEndpoint = new PaymentsEndpoint();
         _shoppingEndpoint = new ShoppingEndpoint();
         _toDoEndpoint = new ToDoEndpoint();
+        _householdEndpoint = new HouseholdEndpoint();
     }
 
     public static WebHandler Instance()
@@ -305,28 +308,8 @@ public class WebHandler
 
     public void AddHousehold(Context context, final JSONObject requestJson, final CommunicationCallback callback)
     {
-        ConnectivityManager connMgr = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
-        NetworkInfo networkInfo = connMgr.getActiveNetworkInfo();
-
-        if(networkInfo != null && networkInfo.isConnected())
-        {
-            CommunicationRequest request = new CommunicationRequest()
-            {{
-                ItemTypeData = ItemType.HOUSEHOLD;
-                Endpoint = WEB_APIV2_URL + API_HOUSEHOLD;
-                RequestTypeData = RequestType.POST;
-                RequestBody = String.valueOf(requestJson);
-                Owner = WebHandler.this;
-                Callback = callback;
-            }};
-            Map<String, String> authenticationProperty = new HashMap<>();
-            authenticationProperty.put("Authorization", _sessionID);
-            new WebService(authenticationProperty).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, request);
-        }
-        else
-        {
-            callback.OnFail(RequestType.GET, "No internet connection");
-        }
+        _householdEndpoint.SetRequestProperty("Authorization", _sessionID);
+        _householdEndpoint.Post(context, callback, requestJson);
     }
 
     public void DeleteHousehold(Context context, final JSONObject requestJson, final CommunicationCallback callback)
@@ -408,33 +391,6 @@ public class WebHandler
                         String sessionID = result.Response.getString("sessionId");
                         SetSessionID(sessionID);
                         result.Callback.OnSuccess(result.RequestTypeData, sessionID);
-                    }
-                    else
-                    {
-                        result.Callback.OnFail(result.RequestTypeData, "Could not obtain session");
-                    }
-                }
-                catch (JSONException je)
-                {
-                    je.printStackTrace();
-                    result.Callback.OnFail(result.RequestTypeData, "Could not obtain session");
-                }
-                catch(Exception e)
-                {
-                    result.Callback.OnFail(result.RequestTypeData, "Could not obtain session");
-                }
-
-                break;
-
-            case HOUSEHOLD:
-                try {
-                    if (result.Response.has("house"))
-                    {
-                        JSONObject house = result.Response.getJSONObject("house");
-
-                        //SetSessionID(sessionID);
-                        FileIOHandler.Instance().WriteToFile("CurrentHousehold", house.toString());
-                        result.Callback.OnSuccess(result.RequestTypeData, house.getString("id"));
                     }
                     else
                     {
