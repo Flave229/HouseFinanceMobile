@@ -98,7 +98,7 @@ public class ViewHouseholdActivity extends AppCompatActivity implements Communic
                         _addingDeletingHouse = true;
                         JSONObject house = new JSONObject();
                         house.put("KeepHousehold", false);
-                        WebHandler.Instance().DeleteHousehold(ViewHouseholdActivity.this, house, ViewHouseholdActivity.this);
+                        WebHandler.Instance().DeleteItem(ViewHouseholdActivity.this, ViewHouseholdActivity.this, house,  ItemType.HOUSEHOLD);
                     } catch (JSONException je)
                     {
 

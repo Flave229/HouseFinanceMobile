@@ -49,6 +49,18 @@ public class HouseholdEndpoint extends HTTPHandler
     }
 
     @Override
+    protected CommunicationRequest ConstructDelete(final JSONObject deleteData)
+    {
+        return new CommunicationRequest()
+        {{
+            ItemTypeData = ItemType.HOUSEHOLD;
+            Endpoint = HOUSEHOLD_ENDPOINT;
+            RequestBody = String.valueOf(deleteData);
+            OwnerV2 = HouseholdEndpoint.this;
+        }};
+    }
+
+    @Override
     public void HandleResponse(CommunicationResponse result)
     {
         try

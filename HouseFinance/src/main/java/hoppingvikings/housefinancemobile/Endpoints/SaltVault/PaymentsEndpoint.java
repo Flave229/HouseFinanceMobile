@@ -45,6 +45,18 @@ public class PaymentsEndpoint extends HTTPHandler
     }
 
     @Override
+    protected CommunicationRequest ConstructDelete(final JSONObject deleteData)
+    {
+        return new CommunicationRequest()
+        {{
+            ItemTypeData = ItemType.PAYMENT;
+            Endpoint = PAYMENT_ENDPOINT;
+            RequestBody = String.valueOf(deleteData);
+            OwnerV2 = PaymentsEndpoint.this;
+        }};
+    }
+
+    @Override
     public void HandleResponse(CommunicationResponse result)
     {
         try

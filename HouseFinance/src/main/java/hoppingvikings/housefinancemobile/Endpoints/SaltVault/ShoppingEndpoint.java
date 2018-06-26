@@ -56,6 +56,18 @@ public class ShoppingEndpoint extends HTTPHandler
     }
 
     @Override
+    protected CommunicationRequest ConstructDelete(final JSONObject deleteData)
+    {
+        return new CommunicationRequest()
+        {{
+            ItemTypeData = ItemType.SHOPPING;
+            Endpoint = SHOPPING_ENDPOINT;
+            RequestBody = String.valueOf(deleteData);
+            OwnerV2 = ShoppingEndpoint.this;
+        }};
+    }
+
+    @Override
     public void HandleResponse(CommunicationResponse result)
     {
         try

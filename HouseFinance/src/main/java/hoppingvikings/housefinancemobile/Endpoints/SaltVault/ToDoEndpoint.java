@@ -56,6 +56,18 @@ public class ToDoEndpoint extends HTTPHandler
     }
 
     @Override
+    protected CommunicationRequest ConstructDelete(final JSONObject deleteData)
+    {
+        return new CommunicationRequest()
+        {{
+            ItemTypeData = ItemType.TODO;
+            Endpoint = TODO_ENDPOINT;
+            RequestBody = String.valueOf(deleteData);
+            OwnerV2 = ToDoEndpoint.this;
+        }};
+    }
+
+    @Override
     public void HandleResponse(CommunicationResponse result)
     {
         try

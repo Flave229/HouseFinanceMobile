@@ -163,51 +163,6 @@ public class WebHandler
         }
     }
 
-    public void DeleteItem(Context context, final CommunicationCallback callback, final JSONObject itemJson, final ItemType itemType)
-    {
-        ConnectivityManager connMgr = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
-        NetworkInfo networkInfo = connMgr.getActiveNetworkInfo();
-
-        if(networkInfo != null && networkInfo.isConnected())
-        {
-            String apiEndpoint = "";
-
-            switch (itemType)
-            {
-                case PAYMENT:
-                    apiEndpoint += API_PAYMENTS;
-                    break;
-                case BILL:
-                    apiEndpoint += API_BILLS;
-                    break;
-                case SHOPPING:
-                    apiEndpoint += API_SHOPPING;
-                    break;
-                case TODO:
-                    apiEndpoint += API_TODO;
-                    break;
-            }
-
-            final String finalEndpointUrl = WEB_APIV2_URL + apiEndpoint;
-            CommunicationRequest request = new CommunicationRequest()
-            {{
-                ItemTypeData = itemType;
-                Endpoint = finalEndpointUrl;
-                RequestTypeData = RequestType.DELETE;
-                RequestBody = String.valueOf(itemJson);
-                Owner = WebHandler.this;
-                Callback = callback;
-            }};
-            Map<String, String> authenticationProperty = new HashMap<>();
-            authenticationProperty.put("Authorization", _sessionID);
-            new WebService(authenticationProperty).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, request);
-        }
-        else
-        {
-            callback.OnFail(RequestType.DELETE, "No Internet Connection");
-        }
-    }
-
     public void UploadNewItem(Context context, final JSONObject newItem, final CommunicationCallback callback, final ItemType itemType)
     {
         if (itemType == ItemType.BILL)
@@ -269,36 +224,43 @@ public class WebHandler
         }
     }
 
+    public void DeleteItem(Context context, final CommunicationCallback callback, final JSONObject itemJson, final ItemType itemType)
+    {
+        if (itemType == ItemType.BILL)
+        {
+            _billEndpoint.SetRequestProperty("Authorization", _sessionID);
+            _billEndpoint.Delete(context, callback, itemJson);
+            return;
+        }
+        if (itemType == ItemType.PAYMENT)
+        {
+            _paymentsEndpoint.SetRequestProperty("Authorization", _sessionID);
+            _paymentsEndpoint.Delete(context, callback, itemJson);
+            return;
+        }
+        if (itemType == ItemType.SHOPPING)
+        {
+            _shoppingEndpoint.SetRequestProperty("Authorization", _sessionID);
+            _shoppingEndpoint.Delete(context, callback, itemJson);
+            return;
+        }
+        if (itemType == ItemType.TODO)
+        {
+            _toDoEndpoint.SetRequestProperty("Authorization", _sessionID);
+            _toDoEndpoint.Delete(context, callback, itemJson);
+            return;
+        }
+        if (itemType == ItemType.HOUSEHOLD)
+        {
+            _householdEndpoint.SetRequestProperty("Authorization", _sessionID);
+            _householdEndpoint.Delete(context, callback, itemJson);
+        }
+    }
+
     public void GetHousehold(Context context, final CommunicationCallback callback)
     {
         _householdEndpoint.SetRequestProperty("Authorization", _sessionID);
         _householdEndpoint.Get(context, callback);
-    }
-
-    public void DeleteHousehold(Context context, final JSONObject requestJson, final CommunicationCallback callback)
-    {
-        ConnectivityManager connMgr = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
-        NetworkInfo networkInfo = connMgr.getActiveNetworkInfo();
-
-        if(networkInfo != null && networkInfo.isConnected())
-        {
-            CommunicationRequest request = new CommunicationRequest()
-            {{
-                ItemTypeData = ItemType.HOUSEHOLD;
-                Endpoint = WEB_APIV2_URL + API_HOUSEHOLD;
-                RequestTypeData = RequestType.DELETE;
-                RequestBody = String.valueOf(requestJson);
-                Owner = WebHandler.this;
-                Callback = callback;
-            }};
-            Map<String, String> authenticationProperty = new HashMap<>();
-            authenticationProperty.put("Authorization", _sessionID);
-            new WebService(authenticationProperty).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, request);
-        }
-        else
-        {
-            callback.OnFail(RequestType.GET, "No internet connection");
-        }
     }
 
     public void ApiResult(CommunicationResponse result, ItemType type)

@@ -57,6 +57,18 @@ public class BillEndpoint extends HTTPHandler
     }
 
     @Override
+    protected CommunicationRequest ConstructDelete(final JSONObject deleteData)
+    {
+        return new CommunicationRequest()
+        {{
+            ItemTypeData = ItemType.BILL;
+            Endpoint = BILL_ENDPOINT;
+            RequestBody = String.valueOf(deleteData);
+            OwnerV2 = BillEndpoint.this;
+        }};
+    }
+
+    @Override
     public void HandleResponse(CommunicationResponse result)
     {
         try
