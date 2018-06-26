@@ -17,6 +17,7 @@ import java.util.Map;
 import hoppingvikings.housefinancemobile.Endpoints.SaltVault.BillEndpoint;
 import hoppingvikings.housefinancemobile.ApiErrorCodes;
 import hoppingvikings.housefinancemobile.Endpoints.SaltVault.PaymentsEndpoint;
+import hoppingvikings.housefinancemobile.Endpoints.SaltVault.ShoppingEndpoint;
 import hoppingvikings.housefinancemobile.FileIOHandler;
 import hoppingvikings.housefinancemobile.ItemType;
 import hoppingvikings.housefinancemobile.Repositories.BillRepository;
@@ -46,11 +47,13 @@ public class WebHandler
 
     private BillEndpoint _billEndpoint;
     private PaymentsEndpoint _paymentsEndpoint;
+    private ShoppingEndpoint _shoppingEndpoint;
 
     private WebHandler()
     {
         _billEndpoint = new BillEndpoint();
         _paymentsEndpoint = new PaymentsEndpoint();
+        _shoppingEndpoint = new ShoppingEndpoint();
     }
 
     public static WebHandler Instance()
@@ -111,27 +114,8 @@ public class WebHandler
 
     public void GetShoppingItems(Context context, final CommunicationCallback callback)
     {
-        ConnectivityManager connMgr = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
-        NetworkInfo networkInfo = connMgr.getActiveNetworkInfo();
-
-        if(networkInfo != null && networkInfo.isConnected())
-        {
-            CommunicationRequest request = new CommunicationRequest()
-            {{
-                ItemTypeData = ItemType.SHOPPING;
-                Endpoint = WEB_APIV2_URL + API_SHOPPING;
-                RequestTypeData = RequestType.GET;
-                Owner = WebHandler.this;
-                Callback = callback;
-            }};
-            Map<String, String> authenticationProperty = new HashMap<>();
-            authenticationProperty.put("Authorization", _sessionID);
-            new WebService(authenticationProperty).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, request);
-        }
-        else
-        {
-            callback.OnFail(RequestType.GET, "No internet connection");
-        }
+        _shoppingEndpoint.SetRequestProperty("Authorization", _sessionID);
+        _shoppingEndpoint.Get(context, callback);
     }
 
     public void GetToDoItems(Context context, final CommunicationCallback callback)
@@ -251,6 +235,12 @@ public class WebHandler
             _paymentsEndpoint.Post(context, callback, newItem);
             return;
         }
+        else if (itemType == ItemType.SHOPPING)
+        {
+            _shoppingEndpoint.SetRequestProperty("Authorization", _sessionID);
+            _shoppingEndpoint.Post(context, callback, newItem);
+            return;
+        }
 
         ConnectivityManager connMgr = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
         NetworkInfo networkInfo = connMgr.getActiveNetworkInfo();
@@ -261,9 +251,6 @@ public class WebHandler
 
             switch (itemType)
             {
-                case SHOPPING:
-                    apiEndpoint += API_SHOPPING;
-                    break;
                 case TODO:
                     apiEndpoint += API_TODO;
                     break;
@@ -425,34 +412,6 @@ public class WebHandler
 
             switch (type)
             {
-            case SHOPPING:
-                try {
-                    JSONArray shoppingItems = result.Response.getJSONArray("shoppingList");
-
-                    ArrayList<ShoppingListObject> items = new ArrayList<>();
-                    for(int k = 0; k < shoppingItems.length(); k++)
-                    {
-                        JSONObject itemJson = shoppingItems.getJSONObject(k);
-                        ShoppingListObject item = new ShoppingListObject(itemJson);
-                        items.add(item);
-                    }
-
-                    ShoppingRepository.Instance().Set(items);
-
-                    result.Callback.OnSuccess(result.RequestTypeData, null);
-
-                }
-                catch (JSONException je)
-                {
-                    je.printStackTrace();
-                    result.Callback.OnFail(result.RequestTypeData, "Could not obtain Shopping list");
-                }
-                catch(Exception e)
-                {
-                    result.Callback.OnFail(result.RequestTypeData, "Could not obtain Shopping list");
-                }
-                break;
-
             case PERSON:
                 JSONArray returnedObject;
                 ArrayList<JSONObject> userObjects = new ArrayList<>();

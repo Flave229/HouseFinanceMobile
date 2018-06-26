@@ -78,12 +78,12 @@ public class BillEndpoint extends HTTPHandler
         }
     }
 
-    public static void HandleNormalResponse(CommunicationResponse result)
+    private void HandleNormalResponse(CommunicationResponse result)
     {
         result.Callback.OnSuccess(result.RequestTypeData, null);
     }
 
-    public static void HandleBillListResponse(CommunicationResponse result) throws JSONException
+    private void HandleBillListResponse(CommunicationResponse result) throws JSONException
     {
         JSONArray billJsonArray = result.Response.getJSONArray("bills");
 
@@ -101,7 +101,7 @@ public class BillEndpoint extends HTTPHandler
         HandleNormalResponse(result);
     }
 
-    public static void HandleDetailedBillResponse(CommunicationResponse result) throws JSONException
+    private void HandleDetailedBillResponse(CommunicationResponse result) throws JSONException
     {
         BillObjectDetailed detailedBill;
 
