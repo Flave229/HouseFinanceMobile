@@ -12,6 +12,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import hoppingvikings.housefinancemobile.FileIOHandler;
+import hoppingvikings.housefinancemobile.ItemType;
 import hoppingvikings.housefinancemobile.R;
 import hoppingvikings.housefinancemobile.WebService.CommunicationCallback;
 import hoppingvikings.housefinancemobile.WebService.RequestType;
@@ -118,7 +119,7 @@ public class ViewHouseholdActivity extends AppCompatActivity implements Communic
                         _addingDeletingHouse = true;
                         JSONObject house = new JSONObject();
                         house.put("Name", "Test");
-                        WebHandler.Instance().AddHousehold(ViewHouseholdActivity.this, house, ViewHouseholdActivity.this);
+                        WebHandler.Instance().UploadNewItem(ViewHouseholdActivity.this, house, ViewHouseholdActivity.this, ItemType.HOUSEHOLD);
                     } catch (JSONException je)
                     {
 

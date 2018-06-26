@@ -234,6 +234,11 @@ public class WebHandler
             _toDoEndpoint.Post(context, callback, newItem);
             return;
         }
+        if (itemType == ItemType.HOUSEHOLD)
+        {
+            _householdEndpoint.SetRequestProperty("Authorization", _sessionID);
+            _householdEndpoint.Post(context, callback, newItem);
+        }
     }
 
     public void EditItem(Context context, final JSONObject editedItem, final CommunicationCallback callback, final ItemType itemType)
@@ -304,12 +309,6 @@ public class WebHandler
         {
             callback.OnFail(RequestType.GET, "No internet connection");
         }
-    }
-
-    public void AddHousehold(Context context, final JSONObject requestJson, final CommunicationCallback callback)
-    {
-        _householdEndpoint.SetRequestProperty("Authorization", _sessionID);
-        _householdEndpoint.Post(context, callback, requestJson);
     }
 
     public void DeleteHousehold(Context context, final JSONObject requestJson, final CommunicationCallback callback)
