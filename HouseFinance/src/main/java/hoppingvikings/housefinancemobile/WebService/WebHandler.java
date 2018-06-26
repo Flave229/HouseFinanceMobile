@@ -18,6 +18,7 @@ import hoppingvikings.housefinancemobile.Endpoints.SaltVault.BillEndpoint;
 import hoppingvikings.housefinancemobile.ApiErrorCodes;
 import hoppingvikings.housefinancemobile.Endpoints.SaltVault.PaymentsEndpoint;
 import hoppingvikings.housefinancemobile.Endpoints.SaltVault.ShoppingEndpoint;
+import hoppingvikings.housefinancemobile.Endpoints.SaltVault.ToDoEndpoint;
 import hoppingvikings.housefinancemobile.FileIOHandler;
 import hoppingvikings.housefinancemobile.ItemType;
 import hoppingvikings.housefinancemobile.Repositories.BillRepository;
@@ -48,12 +49,14 @@ public class WebHandler
     private BillEndpoint _billEndpoint;
     private PaymentsEndpoint _paymentsEndpoint;
     private ShoppingEndpoint _shoppingEndpoint;
+    private ToDoEndpoint _toDoEndpoint;
 
     private WebHandler()
     {
         _billEndpoint = new BillEndpoint();
         _paymentsEndpoint = new PaymentsEndpoint();
         _shoppingEndpoint = new ShoppingEndpoint();
+        _toDoEndpoint = new ToDoEndpoint();
     }
 
     public static WebHandler Instance()
@@ -120,27 +123,8 @@ public class WebHandler
 
     public void GetToDoItems(Context context, final CommunicationCallback callback)
     {
-        ConnectivityManager connMgr = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
-        NetworkInfo networkInfo = connMgr.getActiveNetworkInfo();
-
-        if(networkInfo != null && networkInfo.isConnected())
-        {
-            CommunicationRequest request = new CommunicationRequest()
-            {{
-                ItemTypeData = ItemType.TODO;
-                Endpoint = WEB_APIV2_URL + API_TODO;
-                RequestTypeData = RequestType.GET;
-                Owner = WebHandler.this;
-                Callback = callback;
-            }};
-            Map<String, String> authenticationProperty = new HashMap<>();
-            authenticationProperty.put("Authorization", _sessionID);
-            new WebService(authenticationProperty).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, request);
-        }
-        else
-        {
-            callback.OnFail(RequestType.GET, "No internet connection");
-        }
+        _toDoEndpoint.SetRequestProperty("Authorization", _sessionID);
+        _toDoEndpoint.Get(context, callback);
     }
 
     public void RequestBillDetails(Context context, final CommunicationCallback callback, final int billId)
@@ -241,38 +225,11 @@ public class WebHandler
             _shoppingEndpoint.Post(context, callback, newItem);
             return;
         }
-
-        ConnectivityManager connMgr = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
-        NetworkInfo networkInfo = connMgr.getActiveNetworkInfo();
-
-        if(networkInfo!= null && networkInfo.isConnected())
+        else if (itemType == ItemType.TODO)
         {
-            String apiEndpoint = "";
-
-            switch (itemType)
-            {
-                case TODO:
-                    apiEndpoint += API_TODO;
-                    break;
-            }
-
-            final String finalEndpointUrl = WEB_APIV2_URL + apiEndpoint;
-            CommunicationRequest request = new CommunicationRequest()
-            {{
-                ItemTypeData = itemType;
-                Endpoint = finalEndpointUrl;
-                RequestTypeData = RequestType.POST;
-                RequestBody = String.valueOf(newItem);
-                Owner = WebHandler.this;
-                Callback = callback;
-            }};
-            Map<String, String> authenticationProperty = new HashMap<>();
-            authenticationProperty.put("Authorization", _sessionID);
-            new WebService(authenticationProperty).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, request);
-        }
-        else
-        {
-            callback.OnFail(RequestType.POST, "No internet connection");
+            _toDoEndpoint.SetRequestProperty("Authorization", _sessionID);
+            _toDoEndpoint.Post(context, callback, newItem);
+            return;
         }
     }
 
@@ -443,35 +400,6 @@ public class WebHandler
                 }
 
                 break;
-            case TODO:
-                try
-                {
-                    JSONArray todoArray = result.Response.getJSONArray("toDoTasks");
-
-                    ArrayList<TodoListObject> todos = new ArrayList<>();
-                    for(int k = 0; k < todoArray.length(); k++)
-                    {
-                        JSONObject toDoJson = todoArray.getJSONObject(k);
-
-                        TodoListObject todo = new TodoListObject(toDoJson);
-                        todos.add(todo);
-                    }
-
-                    TodoRepository.Instance().Set(todos);
-
-                    result.Callback.OnSuccess(result.RequestTypeData, null);
-                }
-                catch (JSONException je)
-                {
-                    je.printStackTrace();
-                    result.Callback.OnFail(result.RequestTypeData, "Could not obtain Todo list");
-                }
-                catch(Exception e)
-                {
-                    result.Callback.OnFail(result.RequestTypeData, "Could not obtain Todo list");
-                }
-                break;
-
             case LOG_IN:
                 try
                 {

@@ -9,25 +9,25 @@ import org.json.JSONObject;
 import java.util.ArrayList;
 
 import hoppingvikings.housefinancemobile.ItemType;
-import hoppingvikings.housefinancemobile.Repositories.ShoppingRepository;
-import hoppingvikings.housefinancemobile.UserInterface.Items.ShoppingListObject;
+import hoppingvikings.housefinancemobile.Repositories.TodoRepository;
+import hoppingvikings.housefinancemobile.UserInterface.Items.TodoListObject;
 import hoppingvikings.housefinancemobile.WebService.CommunicationRequest;
 import hoppingvikings.housefinancemobile.WebService.CommunicationResponse;
 import hoppingvikings.housefinancemobile.WebService.HTTPHandler;
 import hoppingvikings.housefinancemobile.WebService.RequestType;
 
-public class ShoppingEndpoint extends HTTPHandler
+public class ToDoEndpoint extends HTTPHandler
 {
-    private final String SHOPPING_ENDPOINT = "http://house.flave.co.uk/api/v2/Shopping";
+    private final String TODO_ENDPOINT = "http://house.flave.co.uk/api/v2/ToDo";
 
     @Override
     protected CommunicationRequest ConstructGet(String urlAdditions)
     {
         return new CommunicationRequest()
         {{
-            ItemTypeData = ItemType.SHOPPING;
-            Endpoint = SHOPPING_ENDPOINT;
-            OwnerV2 = ShoppingEndpoint.this;
+            ItemTypeData = ItemType.TODO;
+            Endpoint = TODO_ENDPOINT;
+            OwnerV2 = ToDoEndpoint.this;
         }};
     }
 
@@ -36,10 +36,10 @@ public class ShoppingEndpoint extends HTTPHandler
     {
         return new CommunicationRequest()
         {{
-            ItemTypeData = ItemType.SHOPPING;
-            Endpoint = SHOPPING_ENDPOINT;
+            ItemTypeData = ItemType.TODO;
+            Endpoint = TODO_ENDPOINT;
             RequestBody = String.valueOf(postData);
-            OwnerV2 = ShoppingEndpoint.this;
+            OwnerV2 = ToDoEndpoint.this;
         }};
     }
 
@@ -58,7 +58,7 @@ public class ShoppingEndpoint extends HTTPHandler
 
             if (result.RequestTypeData == RequestType.GET)
             {
-                HandleShoppingListResponse(result);
+                HandleToDoListResponse(result);
             }
             else
                 result.Callback.OnSuccess(result.RequestTypeData, null);
@@ -74,32 +74,33 @@ public class ShoppingEndpoint extends HTTPHandler
         }
     }
 
-    private void HandleShoppingListResponse(CommunicationResponse result)
+    private void HandleToDoListResponse(CommunicationResponse result)
     {
         try
         {
-            JSONArray shoppingItems = result.Response.getJSONArray("shoppingList");
+            JSONArray todoArray = result.Response.getJSONArray("toDoTasks");
 
-            ArrayList<ShoppingListObject> items = new ArrayList<>();
-            for(int k = 0; k < shoppingItems.length(); k++)
+            ArrayList<TodoListObject> toDos = new ArrayList<>();
+            for(int k = 0; k < todoArray.length(); k++)
             {
-                JSONObject itemJson = shoppingItems.getJSONObject(k);
-                ShoppingListObject item = new ShoppingListObject(itemJson);
-                items.add(item);
+                JSONObject toDoJson = todoArray.getJSONObject(k);
+
+                TodoListObject todo = new TodoListObject(toDoJson);
+                toDos.add(todo);
             }
 
-            ShoppingRepository.Instance().Set(items);
+            TodoRepository.Instance().Set(toDos);
 
             result.Callback.OnSuccess(result.RequestTypeData, null);
         }
         catch (JSONException je)
         {
             je.printStackTrace();
-            result.Callback.OnFail(result.RequestTypeData, "Could not obtain Shopping list");
+            result.Callback.OnFail(result.RequestTypeData, "Could not obtain Todo list");
         }
         catch(Exception e)
         {
-            result.Callback.OnFail(result.RequestTypeData, "Could not obtain Shopping list");
+            result.Callback.OnFail(result.RequestTypeData, "Could not obtain Todo list");
         }
     }
 }
