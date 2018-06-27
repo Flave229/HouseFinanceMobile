@@ -17,6 +17,7 @@ import java.util.Map;
 import hoppingvikings.housefinancemobile.Endpoints.SaltVault.BillEndpoint;
 import hoppingvikings.housefinancemobile.ApiErrorCodes;
 import hoppingvikings.housefinancemobile.Endpoints.SaltVault.HouseholdEndpoint;
+import hoppingvikings.housefinancemobile.Endpoints.SaltVault.LogInEndpoint;
 import hoppingvikings.housefinancemobile.Endpoints.SaltVault.PaymentsEndpoint;
 import hoppingvikings.housefinancemobile.Endpoints.SaltVault.ShoppingEndpoint;
 import hoppingvikings.housefinancemobile.Endpoints.SaltVault.ToDoEndpoint;
@@ -35,11 +36,9 @@ import hoppingvikings.housefinancemobile.UserInterface.Items.TodoListObject;
 
 public class WebHandler
 {
-    private static final String WEB_APIV2_URL = "http://house.flave.co.uk/api/v2/";
-    private static final String API_LOGIN = "LogIn";
     private static WebHandler _instance;
+    private SessionPersister _session;
     private String _clientID = "";
-    private String _sessionID = "";
 
     private BillEndpoint _billEndpoint;
     private PaymentsEndpoint _paymentsEndpoint;
@@ -47,6 +46,7 @@ public class WebHandler
     private ToDoEndpoint _toDoEndpoint;
     private HouseholdEndpoint _householdEndpoint;
     private UserEndpoint _userEndpoint;
+    private LogInEndpoint _logInEndpoint;
 
     private WebHandler()
     {
@@ -56,6 +56,8 @@ public class WebHandler
         _toDoEndpoint = new ToDoEndpoint();
         _householdEndpoint = new HouseholdEndpoint();
         _userEndpoint = new UserEndpoint();
+        _session = new SessionPersister();
+        _logInEndpoint = new LogInEndpoint(_session);
     }
 
     public static WebHandler Instance()
@@ -74,61 +76,40 @@ public class WebHandler
 
     public void SetSessionID(String sessionID)
     {
-        _sessionID = sessionID;
+        _session.SetSessionID(sessionID);
     }
 
     public String GetSessionID()
     {
-        return _sessionID;
+        return _session.GetSessionID();
     }
 
     public void GetSessionID(Context context, final CommunicationCallback callback, final JSONObject idToken)
     {
-        ConnectivityManager connMgr = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
-        NetworkInfo networkInfo = connMgr.getActiveNetworkInfo();
-
-        if(networkInfo != null && networkInfo.isConnected())
-        {
-            CommunicationRequest request = new CommunicationRequest()
-            {{
-                RequestTypeData = RequestType.POST;
-                ItemTypeData = ItemType.LOG_IN;
-                Endpoint = WEB_APIV2_URL + API_LOGIN;
-                RequestBody = String.valueOf(idToken);
-                Owner = WebHandler.this;
-                Callback = callback;
-            }};
-            Map<String, String> authenticationProperty = new HashMap<>();
-            authenticationProperty.put("Authorization", _sessionID);
-            new WebService(authenticationProperty).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, request);
-        }
-        else
-        {
-            callback.OnFail(RequestType.POST, "No internet connection");
-        }
+        _logInEndpoint.Post(context, callback, idToken);
     }
 
     public void GetBills(Context context, final CommunicationCallback callback)
     {
-        _billEndpoint.SetRequestProperty("Authorization", _sessionID);
+        _billEndpoint.SetRequestProperty("Authorization", _session.GetSessionID());
         _billEndpoint.Get(context, callback);
     }
 
     public void GetShoppingItems(Context context, final CommunicationCallback callback)
     {
-        _shoppingEndpoint.SetRequestProperty("Authorization", _sessionID);
+        _shoppingEndpoint.SetRequestProperty("Authorization", _session.GetSessionID());
         _shoppingEndpoint.Get(context, callback);
     }
 
     public void GetToDoItems(Context context, final CommunicationCallback callback)
     {
-        _toDoEndpoint.SetRequestProperty("Authorization", _sessionID);
+        _toDoEndpoint.SetRequestProperty("Authorization", _session.GetSessionID());
         _toDoEndpoint.Get(context, callback);
     }
 
     public void RequestBillDetails(Context context, final CommunicationCallback callback, final int billId)
     {
-        _billEndpoint.SetRequestProperty("Authorization", _sessionID);
+        _billEndpoint.SetRequestProperty("Authorization", _session.GetSessionID());
         Map<String, String> urlParameters = new HashMap<>();
         urlParameters.put("id", Integer.toString(billId));
         _billEndpoint.Get(context, callback, urlParameters);
@@ -136,7 +117,7 @@ public class WebHandler
 
     public void RequestUsers(Context context, final CommunicationCallback callback)
     {
-        _userEndpoint.SetRequestProperty("Authorization", _sessionID);
+        _userEndpoint.SetRequestProperty("Authorization", _session.GetSessionID());
         _userEndpoint.Get(context, callback);
     }
 
@@ -144,31 +125,31 @@ public class WebHandler
     {
         if (itemType == ItemType.BILL)
         {
-            _billEndpoint.SetRequestProperty("Authorization", _sessionID);
+            _billEndpoint.SetRequestProperty("Authorization", _session.GetSessionID());
             _billEndpoint.Post(context, callback, newItem);
             return;
         }
         if (itemType == ItemType.PAYMENT)
         {
-            _paymentsEndpoint.SetRequestProperty("Authorization", _sessionID);
+            _paymentsEndpoint.SetRequestProperty("Authorization", _session.GetSessionID());
             _paymentsEndpoint.Post(context, callback, newItem);
             return;
         }
         if (itemType == ItemType.SHOPPING)
         {
-            _shoppingEndpoint.SetRequestProperty("Authorization", _sessionID);
+            _shoppingEndpoint.SetRequestProperty("Authorization", _session.GetSessionID());
             _shoppingEndpoint.Post(context, callback, newItem);
             return;
         }
         if (itemType == ItemType.TODO)
         {
-            _toDoEndpoint.SetRequestProperty("Authorization", _sessionID);
+            _toDoEndpoint.SetRequestProperty("Authorization", _session.GetSessionID());
             _toDoEndpoint.Post(context, callback, newItem);
             return;
         }
         if (itemType == ItemType.HOUSEHOLD)
         {
-            _householdEndpoint.SetRequestProperty("Authorization", _sessionID);
+            _householdEndpoint.SetRequestProperty("Authorization", _session.GetSessionID());
             _householdEndpoint.Post(context, callback, newItem);
         }
     }
@@ -177,25 +158,25 @@ public class WebHandler
     {
         if (itemType == ItemType.BILL)
         {
-            _billEndpoint.SetRequestProperty("Authorization", _sessionID);
+            _billEndpoint.SetRequestProperty("Authorization", _session.GetSessionID());
             _billEndpoint.Patch(context, callback, editedItem);
             return;
         }
         if (itemType == ItemType.PAYMENT)
         {
-            _paymentsEndpoint.SetRequestProperty("Authorization", _sessionID);
+            _paymentsEndpoint.SetRequestProperty("Authorization", _session.GetSessionID());
             _paymentsEndpoint.Patch(context, callback, editedItem);
             return;
         }
         if (itemType == ItemType.SHOPPING)
         {
-            _shoppingEndpoint.SetRequestProperty("Authorization", _sessionID);
+            _shoppingEndpoint.SetRequestProperty("Authorization", _session.GetSessionID());
             _shoppingEndpoint.Patch(context, callback, editedItem);
             return;
         }
         if (itemType == ItemType.TODO)
         {
-            _toDoEndpoint.SetRequestProperty("Authorization", _sessionID);
+            _toDoEndpoint.SetRequestProperty("Authorization", _session.GetSessionID());
             _toDoEndpoint.Patch(context, callback, editedItem);
             return;
         }
@@ -205,38 +186,38 @@ public class WebHandler
     {
         if (itemType == ItemType.BILL)
         {
-            _billEndpoint.SetRequestProperty("Authorization", _sessionID);
+            _billEndpoint.SetRequestProperty("Authorization", _session.GetSessionID());
             _billEndpoint.Delete(context, callback, itemJson);
             return;
         }
         if (itemType == ItemType.PAYMENT)
         {
-            _paymentsEndpoint.SetRequestProperty("Authorization", _sessionID);
+            _paymentsEndpoint.SetRequestProperty("Authorization", _session.GetSessionID());
             _paymentsEndpoint.Delete(context, callback, itemJson);
             return;
         }
         if (itemType == ItemType.SHOPPING)
         {
-            _shoppingEndpoint.SetRequestProperty("Authorization", _sessionID);
+            _shoppingEndpoint.SetRequestProperty("Authorization", _session.GetSessionID());
             _shoppingEndpoint.Delete(context, callback, itemJson);
             return;
         }
         if (itemType == ItemType.TODO)
         {
-            _toDoEndpoint.SetRequestProperty("Authorization", _sessionID);
+            _toDoEndpoint.SetRequestProperty("Authorization", _session.GetSessionID());
             _toDoEndpoint.Delete(context, callback, itemJson);
             return;
         }
         if (itemType == ItemType.HOUSEHOLD)
         {
-            _householdEndpoint.SetRequestProperty("Authorization", _sessionID);
+            _householdEndpoint.SetRequestProperty("Authorization", _session.GetSessionID());
             _householdEndpoint.Delete(context, callback, itemJson);
         }
     }
 
     public void GetHousehold(Context context, final CommunicationCallback callback)
     {
-        _householdEndpoint.SetRequestProperty("Authorization", _sessionID);
+        _householdEndpoint.SetRequestProperty("Authorization", _session.GetSessionID());
         _householdEndpoint.Get(context, callback);
     }
 
@@ -254,31 +235,6 @@ public class WebHandler
 
             switch (type)
             {
-            case LOG_IN:
-                try
-                {
-                    if (result.Response.has("sessionId"))
-                    {
-                        String sessionID = result.Response.getString("sessionId");
-                        SetSessionID(sessionID);
-                        result.Callback.OnSuccess(result.RequestTypeData, sessionID);
-                    }
-                    else
-                    {
-                        result.Callback.OnFail(result.RequestTypeData, "Could not obtain session");
-                    }
-                }
-                catch (JSONException je)
-                {
-                    je.printStackTrace();
-                    result.Callback.OnFail(result.RequestTypeData, "Could not obtain session");
-                }
-                catch(Exception e)
-                {
-                    result.Callback.OnFail(result.RequestTypeData, "Could not obtain session");
-                }
-
-                break;
             default:
                 try
                 {

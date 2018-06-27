@@ -14,26 +14,34 @@ import hoppingvikings.housefinancemobile.WebService.CommunicationRequest;
 import hoppingvikings.housefinancemobile.WebService.CommunicationResponse;
 import hoppingvikings.housefinancemobile.WebService.HTTPHandler;
 import hoppingvikings.housefinancemobile.WebService.RequestType;
+import hoppingvikings.housefinancemobile.WebService.SessionPersister;
 
-public class UserEndpoint extends HTTPHandler
+public class LogInEndpoint extends HTTPHandler
 {
-    private final String USER_ENDPOINT = "http://house.flave.co.uk/api/v2/Users";
+    private final String LOG_IN_ENDPOINT = "http://house.flave.co.uk/api/v2/LogIn";
+    private final SessionPersister _session;
 
-    @Override
-    protected CommunicationRequest ConstructGet(String urlAdditions)
+    public LogInEndpoint(SessionPersister session)
     {
-        return new CommunicationRequest()
-        {{
-            ItemTypeData = ItemType.PERSON;
-            Endpoint = USER_ENDPOINT;
-            OwnerV2 = UserEndpoint.this;
-        }};
+        _session = session;
     }
 
     @Override
-    protected CommunicationRequest ConstructPost(JSONObject postData) throws UnsupportedOperationException
+    protected CommunicationRequest ConstructGet(String urlAdditions) throws UnsupportedOperationException
     {
         throw new UnsupportedOperationException();
+    }
+
+    @Override
+    protected CommunicationRequest ConstructPost(final JSONObject postData)
+    {
+        return new CommunicationRequest()
+        {{
+            ItemTypeData = ItemType.LOG_IN;
+            Endpoint = LOG_IN_ENDPOINT;
+            RequestBody = String.valueOf(postData);
+            OwnerV2 = LogInEndpoint.this;
+        }};
     }
 
     @Override
@@ -61,12 +69,7 @@ public class UserEndpoint extends HTTPHandler
                 return;
             }
 
-            if (result.RequestTypeData == RequestType.GET)
-            {
-                HandlePersonListResponse(result);
-            }
-            else
-                result.Callback.OnSuccess(result.RequestTypeData, null);
+            HandleLogInResponse(result);
         }
         catch (JSONException je)
         {
@@ -79,36 +82,29 @@ public class UserEndpoint extends HTTPHandler
         }
     }
 
-    private void HandlePersonListResponse(CommunicationResponse result)
+    private void HandleLogInResponse(CommunicationResponse result)
     {
-        JSONArray returnedObject;
-        ArrayList<JSONObject> userObjects = new ArrayList<>();
-        ArrayList<Person> parsedUsers = new ArrayList<>();
-
         try
         {
-            returnedObject = result.Response.getJSONArray("people");
-
-            for(int i = 0; i < returnedObject.length(); i++)
+            if (result.Response.has("sessionId"))
             {
-                userObjects.add(returnedObject.getJSONObject(i));
+                String sessionID = result.Response.getString("sessionId");
+                _session.SetSessionID(sessionID);
+                result.Callback.OnSuccess(result.RequestTypeData, sessionID);
             }
-
-            for (int j = 0; j < userObjects.size(); j++)
+            else
             {
-                parsedUsers.add(new Person(userObjects.get(j)));
+                result.Callback.OnFail(result.RequestTypeData, "Could not obtain session");
             }
-
-            result.Callback.OnSuccess(result.RequestTypeData, parsedUsers);
         }
         catch (JSONException je)
         {
             je.printStackTrace();
-            result.Callback.OnFail(result.RequestTypeData, "Could not obtain People");
+            result.Callback.OnFail(result.RequestTypeData, "Could not obtain session");
         }
         catch(Exception e)
         {
-            result.Callback.OnFail(result.RequestTypeData, "Could not obtain People");
+            result.Callback.OnFail(result.RequestTypeData, "Could not obtain session");
         }
     }
 }
