@@ -1,5 +1,7 @@
 package hoppingvikings.housefinancemobile.WebService;
 
+import java.lang.reflect.Method;
+
 import hoppingvikings.housefinancemobile.ItemType;
 
 public class CommunicationRequest

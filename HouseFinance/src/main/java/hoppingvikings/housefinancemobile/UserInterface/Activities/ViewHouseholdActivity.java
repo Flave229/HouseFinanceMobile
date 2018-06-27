@@ -24,6 +24,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import hoppingvikings.housefinancemobile.FileIOHandler;
+import hoppingvikings.housefinancemobile.ItemType;
 import hoppingvikings.housefinancemobile.R;
 import hoppingvikings.housefinancemobile.WebService.CommunicationCallback;
 import hoppingvikings.housefinancemobile.WebService.RequestType;
@@ -143,7 +144,7 @@ public class ViewHouseholdActivity extends AppCompatActivity implements Communic
                         _addingDeletingHouse = true;
                         JSONObject house = new JSONObject();
                         house.put("KeepHousehold", false);
-                        WebHandler.Instance().DeleteHousehold(ViewHouseholdActivity.this, house, ViewHouseholdActivity.this);
+                        WebHandler.Instance().DeleteItem(ViewHouseholdActivity.this, ViewHouseholdActivity.this, house,  ItemType.HOUSEHOLD);
                     } catch (JSONException je)
                     {
 
@@ -176,7 +177,7 @@ public class ViewHouseholdActivity extends AppCompatActivity implements Communic
                                     _addingDeletingHouse = true;
                                     JSONObject house = new JSONObject();
                                     house.put("Name", houseNameText.getText().toString());
-                                    WebHandler.Instance().AddHousehold(ViewHouseholdActivity.this, house, ViewHouseholdActivity.this);
+                                    WebHandler.Instance().UploadNewItem(ViewHouseholdActivity.this, house, ViewHouseholdActivity.this, ItemType.HOUSEHOLD);
                                     createHouseAlert.dismiss();
                                 } catch (JSONException je)
                                 {

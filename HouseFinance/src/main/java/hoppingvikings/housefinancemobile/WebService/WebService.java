@@ -53,8 +53,6 @@ public class WebService extends AsyncTask<CommunicationRequest, Void, Communicat
     @Override
     protected void onPostExecute(CommunicationResponse result)
     {
-        String type;
-
         if (_request.OwnerV2 != null)
         {
             _request.OwnerV2.HandleResponse(result);
@@ -83,6 +81,7 @@ public class WebService extends AsyncTask<CommunicationRequest, Void, Communicat
         {{
             Callback = _request.Callback;
             RequestTypeData = _request.RequestTypeData;
+            ItemTypeData = _request.ItemTypeData;
         }};
 
         try
