@@ -20,6 +20,7 @@ import hoppingvikings.housefinancemobile.Endpoints.SaltVault.HouseholdEndpoint;
 import hoppingvikings.housefinancemobile.Endpoints.SaltVault.PaymentsEndpoint;
 import hoppingvikings.housefinancemobile.Endpoints.SaltVault.ShoppingEndpoint;
 import hoppingvikings.housefinancemobile.Endpoints.SaltVault.ToDoEndpoint;
+import hoppingvikings.housefinancemobile.Endpoints.SaltVault.UserEndpoint;
 import hoppingvikings.housefinancemobile.FileIOHandler;
 import hoppingvikings.housefinancemobile.ItemType;
 import hoppingvikings.housefinancemobile.Repositories.BillRepository;
@@ -35,14 +36,7 @@ import hoppingvikings.housefinancemobile.UserInterface.Items.TodoListObject;
 public class WebHandler
 {
     private static final String WEB_APIV2_URL = "http://house.flave.co.uk/api/v2/";
-    private static final String API_BILLS = "Bills";
-    private static final String API_PAYMENTS = "Bills/Payments";
-    private static final String API_SHOPPING = "Shopping";
-    private static final String API_USERS = "Users";
-    private static final String API_TODO = "ToDo";
     private static final String API_LOGIN = "LogIn";
-    private static final String API_HOUSEHOLD = "Household";
-    private static final String API_HOUSEHOLD_INVITE = "Household/InviteLink";
     private static WebHandler _instance;
     private String _clientID = "";
     private String _sessionID = "";
@@ -52,6 +46,7 @@ public class WebHandler
     private ShoppingEndpoint _shoppingEndpoint;
     private ToDoEndpoint _toDoEndpoint;
     private HouseholdEndpoint _householdEndpoint;
+    private UserEndpoint _userEndpoint;
 
     private WebHandler()
     {
@@ -60,6 +55,7 @@ public class WebHandler
         _shoppingEndpoint = new ShoppingEndpoint();
         _toDoEndpoint = new ToDoEndpoint();
         _householdEndpoint = new HouseholdEndpoint();
+        _userEndpoint = new UserEndpoint();
     }
 
     public static WebHandler Instance()
@@ -140,27 +136,8 @@ public class WebHandler
 
     public void RequestUsers(Context context, final CommunicationCallback callback)
     {
-        ConnectivityManager connMgr = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
-        NetworkInfo networkInfo = connMgr.getActiveNetworkInfo();
-
-        if(networkInfo != null && networkInfo.isConnected())
-        {
-            CommunicationRequest request = new CommunicationRequest()
-            {{
-                ItemTypeData = ItemType.PERSON;
-                Endpoint = WEB_APIV2_URL + API_USERS;
-                RequestTypeData = RequestType.GET;
-                Owner = WebHandler.this;
-                Callback = callback;
-            }};
-            Map<String, String> authenticationProperty = new HashMap<>();
-            authenticationProperty.put("Authorization", _sessionID);
-            new WebService(authenticationProperty).execute(request);
-        }
-        else
-        {
-            callback.OnFail(RequestType.GET, "No Internet Connection");
-        }
+        _userEndpoint.SetRequestProperty("Authorization", _sessionID);
+        _userEndpoint.Get(context, callback);
     }
 
     public void UploadNewItem(Context context, final JSONObject newItem, final CommunicationCallback callback, final ItemType itemType)
@@ -277,37 +254,6 @@ public class WebHandler
 
             switch (type)
             {
-            case PERSON:
-                JSONArray returnedObject;
-                ArrayList<JSONObject> userObjects = new ArrayList<>();
-                ArrayList<Person> parsedUsers = new ArrayList<>();
-
-                try {
-                    returnedObject = result.Response.getJSONArray("people");
-
-                    for(int i = 0; i < returnedObject.length(); i++)
-                    {
-                        userObjects.add(returnedObject.getJSONObject(i));
-                    }
-
-                    for (int j = 0; j < userObjects.size(); j++)
-                    {
-                        parsedUsers.add(new Person(userObjects.get(j)));
-                    }
-
-                    result.Callback.OnSuccess(result.RequestTypeData, parsedUsers);
-
-                } catch (JSONException je)
-                {
-                    je.printStackTrace();
-                    result.Callback.OnFail(result.RequestTypeData, "Could not obtain People");
-                }
-                catch(Exception e)
-                {
-                    result.Callback.OnFail(result.RequestTypeData, "Could not obtain People");
-                }
-
-                break;
             case LOG_IN:
                 try
                 {
