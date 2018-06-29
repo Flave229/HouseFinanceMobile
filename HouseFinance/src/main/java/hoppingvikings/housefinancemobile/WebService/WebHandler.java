@@ -16,6 +16,7 @@ import java.util.Map;
 
 import hoppingvikings.housefinancemobile.Endpoints.SaltVault.BillEndpoint;
 import hoppingvikings.housefinancemobile.ApiErrorCodes;
+import hoppingvikings.housefinancemobile.Endpoints.SaltVault.HouseInviteEndpoint;
 import hoppingvikings.housefinancemobile.Endpoints.SaltVault.HouseholdEndpoint;
 import hoppingvikings.housefinancemobile.Endpoints.SaltVault.LogInEndpoint;
 import hoppingvikings.housefinancemobile.Endpoints.SaltVault.PaymentsEndpoint;
@@ -48,6 +49,7 @@ public class WebHandler
     private HouseholdEndpoint _householdEndpoint;
     private UserEndpoint _userEndpoint;
     private LogInEndpoint _logInEndpoint;
+    private HouseInviteEndpoint _houseInviteEndpoint;
 
     private static final String WEB_APIV2_URL = "http://house.flave.co.uk/api/v2/";
     private static final String API_HOUSEHOLD_INVITE = "Household/InviteLink";
@@ -60,6 +62,7 @@ public class WebHandler
         _toDoEndpoint = new ToDoEndpoint();
         _householdEndpoint = new HouseholdEndpoint();
         _userEndpoint = new UserEndpoint();
+        _houseInviteEndpoint = new HouseInviteEndpoint();
         _session = HouseFinanceClass.GetSessionPersisterComponent().GetSessionPersister();
         _logInEndpoint = new LogInEndpoint(_session);
     }
@@ -227,53 +230,14 @@ public class WebHandler
 
     public void GetHouseholdInviteCode(Context context, final CommunicationCallback callback)
     {
-        ConnectivityManager connMgr = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
-        NetworkInfo networkInfo = connMgr.getActiveNetworkInfo();
-
-        if(networkInfo != null && networkInfo.isConnected())
-        {
-            CommunicationRequest request = new CommunicationRequest()
-            {{
-                ItemTypeData = ItemType.HOUSEHOLD_INVITE;
-                Endpoint = WEB_APIV2_URL + API_HOUSEHOLD_INVITE;
-                RequestTypeData = RequestType.GET;
-                Owner = WebHandler.this;
-                Callback = callback;
-            }};
-            Map<String, String> authenticationProperty = new HashMap<>();
-            authenticationProperty.put("Authorization", _session.GetSessionID());
-            new WebService(authenticationProperty).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, request);
-        }
-        else
-        {
-            callback.OnFail(RequestType.GET, "No internet connection");
-        }
+        _houseInviteEndpoint.SetRequestProperty("Authorization", _session.GetSessionID());
+        _houseInviteEndpoint.Get(context, callback);
     }
 
     public void JoinHousehold(Context context, final JSONObject jsonObject, final CommunicationCallback callback)
     {
-        ConnectivityManager connMgr = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
-        NetworkInfo networkInfo = connMgr.getActiveNetworkInfo();
-
-        if(networkInfo != null && networkInfo.isConnected())
-        {
-            CommunicationRequest request = new CommunicationRequest()
-            {{
-                ItemTypeData = ItemType.HOUSEHOLD_INVITE;
-                Endpoint = WEB_APIV2_URL + API_HOUSEHOLD_INVITE;
-                RequestBody = jsonObject.toString();
-                RequestTypeData = RequestType.POST;
-                Owner = WebHandler.this;
-                Callback = callback;
-            }};
-            Map<String, String> authenticationProperty = new HashMap<>();
-            authenticationProperty.put("Authorization", _session.GetSessionID());
-            new WebService(authenticationProperty).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, request);
-        }
-        else
-        {
-            callback.OnFail(RequestType.GET, "No internet connection");
-        }
+        _houseInviteEndpoint.SetRequestProperty("Authorization", _session.GetSessionID());
+        _houseInviteEndpoint.Post(context, callback, jsonObject);
     }
 
     public void ApiResult(CommunicationResponse result, ItemType type)
@@ -296,23 +260,6 @@ public class WebHandler
 
             switch (type)
             {
-            case HOUSEHOLD_INVITE:
-                try {
-                    if(result.Response.has("inviteLink"))
-                    {
-                        result.Callback.OnSuccess(result.RequestTypeData, result.Response.getString("inviteLink"));
-                        return;
-                    }
-
-                    result.Callback.OnFail(result.RequestTypeData, "Failed to obtain invite link");
-                } catch (JSONException je)
-                {
-                    result.Callback.OnFail(result.RequestTypeData, "Failed to obtain invite link");
-                } catch (Exception e)
-                {
-                    result.Callback.OnFail(result.RequestTypeData, "Failed to obtain invite link");
-                }
-                break;
             default:
                 try
                 {
