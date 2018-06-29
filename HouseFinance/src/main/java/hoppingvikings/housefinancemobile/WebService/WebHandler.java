@@ -51,9 +51,6 @@ public class WebHandler
     private LogInEndpoint _logInEndpoint;
     private HouseInviteEndpoint _houseInviteEndpoint;
 
-    private static final String WEB_APIV2_URL = "http://house.flave.co.uk/api/v2/";
-    private static final String API_HOUSEHOLD_INVITE = "Household/InviteLink";
-
     private WebHandler()
     {
         _billEndpoint = new BillEndpoint();
