@@ -43,10 +43,6 @@ public class WebService extends AsyncTask<CommunicationRequest, Void, Communicat
         {
             return null;
         }
-        catch (JSONException e)
-        {
-            return null;
-        }
     }
 
     @Override
@@ -56,7 +52,7 @@ public class WebService extends AsyncTask<CommunicationRequest, Void, Communicat
             _request.OwnerV2.HandleResponse(result);
     }
 
-    private CommunicationResponse DownloadUrl() throws IOException, JSONException
+    private CommunicationResponse DownloadUrl() throws IOException
     {
         URL url = new URL(_request.Endpoint);
         HttpURLConnection connection = (HttpURLConnection) url.openConnection();
