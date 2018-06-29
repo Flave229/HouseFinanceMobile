@@ -26,7 +26,7 @@ import org.json.JSONObject;
 import java.io.Serializable;
 import java.util.ArrayList;
 
-import hoppingvikings.housefinancemobile.ItemType;
+import hoppingvikings.housefinancemobile.HouseFinanceClass;
 import hoppingvikings.housefinancemobile.NotificationWrapper;
 import hoppingvikings.housefinancemobile.R;
 import hoppingvikings.housefinancemobile.Repositories.BillRepository;
@@ -43,6 +43,7 @@ import hoppingvikings.housefinancemobile.UserInterface.PeoplePopup;
 import hoppingvikings.housefinancemobile.UserInterface.SignInActivity;
 import hoppingvikings.housefinancemobile.WebService.CommunicationCallback;
 import hoppingvikings.housefinancemobile.WebService.RequestType;
+import hoppingvikings.housefinancemobile.WebService.SessionPersister;
 import hoppingvikings.housefinancemobile.WebService.WebHandler;
 
 public class ViewListActivity extends AppCompatActivity
@@ -166,11 +167,13 @@ public class ViewListActivity extends AppCompatActivity
     };
 
     @Override
-    protected void onCreate(@Nullable Bundle savedInstanceState) {
+    protected void onCreate(@Nullable Bundle savedInstanceState)
+    {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_viewlist);
 
-        NotificationWrapper notificationWrapper = (NotificationWrapper)getIntent().getSerializableExtra("NotificationWrapper");
+        NotificationWrapper notificationWrapper = HouseFinanceClass.GetNotificationWrapperComponent().GetNotificationWrapper();
+        final SessionPersister sessionPersister = HouseFinanceClass.GetSessionPersisterComponent().GetSessionPersister();
         _toolbar = findViewById(R.id.appToolbar);
         _layout = findViewById(R.id.coordLayout);
         _fab = findViewById(R.id.addItem);
@@ -214,6 +217,7 @@ public class ViewListActivity extends AppCompatActivity
                         @Override
                         public void onClick(View v) {
                             Intent addBill = new Intent(ViewListActivity.this, AddNewBillActivity.class);
+                            addBill.putExtra("SessionPersister", sessionPersister);
                             startActivityForResult(addBill, 0);
                         }
                     });

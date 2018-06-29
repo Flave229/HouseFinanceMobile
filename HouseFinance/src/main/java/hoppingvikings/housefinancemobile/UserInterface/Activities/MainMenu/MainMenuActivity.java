@@ -1,22 +1,15 @@
-package hoppingvikings.housefinancemobile.UserInterface;
+package hoppingvikings.housefinancemobile.UserInterface.Activities.MainMenu;
 
-import android.app.PendingIntent;
 import android.content.Intent;
 import android.os.Bundle;
-import android.os.Handler;
-import android.os.Parcelable;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.CoordinatorLayout;
-import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
-import android.support.design.widget.TabLayout;
-import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
-import android.util.DisplayMetrics;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -30,10 +23,12 @@ import com.google.android.gms.tasks.Task;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.io.File;
 import java.util.ArrayList;
 
+import javax.inject.Inject;
+
 import hoppingvikings.housefinancemobile.FileIOHandler;
+import hoppingvikings.housefinancemobile.HouseFinanceClass;
 import hoppingvikings.housefinancemobile.ItemType;
 import hoppingvikings.housefinancemobile.NotificationWrapper;
 import hoppingvikings.housefinancemobile.R;
@@ -41,26 +36,32 @@ import hoppingvikings.housefinancemobile.UserInterface.Activities.ViewHouseholdA
 import hoppingvikings.housefinancemobile.UserInterface.Activities.ViewListActivity;
 import hoppingvikings.housefinancemobile.UserInterface.Items.MainMenuItem;
 import hoppingvikings.housefinancemobile.UserInterface.Lists.MainMenu.MainMenuListAdapter;
-import hoppingvikings.housefinancemobile.UserInterface.Lists.MainMenu.MarginDecoration;
+import hoppingvikings.housefinancemobile.UserInterface.SignInActivity;
 import hoppingvikings.housefinancemobile.WebService.CommunicationCallback;
 import hoppingvikings.housefinancemobile.WebService.RequestType;
+import hoppingvikings.housefinancemobile.WebService.SessionPersister;
 import hoppingvikings.housefinancemobile.WebService.WebHandler;
 
-public class MainMenuActivity extends AppCompatActivity implements CommunicationCallback {
+public class MainMenuActivity extends AppCompatActivity implements CommunicationCallback
+{
+    private NotificationWrapper _notificationWrapper;
+    private SessionPersister _session;
 
-    CoordinatorLayout _layout;
-    MainMenuListAdapter _listAdapter;
-    RecyclerView _rv;
-    ArrayList<MainMenuItem> _mainMenuItems;
+    private CoordinatorLayout _layout;
+    private MainMenuListAdapter _listAdapter;
+    private RecyclerView _rv;
+    private ArrayList<MainMenuItem> _mainMenuItems;
 
-    GoogleSignInClient _signInClient;
-    NotificationWrapper _notificationWrapper;
+    private GoogleSignInClient _signInClient;
 
     @Override
-    protected void onCreate(@Nullable Bundle savedInstanceState) {
+    protected void onCreate(@Nullable Bundle savedInstanceState)
+    {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_mainmenu);
 
+        _notificationWrapper = HouseFinanceClass.GetNotificationWrapperComponent().GetNotificationWrapper();
+        _session = HouseFinanceClass.GetSessionPersisterComponent().GetSessionPersister();
         _layout = findViewById(R.id.coordLayout);
 
         Toolbar appToolbar = findViewById(R.id.appToolbar);
@@ -78,7 +79,7 @@ public class MainMenuActivity extends AppCompatActivity implements Communication
         _rv.setLayoutManager(new GridLayoutManager(this, 3));
         _rv.setItemViewCacheSize(10);
 
-        _notificationWrapper = new NotificationWrapper();
+        WebHandler.Instance().SetSessionPersister(_session);
 
         _listAdapter.SetMainMenuItemClickedListener(new MainMenuListAdapter.MainMenuItemClickedListener() {
             @Override
@@ -104,6 +105,7 @@ public class MainMenuActivity extends AppCompatActivity implements Communication
                 Intent openList = new Intent(MainMenuActivity.this, ViewListActivity.class);
                 openList.putExtra("ItemType", selectedItem.menuItemType);
                 openList.putExtra("NotificationWrapper", _notificationWrapper);
+                openList.putExtra("SessionPersister", _session);
                 startActivity(openList);
             }
         });

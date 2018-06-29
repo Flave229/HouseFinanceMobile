@@ -23,6 +23,7 @@ import hoppingvikings.housefinancemobile.Endpoints.SaltVault.ShoppingEndpoint;
 import hoppingvikings.housefinancemobile.Endpoints.SaltVault.ToDoEndpoint;
 import hoppingvikings.housefinancemobile.Endpoints.SaltVault.UserEndpoint;
 import hoppingvikings.housefinancemobile.FileIOHandler;
+import hoppingvikings.housefinancemobile.HouseFinanceClass;
 import hoppingvikings.housefinancemobile.ItemType;
 import hoppingvikings.housefinancemobile.Repositories.BillRepository;
 import hoppingvikings.housefinancemobile.Repositories.ShoppingRepository;
@@ -56,7 +57,7 @@ public class WebHandler
         _toDoEndpoint = new ToDoEndpoint();
         _householdEndpoint = new HouseholdEndpoint();
         _userEndpoint = new UserEndpoint();
-        _session = new SessionPersister();
+        _session = HouseFinanceClass.GetSessionPersisterComponent().GetSessionPersister();
         _logInEndpoint = new LogInEndpoint(_session);
     }
 
@@ -252,5 +253,10 @@ public class WebHandler
         {
             result.Callback.OnFail(result.RequestTypeData, "Failed to get a response from the server");
         }
+    }
+
+    public void SetSessionPersister(SessionPersister session)
+    {
+        _session = session;
     }
 }

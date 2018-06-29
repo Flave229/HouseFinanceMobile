@@ -1,6 +1,5 @@
 package hoppingvikings.housefinancemobile;
 
-import android.app.Notification;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
@@ -16,7 +15,6 @@ import android.support.v4.app.NotificationManagerCompat;
 import android.support.v4.content.ContextCompat;
 
 import hoppingvikings.housefinancemobile.UserInterface.Activities.ViewListActivity;
-import hoppingvikings.housefinancemobile.UserInterface.MainActivity;
 
 /**
  * Created by iView on 14/07/2017.

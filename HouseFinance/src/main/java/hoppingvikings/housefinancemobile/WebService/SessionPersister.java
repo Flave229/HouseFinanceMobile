@@ -1,6 +1,8 @@
 package hoppingvikings.housefinancemobile.WebService;
 
-public class SessionPersister
+import java.io.Serializable;
+
+public class SessionPersister implements Serializable
 {
     private String _sessionID = "";
 
@@ -12,5 +14,10 @@ public class SessionPersister
     public String GetSessionID()
     {
         return _sessionID;
+    }
+
+    public boolean HasSessionID()
+    {
+        return _sessionID.equals("") == false;
     }
 }

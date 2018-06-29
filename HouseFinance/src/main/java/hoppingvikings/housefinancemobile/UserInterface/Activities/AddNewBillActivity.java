@@ -40,14 +40,18 @@ import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.Locale;
 
+import hoppingvikings.housefinancemobile.HouseFinanceClass;
 import hoppingvikings.housefinancemobile.ItemType;
 import hoppingvikings.housefinancemobile.R;
 import hoppingvikings.housefinancemobile.UserInterface.SignInActivity;
 import hoppingvikings.housefinancemobile.WebService.CommunicationCallback;
 import hoppingvikings.housefinancemobile.WebService.RequestType;
+import hoppingvikings.housefinancemobile.WebService.SessionPersister;
 import hoppingvikings.housefinancemobile.WebService.WebHandler;
 
-public class AddNewBillActivity extends AppCompatActivity implements CommunicationCallback {
+public class AddNewBillActivity extends AppCompatActivity implements CommunicationCallback
+{
+    private SessionPersister _session;
 
     Button submitButton;
     TextInputLayout billNameEntry;
@@ -78,9 +82,12 @@ public class AddNewBillActivity extends AppCompatActivity implements Communicati
     boolean _obtainingSession = false;
 
     @Override
-    protected void onCreate(@Nullable Bundle savedInstanceState) {
+    protected void onCreate(@Nullable Bundle savedInstanceState)
+    {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_addnewbill);
+
+        _session = HouseFinanceClass.GetSessionPersisterComponent().GetSessionPersister();
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.appToolbar);
         setSupportActionBar(toolbar);
@@ -401,9 +408,10 @@ public class AddNewBillActivity extends AppCompatActivity implements Communicati
     }
 
     @Override
-    protected void onStart() {
+    protected void onStart()
+    {
         super.onStart();
-        if(WebHandler.Instance().GetSessionID().equals(""))
+        if(_session.HasSessionID() == false)
         {
             _obtainingSession = true;
             GoogleSignInAccount account = GoogleSignIn.getLastSignedInAccount(this);
