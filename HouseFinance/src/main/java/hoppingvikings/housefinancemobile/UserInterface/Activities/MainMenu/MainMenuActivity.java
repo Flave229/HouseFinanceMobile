@@ -181,10 +181,13 @@ public class MainMenuActivity extends AppCompatActivity implements Communication
     private void SignOut()
     {
         _signInClient.signOut()
-                .addOnCompleteListener(this, new OnCompleteListener<Void>() {
+                .addOnCompleteListener(this, new OnCompleteListener<Void>()
+                {
                     @Override
-                    public void onComplete(@NonNull Task<Void> task) {
+                    public void onComplete(@NonNull Task<Void> task)
+                    {
                         WebHandler.Instance().SetSessionID("");
+                        _session.SetSessionID("");
                         FileIOHandler.Instance().WriteToFile("CurrentHousehold", new JSONObject().toString());
                         Intent signInScreen = new Intent(MainMenuActivity.this, SignInActivity.class);
                         startActivity(signInScreen);

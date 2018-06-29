@@ -3,6 +3,8 @@ package hoppingvikings.housefinancemobile;
 import android.app.Application;
 import android.content.Intent;
 
+import hoppingvikings.housefinancemobile.Endpoints.SaltVault.House.DaggerHouseholdComponent;
+import hoppingvikings.housefinancemobile.Endpoints.SaltVault.House.HouseholdComponent;
 import hoppingvikings.housefinancemobile.UserInterface.Activities.Main.DaggerNotificationWrapperComponent;
 import hoppingvikings.housefinancemobile.UserInterface.Activities.Main.DaggerSessionPersisterComponent;
 import hoppingvikings.housefinancemobile.UserInterface.Activities.Main.NotificationWrapperComponent;
@@ -13,12 +15,12 @@ public class HouseFinanceClass extends Application implements AppServiceBinder.O
 {
     private static NotificationWrapperComponent _notificationComponent;
     private static SessionPersisterComponent _sessionComponent;
+    private static HouseholdComponent _householdComponent;
 
     @Override
     public void OnBind()
     {
         // AppServiceBinder._service.ShowNotification("Started", NotificationManager.IMPORTANCE_DEFAULT);
-        WebHandler.Instance().SetClientID(getApplicationContext());
     }
 
     @Override
@@ -29,6 +31,9 @@ public class HouseFinanceClass extends Application implements AppServiceBinder.O
 
         _notificationComponent = DaggerNotificationWrapperComponent.builder().build();
         _sessionComponent = DaggerSessionPersisterComponent.builder().build();
+        _householdComponent = DaggerHouseholdComponent.builder()
+                .sessionPersisterComponent(_sessionComponent)
+                .build();
 
         Thread serviceThread = new Thread(new Runnable() {
             @Override
@@ -50,6 +55,11 @@ public class HouseFinanceClass extends Application implements AppServiceBinder.O
     public static SessionPersisterComponent GetSessionPersisterComponent()
     {
         return _sessionComponent;
+    }
+
+    public static HouseholdComponent GetHouseholdComponent()
+    {
+        return _householdComponent;
     }
 
     @Override

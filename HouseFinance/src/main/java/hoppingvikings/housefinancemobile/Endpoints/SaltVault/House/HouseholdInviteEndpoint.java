@@ -1,40 +1,53 @@
-package hoppingvikings.housefinancemobile.Endpoints.SaltVault;
+package hoppingvikings.housefinancemobile.Endpoints.SaltVault.House;
 
 import android.util.Log;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import javax.inject.Inject;
+
 import hoppingvikings.housefinancemobile.ItemType;
 import hoppingvikings.housefinancemobile.WebService.CommunicationRequest;
 import hoppingvikings.housefinancemobile.WebService.CommunicationResponse;
 import hoppingvikings.housefinancemobile.WebService.HTTPHandler;
 import hoppingvikings.housefinancemobile.WebService.RequestType;
+import hoppingvikings.housefinancemobile.WebService.SessionPersister;
 
-public class HouseInviteEndpoint extends HTTPHandler
+public class HouseholdInviteEndpoint extends HTTPHandler
 {
+    private final SessionPersister _session;
+
     private final String HOUSEHOLD_INVITE_ENDPOINT = "http://house.flave.co.uk/api/v2/Household/InviteLink";
+
+    @Inject
+    public HouseholdInviteEndpoint(SessionPersister sessionPersister)
+    {
+        _session = sessionPersister;
+    }
 
     @Override
     protected CommunicationRequest ConstructGet(String urlAdditions)
     {
+        SetRequestProperty("Authorization", _session.GetSessionID());
         return new CommunicationRequest()
         {{
             ItemTypeData = ItemType.HOUSEHOLD_INVITE;
             Endpoint = HOUSEHOLD_INVITE_ENDPOINT;
-            OwnerV2 = HouseInviteEndpoint.this;
+            OwnerV2 = HouseholdInviteEndpoint.this;
         }};
     }
 
     @Override
     protected CommunicationRequest ConstructPost(final JSONObject postData)
     {
+        SetRequestProperty("Authorization", _session.GetSessionID());
         return new CommunicationRequest()
         {{
             ItemTypeData = ItemType.HOUSEHOLD_INVITE;
             Endpoint = HOUSEHOLD_INVITE_ENDPOINT;
             RequestBody = String.valueOf(postData);
-            OwnerV2 = HouseInviteEndpoint.this;
+            OwnerV2 = HouseholdInviteEndpoint.this;
         }};
     }
 

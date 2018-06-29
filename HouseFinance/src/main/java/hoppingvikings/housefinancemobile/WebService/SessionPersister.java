@@ -2,9 +2,15 @@ package hoppingvikings.housefinancemobile.WebService;
 
 import java.io.Serializable;
 
+import javax.inject.Inject;
+
 public class SessionPersister implements Serializable
 {
     private String _sessionID = "";
+
+    @Inject
+    public SessionPersister()
+    {}
 
     public void SetSessionID(String sessionID)
     {

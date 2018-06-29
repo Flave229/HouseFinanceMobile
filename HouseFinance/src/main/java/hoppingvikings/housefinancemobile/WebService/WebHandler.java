@@ -1,46 +1,28 @@
 package hoppingvikings.housefinancemobile.WebService;
 
 import android.content.Context;
-import android.net.ConnectivityManager;
-import android.net.NetworkInfo;
-import android.os.AsyncTask;
-import android.util.Log;
 
-import org.json.JSONArray;
-import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
 import hoppingvikings.housefinancemobile.Endpoints.SaltVault.BillEndpoint;
-import hoppingvikings.housefinancemobile.ApiErrorCodes;
-import hoppingvikings.housefinancemobile.Endpoints.SaltVault.HouseInviteEndpoint;
-import hoppingvikings.housefinancemobile.Endpoints.SaltVault.HouseholdEndpoint;
+import hoppingvikings.housefinancemobile.Endpoints.SaltVault.House.HouseholdInviteEndpoint;
+import hoppingvikings.housefinancemobile.Endpoints.SaltVault.House.HouseholdEndpoint;
 import hoppingvikings.housefinancemobile.Endpoints.SaltVault.LogInEndpoint;
 import hoppingvikings.housefinancemobile.Endpoints.SaltVault.PaymentsEndpoint;
 import hoppingvikings.housefinancemobile.Endpoints.SaltVault.ShoppingEndpoint;
 import hoppingvikings.housefinancemobile.Endpoints.SaltVault.ToDoEndpoint;
 import hoppingvikings.housefinancemobile.Endpoints.SaltVault.UserEndpoint;
-import hoppingvikings.housefinancemobile.FileIOHandler;
 import hoppingvikings.housefinancemobile.HouseFinanceClass;
 import hoppingvikings.housefinancemobile.ItemType;
-import hoppingvikings.housefinancemobile.Repositories.BillRepository;
-import hoppingvikings.housefinancemobile.Repositories.ShoppingRepository;
-import hoppingvikings.housefinancemobile.Person;
 import hoppingvikings.housefinancemobile.R;
-import hoppingvikings.housefinancemobile.Repositories.TodoRepository;
-import hoppingvikings.housefinancemobile.UserInterface.Items.BillListObject;
-import hoppingvikings.housefinancemobile.UserInterface.Items.BillObjectDetailed;
-import hoppingvikings.housefinancemobile.UserInterface.Items.ShoppingListObject;
-import hoppingvikings.housefinancemobile.UserInterface.Items.TodoListObject;
 
 public class WebHandler
 {
     private static WebHandler _instance;
     private SessionPersister _session;
-    private String _clientID = "";
 
     private BillEndpoint _billEndpoint;
     private PaymentsEndpoint _paymentsEndpoint;
@@ -49,7 +31,7 @@ public class WebHandler
     private HouseholdEndpoint _householdEndpoint;
     private UserEndpoint _userEndpoint;
     private LogInEndpoint _logInEndpoint;
-    private HouseInviteEndpoint _houseInviteEndpoint;
+    private HouseholdInviteEndpoint _householdInviteEndpoint;
 
     private WebHandler()
     {
@@ -59,8 +41,8 @@ public class WebHandler
         _toDoEndpoint = new ToDoEndpoint();
         _householdEndpoint = new HouseholdEndpoint();
         _userEndpoint = new UserEndpoint();
-        _houseInviteEndpoint = new HouseInviteEndpoint();
         _session = HouseFinanceClass.GetSessionPersisterComponent().GetSessionPersister();
+        _householdInviteEndpoint = new HouseholdInviteEndpoint(_session);
         _logInEndpoint = new LogInEndpoint(_session);
     }
 
@@ -71,11 +53,6 @@ public class WebHandler
 
         _instance = new WebHandler();
         return _instance;
-    }
-
-    public void SetClientID(Context context)
-    {
-        _clientID = context.getString(R.string.backend_id);
     }
 
     public void SetSessionID(String sessionID)
@@ -225,16 +202,10 @@ public class WebHandler
         _householdEndpoint.Get(context, callback);
     }
 
-    public void GetHouseholdInviteCode(Context context, final CommunicationCallback callback)
-    {
-        _houseInviteEndpoint.SetRequestProperty("Authorization", _session.GetSessionID());
-        _houseInviteEndpoint.Get(context, callback);
-    }
-
     public void JoinHousehold(Context context, final JSONObject jsonObject, final CommunicationCallback callback)
     {
-        _houseInviteEndpoint.SetRequestProperty("Authorization", _session.GetSessionID());
-        _houseInviteEndpoint.Post(context, callback, jsonObject);
+        _householdInviteEndpoint.SetRequestProperty("Authorization", _session.GetSessionID());
+        _householdInviteEndpoint.Post(context, callback, jsonObject);
     }
 
     public void SetSessionPersister(SessionPersister session)

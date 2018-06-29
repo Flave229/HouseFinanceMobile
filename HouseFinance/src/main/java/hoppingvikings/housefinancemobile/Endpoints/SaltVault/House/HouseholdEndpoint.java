@@ -1,12 +1,11 @@
-package hoppingvikings.housefinancemobile.Endpoints.SaltVault;
+package hoppingvikings.housefinancemobile.Endpoints.SaltVault.House;
 
 import android.util.Log;
 
-import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.util.ArrayList;
+import javax.inject.Inject;
 
 import hoppingvikings.housefinancemobile.FileIOHandler;
 import hoppingvikings.housefinancemobile.ItemType;
@@ -18,6 +17,10 @@ import hoppingvikings.housefinancemobile.WebService.RequestType;
 public class HouseholdEndpoint extends HTTPHandler
 {
     private final String HOUSEHOLD_ENDPOINT = "http://house.flave.co.uk/api/v2/Household";
+
+    @Inject
+    public HouseholdEndpoint()
+    {}
 
     @Override
     protected CommunicationRequest ConstructGet(String urlAdditions)

@@ -23,14 +23,18 @@ import android.widget.Toast;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import hoppingvikings.housefinancemobile.Endpoints.SaltVault.House.HouseholdInviteEndpoint;
 import hoppingvikings.housefinancemobile.FileIOHandler;
+import hoppingvikings.housefinancemobile.HouseFinanceClass;
 import hoppingvikings.housefinancemobile.ItemType;
 import hoppingvikings.housefinancemobile.R;
 import hoppingvikings.housefinancemobile.WebService.CommunicationCallback;
 import hoppingvikings.housefinancemobile.WebService.RequestType;
 import hoppingvikings.housefinancemobile.WebService.WebHandler;
 
-public class ViewHouseholdActivity extends AppCompatActivity implements CommunicationCallback {
+public class ViewHouseholdActivity extends AppCompatActivity implements CommunicationCallback
+{
+    private HouseholdInviteEndpoint _householdInviteEndpoint;
 
     CoordinatorLayout _layout;
     Button _leftButton;
@@ -42,15 +46,17 @@ public class ViewHouseholdActivity extends AppCompatActivity implements Communic
     TextView _inviteCode;
 
     boolean _hasHousehold;
-
     boolean _addingDeletingHouse;
     boolean _joiningHouse;
-
     boolean _joinedHouse = false;
 
     @Override
-    protected void onCreate(@Nullable Bundle savedInstanceState) {
+    protected void onCreate(@Nullable Bundle savedInstanceState)
+    {
         super.onCreate(savedInstanceState);
+
+        _householdInviteEndpoint = HouseFinanceClass.GetHouseholdComponent().GetHouseholdInviteEndpoint();
+
         setContentView(R.layout.activity_household);
         _layout = findViewById(R.id.householdCoordLayout);
         _houseNameText = findViewById(R.id.houseNameText);
@@ -131,8 +137,9 @@ public class ViewHouseholdActivity extends AppCompatActivity implements Communic
             // Invite Tenant
             _leftButton.setOnClickListener(new View.OnClickListener() {
                 @Override
-                public void onClick(View v) {
-                    WebHandler.Instance().GetHouseholdInviteCode(ViewHouseholdActivity.this, ViewHouseholdActivity.this);
+                public void onClick(View v)
+                {
+                    _householdInviteEndpoint.Get(ViewHouseholdActivity.this, ViewHouseholdActivity.this);
                 }
             });
 
