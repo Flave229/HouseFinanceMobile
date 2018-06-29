@@ -31,7 +31,6 @@ public class WebHandler
     private HouseholdEndpoint _householdEndpoint;
     private UserEndpoint _userEndpoint;
     private LogInEndpoint _logInEndpoint;
-    private HouseholdInviteEndpoint _householdInviteEndpoint;
 
     private WebHandler()
     {
@@ -42,7 +41,6 @@ public class WebHandler
         _householdEndpoint = new HouseholdEndpoint();
         _userEndpoint = new UserEndpoint();
         _session = HouseFinanceClass.GetSessionPersisterComponent().GetSessionPersister();
-        _householdInviteEndpoint = new HouseholdInviteEndpoint(_session);
         _logInEndpoint = new LogInEndpoint(_session);
     }
 
@@ -200,12 +198,6 @@ public class WebHandler
     {
         _householdEndpoint.SetRequestProperty("Authorization", _session.GetSessionID());
         _householdEndpoint.Get(context, callback);
-    }
-
-    public void JoinHousehold(Context context, final JSONObject jsonObject, final CommunicationCallback callback)
-    {
-        _householdInviteEndpoint.SetRequestProperty("Authorization", _session.GetSessionID());
-        _householdInviteEndpoint.Post(context, callback, jsonObject);
     }
 
     public void SetSessionPersister(SessionPersister session)
