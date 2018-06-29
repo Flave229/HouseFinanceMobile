@@ -22,10 +22,6 @@ import com.google.android.gms.tasks.Task;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import javax.inject.Inject;
-
-import dagger.android.AndroidInjection;
-import hoppingvikings.housefinancemobile.NotificationWrapper;
 import hoppingvikings.housefinancemobile.R;
 import hoppingvikings.housefinancemobile.UserInterface.Activities.MainMenu.MainMenuActivity;
 import hoppingvikings.housefinancemobile.UserInterface.SignInActivity;
