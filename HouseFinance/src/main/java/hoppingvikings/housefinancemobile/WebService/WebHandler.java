@@ -237,45 +237,6 @@ public class WebHandler
         _houseInviteEndpoint.Post(context, callback, jsonObject);
     }
 
-    public void ApiResult(CommunicationResponse result, ItemType type)
-    {
-        try
-        {
-            if(result.Response.has("hasError") && result.Response.getBoolean("hasError"))
-            {
-                if(result.Response.getJSONObject("error").getInt("errorCode") == ApiErrorCodes.USER_NOT_IN_HOUSEHOLD.getValue())
-                {
-                    result.Callback.OnFail(result.RequestTypeData, ApiErrorCodes.USER_NOT_IN_HOUSEHOLD.name());
-                    return;
-                }
-
-                String errorMessage = result.Response.getJSONObject("error").getString("message");
-                Log.e("Error", errorMessage);
-                result.Callback.OnFail(result.RequestTypeData, errorMessage);
-                return;
-            }
-
-            switch (type)
-            {
-            default:
-                try
-                {
-                    result.Callback.OnSuccess(result.RequestTypeData, result.Response);
-                }
-                catch (Exception e)
-                {
-                    result.Callback.OnFail(result.RequestTypeData, "Failed to get a response from the server");
-                }
-
-                break;
-            }
-        }
-        catch (Exception e)
-        {
-            result.Callback.OnFail(result.RequestTypeData, "Failed to get a response from the server");
-        }
-    }
-
     public void SetSessionPersister(SessionPersister session)
     {
         _session = session;
