@@ -1,9 +1,11 @@
 package hoppingvikings.housefinancemobile.UserInterface.Activities;
 
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.SystemClock;
 import android.support.annotation.Nullable;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.Snackbar;
@@ -12,10 +14,14 @@ import android.support.design.widget.TextInputLayout;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.MotionEvent;
 import android.view.View;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.FrameLayout;
 import android.widget.ImageButton;
@@ -41,6 +47,8 @@ import hoppingvikings.housefinancemobile.R;
 import hoppingvikings.housefinancemobile.UserInterface.Fragments.AddShoppingItemFragment;
 import hoppingvikings.housefinancemobile.UserInterface.Fragments.Interfaces.ButtonPressedCallback;
 import hoppingvikings.housefinancemobile.UserInterface.Fragments.ShoppingCartFragment;
+import hoppingvikings.housefinancemobile.UserInterface.Items.ShoppingCartItem;
+import hoppingvikings.housefinancemobile.UserInterface.Lists.ShoppingCartList.ShoppingCartAdapter;
 import hoppingvikings.housefinancemobile.UserInterface.SignInActivity;
 import hoppingvikings.housefinancemobile.WebService.CommunicationCallback;
 import hoppingvikings.housefinancemobile.WebService.RequestType;
@@ -58,10 +66,15 @@ public class AddNewShoppingItemActivity extends AppCompatActivity implements Com
     TextView selectUsers;
     ImageButton editPeople;
 
+    RecyclerView _addedItemsRV;
+    ShoppingCartAdapter _cartAdapter;
+
     String itemName;
 
     ArrayList<Integer> _selectedUserIds = new ArrayList<>();
     ArrayList<String> _selectedUserNames = new ArrayList<>();
+
+    ArrayList<ShoppingCartItem> _addedItems = new ArrayList<>();
 
     int _totalAddedItems = 0;
     boolean _obtainingSession = false;
@@ -187,6 +200,11 @@ public class AddNewShoppingItemActivity extends AppCompatActivity implements Com
                 confirmCancel.show();*/
             }
         });
+
+        _addedItemsRV = findViewById(R.id.addedItemsList);
+        _cartAdapter = new ShoppingCartAdapter(_addedItems, this);
+        _addedItemsRV.setAdapter(_cartAdapter);
+        _addedItemsRV.setLayoutManager(new LinearLayoutManager(this));
     }
 
     @Override
@@ -197,8 +215,7 @@ public class AddNewShoppingItemActivity extends AppCompatActivity implements Com
     @Override
     public void onBackPressed() {
 
-        if(shoppingItemNameEntry.getText().length() == 0
-                && _selectedUserIds.size() == 0) {
+        if(shoppingItemNameEntry.getText().length() == 0) {
 
             if(_totalAddedItems > 0)
                 setResult(RESULT_OK);
@@ -256,6 +273,8 @@ public class AddNewShoppingItemActivity extends AppCompatActivity implements Com
     public void ReenableElements()
     {
         shoppingItemNameEntry.setEnabled(true);
+        InputMethodManager imm = (InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE);
+        imm.showSoftInput(shoppingItemNameEntry, InputMethodManager.SHOW_IMPLICIT);
 
         editPeople.setEnabled(true);
         submitButton.setEnabled(true);
@@ -288,6 +307,7 @@ public class AddNewShoppingItemActivity extends AppCompatActivity implements Com
             return;
         }
         Snackbar.make(layout, "Item successfully added", Snackbar.LENGTH_LONG).show();
+        _cartAdapter.AddItem(new ShoppingCartItem(itemName));
         shoppingItemNameEntry.setText("");
         ReenableElements();
         _totalAddedItems++;

@@ -32,7 +32,7 @@ import hoppingvikings.housefinancemobile.WebService.RequestType;
 import hoppingvikings.housefinancemobile.WebService.WebHandler;
 
 public class ShoppingCartFragment extends Fragment
-        implements ButtonPressedCallback, ShoppingCartAdapter.DeleteCallback, CommunicationCallback<ArrayList<Person>> {
+        implements ButtonPressedCallback, CommunicationCallback<ArrayList<Person>> {
     View currentView;
     TextView cartEmptyText;
     CoordinatorLayout layout;
@@ -108,25 +108,6 @@ public class ShoppingCartFragment extends Fragment
     }
 
     @Override
-    public void onItemDeleted(int item)
-    {
-        if(!submitting)
-        {
-            //_activity._shoppingItems.remove(item);
-//            if(_activity._shoppingItems.size() < 1)
-//            {
-//                cartEmptyText.setVisibility(View.VISIBLE);
-//                _activity.addToCartButton.setEnabled(false);
-//            }
-            //_activity.getSupportActionBar().setSubtitle("Items in cart: " + _activity._shoppingItems.size());
-        }
-        else
-        {
-            Snackbar.make(layout, "Items have already been submitted", Snackbar.LENGTH_SHORT).show();
-        }
-    }
-
-    @Override
     public void OnSuccess(RequestType requestType, ArrayList<Person> users)
     {
         try
@@ -139,24 +120,9 @@ public class ShoppingCartFragment extends Fragment
         catch (Exception e)
         { }
 
-        adapter = new ShoppingCartAdapter(items, users, getContext());
+        adapter = new ShoppingCartAdapter(items, getContext());
         rv.setAdapter(adapter);
         rv.setLayoutManager(new LinearLayoutManager(getActivity()));
-        adapter.SetDeleteCallback(this);
-        adapter.setOnCartItemClickListener(new ShoppingCartAdapter.CartItemClickedListener() {
-            @Override
-            public void onCartItemClick(View itemView, int pos) {
-                if(!adapter.GetItem(pos).itemExpanded)
-                {
-                    adapter.GetItem(pos).itemExpanded = true;
-                }
-                else
-                {
-                    adapter.GetItem(pos).itemExpanded = false;
-                }
-                adapter.notifyItemChanged(pos);
-            }
-        });
 
         if(adapter.getItemCount() > 0)
         {

@@ -18,78 +18,24 @@ import hoppingvikings.housefinancemobile.UserInterface.Items.ShoppingCartItem;
 
 public class ShoppingCartAdapter extends RecyclerView.Adapter<ShoppingCartAdapter.CardViewHolder> {
 
-    public interface DeleteCallback
-    {
-        void onItemDeleted(int item);
-    }
-
-    private static CartItemClickedListener _listener;
-
-    public interface CartItemClickedListener
-    {
-        void onCartItemClick(View itemView, int pos);
-    }
-
-    public void setOnCartItemClickListener(CartItemClickedListener listener)
-    {
-        _listener = listener;
-    }
-
-    private static DeleteCallback _deletecallback;
-
     public static class CardViewHolder extends RecyclerView.ViewHolder
     {
         View view;
-        CardView cardView;
         TextView itemName;
-        TextView date;
-        ImageButton delete;
-        LinearLayout extraInfo;
-        TextView addedBy;
-        TextView addedFor;
-        TextView moreInfoText;
 
         public CardViewHolder(View v)
         {
             super(v);
             view = v;
-            cardView = (CardView) view.findViewById(R.id.itemCard);
             itemName = (TextView) view.findViewById(R.id.itemName);
-            date = (TextView) view.findViewById(R.id.itemDate);
-            delete = (ImageButton) view.findViewById(R.id.deleteitem);
-            extraInfo = (LinearLayout) view.findViewById(R.id.extraInfoLayout);
-            moreInfoText = (TextView) view.findViewById(R.id.info_text);
-            addedBy = (TextView) view.findViewById(R.id.addedBy);
-            addedFor = (TextView) view.findViewById(R.id.addedFor);
-
-            view.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    if(_listener != null)
-                    {
-                        int pos = getAdapterPosition();
-                        if(pos != RecyclerView.NO_POSITION)
-                        {
-                            _listener.onCartItemClick(view, pos);
-                        }
-                    }
-                }
-            });
         }
     }
 
-    public void SetDeleteCallback(DeleteCallback owner)
-    {
-        _deletecallback = owner;
-    }
-
     ArrayList<ShoppingCartItem> _items = new ArrayList<>();
-    ArrayList<Person> _usersList = new ArrayList<>();
 
-    public ShoppingCartAdapter(ArrayList<ShoppingCartItem> items, ArrayList<Person> users, Context context)
+    public ShoppingCartAdapter(ArrayList<ShoppingCartItem> items, Context context)
     {
         _items.addAll(items);
-        _usersList.addAll(users);
     }
 
     @Override
@@ -106,42 +52,6 @@ public class ShoppingCartAdapter extends RecyclerView.Adapter<ShoppingCartAdapte
     @Override
     public void onBindViewHolder(final CardViewHolder holder, int position) {
         holder.itemName.setText(_items.get(position).name);
-        holder.date.setText(_items.get(position).date);
-
-        holder.delete.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                _deletecallback.onItemDeleted(holder.getAdapterPosition());
-                _items.remove(holder.getAdapterPosition());
-                notifyItemRemoved(holder.getAdapterPosition());
-                notifyItemRangeChanged(holder.getAdapterPosition(), _items.size());
-            }
-        });
-
-        if(_items.get(position).itemExpanded)
-        {
-            holder.moreInfoText.setVisibility(View.GONE);
-            holder.extraInfo.setVisibility(View.VISIBLE);
-        }
-        else
-        {
-            holder.moreInfoText.setVisibility(View.VISIBLE);
-            holder.extraInfo.setVisibility(View.GONE);
-        }
-
-        String addedForString = "";
-        for (int personname:_items.get(position).people) {
-            for (Person user:_usersList) {
-                if(personname == user.ID)
-                    addedForString += (user.FirstName + "; ");
-            }
-        }
-        holder.addedFor.setText(addedForString);
-
-        for (Person user: _usersList) {
-            if(_items.get(position).addedBy == user.ID)
-                holder.addedBy.setText(user.FirstName);
-        }
     }
 
     public ShoppingCartItem GetItem(int position)
@@ -149,8 +59,9 @@ public class ShoppingCartAdapter extends RecyclerView.Adapter<ShoppingCartAdapte
         return _items.get(position);
     }
 
-    public void SetUsersList(ArrayList<Person> allUsers)
+    public void AddItem(ShoppingCartItem item)
     {
-        _usersList.addAll(allUsers);
+        _items.add(0, item);
+        notifyItemInserted(0);
     }
 }

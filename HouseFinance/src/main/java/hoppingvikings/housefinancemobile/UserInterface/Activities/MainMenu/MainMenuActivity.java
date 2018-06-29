@@ -25,8 +25,7 @@ import org.json.JSONObject;
 
 import java.util.ArrayList;
 
-import javax.inject.Inject;
-
+import hoppingvikings.housefinancemobile.ApiErrorCodes;
 import hoppingvikings.housefinancemobile.FileIOHandler;
 import hoppingvikings.housefinancemobile.HouseFinanceClass;
 import hoppingvikings.housefinancemobile.ItemType;
@@ -126,7 +125,7 @@ public class MainMenuActivity extends AppCompatActivity implements Communication
                 MainMenuItem bills = new MainMenuItem("Bills", R.drawable.baseline_receipt_black_36, ItemType.BILL.name());
                 MainMenuItem shopping = new MainMenuItem("Shopping", R.drawable.baseline_local_grocery_store_black_36, ItemType.SHOPPING.name());
                 MainMenuItem tasks = new MainMenuItem("Tasks", R.drawable.baseline_notification_important_black_36, ItemType.TODO.name());
-                MainMenuItem household = new MainMenuItem("Household", R.drawable.ic_home_white_48dp, ItemType.HOUSEHOLD.name());
+                MainMenuItem household = new MainMenuItem("Household", R.drawable.baseline_home_black_36, ItemType.HOUSEHOLD.name());
 
                 _mainMenuItems.add(bills);
                 _mainMenuItems.add(shopping);
@@ -186,6 +185,7 @@ public class MainMenuActivity extends AppCompatActivity implements Communication
                     @Override
                     public void onComplete(@NonNull Task<Void> task) {
                         WebHandler.Instance().SetSessionID("");
+                        FileIOHandler.Instance().WriteToFile("CurrentHousehold", new JSONObject().toString());
                         Intent signInScreen = new Intent(MainMenuActivity.this, SignInActivity.class);
                         startActivity(signInScreen);
 
@@ -196,23 +196,22 @@ public class MainMenuActivity extends AppCompatActivity implements Communication
 
     @Override
     public void OnSuccess(RequestType requestType, Object o) {
-        String returnedID = o.toString();
-        if(!returnedID.equals(""))
-        {
-           CreateMainMenuListItems();
-            _listAdapter.AddAll(_mainMenuItems);
-        }
-        else
-        {
-            MainMenuItem house = new MainMenuItem("Household", R.drawable.ic_home_white_48dp, ItemType.HOUSEHOLD.name());
-            _mainMenuItems.add(house);
-            _listAdapter.AddAll(_mainMenuItems);
-        }
+        CreateMainMenuListItems();
+        _listAdapter.AddAll(_mainMenuItems);
     }
 
     @Override
     public void OnFail(RequestType requestType, String message) {
-        Snackbar.make(_layout, "Failed to obtain the household ID", Snackbar.LENGTH_LONG).show();
+        if(message.equals(ApiErrorCodes.USER_NOT_IN_HOUSEHOLD.name()))
+        {
+            MainMenuItem house = new MainMenuItem("Household", R.drawable.baseline_home_black_36, ItemType.HOUSEHOLD.name());
+            _mainMenuItems.add(house);
+            _listAdapter.AddAll(_mainMenuItems);
+        }
+        else
+        {
+            Snackbar.make(_layout, "Failed to obtain the household ID", Snackbar.LENGTH_LONG).show();
+        }
     }
 
     @Override
@@ -221,8 +220,14 @@ public class MainMenuActivity extends AppCompatActivity implements Communication
 
         switch (resultCode)
         {
+            case 20:
+                SignOut();
+                break;
+
             case RESULT_OK:
+                _mainMenuItems.clear();
                 CreateMainMenuListItems();
+                _listAdapter.AddAll(_mainMenuItems);
                 break;
 
             case RESULT_CANCELED:
