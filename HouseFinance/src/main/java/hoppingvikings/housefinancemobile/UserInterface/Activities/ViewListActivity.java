@@ -23,15 +23,18 @@ import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.io.Serializable;
 import java.util.ArrayList;
 
-import hoppingvikings.housefinancemobile.ItemType;
+import hoppingvikings.housefinancemobile.Services.SaltVault.Bills.BillEndpoint;
+import hoppingvikings.housefinancemobile.Services.SaltVault.Shopping.ShoppingEndpoint;
+import hoppingvikings.housefinancemobile.Services.SaltVault.ToDo.ToDoEndpoint;
+import hoppingvikings.housefinancemobile.Services.SaltVault.User.LogInEndpoint;
+import hoppingvikings.housefinancemobile.HouseFinanceClass;
 import hoppingvikings.housefinancemobile.NotificationWrapper;
 import hoppingvikings.housefinancemobile.R;
-import hoppingvikings.housefinancemobile.Repositories.BillRepository;
-import hoppingvikings.housefinancemobile.Repositories.ShoppingRepository;
-import hoppingvikings.housefinancemobile.Repositories.TodoRepository;
+import hoppingvikings.housefinancemobile.Services.SaltVault.Bills.BillRepository;
+import hoppingvikings.housefinancemobile.Services.SaltVault.Shopping.ShoppingRepository;
+import hoppingvikings.housefinancemobile.Services.SaltVault.ToDo.TodoRepository;
 import hoppingvikings.housefinancemobile.UserInterface.Items.BillListObject;
 import hoppingvikings.housefinancemobile.UserInterface.Items.BillListObjectPeople;
 import hoppingvikings.housefinancemobile.UserInterface.Items.ShoppingListObject;
@@ -43,7 +46,7 @@ import hoppingvikings.housefinancemobile.UserInterface.PeoplePopup;
 import hoppingvikings.housefinancemobile.UserInterface.SignInActivity;
 import hoppingvikings.housefinancemobile.WebService.CommunicationCallback;
 import hoppingvikings.housefinancemobile.WebService.RequestType;
-import hoppingvikings.housefinancemobile.WebService.WebHandler;
+import hoppingvikings.housefinancemobile.WebService.SessionPersister;
 
 public class ViewListActivity extends AppCompatActivity
         implements CommunicationCallback,
@@ -51,6 +54,11 @@ public class ViewListActivity extends AppCompatActivity
         ShoppingListAdapter.DeleteCallback, ShoppingListAdapter.EditPressedCallback,
         TodoListAdapter.DeleteCallback, TodoListAdapter.EditPressedCallback
 {
+    private SessionPersister _session;
+    private LogInEndpoint _logInEndpoint;
+    private BillEndpoint _billEndpoint;
+    private ShoppingEndpoint _shoppingEndpoint;
+    private ToDoEndpoint _toDoEndpoint;
 
     CoordinatorLayout _layout;
     RecyclerView _rv;
@@ -74,29 +82,33 @@ public class ViewListActivity extends AppCompatActivity
 
     boolean _obtainingSession = false;
 
-    private Runnable ConnectToApi = new Runnable() {
+    private Runnable ConnectToApi = new Runnable()
+    {
         @Override
-        public void run() {
+        public void run()
+        {
             switch (_currentType)
             {
                 case "BILL":
-                    WebHandler.Instance().GetBills(ViewListActivity.this, ViewListActivity.this);
+                    _billEndpoint.Get(ViewListActivity.this, ViewListActivity.this);
                     break;
 
                 case "SHOPPING":
-                    WebHandler.Instance().GetShoppingItems(ViewListActivity.this, ViewListActivity.this);
+                    _shoppingEndpoint.Get(ViewListActivity.this, ViewListActivity.this);
                     break;
 
                 case "TODO":
-                    WebHandler.Instance().GetToDoItems(ViewListActivity.this, ViewListActivity.this);
+                    _toDoEndpoint.Get(ViewListActivity.this, ViewListActivity.this);
                     break;
             }
         }
     };
 
-    private Runnable updateList = new Runnable() {
+    private Runnable updateList = new Runnable()
+    {
         @Override
-        public void run() {
+        public void run()
+        {
             switch (_currentType)
             {
                 case "BILL":
@@ -166,11 +178,18 @@ public class ViewListActivity extends AppCompatActivity
     };
 
     @Override
-    protected void onCreate(@Nullable Bundle savedInstanceState) {
+    protected void onCreate(@Nullable Bundle savedInstanceState)
+    {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_viewlist);
 
-        NotificationWrapper notificationWrapper = (NotificationWrapper)getIntent().getSerializableExtra("NotificationWrapper");
+        NotificationWrapper notificationWrapper = HouseFinanceClass.GetNotificationWrapperComponent().GetNotificationWrapper();
+        _session = HouseFinanceClass.GetSessionPersisterComponent().GetSessionPersister();
+        _logInEndpoint = HouseFinanceClass.GetUserComponent().GetLogInEndpoint();
+        _billEndpoint = HouseFinanceClass.GetBillComponent().GetBillEndpoint();
+        _shoppingEndpoint = HouseFinanceClass.GetShoppingComponent().GetShoppingEndpoint();
+        _toDoEndpoint = HouseFinanceClass.GetToDoComponent().GetToDoEndpoint();
+
         _toolbar = findViewById(R.id.appToolbar);
         _layout = findViewById(R.id.coordLayout);
         _fab = findViewById(R.id.addItem);
@@ -214,6 +233,7 @@ public class ViewListActivity extends AppCompatActivity
                         @Override
                         public void onClick(View v) {
                             Intent addBill = new Intent(ViewListActivity.this, AddNewBillActivity.class);
+                            addBill.putExtra("SessionPersister", _session);
                             startActivityForResult(addBill, 0);
                         }
                     });
@@ -229,7 +249,7 @@ public class ViewListActivity extends AppCompatActivity
                     if(ShoppingRepository.Instance().Get().size() > 0)
                         _shopping.addAll(ShoppingRepository.Instance().Get());
 
-                    _shoppingAdapter = new ShoppingListAdapter(_shopping, this, notificationWrapper);
+                    _shoppingAdapter = new ShoppingListAdapter(this, notificationWrapper, _shoppingEndpoint, _shopping);
                     _rv.setAdapter(_shoppingAdapter);
                     _rv.setLayoutManager(new LinearLayoutManager(this));
                     _rv.setItemViewCacheSize(20);
@@ -267,7 +287,7 @@ public class ViewListActivity extends AppCompatActivity
                     if(TodoRepository.Instance().Get().size() > 0)
                         _tasks.addAll(TodoRepository.Instance().Get());
 
-                    _todoAdapter = new TodoListAdapter(_tasks, this, notificationWrapper);
+                    _todoAdapter = new TodoListAdapter(this, notificationWrapper, _toDoEndpoint, _tasks);
                     _rv.setAdapter(_todoAdapter);
                     _rv.setLayoutManager(new LinearLayoutManager(this));
                     _rv.setItemViewCacheSize(20);
@@ -320,7 +340,7 @@ public class ViewListActivity extends AppCompatActivity
                     android.R.color.holo_red_light);
 
             _refreshLayout.setRefreshing(true);
-            _handler.postDelayed(ConnectToApi, 200);
+            _handler.post(ConnectToApi);
         }
         else
         {
@@ -329,7 +349,8 @@ public class ViewListActivity extends AppCompatActivity
     }
 
     @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+    protected void onActivityResult(int requestCode, int resultCode, Intent data)
+    {
         super.onActivityResult(requestCode, resultCode, data);
 
         switch (resultCode)
@@ -347,18 +368,21 @@ public class ViewListActivity extends AppCompatActivity
     }
 
     @Override
-    public void onViewAllPressed(ArrayList<BillListObjectPeople> allPeople) {
+    public void onViewAllPressed(ArrayList<BillListObjectPeople> allPeople)
+    {
         _peopleListPopup.Show(allPeople);
     }
 
     @Override
-    public void onItemDeleted() {
+    public void onItemDeleted()
+    {
         _refreshLayout.setRefreshing(true);
-        _handler.postDelayed(ConnectToApi, 200);
+        _handler.post(ConnectToApi);
     }
 
     @Override
-    public void onEditPressed(int itemid) {
+    public void onEditPressed(int itemid)
+    {
         Intent edititem;
         switch (_currentType)
         {
@@ -377,31 +401,35 @@ public class ViewListActivity extends AppCompatActivity
     }
 
     @Override
-    public void OnSuccess(RequestType requestType, Object o) {
+    public void OnSuccess(RequestType requestType, Object o)
+    {
         if(_obtainingSession)
         {
             _handler.post(ConnectToApi);
             _obtainingSession = false;
             return;
         }
-        _handler.postDelayed(updateList, 1000);
+        _handler.post(updateList);
     }
 
     @Override
-    public void OnFail(RequestType requestType, String message) {
+    public void OnFail(RequestType requestType, String message)
+    {
         _handler.removeCallbacksAndMessages(null);
         Snackbar.make(_layout, message, Snackbar.LENGTH_LONG).show();
         _refreshLayout.setRefreshing(false);
     }
 
     @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
+    public boolean onCreateOptionsMenu(Menu menu)
+    {
         getMenuInflater().inflate(R.menu.billentrytoolbar, menu);
         return super.onCreateOptionsMenu(menu);
     }
 
     @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
+    public boolean onOptionsItemSelected(MenuItem item)
+    {
         switch (item.getItemId())
         {
             case android.R.id.home:
@@ -414,9 +442,10 @@ public class ViewListActivity extends AppCompatActivity
     }
 
     @Override
-    protected void onStart() {
+    protected void onStart()
+    {
         super.onStart();
-        if(WebHandler.Instance().GetSessionID().equals(""))
+        if(_session.HasSessionID() == false)
         {
             _obtainingSession = true;
             GoogleSignInAccount account = GoogleSignIn.getLastSignedInAccount(this);
@@ -424,13 +453,15 @@ public class ViewListActivity extends AppCompatActivity
             if(account != null)
             {
                 JSONObject tokenJson = new JSONObject();
-                try {
+                try
+                {
                     tokenJson.put("Token", account.getIdToken());
-                } catch (JSONException e)
+                }
+                catch (JSONException e)
                 {
 
                 }
-                WebHandler.Instance().GetSessionID(this, this, tokenJson);
+                _logInEndpoint.Post(this, this, tokenJson);
             }
             else
             {

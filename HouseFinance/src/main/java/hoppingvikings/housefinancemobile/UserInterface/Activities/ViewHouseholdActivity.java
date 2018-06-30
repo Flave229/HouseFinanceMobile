@@ -17,20 +17,26 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 
+
+import hoppingvikings.housefinancemobile.ApiErrorCodes;
+import hoppingvikings.housefinancemobile.Services.SaltVault.House.HouseholdEndpoint;
+import hoppingvikings.housefinancemobile.Services.SaltVault.House.HouseholdInviteEndpoint;
 import hoppingvikings.housefinancemobile.FileIOHandler;
-import hoppingvikings.housefinancemobile.ItemType;
+import hoppingvikings.housefinancemobile.HouseFinanceClass;
 import hoppingvikings.housefinancemobile.R;
 import hoppingvikings.housefinancemobile.WebService.CommunicationCallback;
 import hoppingvikings.housefinancemobile.WebService.RequestType;
-import hoppingvikings.housefinancemobile.WebService.WebHandler;
 
-public class ViewHouseholdActivity extends AppCompatActivity implements CommunicationCallback {
+public class ViewHouseholdActivity extends AppCompatActivity implements CommunicationCallback
+{
+    private HouseholdInviteEndpoint _householdInviteEndpoint;
 
     CoordinatorLayout _layout;
     Button _leftButton;
@@ -41,16 +47,23 @@ public class ViewHouseholdActivity extends AppCompatActivity implements Communic
     CardView _inviteCodeBackground;
     TextView _inviteCode;
 
-    boolean _hasHousehold;
+    ImageButton _editHouseName;
 
+    boolean _hasHousehold;
     boolean _addingDeletingHouse;
     boolean _joiningHouse;
-
     boolean _joinedHouse = false;
+    boolean _editingHouseName;
+    private HouseholdEndpoint _householdEndpoint;
 
     @Override
-    protected void onCreate(@Nullable Bundle savedInstanceState) {
+    protected void onCreate(@Nullable Bundle savedInstanceState)
+    {
         super.onCreate(savedInstanceState);
+
+        _householdEndpoint = HouseFinanceClass.GetHouseholdComponent().GetHouseholdEndpoint();
+        _householdInviteEndpoint = HouseFinanceClass.GetHouseholdComponent().GetHouseholdInviteEndpoint();
+
         setContentView(R.layout.activity_household);
         _layout = findViewById(R.id.householdCoordLayout);
         _houseNameText = findViewById(R.id.houseNameText);
@@ -58,6 +71,7 @@ public class ViewHouseholdActivity extends AppCompatActivity implements Communic
         _inviteCode = findViewById(R.id.inviteCode);
         _inviteCodeBackground = findViewById(R.id.inviteCodeBackground);
         Toolbar toolbar = findViewById(R.id.appToolbar);
+        _editHouseName = findViewById(R.id.editHouseName);
 
         toolbar.setTitle("Household");
         setSupportActionBar(toolbar);
@@ -124,6 +138,8 @@ public class ViewHouseholdActivity extends AppCompatActivity implements Communic
         {
             _leftButton.setText("Get Invite Code");
             _rightButton.setText("Delete Household");
+            _editHouseName.setEnabled(true);
+            _editHouseName.setVisibility(View.VISIBLE);
 
             // TODO Enable this once proper checking is in place
             _rightButton.setEnabled(false);
@@ -131,8 +147,9 @@ public class ViewHouseholdActivity extends AppCompatActivity implements Communic
             // Invite Tenant
             _leftButton.setOnClickListener(new View.OnClickListener() {
                 @Override
-                public void onClick(View v) {
-                    WebHandler.Instance().GetHouseholdInviteCode(ViewHouseholdActivity.this, ViewHouseholdActivity.this);
+                public void onClick(View v)
+                {
+                    _householdInviteEndpoint.Get(ViewHouseholdActivity.this, ViewHouseholdActivity.this);
                 }
             });
 
@@ -140,15 +157,86 @@ public class ViewHouseholdActivity extends AppCompatActivity implements Communic
             _rightButton.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    try {
-                        _addingDeletingHouse = true;
-                        JSONObject house = new JSONObject();
-                        house.put("KeepHousehold", false);
-                        WebHandler.Instance().DeleteItem(ViewHouseholdActivity.this, ViewHouseholdActivity.this, house,  ItemType.HOUSEHOLD);
-                    } catch (JSONException je)
-                    {
+                    final AlertDialog deleteWarning = new AlertDialog.Builder(ViewHouseholdActivity.this).create();
+                    deleteWarning.setTitle("Delete Household");
+                    deleteWarning.setMessage("This cannot be undone. Once the house has been deleted, you will be automatically signed out.");
+                    deleteWarning.setButton(DialogInterface.BUTTON_POSITIVE, "Delete", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            try {
+                                _addingDeletingHouse = true;
+                                JSONObject house = new JSONObject();
+                                house.put("KeepHousehold", false);
+                                _householdEndpoint.Delete(ViewHouseholdActivity.this, ViewHouseholdActivity.this, house);
+                            } catch (JSONException je)
+                            {
 
-                    }
+                            }
+                        }
+                        });
+                    deleteWarning.setButton(DialogInterface.BUTTON_NEGATIVE, "Cancel", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            deleteWarning.dismiss();
+                        }
+                    });
+
+                    deleteWarning.show();
+                }
+            });
+
+            _editHouseName.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+
+                    final View editHouseNameLayout = getLayoutInflater().inflate(R.layout.dialog_create_house, null);
+                    final AlertDialog editHouseName = new AlertDialog.Builder(ViewHouseholdActivity.this).create();
+                    editHouseName.setTitle("Edit Household Name");
+                    editHouseName.setCancelable(true);
+
+                    final TextInputEditText houseNameText = editHouseNameLayout.findViewById(R.id.createHouseEntryText);
+
+                    houseNameText.setText(_houseNameText.getText().toString());
+                    editHouseName.setButton(DialogInterface.BUTTON_POSITIVE, "Confirm", new DialogInterface.OnClickListener()
+                    {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which)
+                        {
+                            if(houseNameText.getText().toString().length() > 0)
+                            {
+                                try
+                                {
+                                    JSONObject currentHousehold = new JSONObject(FileIOHandler.Instance().ReadFileAsString("CurrentHousehold"));
+                                    int houseID = currentHousehold.getInt("id");
+
+                                    _editingHouseName = true;
+                                    JSONObject house = new JSONObject();
+                                    house.put("Id", houseID);
+                                    house.put("Name", houseNameText.getText().toString());
+                                    _householdEndpoint.Patch(ViewHouseholdActivity.this, ViewHouseholdActivity.this, house);
+                                    editHouseName.dismiss();
+                                }
+                                catch (JSONException je)
+                                {
+
+                                }
+                            }
+                            else
+                            {
+                                houseNameText.setError("Please enter a valid name");
+                            }
+                        }
+                    });
+
+                    editHouseName.setButton(DialogInterface.BUTTON_NEGATIVE, "Cancel", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            editHouseName.dismiss();
+                        }
+                    });
+
+                    editHouseName.setView(editHouseNameLayout);
+                    editHouseName.show();
                 }
             });
         }
@@ -156,6 +244,8 @@ public class ViewHouseholdActivity extends AppCompatActivity implements Communic
         {
             _leftButton.setText("Create Household");
             _rightButton.setText("Join Household");
+            _editHouseName.setEnabled(false);
+            _editHouseName.setVisibility(View.GONE);
 
             // Add Household
             _leftButton.setOnClickListener(new View.OnClickListener() {
@@ -168,18 +258,22 @@ public class ViewHouseholdActivity extends AppCompatActivity implements Communic
 
                     final TextInputEditText houseNameText = createHouseDialog.findViewById(R.id.createHouseEntryText);
 
-                    createHouseAlert.setButton(DialogInterface.BUTTON_POSITIVE, "OK", new DialogInterface.OnClickListener() {
+                    createHouseAlert.setButton(DialogInterface.BUTTON_POSITIVE, "OK", new DialogInterface.OnClickListener()
+                    {
                         @Override
-                        public void onClick(DialogInterface dialog, int which) {
+                        public void onClick(DialogInterface dialog, int which)
+                        {
                             if(houseNameText.getText().toString().length() > 0)
                             {
-                                try {
+                                try
+                                {
                                     _addingDeletingHouse = true;
                                     JSONObject house = new JSONObject();
                                     house.put("Name", houseNameText.getText().toString());
-                                    WebHandler.Instance().UploadNewItem(ViewHouseholdActivity.this, house, ViewHouseholdActivity.this, ItemType.HOUSEHOLD);
+                                    _householdEndpoint.Post(ViewHouseholdActivity.this, ViewHouseholdActivity.this, house);
                                     createHouseAlert.dismiss();
-                                } catch (JSONException je)
+                                }
+                                catch (JSONException je)
                                 {
 
                                 }
@@ -223,7 +317,7 @@ public class ViewHouseholdActivity extends AppCompatActivity implements Communic
                                     _joiningHouse = true;
                                     JSONObject joinHouse = new JSONObject();
                                     joinHouse.put("InviteLink", inviteInputText.getText().toString());
-                                    WebHandler.Instance().JoinHousehold(ViewHouseholdActivity.this, joinHouse, ViewHouseholdActivity.this);
+                                    _householdInviteEndpoint.Post(ViewHouseholdActivity.this, ViewHouseholdActivity.this, joinHouse);
                                     joinHouseAlert.dismiss();
                                 } catch (JSONException je)
                                 {
@@ -285,7 +379,6 @@ public class ViewHouseholdActivity extends AppCompatActivity implements Communic
 
             FileIOHandler.Instance().WriteToFile("CurrentHousehold", new JSONObject().toString());
             finish();
-            return;
         }
         else if(requestType == RequestType.GET)
         {
@@ -299,18 +392,34 @@ public class ViewHouseholdActivity extends AppCompatActivity implements Communic
                 return;
             }
 
+            if(_editingHouseName)
+            {
+                try {
+                    _editingHouseName = false;
+                    JSONObject house = new JSONObject(FileIOHandler.Instance().ReadFileAsString("CurrentHousehold"));
+                    _houseNameText.setText(house.getString("name"));
+                } catch (JSONException je)
+                {
+
+                }
+                return;
+            }
+
             String inviteCode = o.toString();
             _inviteCode.setText(inviteCode);
             _inviteCode.setVisibility(View.VISIBLE);
             _inviteLinkDesc.setVisibility(View.VISIBLE);
             _inviteCodeBackground.setVisibility(View.VISIBLE);
         }
+        else if(requestType == RequestType.PATCH)
+        {
+            _householdEndpoint.Get(this, this);
+        }
         else
         {
             if(_addingDeletingHouse || _joiningHouse)
             {
-                WebHandler.Instance().GetHousehold(this, this);
-                return;
+                _householdEndpoint.Get(this, this);
             }
         }
     }

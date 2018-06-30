@@ -3,15 +3,12 @@ package hoppingvikings.housefinancemobile.UserInterface.Activities;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.os.AsyncTask;
 import android.os.Bundle;
-import android.os.SystemClock;
 import android.support.annotation.Nullable;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.Snackbar;
 import android.support.design.widget.TextInputEditText;
 import android.support.design.widget.TextInputLayout;
-import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
@@ -19,15 +16,11 @@ import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.MotionEvent;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
-import android.widget.FrameLayout;
 import android.widget.ImageButton;
-import android.widget.ProgressBar;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
@@ -36,25 +29,25 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Date;
 
-import hoppingvikings.housefinancemobile.FileName;
-import hoppingvikings.housefinancemobile.ItemType;
 import hoppingvikings.housefinancemobile.FileIOHandler;
+import hoppingvikings.housefinancemobile.Services.SaltVault.Shopping.ShoppingEndpoint;
+import hoppingvikings.housefinancemobile.Services.SaltVault.User.LogInEndpoint;
+import hoppingvikings.housefinancemobile.HouseFinanceClass;
 import hoppingvikings.housefinancemobile.R;
-import hoppingvikings.housefinancemobile.UserInterface.Fragments.AddShoppingItemFragment;
-import hoppingvikings.housefinancemobile.UserInterface.Fragments.Interfaces.ButtonPressedCallback;
-import hoppingvikings.housefinancemobile.UserInterface.Fragments.ShoppingCartFragment;
 import hoppingvikings.housefinancemobile.UserInterface.Items.ShoppingCartItem;
 import hoppingvikings.housefinancemobile.UserInterface.Lists.ShoppingCartList.ShoppingCartAdapter;
 import hoppingvikings.housefinancemobile.UserInterface.SignInActivity;
 import hoppingvikings.housefinancemobile.WebService.CommunicationCallback;
 import hoppingvikings.housefinancemobile.WebService.RequestType;
-import hoppingvikings.housefinancemobile.WebService.WebHandler;
+import hoppingvikings.housefinancemobile.WebService.SessionPersister;
 
-public class AddNewShoppingItemActivity extends AppCompatActivity implements CommunicationCallback {
+public class AddNewShoppingItemActivity extends AppCompatActivity implements CommunicationCallback
+{
+    private SessionPersister _session;
+    private LogInEndpoint _logInEndpoint;
+    private ShoppingEndpoint _shoppingEndpoint;
 
     Button submitButton;
 
@@ -80,16 +73,22 @@ public class AddNewShoppingItemActivity extends AppCompatActivity implements Com
     boolean _obtainingSession = false;
 
     @Override
-    protected void onSaveInstanceState(Bundle outState) {
+    protected void onSaveInstanceState(Bundle outState)
+    {
         outState.putStringArrayList("user_names",_selectedUserNames);
         outState.putIntegerArrayList("user_ids", _selectedUserIds);
         super.onSaveInstanceState(outState);
     }
 
     @Override
-    protected void onCreate(@Nullable Bundle savedInstanceState) {
+    protected void onCreate(@Nullable Bundle savedInstanceState)
+    {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_addnewshoppingitem);
+
+        _session = HouseFinanceClass.GetSessionPersisterComponent().GetSessionPersister();
+        _logInEndpoint = HouseFinanceClass.GetUserComponent().GetLogInEndpoint();
+        _shoppingEndpoint = HouseFinanceClass.GetShoppingComponent().GetShoppingEndpoint();
 
         if(savedInstanceState != null)
         {
@@ -169,7 +168,7 @@ public class AddNewShoppingItemActivity extends AppCompatActivity implements Com
                     // Add the item to a file on the device
                     //GlobalObjects.WriteToFile(getContext(), newItem.toString());
 
-                    WebHandler.Instance().UploadNewItem(AddNewShoppingItemActivity.this, newItem, AddNewShoppingItemActivity.this, ItemType.SHOPPING);
+                    _shoppingEndpoint.Post(AddNewShoppingItemActivity.this, AddNewShoppingItemActivity.this, newItem);
                 } catch (JSONException je)
                 {
                     Snackbar.make(layout, "Failed to create Json", Snackbar.LENGTH_LONG).show();
@@ -205,18 +204,45 @@ public class AddNewShoppingItemActivity extends AppCompatActivity implements Com
         _cartAdapter = new ShoppingCartAdapter(_addedItems, this);
         _addedItemsRV.setAdapter(_cartAdapter);
         _addedItemsRV.setLayoutManager(new LinearLayoutManager(this));
+
+        try {
+            JSONObject currentUser = new JSONObject(FileIOHandler.Instance().ReadFileAsString("CurrentUser"));
+            int userId = currentUser.getInt("id");
+            String username = currentUser.getString("firstName");
+
+            _selectedUserIds.add(userId);
+            _selectedUserNames.add(username);
+
+            StringBuilder namesString = new StringBuilder();
+            int index = 0;
+            for (String name:_selectedUserNames)
+            {
+                if(index != _selectedUserNames.size() - 1)
+                    namesString.append(name).append(", ");
+                else
+                    namesString.append(name);
+
+                index++;
+            }
+            selectUsers.setText(namesString);
+        } catch (JSONException je)
+        {
+
+        }
     }
 
     @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
+    public boolean onCreateOptionsMenu(Menu menu)
+    {
         getMenuInflater().inflate(R.menu.shopping_item_menu, menu);
         return super.onCreateOptionsMenu(menu);
     }
+
     @Override
-    public void onBackPressed() {
-
-        if(shoppingItemNameEntry.getText().length() == 0) {
-
+    public void onBackPressed()
+    {
+        if(shoppingItemNameEntry.getText().length() == 0)
+        {
             if(_totalAddedItems > 0)
                 setResult(RESULT_OK);
             else
@@ -257,8 +283,8 @@ public class AddNewShoppingItemActivity extends AppCompatActivity implements Com
     }
 
     @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-
+    public boolean onOptionsItemSelected(MenuItem item)
+    {
         switch (item.getItemId())
         {
             case android.R.id.home:
@@ -321,7 +347,8 @@ public class AddNewShoppingItemActivity extends AppCompatActivity implements Com
     }
 
     @Override
-    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+    public void onActivityResult(int requestCode, int resultCode, Intent data)
+    {
         super.onActivityResult(requestCode, resultCode, data);
 
         switch (requestCode)
@@ -337,7 +364,8 @@ public class AddNewShoppingItemActivity extends AppCompatActivity implements Com
 
                             StringBuilder namesString = new StringBuilder();
                             int index = 0;
-                            for (String name:_selectedUserNames) {
+                            for (String name:_selectedUserNames)
+                            {
                                 if(index != _selectedUserNames.size() - 1)
                                     namesString.append(name).append(", ");
                                 else
@@ -358,9 +386,10 @@ public class AddNewShoppingItemActivity extends AppCompatActivity implements Com
     }
 
     @Override
-    protected void onStart() {
+    protected void onStart()
+    {
         super.onStart();
-        if(WebHandler.Instance().GetSessionID().equals(""))
+        if(_session.HasSessionID() == false)
         {
             _obtainingSession = true;
             GoogleSignInAccount account = GoogleSignIn.getLastSignedInAccount(this);
@@ -368,13 +397,13 @@ public class AddNewShoppingItemActivity extends AppCompatActivity implements Com
             if(account != null)
             {
                 JSONObject tokenJson = new JSONObject();
-                try {
-                    tokenJson.put("Token", account.getIdToken());
-                } catch (JSONException e)
+                try
                 {
-
+                    tokenJson.put("Token", account.getIdToken());
                 }
-                WebHandler.Instance().GetSessionID(this, this, tokenJson);
+                catch (JSONException e)
+                { }
+                _logInEndpoint.Post(this, this, tokenJson);
             }
             else
             {

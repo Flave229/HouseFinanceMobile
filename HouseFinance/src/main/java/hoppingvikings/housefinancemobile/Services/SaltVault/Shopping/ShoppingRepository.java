@@ -1,4 +1,4 @@
-package hoppingvikings.housefinancemobile.Repositories;
+package hoppingvikings.housefinancemobile.Services.SaltVault.Shopping;
 
 import java.util.ArrayList;
 

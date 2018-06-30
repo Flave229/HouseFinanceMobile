@@ -1,4 +1,4 @@
-package hoppingvikings.housefinancemobile.Endpoints.SaltVault;
+package hoppingvikings.housefinancemobile.Services.SaltVault.Bills;
 
 import android.util.Log;
 
@@ -8,22 +8,33 @@ import org.json.JSONObject;
 
 import java.util.ArrayList;
 
+import javax.inject.Inject;
+
+import hoppingvikings.housefinancemobile.ApiErrorCodes;
 import hoppingvikings.housefinancemobile.ItemType;
-import hoppingvikings.housefinancemobile.Repositories.BillRepository;
 import hoppingvikings.housefinancemobile.UserInterface.Items.BillListObject;
 import hoppingvikings.housefinancemobile.UserInterface.Items.BillObjectDetailed;
 import hoppingvikings.housefinancemobile.WebService.CommunicationRequest;
 import hoppingvikings.housefinancemobile.WebService.CommunicationResponse;
 import hoppingvikings.housefinancemobile.WebService.HTTPHandler;
 import hoppingvikings.housefinancemobile.WebService.RequestType;
+import hoppingvikings.housefinancemobile.WebService.SessionPersister;
 
 public class BillEndpoint extends HTTPHandler
 {
     private final String BILL_ENDPOINT = "http://house.flave.co.uk/api/v2/Bills";
+    private final SessionPersister _session;
+
+    @Inject
+    public BillEndpoint(SessionPersister session)
+    {
+        _session = session;
+    }
 
     @Override
     protected CommunicationRequest ConstructGet(final String urlAdditions)
     {
+        SetRequestProperty("Authorization", _session.GetSessionID());
         return new CommunicationRequest()
         {{
             ItemTypeData = (urlAdditions == "") ? ItemType.BILL : ItemType.BILL_DETAILED;
@@ -35,6 +46,7 @@ public class BillEndpoint extends HTTPHandler
     @Override
     protected CommunicationRequest ConstructPost(final JSONObject postData)
     {
+        SetRequestProperty("Authorization", _session.GetSessionID());
         return new CommunicationRequest()
         {{
             ItemTypeData = ItemType.BILL;
@@ -47,6 +59,7 @@ public class BillEndpoint extends HTTPHandler
     @Override
     protected CommunicationRequest ConstructPatch(final JSONObject patchData) throws UnsupportedOperationException
     {
+        SetRequestProperty("Authorization", _session.GetSessionID());
         return new CommunicationRequest()
         {{
             ItemTypeData = ItemType.BILL;
@@ -59,6 +72,7 @@ public class BillEndpoint extends HTTPHandler
     @Override
     protected CommunicationRequest ConstructDelete(final JSONObject deleteData)
     {
+        SetRequestProperty("Authorization", _session.GetSessionID());
         return new CommunicationRequest()
         {{
             ItemTypeData = ItemType.BILL;
@@ -75,6 +89,7 @@ public class BillEndpoint extends HTTPHandler
         {
             if(result.Response.has("hasError") && result.Response.getBoolean("hasError"))
             {
+                ApiErrorCodes errorCode = ApiErrorCodes.get(result.Response.getJSONObject("error").getInt("errorCode"));
                 String errorMessage = result.Response.getJSONObject("error").getString("message");
                 Log.e("Error", errorMessage);
                 result.Callback.OnFail(result.RequestTypeData, errorMessage);

@@ -9,7 +9,6 @@ import android.support.design.widget.Snackbar;
 import android.support.design.widget.TextInputEditText;
 import android.support.design.widget.TextInputLayout;
 import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AlertDialog;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -26,12 +25,12 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 
-import hoppingvikings.housefinancemobile.ItemType;
+import hoppingvikings.housefinancemobile.HouseFinanceClass;
 import hoppingvikings.housefinancemobile.R;
+import hoppingvikings.housefinancemobile.Services.SaltVault.Shopping.ShoppingEndpoint;
 import hoppingvikings.housefinancemobile.UserInterface.Activities.AddNewShoppingItemActivity;
 import hoppingvikings.housefinancemobile.UserInterface.Activities.SelectUsersActivity;
 import hoppingvikings.housefinancemobile.UserInterface.Fragments.Interfaces.ButtonPressedCallback;
-import hoppingvikings.housefinancemobile.WebService.WebHandler;
 
 import static android.app.Activity.RESULT_CANCELED;
 import static android.app.Activity.RESULT_OK;
@@ -40,7 +39,10 @@ import static android.app.Activity.RESULT_OK;
  * Created by iView on 25/07/2017.
  */
 
-public class AddShoppingItemFragment extends Fragment implements ButtonPressedCallback{
+public class AddShoppingItemFragment extends Fragment implements ButtonPressedCallback
+{
+    private ShoppingEndpoint _shoppingEndpoint;
+
     View _currentView;
 
     TextInputLayout itemNameLayout;
@@ -74,8 +76,11 @@ public class AddShoppingItemFragment extends Fragment implements ButtonPressedCa
 
     @Nullable
     @Override
-    public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+    public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState)
+    {
         _currentView = inflater.inflate(R.layout.fragment_shoppingform, container, false);
+
+        _shoppingEndpoint = HouseFinanceClass.GetShoppingComponent().GetShoppingEndpoint();
 
         if(savedInstanceState != null)
         {
@@ -194,7 +199,8 @@ public class AddShoppingItemFragment extends Fragment implements ButtonPressedCa
             }
         });
 
-        confirmCancel.setButton(DialogInterface.BUTTON_POSITIVE, "Confirm", new DialogInterface.OnClickListener() {
+        confirmCancel.setButton(DialogInterface.BUTTON_POSITIVE, "Confirm", new DialogInterface.OnClickListener()
+        {
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 confirmCancel.dismiss();
@@ -205,7 +211,8 @@ public class AddShoppingItemFragment extends Fragment implements ButtonPressedCa
 
                 JSONObject newItem = new JSONObject();
 
-                try{
+                try
+                {
                     newItem.put("Name", itemName);
                     newItem.put("Added", new SimpleDateFormat("yyyy-MM-dd").format(new Date()));
 
@@ -222,8 +229,9 @@ public class AddShoppingItemFragment extends Fragment implements ButtonPressedCa
                     // Add the item to a file on the device
                     //GlobalObjects.WriteToFile(getContext(), newItem.toString());
 
-                    WebHandler.Instance().UploadNewItem(getContext(), newItem, _activity, ItemType.SHOPPING);
-                } catch (JSONException je)
+                    _shoppingEndpoint.Post(getContext(), _activity, newItem);
+                }
+                catch (JSONException je)
                 {
                     Snackbar.make(layout, "Failed to create Json", Snackbar.LENGTH_LONG).show();
                     ReenableElements();
@@ -263,7 +271,6 @@ public class AddShoppingItemFragment extends Fragment implements ButtonPressedCa
             //_activity.getSupportActionBar().setSubtitle("Items in cart: " + String.valueOf(_activity._shoppingItems.size()));
 
             shoppingItemNameEntry.setText("");
-            //GlobalObjects.WebHandler.UploadNewShoppingItem(getApplicationContext(), newItem, AddNewShoppingItemActivity.this);
         } catch (JSONException je)
         {
             Snackbar.make(layout, "Failed to create Json", Snackbar.LENGTH_LONG).show();

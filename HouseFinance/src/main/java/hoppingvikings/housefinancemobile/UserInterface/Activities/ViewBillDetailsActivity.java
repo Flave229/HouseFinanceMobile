@@ -22,22 +22,27 @@ import android.widget.Toast;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Locale;
+import java.util.Map;
 
-import hoppingvikings.housefinancemobile.ItemType;
-import hoppingvikings.housefinancemobile.Repositories.BillRepository;
+import hoppingvikings.housefinancemobile.HouseFinanceClass;
+import hoppingvikings.housefinancemobile.Services.SaltVault.Bills.BillRepository;
 import hoppingvikings.housefinancemobile.R;
+import hoppingvikings.housefinancemobile.Services.SaltVault.Bills.BillEndpoint;
+import hoppingvikings.housefinancemobile.Services.SaltVault.Bills.PaymentsEndpoint;
 import hoppingvikings.housefinancemobile.UserInterface.Items.BillListObject;
 import hoppingvikings.housefinancemobile.UserInterface.Items.BillObjectDetailed;
 import hoppingvikings.housefinancemobile.UserInterface.Items.BillPayment;
 import hoppingvikings.housefinancemobile.UserInterface.PaymentsListAdapter;
 import hoppingvikings.housefinancemobile.WebService.CommunicationCallback;
 import hoppingvikings.housefinancemobile.WebService.RequestType;
-import hoppingvikings.housefinancemobile.WebService.WebHandler;
 
 public class ViewBillDetailsActivity extends AppCompatActivity
         implements CommunicationCallback, PaymentsListAdapter.DeleteCallback, PaymentsListAdapter.EditPressedCallback
 {
+    private BillEndpoint _billEndpoint;
+
     TextView billAmountText;
     TextView totalPaidText;
     TextView dueDateText;
@@ -56,21 +61,27 @@ public class ViewBillDetailsActivity extends AppCompatActivity
     CoordinatorLayout layout;
 
     BillObjectDetailed _currentBill = null;
-    private Runnable contactWebsite = new Runnable() {
+    private Runnable contactWebsite = new Runnable()
+    {
         @Override
-        public void run() {
-            WebHandler.Instance().RequestBillDetails(ViewBillDetailsActivity.this, ViewBillDetailsActivity.this, billID);
+        public void run()
+        {
+            Map<String, String> urlParameters = new HashMap<>();
+            urlParameters.put("id", Integer.toString(billID));
+            _billEndpoint.Get(ViewBillDetailsActivity.this, ViewBillDetailsActivity.this, urlParameters);
         }
     };
 
     @Override
-    public void OnItemDeleted() {
+    public void OnItemDeleted()
+    {
         somethingChanged = true;
         _handler.postDelayed(contactWebsite, 100);
     }
 
     @Override
-    public void onEditPressed(BillPayment itemid) {
+    public void onEditPressed(BillPayment itemid)
+    {
         Intent edititem = new Intent(this, EditPaymentActivity.class);
         edititem.putExtra("payment_id", itemid.PaymentID);
         edititem.putExtra("payment_amount", itemid.AmountPaid);
@@ -79,9 +90,13 @@ public class ViewBillDetailsActivity extends AppCompatActivity
     }
 
     @Override
-    protected void onCreate(@Nullable Bundle savedInstanceState) {
+    protected void onCreate(@Nullable Bundle savedInstanceState)
+    {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_view_bill);
+
+        _billEndpoint = HouseFinanceClass.GetBillComponent().GetBillEndpoint();
+        PaymentsEndpoint paymentsEndpoint = HouseFinanceClass.GetBillComponent().GetPaymentsEndpoint();
 
         layout = (CoordinatorLayout) findViewById(R.id.viewBillLayout);
         billAmountText = (TextView) findViewById(R.id.billAmount);
@@ -94,7 +109,7 @@ public class ViewBillDetailsActivity extends AppCompatActivity
 
         paymentsList = (RecyclerView) findViewById(R.id.paymentsList);
         paymentsList.setNestedScrollingEnabled(true);
-        adapter = new PaymentsListAdapter(new ArrayList<BillPayment>(), this);
+        adapter = new PaymentsListAdapter(this, paymentsEndpoint, new ArrayList<BillPayment>());
         adapter.SetDeleteCallback(this);
         adapter.SetEditPressedCallback(this);
         paymentsList.setAdapter(adapter);
@@ -142,13 +157,15 @@ public class ViewBillDetailsActivity extends AppCompatActivity
     }
 
     @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
+    public boolean onCreateOptionsMenu(Menu menu)
+    {
         getMenuInflater().inflate(R.menu.viewdetailsmenu, menu);
         return super.onCreateOptionsMenu(menu);
     }
 
     @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
+    public boolean onOptionsItemSelected(MenuItem item)
+    {
         switch (item.getItemId())
         {
             case android.R.id.home:
@@ -162,32 +179,34 @@ public class ViewBillDetailsActivity extends AppCompatActivity
                 return true;
 
             case R.id.delete_bill:
-                final AlertDialog deleteconfirm = new AlertDialog.Builder(ViewBillDetailsActivity.this).create();
-                deleteconfirm.setMessage("Delete the bill? This action cannot be reversed");
-                deleteconfirm.setButton(DialogInterface.BUTTON_POSITIVE, "Delete", new DialogInterface.OnClickListener() {
+                final AlertDialog deleteConfirm = new AlertDialog.Builder(ViewBillDetailsActivity.this).create();
+                deleteConfirm.setMessage("Delete the bill? This action cannot be reversed");
+                deleteConfirm.setButton(DialogInterface.BUTTON_POSITIVE, "Delete", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         addPayment.hide();
-                        deleteconfirm.dismiss();
-                        try {
+                        deleteConfirm.dismiss();
+                        try
+                        {
                             JSONObject billidjson = new JSONObject();
                             billidjson.put("BillId", billID);
-                            WebHandler.Instance().DeleteItem(ViewBillDetailsActivity.this, ViewBillDetailsActivity.this, billidjson, ItemType.BILL);
-                        } catch (Exception e)
+                            _billEndpoint.Delete(ViewBillDetailsActivity.this, ViewBillDetailsActivity.this, billidjson);
+                        }
+                        catch (Exception e)
                         {
                             addPayment.show();
                         }
                     }
                 });
 
-                deleteconfirm.setButton(DialogInterface.BUTTON_NEGATIVE, "Cancel", new DialogInterface.OnClickListener() {
+                deleteConfirm.setButton(DialogInterface.BUTTON_NEGATIVE, "Cancel", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-                        deleteconfirm.dismiss();
+                        deleteConfirm.dismiss();
                     }
                 });
 
-                deleteconfirm.show();
+                deleteConfirm.show();
                 return true;
 
 

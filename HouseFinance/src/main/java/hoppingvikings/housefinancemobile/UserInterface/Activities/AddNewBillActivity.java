@@ -40,14 +40,21 @@ import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.Locale;
 
-import hoppingvikings.housefinancemobile.ItemType;
+import hoppingvikings.housefinancemobile.FileIOHandler;
+import hoppingvikings.housefinancemobile.Services.SaltVault.Bills.BillEndpoint;
+import hoppingvikings.housefinancemobile.Services.SaltVault.User.LogInEndpoint;
+import hoppingvikings.housefinancemobile.HouseFinanceClass;
 import hoppingvikings.housefinancemobile.R;
 import hoppingvikings.housefinancemobile.UserInterface.SignInActivity;
 import hoppingvikings.housefinancemobile.WebService.CommunicationCallback;
 import hoppingvikings.housefinancemobile.WebService.RequestType;
-import hoppingvikings.housefinancemobile.WebService.WebHandler;
+import hoppingvikings.housefinancemobile.WebService.SessionPersister;
 
-public class AddNewBillActivity extends AppCompatActivity implements CommunicationCallback {
+public class AddNewBillActivity extends AppCompatActivity implements CommunicationCallback
+{
+    private SessionPersister _session;
+    private LogInEndpoint _logInEndpoint;
+    private BillEndpoint _billEndpoint;
 
     Button submitButton;
     TextInputLayout billNameEntry;
@@ -78,9 +85,14 @@ public class AddNewBillActivity extends AppCompatActivity implements Communicati
     boolean _obtainingSession = false;
 
     @Override
-    protected void onCreate(@Nullable Bundle savedInstanceState) {
+    protected void onCreate(@Nullable Bundle savedInstanceState)
+    {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_addnewbill);
+
+        _session = HouseFinanceClass.GetSessionPersisterComponent().GetSessionPersister();
+        _logInEndpoint = HouseFinanceClass.GetUserComponent().GetLogInEndpoint();
+        _billEndpoint = HouseFinanceClass.GetBillComponent().GetBillEndpoint();
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.appToolbar);
         setSupportActionBar(toolbar);
@@ -174,7 +186,8 @@ public class AddNewBillActivity extends AppCompatActivity implements Communicati
 
                 confirmCancel.setButton(DialogInterface.BUTTON_POSITIVE, "Confirm", new DialogInterface.OnClickListener() {
                     @Override
-                    public void onClick(DialogInterface dialogInterface, int i) {
+                    public void onClick(DialogInterface dialogInterface, int i)
+                    {
                         confirmCancel.dismiss();
 
                         recurring = recurRadio.isChecked();
@@ -190,7 +203,8 @@ public class AddNewBillActivity extends AppCompatActivity implements Communicati
 
                         JSONObject newBill = new JSONObject();
 
-                        try {
+                        try
+                        {
                             newBill.put("Name", billName);
                             newBill.put("TotalAmount", billAmount.doubleValue());
                             newBill.put("Due", new SimpleDateFormat("yyyy-MM-dd").format(billDueDate));
@@ -208,10 +222,9 @@ public class AddNewBillActivity extends AppCompatActivity implements Communicati
                             else
                                 newBill.put("RecurringType", 0);
 
-
-                            WebHandler.Instance().UploadNewItem(getApplicationContext(), newBill, AddNewBillActivity.this, ItemType.BILL);
-
-                        } catch (JSONException je)
+                            _billEndpoint.Post(getApplicationContext(), AddNewBillActivity.this, newBill);
+                        }
+                        catch (JSONException je)
                         {
                             Snackbar.make(layout, "Failed to create Json", Snackbar.LENGTH_LONG).show();
                             ReenableElements();
@@ -229,20 +242,46 @@ public class AddNewBillActivity extends AppCompatActivity implements Communicati
                 confirmCancel.show();
             }
         });
+
+        try {
+            JSONObject currentUser = new JSONObject(FileIOHandler.Instance().ReadFileAsString("CurrentUser"));
+            int userId = currentUser.getInt("id");
+            String username = currentUser.getString("firstName");
+
+            _selectedUserIds.add(userId);
+            _selectedUserNames.add(username);
+
+            StringBuilder namesString = new StringBuilder();
+            int index = 0;
+            for (String name:_selectedUserNames)
+            {
+                if(index != _selectedUserNames.size() - 1)
+                    namesString.append(name).append(", ");
+                else
+                    namesString.append(name);
+
+                index++;
+            }
+            selectUsers.setText(namesString);
+        } catch (JSONException je)
+        {
+
+        }
     }
 
     @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
+    public boolean onCreateOptionsMenu(Menu menu)
+    {
         getMenuInflater().inflate(R.menu.billentrytoolbar, menu);
         return super.onCreateOptionsMenu(menu);
     }
 
     @Override
-    public void onBackPressed() {
+    public void onBackPressed()
+    {
         if(billNameEntryText.getText().length() == 0
                 && billAmountEntryText.getText().length() == 0
-                && billDueDateEntryText.getText().length() == 0
-                && _selectedUserIds.size() == 0)
+                && billDueDateEntryText.getText().length() == 0)
         {
             setResult(RESULT_CANCELED);
             super.onBackPressed();
@@ -273,8 +312,8 @@ public class AddNewBillActivity extends AppCompatActivity implements Communicati
     }
 
     @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-
+    public boolean onOptionsItemSelected(MenuItem item)
+    {
         switch (item.getItemId())
         {
             case android.R.id.home:
@@ -301,11 +340,13 @@ public class AddNewBillActivity extends AppCompatActivity implements Communicati
 
     private boolean ValidateFields()
     {
-        if(billNameEntryText.getText().length() > 0) {
+        if(billNameEntryText.getText().length() > 0)
+        {
             billName = billNameEntryText.getText().toString();
             billNameEntry.setError(null);
         }
-        else {
+        else
+            {
             billNameEntryText.requestFocus();
             billNameEntry.setError("Please enter a valid Bill name");
             return false;
@@ -316,7 +357,8 @@ public class AddNewBillActivity extends AppCompatActivity implements Communicati
                 billAmount = DecimalFormat.getInstance().parse(billAmountEntryText.getText().toString());
                 billAmountEntry.setError(null);
             }
-            else {
+            else
+                {
                 billAmountEntryText.requestFocus();
                 billAmountEntry.setError("Please enter a valid Bill remainingAmount");
                 return false;
@@ -350,7 +392,8 @@ public class AddNewBillActivity extends AppCompatActivity implements Communicati
     }
 
     @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+    protected void onActivityResult(int requestCode, int resultCode, Intent data)
+    {
         super.onActivityResult(requestCode, resultCode, data);
         switch (resultCode)
         {
@@ -401,9 +444,10 @@ public class AddNewBillActivity extends AppCompatActivity implements Communicati
     }
 
     @Override
-    protected void onStart() {
+    protected void onStart()
+    {
         super.onStart();
-        if(WebHandler.Instance().GetSessionID().equals(""))
+        if(_session.HasSessionID() == false)
         {
             _obtainingSession = true;
             GoogleSignInAccount account = GoogleSignIn.getLastSignedInAccount(this);
@@ -411,13 +455,13 @@ public class AddNewBillActivity extends AppCompatActivity implements Communicati
             if(account != null)
             {
                 JSONObject tokenJson = new JSONObject();
-                try {
-                    tokenJson.put("Token", account.getIdToken());
-                } catch (JSONException e)
+                try
                 {
-
+                    tokenJson.put("Token", account.getIdToken());
                 }
-                WebHandler.Instance().GetSessionID(this, this, tokenJson);
+                catch (JSONException e)
+                { }
+                _logInEndpoint.Post(this, this, tokenJson);
             }
             else
             {

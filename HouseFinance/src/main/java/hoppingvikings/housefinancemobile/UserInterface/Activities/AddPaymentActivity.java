@@ -23,6 +23,7 @@ import android.widget.ImageButton;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.text.DecimalFormat;
@@ -32,13 +33,16 @@ import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.Locale;
 
-import hoppingvikings.housefinancemobile.ItemType;
+import hoppingvikings.housefinancemobile.FileIOHandler;
+import hoppingvikings.housefinancemobile.HouseFinanceClass;
 import hoppingvikings.housefinancemobile.R;
+import hoppingvikings.housefinancemobile.Services.SaltVault.Bills.PaymentsEndpoint;
 import hoppingvikings.housefinancemobile.WebService.CommunicationCallback;
 import hoppingvikings.housefinancemobile.WebService.RequestType;
-import hoppingvikings.housefinancemobile.WebService.WebHandler;
 
-public class AddPaymentActivity extends AppCompatActivity implements CommunicationCallback {
+public class AddPaymentActivity extends AppCompatActivity implements CommunicationCallback
+{
+    private PaymentsEndpoint _paymentEndpoint;
 
     TextView billName;
     Button submitButton;
@@ -63,9 +67,13 @@ public class AddPaymentActivity extends AppCompatActivity implements Communicati
     String _selectedUserName = "";
 
     @Override
-    public void onCreate(@Nullable Bundle savedInstanceState) {
+    public void onCreate(@Nullable Bundle savedInstanceState)
+    {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_addpayment);
+
+        _paymentEndpoint = HouseFinanceClass.GetBillComponent().GetPaymentsEndpoint();
+
         Toolbar toolbar = (Toolbar) findViewById(R.id.appToolbar);
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayShowHomeEnabled(true);
@@ -108,7 +116,8 @@ public class AddPaymentActivity extends AppCompatActivity implements Communicati
 
         selectUser = (TextView) findViewById(R.id.selectUser);
         editPerson = (ImageButton) findViewById(R.id.editPerson);
-        editPerson.setOnClickListener(new View.OnClickListener() {
+        editPerson.setOnClickListener(new View.OnClickListener()
+        {
             @Override
             public void onClick(View v) {
                 Intent selectusers = new Intent(AddPaymentActivity.this, SelectUsersActivity.class);
@@ -121,7 +130,8 @@ public class AddPaymentActivity extends AppCompatActivity implements Communicati
         });
 
         final Calendar myCalendar = Calendar.getInstance(Locale.ENGLISH);
-        final DatePickerDialog.OnDateSetListener date = new DatePickerDialog.OnDateSetListener() {
+        final DatePickerDialog.OnDateSetListener date = new DatePickerDialog.OnDateSetListener()
+        {
             @Override
             public void onDateSet(DatePicker view, int year, int month, int dayOfMonth) {
 
@@ -138,7 +148,8 @@ public class AddPaymentActivity extends AppCompatActivity implements Communicati
             }
         };
 
-        paymentDateEntryText.setOnClickListener(new View.OnClickListener() {
+        paymentDateEntryText.setOnClickListener(new View.OnClickListener()
+        {
             @Override
             public void onClick(View v) {
                 new DatePickerDialog(AddPaymentActivity.this, date,
@@ -152,7 +163,8 @@ public class AddPaymentActivity extends AppCompatActivity implements Communicati
         SimpleDateFormat sdf = new SimpleDateFormat(format, Locale.UK);
         paymentDateEntryText.setText(sdf.format(myCalendar.getTime()));
 
-        submitButton.setOnClickListener(new View.OnClickListener() {
+        submitButton.setOnClickListener(new View.OnClickListener()
+        {
             @Override
             public void onClick(View v) {
                 if(!ValidateFields())
@@ -175,15 +187,17 @@ public class AddPaymentActivity extends AppCompatActivity implements Communicati
 
                         JSONObject newPayment = new JSONObject();
 
-                        try {
+                        try
+                        {
                             newPayment.put("BillId", billid);
                             newPayment.put("Amount", paymentAmount.doubleValue());
                             newPayment.put("Created", new SimpleDateFormat("yyyy-MM-dd").format(paymentDate));
 
                             newPayment.put("PersonId", _selectedUserId);
 
-                            WebHandler.Instance().UploadNewItem(getApplicationContext(), newPayment, AddPaymentActivity.this, ItemType.PAYMENT);
-                        } catch (Exception e)
+                            _paymentEndpoint.Post(getApplicationContext(), AddPaymentActivity.this, newPayment);
+                        }
+                        catch (Exception e)
                         {
                             Snackbar.make(layout, "Failed to create Json", Snackbar.LENGTH_LONG).show();
                             ReenableElements();
@@ -201,6 +215,20 @@ public class AddPaymentActivity extends AppCompatActivity implements Communicati
                 confirmCancel.show();
             }
         });
+
+        try {
+            JSONObject currentUser = new JSONObject(FileIOHandler.Instance().ReadFileAsString("CurrentUser"));
+            int userId = currentUser.getInt("id");
+            String username = currentUser.getString("firstName");
+
+            _selectedUserId = userId;
+            _selectedUserName = username;
+
+            selectUser.setText(_selectedUserName);
+        } catch (JSONException je)
+        {
+
+        }
     }
 
     private void ReenableElements()

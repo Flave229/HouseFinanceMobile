@@ -20,7 +20,6 @@ import hoppingvikings.housefinancemobile.ItemType;
 public class WebService extends AsyncTask<CommunicationRequest, Void, CommunicationResponse>
 {
     private final Map<String, String> _requestProperties;
-    private String _fullAuthToken = "";
     private CommunicationRequest _request;
 
     public WebService(Map<String, String> requestProperties)
@@ -44,36 +43,16 @@ public class WebService extends AsyncTask<CommunicationRequest, Void, Communicat
         {
             return null;
         }
-        catch (JSONException e)
-        {
-            return null;
-        }
     }
 
     @Override
     protected void onPostExecute(CommunicationResponse result)
     {
         if (_request.OwnerV2 != null)
-        {
             _request.OwnerV2.HandleResponse(result);
-            return;
-        }
-
-        if (_request.RequestTypeData != RequestType.GET)
-        {
-            if(_request.ItemTypeData == ItemType.LOG_IN)
-            {
-                _request.Owner.ApiResult(result, ItemType.LOG_IN);
-                return;
-            }
-            _request.Owner.ApiResult(result, ItemType.NONE);
-            return;
-        }
-
-        _request.Owner.ApiResult(result, _request.ItemTypeData);
     }
 
-    private CommunicationResponse DownloadUrl() throws IOException, JSONException
+    private CommunicationResponse DownloadUrl() throws IOException
     {
         URL url = new URL(_request.Endpoint);
         HttpURLConnection connection = (HttpURLConnection) url.openConnection();

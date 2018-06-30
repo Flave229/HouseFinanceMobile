@@ -5,7 +5,6 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.support.annotation.Nullable;
 import android.support.design.widget.CoordinatorLayout;
-import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
@@ -16,19 +15,16 @@ import android.view.ViewGroup;
 
 import java.util.ArrayList;
 
+import hoppingvikings.housefinancemobile.HouseFinanceClass;
 import hoppingvikings.housefinancemobile.R;
-import hoppingvikings.housefinancemobile.Repositories.TodoRepository;
-import hoppingvikings.housefinancemobile.UserInterface.Activities.AddNewToDoActivity;
-import hoppingvikings.housefinancemobile.UserInterface.Activities.EditShoppingItemActivity;
+import hoppingvikings.housefinancemobile.Services.SaltVault.ToDo.ToDoEndpoint;
+import hoppingvikings.housefinancemobile.Services.SaltVault.ToDo.TodoRepository;
 import hoppingvikings.housefinancemobile.UserInterface.Activities.EditTodoItemActivity;
 import hoppingvikings.housefinancemobile.UserInterface.Items.TodoListObject;
-import hoppingvikings.housefinancemobile.UserInterface.Lists.ListItemDivider;
 import hoppingvikings.housefinancemobile.UserInterface.Lists.TodoList.TodoListAdapter;
-import hoppingvikings.housefinancemobile.UserInterface.MainActivity;
-import hoppingvikings.housefinancemobile.UserInterface.MainMenuActivity;
+import hoppingvikings.housefinancemobile.UserInterface.Activities.MainMenuActivity;
 import hoppingvikings.housefinancemobile.WebService.CommunicationCallback;
 import hoppingvikings.housefinancemobile.WebService.RequestType;
-import hoppingvikings.housefinancemobile.WebService.WebHandler;
 
 import static android.app.Activity.RESULT_CANCELED;
 import static android.app.Activity.RESULT_OK;
@@ -38,7 +34,9 @@ import static android.app.Activity.RESULT_OK;
  */
 
 public class TodoListFragment extends Fragment
-        implements CommunicationCallback, TodoListAdapter.DeleteCallback, TodoListAdapter.EditPressedCallback{
+        implements CommunicationCallback, TodoListAdapter.DeleteCallback, TodoListAdapter.EditPressedCallback
+{
+    private ToDoEndpoint _toDoEndpoint;
 
     CoordinatorLayout _layout;
     Handler _handler;
@@ -48,17 +46,20 @@ public class TodoListFragment extends Fragment
     SwipeRefreshLayout _swipeRefreshLayout;
     MainMenuActivity _activity;
 
-    private Runnable contactWebsite = new Runnable() {
+    private Runnable contactWebsite = new Runnable()
+    {
         @Override
-        public void run() {
-            // todo create and call the api endpoint for todo items
-            WebHandler.Instance().GetToDoItems(getContext(), TodoListFragment.this);
+        public void run()
+        {
+            _toDoEndpoint.Get(getContext(), TodoListFragment.this);
         }
     };
 
-    private Runnable updateList = new Runnable() {
+    private Runnable updateList = new Runnable()
+    {
         @Override
-        public void run() {
+        public void run()
+        {
             TodoRepository todoRepository = TodoRepository.Instance();
             if(todoRepository.Get() != null)
             {
@@ -91,9 +92,17 @@ public class TodoListFragment extends Fragment
         }
     };
 
+    @Override
+    public void onCreate(Bundle savedInstanceState)
+    {
+        super.onCreate(savedInstanceState);
+        _toDoEndpoint = HouseFinanceClass.GetToDoComponent().GetToDoEndpoint();
+    }
+
     @Nullable
     @Override
-    public View onCreateView(LayoutInflater inflater, @Nullable final ViewGroup container, Bundle savedInstanceState) {
+    public View onCreateView(LayoutInflater inflater, @Nullable final ViewGroup container, Bundle savedInstanceState)
+    {
         _activity = (MainMenuActivity) getActivity();
         View view = inflater.inflate(R.layout.fragment_blank, container, false);
 
@@ -113,7 +122,7 @@ public class TodoListFragment extends Fragment
 
         if(_recyclerView != null)
         {
-            _adapter = new TodoListAdapter(_items, getContext(), null);
+            _adapter = new TodoListAdapter(getContext(), null, _toDoEndpoint, _items);
             _recyclerView.setAdapter(_adapter);
             _recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
         }
@@ -154,7 +163,8 @@ public class TodoListFragment extends Fragment
     }
 
     @Override
-    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+    public void onActivityResult(int requestCode, int resultCode, Intent data)
+    {
         super.onActivityResult(requestCode, resultCode, data);
         switch (resultCode)
         {
@@ -171,25 +181,29 @@ public class TodoListFragment extends Fragment
     }
 
     @Override
-    public void onItemDeleted() {
+    public void onItemDeleted()
+    {
         _swipeRefreshLayout.setRefreshing(true);
         _handler.postDelayed(contactWebsite, 200);
     }
 
     @Override
-    public void onEditPressed(int itemid) {
+    public void onEditPressed(int itemid)
+    {
         Intent edititem = new Intent(getContext(), EditTodoItemActivity.class);
         edititem.putExtra("id", itemid);
         startActivityForResult(edititem, 0);
     }
 
     @Override
-    public void OnSuccess(RequestType requestType, Object o) {
+    public void OnSuccess(RequestType requestType, Object o)
+    {
         _handler.postDelayed(updateList, 100);
     }
 
     @Override
-    public void OnFail(RequestType requestType, String message) {
+    public void OnFail(RequestType requestType, String message)
+    {
         _handler.removeCallbacksAndMessages(null);
         //Snackbar.make(_activity._layout, message, Snackbar.LENGTH_LONG).show();
         _swipeRefreshLayout.setRefreshing(false);

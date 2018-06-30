@@ -1,4 +1,4 @@
-package hoppingvikings.housefinancemobile.Endpoints.SaltVault;
+package hoppingvikings.housefinancemobile.Services.SaltVault.Shopping;
 
 import android.util.Log;
 
@@ -8,21 +8,31 @@ import org.json.JSONObject;
 
 import java.util.ArrayList;
 
+import javax.inject.Inject;
+
 import hoppingvikings.housefinancemobile.ItemType;
-import hoppingvikings.housefinancemobile.Repositories.ShoppingRepository;
 import hoppingvikings.housefinancemobile.UserInterface.Items.ShoppingListObject;
 import hoppingvikings.housefinancemobile.WebService.CommunicationRequest;
 import hoppingvikings.housefinancemobile.WebService.CommunicationResponse;
 import hoppingvikings.housefinancemobile.WebService.HTTPHandler;
 import hoppingvikings.housefinancemobile.WebService.RequestType;
+import hoppingvikings.housefinancemobile.WebService.SessionPersister;
 
 public class ShoppingEndpoint extends HTTPHandler
 {
+    private final SessionPersister _session;
     private final String SHOPPING_ENDPOINT = "http://house.flave.co.uk/api/v2/Shopping";
+
+    @Inject
+    public ShoppingEndpoint(SessionPersister session)
+    {
+        _session = session;
+    }
 
     @Override
     protected CommunicationRequest ConstructGet(String urlAdditions)
     {
+        SetRequestProperty("Authorization", _session.GetSessionID());
         return new CommunicationRequest()
         {{
             ItemTypeData = ItemType.SHOPPING;
@@ -34,6 +44,7 @@ public class ShoppingEndpoint extends HTTPHandler
     @Override
     protected CommunicationRequest ConstructPost(final JSONObject postData)
     {
+        SetRequestProperty("Authorization", _session.GetSessionID());
         return new CommunicationRequest()
         {{
             ItemTypeData = ItemType.SHOPPING;
@@ -46,6 +57,7 @@ public class ShoppingEndpoint extends HTTPHandler
     @Override
     protected CommunicationRequest ConstructPatch(final JSONObject patchData)
     {
+        SetRequestProperty("Authorization", _session.GetSessionID());
         return new CommunicationRequest()
         {{
             ItemTypeData = ItemType.SHOPPING;
@@ -58,6 +70,7 @@ public class ShoppingEndpoint extends HTTPHandler
     @Override
     protected CommunicationRequest ConstructDelete(final JSONObject deleteData)
     {
+        SetRequestProperty("Authorization", _session.GetSessionID());
         return new CommunicationRequest()
         {{
             ItemTypeData = ItemType.SHOPPING;

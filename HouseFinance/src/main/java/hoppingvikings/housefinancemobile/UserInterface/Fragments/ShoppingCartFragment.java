@@ -4,7 +4,6 @@ import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.CoordinatorLayout;
-import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.LinearLayoutManager;
@@ -14,25 +13,22 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
-import org.json.JSONObject;
-
 import java.util.ArrayList;
 
-import hoppingvikings.housefinancemobile.FileName;
-import hoppingvikings.housefinancemobile.ItemType;
+import hoppingvikings.housefinancemobile.Services.SaltVault.User.UserEndpoint;
+import hoppingvikings.housefinancemobile.HouseFinanceClass;
 import hoppingvikings.housefinancemobile.Person;
 import hoppingvikings.housefinancemobile.R;
-import hoppingvikings.housefinancemobile.FileIOHandler;
 import hoppingvikings.housefinancemobile.UserInterface.Activities.AddNewShoppingItemActivity;
 import hoppingvikings.housefinancemobile.UserInterface.Fragments.Interfaces.ButtonPressedCallback;
 import hoppingvikings.housefinancemobile.UserInterface.Lists.ShoppingCartList.ShoppingCartAdapter;
 import hoppingvikings.housefinancemobile.UserInterface.Items.ShoppingCartItem;
 import hoppingvikings.housefinancemobile.WebService.CommunicationCallback;
 import hoppingvikings.housefinancemobile.WebService.RequestType;
-import hoppingvikings.housefinancemobile.WebService.WebHandler;
 
 public class ShoppingCartFragment extends Fragment
-        implements ButtonPressedCallback, CommunicationCallback<ArrayList<Person>> {
+        implements ButtonPressedCallback, CommunicationCallback<ArrayList<Person>>
+{
     View currentView;
     TextView cartEmptyText;
     CoordinatorLayout layout;
@@ -44,8 +40,10 @@ public class ShoppingCartFragment extends Fragment
 
     @Nullable
     @Override
-    public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        WebHandler.Instance().RequestUsers(getContext(), this);
+    public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState)
+    {
+        UserEndpoint userEndpoint = HouseFinanceClass.GetUserComponent().GetUserEndpoint();
+        userEndpoint.Get(getContext(), this);
         currentView = inflater.inflate(R.layout.fragment_shoppingcart, container, false);
         _activity = (AddNewShoppingItemActivity)getActivity();
         //_activity.SetCallbackOwner(this);
@@ -72,7 +70,8 @@ public class ShoppingCartFragment extends Fragment
     }
 
     @Override
-    public void AddToCartPressed() {
+    public void AddToCartPressed()
+    {
         final AlertDialog submitcheck = new AlertDialog.Builder(getContext()).create();
 
         submitcheck.setMessage("Please check all items are correct before submitting");
@@ -90,12 +89,6 @@ public class ShoppingCartFragment extends Fragment
                 submitting = true;
                 //_activity.progress = 100 / _activity._shoppingItems.size();
                 //_activity.addToCartButton.setEnabled(false);
-                try {
-                    //WebHandler.Instance().UploadNewItem(getContext(), new JSONObject(_activity._shoppingItems.get(0)), _activity, ItemType.SHOPPING);
-                } catch (Exception e)
-                {
-
-                }
             }
         });
         submitcheck.setButton(DialogInterface.BUTTON_NEGATIVE, "Cancel", new DialogInterface.OnClickListener() {

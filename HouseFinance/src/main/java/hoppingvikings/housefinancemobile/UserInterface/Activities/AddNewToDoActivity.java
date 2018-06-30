@@ -1,6 +1,5 @@
 package hoppingvikings.housefinancemobile.UserInterface.Activities;
 
-import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.DatePickerDialog;
 import android.content.DialogInterface;
@@ -37,14 +36,21 @@ import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.Locale;
 
-import hoppingvikings.housefinancemobile.ItemType;
+import hoppingvikings.housefinancemobile.FileIOHandler;
+import hoppingvikings.housefinancemobile.Services.SaltVault.ToDo.ToDoEndpoint;
+import hoppingvikings.housefinancemobile.Services.SaltVault.User.LogInEndpoint;
+import hoppingvikings.housefinancemobile.HouseFinanceClass;
 import hoppingvikings.housefinancemobile.R;
 import hoppingvikings.housefinancemobile.UserInterface.SignInActivity;
 import hoppingvikings.housefinancemobile.WebService.CommunicationCallback;
 import hoppingvikings.housefinancemobile.WebService.RequestType;
-import hoppingvikings.housefinancemobile.WebService.WebHandler;
+import hoppingvikings.housefinancemobile.WebService.SessionPersister;
 
-public class AddNewToDoActivity extends AppCompatActivity implements CommunicationCallback {
+public class AddNewToDoActivity extends AppCompatActivity implements CommunicationCallback
+{
+    private SessionPersister _session;
+    private LogInEndpoint _logInEndpoint;
+    private ToDoEndpoint _toDoEndpoint;
 
     Button submitButton;
     TextInputLayout taskTitleEntry;
@@ -53,8 +59,8 @@ public class AddNewToDoActivity extends AppCompatActivity implements Communicati
     TextInputLayout taskDueDateEntry;
     TextInputEditText taskDueDateEntryText;
 
-    ArrayList<Integer> selectedPeopleIDs = new ArrayList<>();
-    ArrayList<String> selectedPeopleNames = new ArrayList<>();
+    ArrayList<Integer> _selectedPeopleIDs = new ArrayList<>();
+    ArrayList<String> _selectedPeopleNames = new ArrayList<>();
 
     CoordinatorLayout layout;
     TextView selectedPeople;
@@ -66,9 +72,14 @@ public class AddNewToDoActivity extends AppCompatActivity implements Communicati
     boolean _obtainingSession = false;
 
     @Override
-    protected void onCreate(@Nullable Bundle savedInstanceState) {
+    protected void onCreate(@Nullable Bundle savedInstanceState)
+    {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_addnewtask);
+
+        _session = HouseFinanceClass.GetSessionPersisterComponent().GetSessionPersister();
+        _logInEndpoint = HouseFinanceClass.GetUserComponent().GetLogInEndpoint();
+        _toDoEndpoint = HouseFinanceClass.GetToDoComponent().GetToDoEndpoint();
 
         Toolbar toolbar = findViewById(R.id.appToolbar);
         setSupportActionBar(toolbar);
@@ -85,20 +96,22 @@ public class AddNewToDoActivity extends AppCompatActivity implements Communicati
 
         selectedPeople = findViewById(R.id.selectUsers);
         editPeople = findViewById(R.id.editPeople);
-        editPeople.setOnClickListener(new View.OnClickListener() {
+        editPeople.setOnClickListener(new View.OnClickListener()
+        {
             @Override
             public void onClick(View v) {
                 Intent selectPeople = new Intent(AddNewToDoActivity.this, SelectUsersActivity.class);
                 selectPeople.putExtra("multiple_user_selection", true);
-                if(selectedPeopleIDs.size() > 0)
-                    selectPeople.putExtra("currently_selected_ids", selectedPeopleIDs);
+                if(_selectedPeopleIDs.size() > 0)
+                    selectPeople.putExtra("currently_selected_ids", _selectedPeopleIDs);
 
                 startActivityForResult(selectPeople, 0);
             }
         });
 
         final Calendar calendar = Calendar.getInstance(Locale.ENGLISH);
-        final DatePickerDialog.OnDateSetListener date = new DatePickerDialog.OnDateSetListener() {
+        final DatePickerDialog.OnDateSetListener date = new DatePickerDialog.OnDateSetListener()
+        {
             @Override
             public void onDateSet(DatePicker view, int year, int month, int dayOfMonth) {
                 GregorianCalendar gc = new GregorianCalendar();
@@ -114,9 +127,11 @@ public class AddNewToDoActivity extends AppCompatActivity implements Communicati
             }
         };
 
-        taskDueDateEntryText.setOnClickListener(new View.OnClickListener() {
+        taskDueDateEntryText.setOnClickListener(new View.OnClickListener()
+        {
             @Override
-            public void onClick(View v) {
+            public void onClick(View v)
+            {
                 new DatePickerDialog(AddNewToDoActivity.this, date,
                         calendar.get(Calendar.YEAR),
                         calendar.get(Calendar.MONTH),
@@ -124,9 +139,11 @@ public class AddNewToDoActivity extends AppCompatActivity implements Communicati
             }
         });
 
-        submitButton.setOnClickListener(new View.OnClickListener() {
+        submitButton.setOnClickListener(new View.OnClickListener()
+        {
             @Override
-            public void onClick(View v) {
+            public void onClick(View v)
+            {
                 if(!ValidateFields())
                     return;
 
@@ -134,7 +151,8 @@ public class AddNewToDoActivity extends AppCompatActivity implements Communicati
                 confirmCancel.setTitle("Submit new task?");
                 confirmCancel.setMessage("Please check that all details are correct");
 
-                confirmCancel.setButton(DialogInterface.BUTTON_POSITIVE, "Confirm", new DialogInterface.OnClickListener() {
+                confirmCancel.setButton(DialogInterface.BUTTON_POSITIVE, "Confirm", new DialogInterface.OnClickListener()
+                {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         confirmCancel.dismiss();
@@ -152,12 +170,12 @@ public class AddNewToDoActivity extends AppCompatActivity implements Communicati
                                 newTask.put("Due", new SimpleDateFormat("yyyy-MM-dd").format(taskDueDate));
 
                             JSONArray people = new JSONArray();
-                            for(int id : selectedPeopleIDs)
+                            for(int id : _selectedPeopleIDs)
                                 people.put(id);
 
                             newTask.put("PeopleIds", people);
 
-                            WebHandler.Instance().UploadNewItem(getApplicationContext(), newTask, AddNewToDoActivity.this, ItemType.TODO);
+                            _toDoEndpoint.Post(getApplicationContext(), AddNewToDoActivity.this, newTask);
 
                         } catch (JSONException je)
                         {
@@ -177,20 +195,45 @@ public class AddNewToDoActivity extends AppCompatActivity implements Communicati
                 confirmCancel.show();
             }
         });
+
+        try {
+            JSONObject currentUser = new JSONObject(FileIOHandler.Instance().ReadFileAsString("CurrentUser"));
+            int userId = currentUser.getInt("id");
+            String username = currentUser.getString("firstName");
+
+            _selectedPeopleIDs.add(userId);
+            _selectedPeopleNames.add(username);
+
+            StringBuilder namesString = new StringBuilder();
+            int index = 0;
+            for (String name:_selectedPeopleNames)
+            {
+                if(index != _selectedPeopleNames.size() - 1)
+                    namesString.append(name).append(", ");
+                else
+                    namesString.append(name);
+
+                index++;
+            }
+            selectedPeople.setText(namesString);
+        } catch (JSONException je)
+        {
+
+        }
     }
 
     @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
+    public boolean onCreateOptionsMenu(Menu menu)
+    {
         getMenuInflater().inflate(R.menu.billentrytoolbar, menu);
         return super.onCreateOptionsMenu(menu);
     }
 
     @Override
-    public void onBackPressed() {
-
+    public void onBackPressed()
+    {
         if(taskTitleEntryText.getText().length() == 0
-                && taskDueDateEntryText.getText().length() == 0
-                && selectedPeopleIDs.size() == 0)
+                && taskDueDateEntryText.getText().length() == 0)
         {
             setResult(RESULT_CANCELED);
             super.onBackPressed();
@@ -222,7 +265,8 @@ public class AddNewToDoActivity extends AppCompatActivity implements Communicati
     }
 
     @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
+    public boolean onOptionsItemSelected(MenuItem item)
+    {
         switch (item.getItemId())
         {
             case android.R.id.home:
@@ -259,9 +303,11 @@ public class AddNewToDoActivity extends AppCompatActivity implements Communicati
         // Date is optional. Don't break out of there is no date entered
         if(taskDueDateEntryText.getText().length() > 0)
         {
-            try {
+            try
+            {
                 taskDueDate = new SimpleDateFormat("dd-MM-yyyy").parse(taskDueDateEntryText.getText().toString());
-            } catch (ParseException pe)
+            }
+            catch (ParseException pe)
             {
                 taskDueDate = null;
             }
@@ -271,7 +317,7 @@ public class AddNewToDoActivity extends AppCompatActivity implements Communicati
             taskDueDate = null;
         }
 
-        if(selectedPeopleIDs.size() < 1)
+        if(_selectedPeopleIDs.size() < 1)
         {
             Snackbar.make(layout, "Please select at least one person for this task", Snackbar.LENGTH_LONG).show();
             return false;
@@ -281,21 +327,22 @@ public class AddNewToDoActivity extends AppCompatActivity implements Communicati
     }
 
     @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+    protected void onActivityResult(int requestCode, int resultCode, Intent data)
+    {
         super.onActivityResult(requestCode, resultCode, data);
         switch (resultCode)
         {
             case RESULT_OK:
                 if(data != null)
                 {
-                    selectedPeopleIDs = data.getIntegerArrayListExtra("selected_ids");
-                    selectedPeopleNames = data.getStringArrayListExtra("selected_names");
+                    _selectedPeopleIDs = data.getIntegerArrayListExtra("selected_ids");
+                    _selectedPeopleNames = data.getStringArrayListExtra("selected_names");
 
                     StringBuilder namesString = new StringBuilder();
 
                     int index = 0;
-                    for (String name : selectedPeopleNames) {
-                        if(index != selectedPeopleNames.size() - 1)
+                    for (String name : _selectedPeopleNames) {
+                        if(index != _selectedPeopleNames.size() - 1)
                             namesString.append(name).append(", ");
                         else
                             namesString.append(name);
@@ -313,7 +360,8 @@ public class AddNewToDoActivity extends AppCompatActivity implements Communicati
     }
 
     @Override
-    public void OnSuccess(RequestType requestType, Object o) {
+    public void OnSuccess(RequestType requestType, Object o)
+    {
         if(_obtainingSession)
         {
             _obtainingSession = false;
@@ -326,15 +374,17 @@ public class AddNewToDoActivity extends AppCompatActivity implements Communicati
     }
 
     @Override
-    public void OnFail(RequestType requestType, String message) {
+    public void OnFail(RequestType requestType, String message)
+    {
         Snackbar.make(layout, message, Snackbar.LENGTH_LONG).show();
         ReenableElements();
     }
 
     @Override
-    protected void onStart() {
+    protected void onStart()
+    {
         super.onStart();
-        if(WebHandler.Instance().GetSessionID().equals(""))
+        if(_session.HasSessionID() == false)
         {
             _obtainingSession = true;
             GoogleSignInAccount account = GoogleSignIn.getLastSignedInAccount(this);
@@ -342,13 +392,14 @@ public class AddNewToDoActivity extends AppCompatActivity implements Communicati
             if(account != null)
             {
                 JSONObject tokenJson = new JSONObject();
-                try {
+                try
+                {
                     tokenJson.put("Token", account.getIdToken());
                 } catch (JSONException e)
                 {
 
                 }
-                WebHandler.Instance().GetSessionID(this, this, tokenJson);
+                _logInEndpoint.Post(this, this, tokenJson);
             }
             else
             {

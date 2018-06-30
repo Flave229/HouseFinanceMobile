@@ -1,22 +1,15 @@
-package hoppingvikings.housefinancemobile.UserInterface;
+package hoppingvikings.housefinancemobile.UserInterface.Activities;
 
-import android.app.PendingIntent;
 import android.content.Intent;
 import android.os.Bundle;
-import android.os.Handler;
-import android.os.Parcelable;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.CoordinatorLayout;
-import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
-import android.support.design.widget.TabLayout;
-import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
-import android.util.DisplayMetrics;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -30,37 +23,44 @@ import com.google.android.gms.tasks.Task;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.io.File;
 import java.util.ArrayList;
 
 import hoppingvikings.housefinancemobile.ApiErrorCodes;
+import hoppingvikings.housefinancemobile.Services.SaltVault.House.HouseholdEndpoint;
 import hoppingvikings.housefinancemobile.FileIOHandler;
+import hoppingvikings.housefinancemobile.HouseFinanceClass;
 import hoppingvikings.housefinancemobile.ItemType;
 import hoppingvikings.housefinancemobile.NotificationWrapper;
 import hoppingvikings.housefinancemobile.R;
-import hoppingvikings.housefinancemobile.UserInterface.Activities.ViewHouseholdActivity;
-import hoppingvikings.housefinancemobile.UserInterface.Activities.ViewListActivity;
 import hoppingvikings.housefinancemobile.UserInterface.Items.MainMenuItem;
 import hoppingvikings.housefinancemobile.UserInterface.Lists.MainMenu.MainMenuListAdapter;
-import hoppingvikings.housefinancemobile.UserInterface.Lists.MainMenu.MarginDecoration;
+import hoppingvikings.housefinancemobile.UserInterface.SignInActivity;
 import hoppingvikings.housefinancemobile.WebService.CommunicationCallback;
 import hoppingvikings.housefinancemobile.WebService.RequestType;
-import hoppingvikings.housefinancemobile.WebService.WebHandler;
+import hoppingvikings.housefinancemobile.WebService.SessionPersister;
 
-public class MainMenuActivity extends AppCompatActivity implements CommunicationCallback {
+public class MainMenuActivity extends AppCompatActivity implements CommunicationCallback
+{
+    private NotificationWrapper _notificationWrapper;
+    private SessionPersister _session;
+    private HouseholdEndpoint _householdEndpoint;
 
-    CoordinatorLayout _layout;
-    MainMenuListAdapter _listAdapter;
-    RecyclerView _rv;
-    ArrayList<MainMenuItem> _mainMenuItems;
+    private CoordinatorLayout _layout;
+    private MainMenuListAdapter _listAdapter;
+    private RecyclerView _rv;
+    private ArrayList<MainMenuItem> _mainMenuItems;
 
-    GoogleSignInClient _signInClient;
-    NotificationWrapper _notificationWrapper;
+    private GoogleSignInClient _signInClient;
 
     @Override
-    protected void onCreate(@Nullable Bundle savedInstanceState) {
+    protected void onCreate(@Nullable Bundle savedInstanceState)
+    {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_mainmenu);
+
+        _notificationWrapper = HouseFinanceClass.GetNotificationWrapperComponent().GetNotificationWrapper();
+        _session = HouseFinanceClass.GetSessionPersisterComponent().GetSessionPersister();
+        _householdEndpoint = HouseFinanceClass.GetHouseholdComponent().GetHouseholdEndpoint();
 
         _layout = findViewById(R.id.coordLayout);
 
@@ -79,11 +79,11 @@ public class MainMenuActivity extends AppCompatActivity implements Communication
         _rv.setLayoutManager(new GridLayoutManager(this, 3));
         _rv.setItemViewCacheSize(10);
 
-        _notificationWrapper = new NotificationWrapper();
-
-        _listAdapter.SetMainMenuItemClickedListener(new MainMenuListAdapter.MainMenuItemClickedListener() {
+        _listAdapter.SetMainMenuItemClickedListener(new MainMenuListAdapter.MainMenuItemClickedListener()
+        {
             @Override
-            public void onItemClicked(View itemView, int pos) {
+            public void onItemClicked(View itemView, int pos)
+            {
                 MainMenuItem selectedItem = _listAdapter.GetItem(pos);
 
                 if(selectedItem.menuItemType.equals("HOUSEHOLD"))
@@ -105,6 +105,7 @@ public class MainMenuActivity extends AppCompatActivity implements Communication
                 Intent openList = new Intent(MainMenuActivity.this, ViewListActivity.class);
                 openList.putExtra("ItemType", selectedItem.menuItemType);
                 openList.putExtra("NotificationWrapper", _notificationWrapper);
+                openList.putExtra("SessionPersister", _session);
                 startActivity(openList);
             }
         });
@@ -118,7 +119,8 @@ public class MainMenuActivity extends AppCompatActivity implements Communication
 
     private void CreateMainMenuListItems()
     {
-        try {
+        try
+        {
             JSONObject house = new JSONObject(FileIOHandler.Instance().ReadFileAsString("CurrentHousehold"));
             if(house.has("id"))
             {
@@ -134,11 +136,12 @@ public class MainMenuActivity extends AppCompatActivity implements Communication
             }
             else
             {
-                WebHandler.Instance().GetHousehold(this, this);
+                _householdEndpoint.Get(this, this);
             }
-        } catch (JSONException je)
+        }
+        catch (JSONException je)
         {
-            WebHandler.Instance().GetHousehold(this, this);
+            _householdEndpoint.Get(this, this);
         }
     }
 
@@ -149,20 +152,23 @@ public class MainMenuActivity extends AppCompatActivity implements Communication
     }
 
     @Override
-    public void onBackPressed() {
+    public void onBackPressed()
+    {
         // End the app process after pressing back
         finish();
         //Runtime.getRuntime().exit(0);
     }
 
     @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
+    public boolean onCreateOptionsMenu(Menu menu)
+    {
         getMenuInflater().inflate(R.menu.additemmenu, menu);
         return super.onCreateOptionsMenu(menu);
     }
 
     @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
+    public boolean onOptionsItemSelected(MenuItem item)
+    {
         switch (item.getItemId())
         {
             case R.id.action_end:
@@ -181,10 +187,12 @@ public class MainMenuActivity extends AppCompatActivity implements Communication
     private void SignOut()
     {
         _signInClient.signOut()
-                .addOnCompleteListener(this, new OnCompleteListener<Void>() {
+                .addOnCompleteListener(this, new OnCompleteListener<Void>()
+                {
                     @Override
-                    public void onComplete(@NonNull Task<Void> task) {
-                        WebHandler.Instance().SetSessionID("");
+                    public void onComplete(@NonNull Task<Void> task)
+                    {
+                        _session.SetSessionID("");
                         FileIOHandler.Instance().WriteToFile("CurrentHousehold", new JSONObject().toString());
                         Intent signInScreen = new Intent(MainMenuActivity.this, SignInActivity.class);
                         startActivity(signInScreen);
@@ -195,13 +203,15 @@ public class MainMenuActivity extends AppCompatActivity implements Communication
     }
 
     @Override
-    public void OnSuccess(RequestType requestType, Object o) {
+    public void OnSuccess(RequestType requestType, Object o)
+    {
         CreateMainMenuListItems();
         _listAdapter.AddAll(_mainMenuItems);
     }
 
     @Override
-    public void OnFail(RequestType requestType, String message) {
+    public void OnFail(RequestType requestType, String message)
+    {
         if(message.equals(ApiErrorCodes.USER_NOT_IN_HOUSEHOLD.name()))
         {
             MainMenuItem house = new MainMenuItem("Household", R.drawable.baseline_home_black_36, ItemType.HOUSEHOLD.name());
@@ -215,7 +225,8 @@ public class MainMenuActivity extends AppCompatActivity implements Communication
     }
 
     @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+    protected void onActivityResult(int requestCode, int resultCode, Intent data)
+    {
         super.onActivityResult(requestCode, resultCode, data);
 
         switch (resultCode)

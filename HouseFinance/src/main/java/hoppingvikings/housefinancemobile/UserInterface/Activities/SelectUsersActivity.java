@@ -17,16 +17,19 @@ import android.widget.TextView;
 import java.util.ArrayList;
 import java.util.HashMap;
 
+import hoppingvikings.housefinancemobile.Services.SaltVault.User.UserEndpoint;
+import hoppingvikings.housefinancemobile.HouseFinanceClass;
 import hoppingvikings.housefinancemobile.Person;
 import hoppingvikings.housefinancemobile.R;
 import hoppingvikings.housefinancemobile.UserInterface.Lists.UserSelectList.IUserClickedListener;
 import hoppingvikings.housefinancemobile.UserInterface.Lists.UserSelectList.UserSelectAdapter;
 import hoppingvikings.housefinancemobile.WebService.CommunicationCallback;
 import hoppingvikings.housefinancemobile.WebService.RequestType;
-import hoppingvikings.housefinancemobile.WebService.WebHandler;
 
 public class SelectUsersActivity extends AppCompatActivity implements CommunicationCallback<ArrayList<Person>>
 {
+    private UserEndpoint _userEndpoint;
+
     private ArrayList<Person> _users;
     private boolean _multipleSelect;
     private HashMap<Integer, Integer> _selectedUserIds;
@@ -40,17 +43,22 @@ public class SelectUsersActivity extends AppCompatActivity implements Communicat
     private UserSelectAdapter _adapter;
     private TextView _failedToGetUsers;
 
-    private Runnable requestUsers = new Runnable() {
+    private Runnable requestUsers = new Runnable()
+    {
         @Override
-        public void run() {
-            WebHandler.Instance().RequestUsers(SelectUsersActivity.this, SelectUsersActivity.this);
+        public void run()
+        {
+            _userEndpoint.Get(SelectUsersActivity.this, SelectUsersActivity.this);
         }
     };
 
     @Override
-    protected void onCreate(@Nullable Bundle savedInstanceState) {
+    protected void onCreate(@Nullable Bundle savedInstanceState)
+    {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_userselect);
+
+        _userEndpoint = HouseFinanceClass.GetUserComponent().GetUserEndpoint();
 
         _layout = (CoordinatorLayout) findViewById(R.id.coordlayout);
         _rv = (RecyclerView) findViewById(R.id.usersList);

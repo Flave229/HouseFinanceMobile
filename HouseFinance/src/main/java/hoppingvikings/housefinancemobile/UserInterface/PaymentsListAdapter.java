@@ -14,16 +14,17 @@ import org.json.JSONObject;
 import java.util.ArrayList;
 import java.util.Locale;
 
-import hoppingvikings.housefinancemobile.ItemType;
 import hoppingvikings.housefinancemobile.R;
+import hoppingvikings.housefinancemobile.Services.SaltVault.Bills.PaymentsEndpoint;
 import hoppingvikings.housefinancemobile.UserInterface.Items.BillPayment;
 import hoppingvikings.housefinancemobile.WebService.CommunicationCallback;
 import hoppingvikings.housefinancemobile.WebService.RequestType;
-import hoppingvikings.housefinancemobile.WebService.WebHandler;
 
 public class PaymentsListAdapter extends RecyclerView.Adapter<PaymentsListAdapter.CardViewHolder>
         implements CommunicationCallback
 {
+    private final PaymentsEndpoint _paymentEndpoint;
+
     public interface DeleteCallback
     {
         void OnItemDeleted();
@@ -71,43 +72,51 @@ public class PaymentsListAdapter extends RecyclerView.Adapter<PaymentsListAdapte
         _editCallback = owner;
     }
 
-    public PaymentsListAdapter(ArrayList<BillPayment> payments, Context context)
+    public PaymentsListAdapter(Context context, PaymentsEndpoint paymentEndpoint, ArrayList<BillPayment> payments)
     {
-        _payments.addAll(payments);
         _context = context;
+        _paymentEndpoint = paymentEndpoint;
+        _payments.addAll(payments);
     }
 
     @Override
-    public int getItemCount() {
+    public int getItemCount()
+    {
         return _payments.size();
     }
 
     @Override
-    public CardViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+    public CardViewHolder onCreateViewHolder(ViewGroup parent, int viewType)
+    {
         View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.listitem_billpayment, parent, false);
         return new CardViewHolder(v);
     }
 
     @Override
-    public void onBindViewHolder(CardViewHolder holder, int position) {
+    public void onBindViewHolder(CardViewHolder holder, int position)
+    {
         final BillPayment item = _payments.get(position);
         holder.paymentName.setText(item.Person.FirstName + " " + item.Person.Surname);
         holder.paymentDate.setText("Date: " + item.Date);
         holder.paymentAmount.setText("Paid: £" + String.format(Locale.getDefault(), "%.2f", item.AmountPaid));
-        holder.editPayment.setOnClickListener(new View.OnClickListener() {
+        holder.editPayment.setOnClickListener(new View.OnClickListener()
+        {
             @Override
             public void onClick(View v) {
                 _editCallback.onEditPressed(item);
             }
         });
-        holder.deletePayment.setOnClickListener(new View.OnClickListener() {
+        holder.deletePayment.setOnClickListener(new View.OnClickListener()
+        {
             @Override
             public void onClick(View v) {
-                try {
+                try
+                {
                     JSONObject paymentToDelete = new JSONObject();
                     paymentToDelete.put("PaymentId", item.PaymentID);
-                    WebHandler.Instance().DeleteItem(_context, PaymentsListAdapter.this, paymentToDelete, ItemType.PAYMENT);
-                } catch (Exception e)
+                    _paymentEndpoint.Delete(_context, PaymentsListAdapter.this, paymentToDelete);
+                }
+                catch (Exception e)
                 {
 
                 }

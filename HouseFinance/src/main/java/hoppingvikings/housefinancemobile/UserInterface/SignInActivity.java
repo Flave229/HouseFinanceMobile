@@ -5,7 +5,6 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.CoordinatorLayout;
-import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
@@ -23,12 +22,16 @@ import com.google.android.gms.tasks.Task;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import hoppingvikings.housefinancemobile.Services.SaltVault.User.LogInEndpoint;
+import hoppingvikings.housefinancemobile.HouseFinanceClass;
 import hoppingvikings.housefinancemobile.R;
+import hoppingvikings.housefinancemobile.UserInterface.Activities.MainMenuActivity;
 import hoppingvikings.housefinancemobile.WebService.CommunicationCallback;
 import hoppingvikings.housefinancemobile.WebService.RequestType;
-import hoppingvikings.housefinancemobile.WebService.WebHandler;
 
-public class SignInActivity extends AppCompatActivity implements CommunicationCallback {
+public class SignInActivity extends AppCompatActivity implements CommunicationCallback
+{
+    private LogInEndpoint _logInEndpoint;
 
     SignInButton signInButton;
     Toolbar _toolbar;
@@ -38,9 +41,12 @@ public class SignInActivity extends AppCompatActivity implements CommunicationCa
     GoogleSignInClient _signInClient;
 
     @Override
-    protected void onCreate(@Nullable Bundle savedInstanceState) {
+    protected void onCreate(@Nullable Bundle savedInstanceState)
+    {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_signin);
+
+        _logInEndpoint = HouseFinanceClass.GetUserComponent().GetLogInEndpoint();
 
         _toolbar = findViewById(R.id.appToolbar);
         _welcomeText = findViewById(R.id.welcomeText);
@@ -65,21 +71,23 @@ public class SignInActivity extends AppCompatActivity implements CommunicationCa
     }
 
     @Override
-    protected void onStart() {
+    protected void onStart()
+    {
         super.onStart();
         _welcomeText.setText("Signing in...");
         GoogleSignInAccount account = GoogleSignIn.getLastSignedInAccount(this);
 
         if(account != null)
         {
+            // TODO: Remove the Token LogIn Duplication in this class
             JSONObject tokenJson = new JSONObject();
-            try {
-                tokenJson.put("Token", account.getIdToken());
-            } catch (JSONException e)
+            try
             {
-
+                tokenJson.put("Token", account.getIdToken());
             }
-            WebHandler.Instance().GetSessionID(this, this, tokenJson);
+            catch (JSONException e)
+            { }
+            _logInEndpoint.Post(this, this, tokenJson);
         }
         else
         {
@@ -110,25 +118,27 @@ public class SignInActivity extends AppCompatActivity implements CommunicationCa
 
     private void HandleSignInResult(@NonNull Task<GoogleSignInAccount> completeTask)
     {
-        try {
+        try
+        {
             GoogleSignInAccount account = completeTask.getResult(ApiException.class);
             String idToken = account.getIdToken();
 
             _welcomeText.setText("Authenticating...");
 
             JSONObject tokenJson = new JSONObject();
-            try {
+            try
+            {
                 tokenJson.put("Token", idToken);
-            } catch (JSONException e)
+            }
+            catch (JSONException e)
             {
 
             }
 
-            //Send the token to dave to confirm
-            WebHandler.Instance().GetSessionID(this, this, tokenJson);
-
+            _logInEndpoint.Post(this, this, tokenJson);
             //HandleAccount(account);
-        } catch (ApiException e)
+        }
+        catch (ApiException e)
         {
             Log.e("Error: ", "signInResult:failed code=" + e.getStatusCode());
             _welcomeText.setText("Failed to sign in. Please try again.");

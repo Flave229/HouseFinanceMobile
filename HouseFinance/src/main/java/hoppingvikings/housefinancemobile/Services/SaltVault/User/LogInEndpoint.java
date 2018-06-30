@@ -1,33 +1,36 @@
-package hoppingvikings.housefinancemobile.Endpoints.SaltVault;
+package hoppingvikings.housefinancemobile.Services.SaltVault.User;
 
 import android.util.Log;
 
-import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.util.ArrayList;
+import java.io.File;
+
+import javax.inject.Inject;
 
 import hoppingvikings.housefinancemobile.FileIOHandler;
 import hoppingvikings.housefinancemobile.ItemType;
 import hoppingvikings.housefinancemobile.WebService.CommunicationRequest;
 import hoppingvikings.housefinancemobile.WebService.CommunicationResponse;
 import hoppingvikings.housefinancemobile.WebService.HTTPHandler;
-import hoppingvikings.housefinancemobile.WebService.RequestType;
+import hoppingvikings.housefinancemobile.WebService.SessionPersister;
 
-public class HouseholdEndpoint extends HTTPHandler
+public class LogInEndpoint extends HTTPHandler
 {
-    private final String HOUSEHOLD_ENDPOINT = "http://house.flave.co.uk/api/v2/Household";
+    private final String LOG_IN_ENDPOINT = "http://house.flave.co.uk/api/v2/LogIn";
+    private final SessionPersister _session;
+
+    @Inject
+    public LogInEndpoint(SessionPersister session)
+    {
+        _session = session;
+    }
 
     @Override
-    protected CommunicationRequest ConstructGet(String urlAdditions)
+    protected CommunicationRequest ConstructGet(String urlAdditions) throws UnsupportedOperationException
     {
-        return new CommunicationRequest()
-        {{
-            ItemTypeData = ItemType.HOUSEHOLD;
-            Endpoint = HOUSEHOLD_ENDPOINT;
-            OwnerV2 = HouseholdEndpoint.this;
-        }};
+        throw new UnsupportedOperationException();
     }
 
     @Override
@@ -35,10 +38,10 @@ public class HouseholdEndpoint extends HTTPHandler
     {
         return new CommunicationRequest()
         {{
-            ItemTypeData = ItemType.HOUSEHOLD;
-            Endpoint = HOUSEHOLD_ENDPOINT;
+            ItemTypeData = ItemType.LOG_IN;
+            Endpoint = LOG_IN_ENDPOINT;
             RequestBody = String.valueOf(postData);
-            OwnerV2 = HouseholdEndpoint.this;
+            OwnerV2 = LogInEndpoint.this;
         }};
     }
 
@@ -49,15 +52,9 @@ public class HouseholdEndpoint extends HTTPHandler
     }
 
     @Override
-    protected CommunicationRequest ConstructDelete(final JSONObject deleteData)
+    protected CommunicationRequest ConstructDelete(JSONObject deleteData) throws UnsupportedOperationException
     {
-        return new CommunicationRequest()
-        {{
-            ItemTypeData = ItemType.HOUSEHOLD;
-            Endpoint = HOUSEHOLD_ENDPOINT;
-            RequestBody = String.valueOf(deleteData);
-            OwnerV2 = HouseholdEndpoint.this;
-        }};
+        throw new UnsupportedOperationException();
     }
 
     @Override
@@ -73,12 +70,7 @@ public class HouseholdEndpoint extends HTTPHandler
                 return;
             }
 
-            if (result.RequestTypeData == RequestType.GET)
-            {
-                HandleHouseholdResponse(result);
-            }
-            else
-                result.Callback.OnSuccess(result.RequestTypeData, null);
+            HandleLogInResponse(result);
         }
         catch (JSONException je)
         {
@@ -91,16 +83,20 @@ public class HouseholdEndpoint extends HTTPHandler
         }
     }
 
-    private void HandleHouseholdResponse(CommunicationResponse result)
+    private void HandleLogInResponse(CommunicationResponse result)
     {
         try
         {
-            if (result.Response.has("house"))
+            if(result.Response.has("user"))
             {
-                JSONObject house = result.Response.getJSONObject("house");
+                FileIOHandler.Instance().WriteToFile("CurrentUser", result.Response.getJSONObject("user").toString());
+            }
 
-                FileIOHandler.Instance().WriteToFile("CurrentHousehold", house.toString());
-                result.Callback.OnSuccess(result.RequestTypeData, house.getString("id"));
+            if (result.Response.has("sessionId"))
+            {
+                String sessionID = result.Response.getString("sessionId");
+                _session.SetSessionID(sessionID);
+                result.Callback.OnSuccess(result.RequestTypeData, sessionID);
             }
             else
             {
@@ -112,7 +108,7 @@ public class HouseholdEndpoint extends HTTPHandler
             je.printStackTrace();
             result.Callback.OnFail(result.RequestTypeData, "Could not obtain session");
         }
-        catch (Exception e)
+        catch(Exception e)
         {
             result.Callback.OnFail(result.RequestTypeData, "Could not obtain session");
         }

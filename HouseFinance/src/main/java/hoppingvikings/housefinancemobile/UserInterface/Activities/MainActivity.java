@@ -1,25 +1,15 @@
-package hoppingvikings.housefinancemobile.UserInterface;
+package hoppingvikings.housefinancemobile.UserInterface.Activities;
 
 import android.Manifest;
 import android.app.ActivityManager;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
-import android.os.Handler;
 import android.support.annotation.NonNull;
-import android.support.design.widget.CoordinatorLayout;
-import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
-import android.support.design.widget.TabLayout;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
-import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.Toolbar;
 import android.util.Log;
-import android.view.Menu;
-import android.view.MenuItem;
-import android.widget.Toast;
 
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
@@ -32,18 +22,26 @@ import com.google.android.gms.tasks.Task;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import hoppingvikings.housefinancemobile.Services.SaltVault.User.LogInEndpoint;
+import hoppingvikings.housefinancemobile.HouseFinanceClass;
 import hoppingvikings.housefinancemobile.R;
+import hoppingvikings.housefinancemobile.UserInterface.Activities.MainMenuActivity;
+import hoppingvikings.housefinancemobile.UserInterface.SignInActivity;
 import hoppingvikings.housefinancemobile.WebService.CommunicationCallback;
 import hoppingvikings.housefinancemobile.WebService.RequestType;
-import hoppingvikings.housefinancemobile.WebService.WebHandler;
 
-public class MainActivity extends AppCompatActivity implements CommunicationCallback {
 
+public class MainActivity extends AppCompatActivity implements CommunicationCallback
+{
+    private LogInEndpoint _logInEndpoint;
     GoogleSignInClient _signInClient;
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
+    protected void onCreate(Bundle savedInstanceState)
+    {
         super.onCreate(savedInstanceState);
+
+        _logInEndpoint = HouseFinanceClass.GetUserComponent().GetLogInEndpoint();
 
         GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
                 .requestIdToken(getString(R.string.backend_id))
@@ -51,7 +49,7 @@ public class MainActivity extends AppCompatActivity implements CommunicationCall
 
         _signInClient = GoogleSignIn.getClient(this, gso);
 
-        // TODO: Need to keep this around for when "We want to write stuff to a file". I asked what specifically... Ha
+        // TODO: Need to keep this around for when "We want to write stuff to a file".
         if((ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED)
                 || ContextCompat.checkSelfPermission(this, Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED)
         {
@@ -91,22 +89,23 @@ public class MainActivity extends AppCompatActivity implements CommunicationCall
 
     private void HandleSignInResult(@NonNull Task<GoogleSignInAccount> completeTask)
     {
-        try {
+        try
+        {
             GoogleSignInAccount account = completeTask.getResult(ApiException.class);
             String idToken = account.getIdToken();
 
             JSONObject tokenJson = new JSONObject();
-            try {
-                tokenJson.put("Token", idToken);
-            } catch (JSONException e)
+            try
             {
-
+                tokenJson.put("Token", idToken);
             }
+            catch (JSONException e)
+            { }
 
-            WebHandler.Instance().GetSessionID(this, this, tokenJson);
-            // Send the token to dave to confirm
+            _logInEndpoint.Post(this,this, tokenJson);
             //GoToMainMenu();
-        } catch (ApiException e)
+        }
+        catch (ApiException e)
         {
             Log.e("Error: ", "signInResult:failed code=" + e.getStatusCode());
             GoToSignInPage();

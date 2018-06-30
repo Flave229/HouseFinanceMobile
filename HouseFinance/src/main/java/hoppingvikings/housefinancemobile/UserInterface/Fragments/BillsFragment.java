@@ -4,8 +4,6 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.design.widget.CoordinatorLayout;
-import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
@@ -16,26 +14,27 @@ import android.view.ViewGroup;
 
 import java.util.ArrayList;
 
-import hoppingvikings.housefinancemobile.Repositories.BillRepository;
+import hoppingvikings.housefinancemobile.HouseFinanceClass;
+import hoppingvikings.housefinancemobile.Services.SaltVault.Bills.BillRepository;
 import hoppingvikings.housefinancemobile.R;
-import hoppingvikings.housefinancemobile.UserInterface.Activities.AddNewBillActivity;
+import hoppingvikings.housefinancemobile.Services.SaltVault.Bills.BillEndpoint;
 import hoppingvikings.housefinancemobile.UserInterface.Items.BillListObjectPeople;
 import hoppingvikings.housefinancemobile.UserInterface.Lists.BillList.BillListAdapter;
 import hoppingvikings.housefinancemobile.UserInterface.Items.BillListObject;
 import hoppingvikings.housefinancemobile.UserInterface.Lists.ListItemDivider;
-import hoppingvikings.housefinancemobile.UserInterface.MainActivity;
 import hoppingvikings.housefinancemobile.UserInterface.Activities.ViewBillDetailsActivity;
-import hoppingvikings.housefinancemobile.UserInterface.MainMenuActivity;
+import hoppingvikings.housefinancemobile.UserInterface.Activities.MainMenuActivity;
 import hoppingvikings.housefinancemobile.UserInterface.PeoplePopup;
 import hoppingvikings.housefinancemobile.WebService.CommunicationCallback;
 import hoppingvikings.housefinancemobile.WebService.RequestType;
-import hoppingvikings.housefinancemobile.WebService.WebHandler;
 
 import static android.app.Activity.RESULT_CANCELED;
 import static android.app.Activity.RESULT_OK;
 
 public class BillsFragment extends Fragment
-        implements CommunicationCallback, BillListAdapter.ViewAllPeopleClicked {
+        implements CommunicationCallback, BillListAdapter.ViewAllPeopleClicked
+{
+    private BillEndpoint _billEndpoint;
 
     CoordinatorLayout _layout;
     Handler _handler;
@@ -47,16 +46,20 @@ public class BillsFragment extends Fragment
 
     PeoplePopup _peopleListPopup;
 
-    private Runnable contactWebsite = new Runnable() {
+    private Runnable contactWebsite = new Runnable()
+    {
         @Override
-        public void run() {
-            WebHandler.Instance().GetBills(getContext(), BillsFragment.this);
+        public void run()
+        {
+            _billEndpoint.Get(getContext(), BillsFragment.this);
         }
     };
 
-    private Runnable updateList = new Runnable() {
+    private Runnable updateList = new Runnable()
+    {
         @Override
-        public void run() {
+        public void run()
+        {
             BillRepository billRepository = BillRepository.Instance();
             if (billRepository.Get() != null) {
                 if(_cards != null) {
@@ -84,7 +87,8 @@ public class BillsFragment extends Fragment
     };
 
     @Override
-    public void onViewAllPressed(ArrayList<BillListObjectPeople> allPeople) {
+    public void onViewAllPressed(ArrayList<BillListObjectPeople> allPeople)
+    {
         _peopleListPopup.Show(allPeople);
     }
 
@@ -97,6 +101,8 @@ public class BillsFragment extends Fragment
     public void onCreate(Bundle savedInstanceState)
     {
         super.onCreate(savedInstanceState);
+
+        _billEndpoint = HouseFinanceClass.GetBillComponent().GetBillEndpoint();
     }
 
     @Override
