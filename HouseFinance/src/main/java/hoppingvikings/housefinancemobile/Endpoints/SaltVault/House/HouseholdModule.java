@@ -9,9 +9,9 @@ public class HouseholdModule
 {
     @Provides
     @HouseholdScope
-    public HouseholdEndpoint HouseholdEndpoint()
+    public HouseholdEndpoint HouseholdEndpoint(SessionPersister session)
     {
-        return new HouseholdEndpoint();
+        return new HouseholdEndpoint(session);
     }
 
     @Provides

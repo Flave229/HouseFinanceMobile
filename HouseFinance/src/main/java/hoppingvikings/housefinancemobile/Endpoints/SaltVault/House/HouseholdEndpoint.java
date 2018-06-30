@@ -13,18 +13,23 @@ import hoppingvikings.housefinancemobile.WebService.CommunicationRequest;
 import hoppingvikings.housefinancemobile.WebService.CommunicationResponse;
 import hoppingvikings.housefinancemobile.WebService.HTTPHandler;
 import hoppingvikings.housefinancemobile.WebService.RequestType;
+import hoppingvikings.housefinancemobile.WebService.SessionPersister;
 
 public class HouseholdEndpoint extends HTTPHandler
 {
     private final String HOUSEHOLD_ENDPOINT = "http://house.flave.co.uk/api/v2/Household";
+    private final SessionPersister _session;
 
     @Inject
-    public HouseholdEndpoint()
-    {}
+    public HouseholdEndpoint(SessionPersister session)
+    {
+        _session = session;
+    }
 
     @Override
     protected CommunicationRequest ConstructGet(String urlAdditions)
     {
+        SetRequestProperty("Authorization", _session.GetSessionID());
         return new CommunicationRequest()
         {{
             ItemTypeData = ItemType.HOUSEHOLD;
@@ -36,6 +41,7 @@ public class HouseholdEndpoint extends HTTPHandler
     @Override
     protected CommunicationRequest ConstructPost(final JSONObject postData)
     {
+        SetRequestProperty("Authorization", _session.GetSessionID());
         return new CommunicationRequest()
         {{
             ItemTypeData = ItemType.HOUSEHOLD;
@@ -54,6 +60,7 @@ public class HouseholdEndpoint extends HTTPHandler
     @Override
     protected CommunicationRequest ConstructDelete(final JSONObject deleteData)
     {
+        SetRequestProperty("Authorization", _session.GetSessionID());
         return new CommunicationRequest()
         {{
             ItemTypeData = ItemType.HOUSEHOLD;

@@ -181,7 +181,8 @@ public class AddNewBillActivity extends AppCompatActivity implements Communicati
 
                 confirmCancel.setButton(DialogInterface.BUTTON_POSITIVE, "Confirm", new DialogInterface.OnClickListener() {
                     @Override
-                    public void onClick(DialogInterface dialogInterface, int i) {
+                    public void onClick(DialogInterface dialogInterface, int i)
+                    {
                         confirmCancel.dismiss();
 
                         recurring = recurRadio.isChecked();
@@ -197,7 +198,8 @@ public class AddNewBillActivity extends AppCompatActivity implements Communicati
 
                         JSONObject newBill = new JSONObject();
 
-                        try {
+                        try
+                        {
                             newBill.put("Name", billName);
                             newBill.put("TotalAmount", billAmount.doubleValue());
                             newBill.put("Due", new SimpleDateFormat("yyyy-MM-dd").format(billDueDate));
@@ -218,7 +220,8 @@ public class AddNewBillActivity extends AppCompatActivity implements Communicati
 
                             WebHandler.Instance().UploadNewItem(getApplicationContext(), newBill, AddNewBillActivity.this, ItemType.BILL);
 
-                        } catch (JSONException je)
+                        }
+                        catch (JSONException je)
                         {
                             Snackbar.make(layout, "Failed to create Json", Snackbar.LENGTH_LONG).show();
                             ReenableElements();

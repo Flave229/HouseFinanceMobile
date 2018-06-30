@@ -28,7 +28,6 @@ public class WebHandler
     private PaymentsEndpoint _paymentsEndpoint;
     private ShoppingEndpoint _shoppingEndpoint;
     private ToDoEndpoint _toDoEndpoint;
-    private HouseholdEndpoint _householdEndpoint;
     private UserEndpoint _userEndpoint;
     private LogInEndpoint _logInEndpoint;
 
@@ -38,7 +37,6 @@ public class WebHandler
         _paymentsEndpoint = new PaymentsEndpoint();
         _shoppingEndpoint = new ShoppingEndpoint();
         _toDoEndpoint = new ToDoEndpoint();
-        _householdEndpoint = new HouseholdEndpoint();
         _userEndpoint = new UserEndpoint();
         _session = HouseFinanceClass.GetSessionPersisterComponent().GetSessionPersister();
         _logInEndpoint = new LogInEndpoint(_session);
@@ -126,11 +124,6 @@ public class WebHandler
             _toDoEndpoint.Post(context, callback, newItem);
             return;
         }
-        if (itemType == ItemType.HOUSEHOLD)
-        {
-            _householdEndpoint.SetRequestProperty("Authorization", _session.GetSessionID());
-            _householdEndpoint.Post(context, callback, newItem);
-        }
     }
 
     public void EditItem(Context context, final JSONObject editedItem, final CommunicationCallback callback, final ItemType itemType)
@@ -187,17 +180,6 @@ public class WebHandler
             _toDoEndpoint.Delete(context, callback, itemJson);
             return;
         }
-        if (itemType == ItemType.HOUSEHOLD)
-        {
-            _householdEndpoint.SetRequestProperty("Authorization", _session.GetSessionID());
-            _householdEndpoint.Delete(context, callback, itemJson);
-        }
-    }
-
-    public void GetHousehold(Context context, final CommunicationCallback callback)
-    {
-        _householdEndpoint.SetRequestProperty("Authorization", _session.GetSessionID());
-        _householdEndpoint.Get(context, callback);
     }
 
     public void SetSessionPersister(SessionPersister session)

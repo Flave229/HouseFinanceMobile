@@ -26,6 +26,7 @@ import org.json.JSONObject;
 import java.util.ArrayList;
 
 import hoppingvikings.housefinancemobile.ApiErrorCodes;
+import hoppingvikings.housefinancemobile.Endpoints.SaltVault.House.HouseholdEndpoint;
 import hoppingvikings.housefinancemobile.FileIOHandler;
 import hoppingvikings.housefinancemobile.HouseFinanceClass;
 import hoppingvikings.housefinancemobile.ItemType;
@@ -45,6 +46,7 @@ public class MainMenuActivity extends AppCompatActivity implements Communication
 {
     private NotificationWrapper _notificationWrapper;
     private SessionPersister _session;
+    private HouseholdEndpoint _householdEndpoint;
 
     private CoordinatorLayout _layout;
     private MainMenuListAdapter _listAdapter;
@@ -61,6 +63,8 @@ public class MainMenuActivity extends AppCompatActivity implements Communication
 
         _notificationWrapper = HouseFinanceClass.GetNotificationWrapperComponent().GetNotificationWrapper();
         _session = HouseFinanceClass.GetSessionPersisterComponent().GetSessionPersister();
+        _householdEndpoint = HouseFinanceClass.GetHouseholdComponent().GetHouseholdEndpoint();
+
         _layout = findViewById(R.id.coordLayout);
 
         Toolbar appToolbar = findViewById(R.id.appToolbar);
@@ -118,7 +122,8 @@ public class MainMenuActivity extends AppCompatActivity implements Communication
 
     private void CreateMainMenuListItems()
     {
-        try {
+        try
+        {
             JSONObject house = new JSONObject(FileIOHandler.Instance().ReadFileAsString("CurrentHousehold"));
             if(house.has("id"))
             {
@@ -134,11 +139,12 @@ public class MainMenuActivity extends AppCompatActivity implements Communication
             }
             else
             {
-                WebHandler.Instance().GetHousehold(this, this);
+                _householdEndpoint.Get(this, this);
             }
-        } catch (JSONException je)
+        }
+        catch (JSONException je)
         {
-            WebHandler.Instance().GetHousehold(this, this);
+            _householdEndpoint.Get(this, this);
         }
     }
 
@@ -149,20 +155,23 @@ public class MainMenuActivity extends AppCompatActivity implements Communication
     }
 
     @Override
-    public void onBackPressed() {
+    public void onBackPressed()
+    {
         // End the app process after pressing back
         finish();
         //Runtime.getRuntime().exit(0);
     }
 
     @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
+    public boolean onCreateOptionsMenu(Menu menu)
+    {
         getMenuInflater().inflate(R.menu.additemmenu, menu);
         return super.onCreateOptionsMenu(menu);
     }
 
     @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
+    public boolean onOptionsItemSelected(MenuItem item)
+    {
         switch (item.getItemId())
         {
             case R.id.action_end:
@@ -198,13 +207,15 @@ public class MainMenuActivity extends AppCompatActivity implements Communication
     }
 
     @Override
-    public void OnSuccess(RequestType requestType, Object o) {
+    public void OnSuccess(RequestType requestType, Object o)
+    {
         CreateMainMenuListItems();
         _listAdapter.AddAll(_mainMenuItems);
     }
 
     @Override
-    public void OnFail(RequestType requestType, String message) {
+    public void OnFail(RequestType requestType, String message)
+    {
         if(message.equals(ApiErrorCodes.USER_NOT_IN_HOUSEHOLD.name()))
         {
             MainMenuItem house = new MainMenuItem("Household", R.drawable.baseline_home_black_36, ItemType.HOUSEHOLD.name());
@@ -218,7 +229,8 @@ public class MainMenuActivity extends AppCompatActivity implements Communication
     }
 
     @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+    protected void onActivityResult(int requestCode, int resultCode, Intent data)
+    {
         super.onActivityResult(requestCode, resultCode, data);
 
         switch (resultCode)

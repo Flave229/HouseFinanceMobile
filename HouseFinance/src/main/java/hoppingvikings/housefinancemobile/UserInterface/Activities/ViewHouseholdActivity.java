@@ -23,6 +23,7 @@ import android.widget.Toast;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import hoppingvikings.housefinancemobile.Endpoints.SaltVault.House.HouseholdEndpoint;
 import hoppingvikings.housefinancemobile.Endpoints.SaltVault.House.HouseholdInviteEndpoint;
 import hoppingvikings.housefinancemobile.FileIOHandler;
 import hoppingvikings.housefinancemobile.HouseFinanceClass;
@@ -49,12 +50,14 @@ public class ViewHouseholdActivity extends AppCompatActivity implements Communic
     boolean _addingDeletingHouse;
     boolean _joiningHouse;
     boolean _joinedHouse = false;
+    private HouseholdEndpoint _householdEndpoint;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState)
     {
         super.onCreate(savedInstanceState);
 
+        _householdEndpoint = HouseFinanceClass.GetHouseholdComponent().GetHouseholdEndpoint();
         _householdInviteEndpoint = HouseFinanceClass.GetHouseholdComponent().GetHouseholdInviteEndpoint();
 
         setContentView(R.layout.activity_household);
@@ -151,7 +154,7 @@ public class ViewHouseholdActivity extends AppCompatActivity implements Communic
                         _addingDeletingHouse = true;
                         JSONObject house = new JSONObject();
                         house.put("KeepHousehold", false);
-                        WebHandler.Instance().DeleteItem(ViewHouseholdActivity.this, ViewHouseholdActivity.this, house,  ItemType.HOUSEHOLD);
+                        _householdEndpoint.Delete(ViewHouseholdActivity.this, ViewHouseholdActivity.this, house);
                     } catch (JSONException je)
                     {
 
@@ -175,18 +178,22 @@ public class ViewHouseholdActivity extends AppCompatActivity implements Communic
 
                     final TextInputEditText houseNameText = createHouseDialog.findViewById(R.id.createHouseEntryText);
 
-                    createHouseAlert.setButton(DialogInterface.BUTTON_POSITIVE, "OK", new DialogInterface.OnClickListener() {
+                    createHouseAlert.setButton(DialogInterface.BUTTON_POSITIVE, "OK", new DialogInterface.OnClickListener()
+                    {
                         @Override
-                        public void onClick(DialogInterface dialog, int which) {
+                        public void onClick(DialogInterface dialog, int which)
+                        {
                             if(houseNameText.getText().toString().length() > 0)
                             {
-                                try {
+                                try
+                                {
                                     _addingDeletingHouse = true;
                                     JSONObject house = new JSONObject();
                                     house.put("Name", houseNameText.getText().toString());
-                                    WebHandler.Instance().UploadNewItem(ViewHouseholdActivity.this, house, ViewHouseholdActivity.this, ItemType.HOUSEHOLD);
+                                    _householdEndpoint.Post(ViewHouseholdActivity.this, ViewHouseholdActivity.this, house);
                                     createHouseAlert.dismiss();
-                                } catch (JSONException je)
+                                }
+                                catch (JSONException je)
                                 {
 
                                 }
@@ -316,7 +323,7 @@ public class ViewHouseholdActivity extends AppCompatActivity implements Communic
         {
             if(_addingDeletingHouse || _joiningHouse)
             {
-                WebHandler.Instance().GetHousehold(this, this);
+                _householdEndpoint.Get(this, this);
                 return;
             }
         }
