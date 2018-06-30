@@ -89,12 +89,6 @@ public class ShoppingCartFragment extends Fragment
                 submitting = true;
                 //_activity.progress = 100 / _activity._shoppingItems.size();
                 //_activity.addToCartButton.setEnabled(false);
-                try {
-                    //WebHandler.Instance().UploadNewItem(getContext(), new JSONObject(_activity._shoppingItems.get(0)), _activity, ItemType.SHOPPING);
-                } catch (Exception e)
-                {
-
-                }
             }
         });
         submitcheck.setButton(DialogInterface.BUTTON_NEGATIVE, "Cancel", new DialogInterface.OnClickListener() {

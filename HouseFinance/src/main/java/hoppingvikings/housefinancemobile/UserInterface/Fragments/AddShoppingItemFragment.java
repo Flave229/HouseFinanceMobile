@@ -9,7 +9,6 @@ import android.support.design.widget.Snackbar;
 import android.support.design.widget.TextInputEditText;
 import android.support.design.widget.TextInputLayout;
 import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AlertDialog;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -27,13 +26,11 @@ import java.util.ArrayList;
 import java.util.Date;
 
 import hoppingvikings.housefinancemobile.HouseFinanceClass;
-import hoppingvikings.housefinancemobile.ItemType;
 import hoppingvikings.housefinancemobile.R;
 import hoppingvikings.housefinancemobile.Services.SaltVault.Shopping.ShoppingEndpoint;
 import hoppingvikings.housefinancemobile.UserInterface.Activities.AddNewShoppingItemActivity;
 import hoppingvikings.housefinancemobile.UserInterface.Activities.SelectUsersActivity;
 import hoppingvikings.housefinancemobile.UserInterface.Fragments.Interfaces.ButtonPressedCallback;
-import hoppingvikings.housefinancemobile.WebService.WebHandler;
 
 import static android.app.Activity.RESULT_CANCELED;
 import static android.app.Activity.RESULT_OK;
@@ -274,7 +271,6 @@ public class AddShoppingItemFragment extends Fragment implements ButtonPressedCa
             //_activity.getSupportActionBar().setSubtitle("Items in cart: " + String.valueOf(_activity._shoppingItems.size()));
 
             shoppingItemNameEntry.setText("");
-            //GlobalObjects.WebHandler.UploadNewShoppingItem(getApplicationContext(), newItem, AddNewShoppingItemActivity.this);
         } catch (JSONException je)
         {
             Snackbar.make(layout, "Failed to create Json", Snackbar.LENGTH_LONG).show();

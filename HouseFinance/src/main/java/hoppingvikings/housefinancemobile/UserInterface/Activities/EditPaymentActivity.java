@@ -30,12 +30,10 @@ import java.util.GregorianCalendar;
 import java.util.Locale;
 
 import hoppingvikings.housefinancemobile.HouseFinanceClass;
-import hoppingvikings.housefinancemobile.ItemType;
 import hoppingvikings.housefinancemobile.R;
 import hoppingvikings.housefinancemobile.Services.SaltVault.Bills.PaymentsEndpoint;
 import hoppingvikings.housefinancemobile.WebService.CommunicationCallback;
 import hoppingvikings.housefinancemobile.WebService.RequestType;
-import hoppingvikings.housefinancemobile.WebService.WebHandler;
 
 public class EditPaymentActivity extends AppCompatActivity implements CommunicationCallback
 {

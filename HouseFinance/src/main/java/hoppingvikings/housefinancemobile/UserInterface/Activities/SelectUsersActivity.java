@@ -25,7 +25,6 @@ import hoppingvikings.housefinancemobile.UserInterface.Lists.UserSelectList.IUse
 import hoppingvikings.housefinancemobile.UserInterface.Lists.UserSelectList.UserSelectAdapter;
 import hoppingvikings.housefinancemobile.WebService.CommunicationCallback;
 import hoppingvikings.housefinancemobile.WebService.RequestType;
-import hoppingvikings.housefinancemobile.WebService.WebHandler;
 
 public class SelectUsersActivity extends AppCompatActivity implements CommunicationCallback<ArrayList<Person>>
 {

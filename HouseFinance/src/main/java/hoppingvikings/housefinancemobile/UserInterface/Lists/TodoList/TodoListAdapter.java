@@ -19,7 +19,6 @@ import org.json.JSONObject;
 import java.util.ArrayList;
 
 import hoppingvikings.housefinancemobile.BitmapCache;
-import hoppingvikings.housefinancemobile.ItemType;
 import hoppingvikings.housefinancemobile.Notifications.NotificationType;
 import hoppingvikings.housefinancemobile.NotificationWrapper;
 import hoppingvikings.housefinancemobile.R;
@@ -27,7 +26,6 @@ import hoppingvikings.housefinancemobile.Services.SaltVault.ToDo.ToDoEndpoint;
 import hoppingvikings.housefinancemobile.UserInterface.Items.TodoListObject;
 import hoppingvikings.housefinancemobile.WebService.CommunicationCallback;
 import hoppingvikings.housefinancemobile.WebService.RequestType;
-import hoppingvikings.housefinancemobile.WebService.WebHandler;
 
 import static android.content.Context.NOTIFICATION_SERVICE;
 

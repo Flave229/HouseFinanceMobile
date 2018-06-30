@@ -43,13 +43,11 @@ import java.util.Locale;
 import hoppingvikings.housefinancemobile.Services.SaltVault.Bills.BillEndpoint;
 import hoppingvikings.housefinancemobile.Services.SaltVault.User.LogInEndpoint;
 import hoppingvikings.housefinancemobile.HouseFinanceClass;
-import hoppingvikings.housefinancemobile.ItemType;
 import hoppingvikings.housefinancemobile.R;
 import hoppingvikings.housefinancemobile.UserInterface.SignInActivity;
 import hoppingvikings.housefinancemobile.WebService.CommunicationCallback;
 import hoppingvikings.housefinancemobile.WebService.RequestType;
 import hoppingvikings.housefinancemobile.WebService.SessionPersister;
-import hoppingvikings.housefinancemobile.WebService.WebHandler;
 
 public class AddNewBillActivity extends AppCompatActivity implements CommunicationCallback
 {

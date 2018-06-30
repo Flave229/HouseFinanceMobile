@@ -47,7 +47,6 @@ import hoppingvikings.housefinancemobile.UserInterface.SignInActivity;
 import hoppingvikings.housefinancemobile.WebService.CommunicationCallback;
 import hoppingvikings.housefinancemobile.WebService.RequestType;
 import hoppingvikings.housefinancemobile.WebService.SessionPersister;
-import hoppingvikings.housefinancemobile.WebService.WebHandler;
 
 public class ViewListActivity extends AppCompatActivity
         implements CommunicationCallback,

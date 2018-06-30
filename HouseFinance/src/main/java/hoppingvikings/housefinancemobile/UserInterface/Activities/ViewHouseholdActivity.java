@@ -27,11 +27,9 @@ import hoppingvikings.housefinancemobile.Services.SaltVault.House.HouseholdEndpo
 import hoppingvikings.housefinancemobile.Services.SaltVault.House.HouseholdInviteEndpoint;
 import hoppingvikings.housefinancemobile.FileIOHandler;
 import hoppingvikings.housefinancemobile.HouseFinanceClass;
-import hoppingvikings.housefinancemobile.ItemType;
 import hoppingvikings.housefinancemobile.R;
 import hoppingvikings.housefinancemobile.WebService.CommunicationCallback;
 import hoppingvikings.housefinancemobile.WebService.RequestType;
-import hoppingvikings.housefinancemobile.WebService.WebHandler;
 
 public class ViewHouseholdActivity extends AppCompatActivity implements CommunicationCallback
 {

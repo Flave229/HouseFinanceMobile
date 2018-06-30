@@ -26,14 +26,12 @@ import org.json.JSONObject;
 import java.util.ArrayList;
 
 import hoppingvikings.housefinancemobile.HouseFinanceClass;
-import hoppingvikings.housefinancemobile.ItemType;
 import hoppingvikings.housefinancemobile.Services.SaltVault.Shopping.ShoppingEndpoint;
 import hoppingvikings.housefinancemobile.Services.SaltVault.Shopping.ShoppingRepository;
 import hoppingvikings.housefinancemobile.R;
 import hoppingvikings.housefinancemobile.UserInterface.Items.ShoppingListObject;
 import hoppingvikings.housefinancemobile.WebService.CommunicationCallback;
 import hoppingvikings.housefinancemobile.WebService.RequestType;
-import hoppingvikings.housefinancemobile.WebService.WebHandler;
 
 public class EditShoppingItemActivity extends AppCompatActivity implements CommunicationCallback
 {

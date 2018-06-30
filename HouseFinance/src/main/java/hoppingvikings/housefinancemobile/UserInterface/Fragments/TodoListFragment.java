@@ -25,7 +25,6 @@ import hoppingvikings.housefinancemobile.UserInterface.Lists.TodoList.TodoListAd
 import hoppingvikings.housefinancemobile.UserInterface.Activities.MainMenuActivity;
 import hoppingvikings.housefinancemobile.WebService.CommunicationCallback;
 import hoppingvikings.housefinancemobile.WebService.RequestType;
-import hoppingvikings.housefinancemobile.WebService.WebHandler;
 
 import static android.app.Activity.RESULT_CANCELED;
 import static android.app.Activity.RESULT_OK;
