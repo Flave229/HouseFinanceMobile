@@ -40,6 +40,7 @@ import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.Locale;
 
+import hoppingvikings.housefinancemobile.Services.SaltVault.Bills.BillEndpoint;
 import hoppingvikings.housefinancemobile.Services.SaltVault.User.LogInEndpoint;
 import hoppingvikings.housefinancemobile.HouseFinanceClass;
 import hoppingvikings.housefinancemobile.ItemType;
@@ -54,6 +55,7 @@ public class AddNewBillActivity extends AppCompatActivity implements Communicati
 {
     private SessionPersister _session;
     private LogInEndpoint _logInEndpoint;
+    private BillEndpoint _billEndpoint;
 
     Button submitButton;
     TextInputLayout billNameEntry;
@@ -91,6 +93,7 @@ public class AddNewBillActivity extends AppCompatActivity implements Communicati
 
         _session = HouseFinanceClass.GetSessionPersisterComponent().GetSessionPersister();
         _logInEndpoint = HouseFinanceClass.GetUserComponent().GetLogInEndpoint();
+        _billEndpoint = HouseFinanceClass.GetBillComponent().GetBillEndpoint();
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.appToolbar);
         setSupportActionBar(toolbar);
@@ -220,9 +223,7 @@ public class AddNewBillActivity extends AppCompatActivity implements Communicati
                             else
                                 newBill.put("RecurringType", 0);
 
-
-                            WebHandler.Instance().UploadNewItem(getApplicationContext(), newBill, AddNewBillActivity.this, ItemType.BILL);
-
+                            _billEndpoint.Post(getApplicationContext(), AddNewBillActivity.this, newBill);
                         }
                         catch (JSONException je)
                         {

@@ -14,8 +14,10 @@ import android.view.ViewGroup;
 
 import java.util.ArrayList;
 
+import hoppingvikings.housefinancemobile.HouseFinanceClass;
 import hoppingvikings.housefinancemobile.Repositories.BillRepository;
 import hoppingvikings.housefinancemobile.R;
+import hoppingvikings.housefinancemobile.Services.SaltVault.Bills.BillEndpoint;
 import hoppingvikings.housefinancemobile.UserInterface.Items.BillListObjectPeople;
 import hoppingvikings.housefinancemobile.UserInterface.Lists.BillList.BillListAdapter;
 import hoppingvikings.housefinancemobile.UserInterface.Items.BillListObject;
@@ -31,7 +33,9 @@ import static android.app.Activity.RESULT_CANCELED;
 import static android.app.Activity.RESULT_OK;
 
 public class BillsFragment extends Fragment
-        implements CommunicationCallback, BillListAdapter.ViewAllPeopleClicked {
+        implements CommunicationCallback, BillListAdapter.ViewAllPeopleClicked
+{
+    private BillEndpoint _billEndpoint;
 
     CoordinatorLayout _layout;
     Handler _handler;
@@ -43,16 +47,20 @@ public class BillsFragment extends Fragment
 
     PeoplePopup _peopleListPopup;
 
-    private Runnable contactWebsite = new Runnable() {
+    private Runnable contactWebsite = new Runnable()
+    {
         @Override
-        public void run() {
-            WebHandler.Instance().GetBills(getContext(), BillsFragment.this);
+        public void run()
+        {
+            _billEndpoint.Get(getContext(), BillsFragment.this);
         }
     };
 
-    private Runnable updateList = new Runnable() {
+    private Runnable updateList = new Runnable()
+    {
         @Override
-        public void run() {
+        public void run()
+        {
             BillRepository billRepository = BillRepository.Instance();
             if (billRepository.Get() != null) {
                 if(_cards != null) {
@@ -80,7 +88,8 @@ public class BillsFragment extends Fragment
     };
 
     @Override
-    public void onViewAllPressed(ArrayList<BillListObjectPeople> allPeople) {
+    public void onViewAllPressed(ArrayList<BillListObjectPeople> allPeople)
+    {
         _peopleListPopup.Show(allPeople);
     }
 
@@ -93,6 +102,8 @@ public class BillsFragment extends Fragment
     public void onCreate(Bundle savedInstanceState)
     {
         super.onCreate(savedInstanceState);
+
+        _billEndpoint = HouseFinanceClass.GetBillComponent().GetBillEndpoint();
     }
 
     @Override

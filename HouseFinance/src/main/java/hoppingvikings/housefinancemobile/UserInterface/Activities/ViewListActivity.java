@@ -26,6 +26,7 @@ import org.json.JSONObject;
 import java.io.Serializable;
 import java.util.ArrayList;
 
+import hoppingvikings.housefinancemobile.Services.SaltVault.Bills.BillEndpoint;
 import hoppingvikings.housefinancemobile.Services.SaltVault.User.LogInEndpoint;
 import hoppingvikings.housefinancemobile.HouseFinanceClass;
 import hoppingvikings.housefinancemobile.NotificationWrapper;
@@ -54,6 +55,7 @@ public class ViewListActivity extends AppCompatActivity
         TodoListAdapter.DeleteCallback, TodoListAdapter.EditPressedCallback
 {
     private LogInEndpoint _logInEndpoint;
+    private BillEndpoint _billEndpoint;
 
     CoordinatorLayout _layout;
     RecyclerView _rv;
@@ -83,7 +85,7 @@ public class ViewListActivity extends AppCompatActivity
             switch (_currentType)
             {
                 case "BILL":
-                    WebHandler.Instance().GetBills(ViewListActivity.this, ViewListActivity.this);
+                    _billEndpoint.Get(ViewListActivity.this, ViewListActivity.this);
                     break;
 
                 case "SHOPPING":
@@ -97,9 +99,11 @@ public class ViewListActivity extends AppCompatActivity
         }
     };
 
-    private Runnable updateList = new Runnable() {
+    private Runnable updateList = new Runnable()
+    {
         @Override
-        public void run() {
+        public void run()
+        {
             switch (_currentType)
             {
                 case "BILL":
@@ -177,6 +181,7 @@ public class ViewListActivity extends AppCompatActivity
         NotificationWrapper notificationWrapper = HouseFinanceClass.GetNotificationWrapperComponent().GetNotificationWrapper();
         final SessionPersister sessionPersister = HouseFinanceClass.GetSessionPersisterComponent().GetSessionPersister();
         _logInEndpoint = HouseFinanceClass.GetUserComponent().GetLogInEndpoint();
+        _billEndpoint = HouseFinanceClass.GetBillComponent().GetBillEndpoint();
 
         _toolbar = findViewById(R.id.appToolbar);
         _layout = findViewById(R.id.coordLayout);

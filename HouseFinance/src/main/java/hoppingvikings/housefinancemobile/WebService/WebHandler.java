@@ -4,15 +4,8 @@ import android.content.Context;
 
 import org.json.JSONObject;
 
-import java.util.HashMap;
-import java.util.Map;
-
-import hoppingvikings.housefinancemobile.Services.SaltVault.BillEndpoint;
-import hoppingvikings.housefinancemobile.Services.SaltVault.User.LogInEndpoint;
-import hoppingvikings.housefinancemobile.Services.SaltVault.PaymentsEndpoint;
 import hoppingvikings.housefinancemobile.Services.SaltVault.ShoppingEndpoint;
 import hoppingvikings.housefinancemobile.Services.SaltVault.ToDoEndpoint;
-import hoppingvikings.housefinancemobile.Services.SaltVault.User.UserEndpoint;
 import hoppingvikings.housefinancemobile.HouseFinanceClass;
 import hoppingvikings.housefinancemobile.ItemType;
 
@@ -21,15 +14,11 @@ public class WebHandler
     private static WebHandler _instance;
     private SessionPersister _session;
 
-    private BillEndpoint _billEndpoint;
-    private PaymentsEndpoint _paymentsEndpoint;
     private ShoppingEndpoint _shoppingEndpoint;
     private ToDoEndpoint _toDoEndpoint;
 
     private WebHandler()
     {
-        _billEndpoint = new BillEndpoint();
-        _paymentsEndpoint = new PaymentsEndpoint();
         _shoppingEndpoint = new ShoppingEndpoint();
         _toDoEndpoint = new ToDoEndpoint();
         _session = HouseFinanceClass.GetSessionPersisterComponent().GetSessionPersister();
@@ -54,12 +43,6 @@ public class WebHandler
         return _session.GetSessionID();
     }
 
-    public void GetBills(Context context, final CommunicationCallback callback)
-    {
-        _billEndpoint.SetRequestProperty("Authorization", _session.GetSessionID());
-        _billEndpoint.Get(context, callback);
-    }
-
     public void GetShoppingItems(Context context, final CommunicationCallback callback)
     {
         _shoppingEndpoint.SetRequestProperty("Authorization", _session.GetSessionID());
@@ -72,28 +55,8 @@ public class WebHandler
         _toDoEndpoint.Get(context, callback);
     }
 
-    public void RequestBillDetails(Context context, final CommunicationCallback callback, final int billId)
-    {
-        _billEndpoint.SetRequestProperty("Authorization", _session.GetSessionID());
-        Map<String, String> urlParameters = new HashMap<>();
-        urlParameters.put("id", Integer.toString(billId));
-        _billEndpoint.Get(context, callback, urlParameters);
-    }
-
     public void UploadNewItem(Context context, final JSONObject newItem, final CommunicationCallback callback, final ItemType itemType)
     {
-        if (itemType == ItemType.BILL)
-        {
-            _billEndpoint.SetRequestProperty("Authorization", _session.GetSessionID());
-            _billEndpoint.Post(context, callback, newItem);
-            return;
-        }
-        if (itemType == ItemType.PAYMENT)
-        {
-            _paymentsEndpoint.SetRequestProperty("Authorization", _session.GetSessionID());
-            _paymentsEndpoint.Post(context, callback, newItem);
-            return;
-        }
         if (itemType == ItemType.SHOPPING)
         {
             _shoppingEndpoint.SetRequestProperty("Authorization", _session.GetSessionID());
@@ -110,18 +73,6 @@ public class WebHandler
 
     public void EditItem(Context context, final JSONObject editedItem, final CommunicationCallback callback, final ItemType itemType)
     {
-        if (itemType == ItemType.BILL)
-        {
-            _billEndpoint.SetRequestProperty("Authorization", _session.GetSessionID());
-            _billEndpoint.Patch(context, callback, editedItem);
-            return;
-        }
-        if (itemType == ItemType.PAYMENT)
-        {
-            _paymentsEndpoint.SetRequestProperty("Authorization", _session.GetSessionID());
-            _paymentsEndpoint.Patch(context, callback, editedItem);
-            return;
-        }
         if (itemType == ItemType.SHOPPING)
         {
             _shoppingEndpoint.SetRequestProperty("Authorization", _session.GetSessionID());
@@ -138,18 +89,6 @@ public class WebHandler
 
     public void DeleteItem(Context context, final CommunicationCallback callback, final JSONObject itemJson, final ItemType itemType)
     {
-        if (itemType == ItemType.BILL)
-        {
-            _billEndpoint.SetRequestProperty("Authorization", _session.GetSessionID());
-            _billEndpoint.Delete(context, callback, itemJson);
-            return;
-        }
-        if (itemType == ItemType.PAYMENT)
-        {
-            _paymentsEndpoint.SetRequestProperty("Authorization", _session.GetSessionID());
-            _paymentsEndpoint.Delete(context, callback, itemJson);
-            return;
-        }
         if (itemType == ItemType.SHOPPING)
         {
             _shoppingEndpoint.SetRequestProperty("Authorization", _session.GetSessionID());

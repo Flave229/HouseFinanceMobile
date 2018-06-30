@@ -29,13 +29,18 @@ import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.Locale;
 
+import hoppingvikings.housefinancemobile.HouseFinanceClass;
 import hoppingvikings.housefinancemobile.ItemType;
 import hoppingvikings.housefinancemobile.R;
+import hoppingvikings.housefinancemobile.Services.SaltVault.Bills.PaymentsEndpoint;
 import hoppingvikings.housefinancemobile.WebService.CommunicationCallback;
 import hoppingvikings.housefinancemobile.WebService.RequestType;
 import hoppingvikings.housefinancemobile.WebService.WebHandler;
 
-public class EditPaymentActivity extends AppCompatActivity implements CommunicationCallback {
+public class EditPaymentActivity extends AppCompatActivity implements CommunicationCallback
+{
+    private PaymentsEndpoint _paymentEndpoint;
+
     Button submitButton;
 
     CheckBox editAmount;
@@ -57,6 +62,9 @@ public class EditPaymentActivity extends AppCompatActivity implements Communicat
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_editpayment);
+
+        _paymentEndpoint = HouseFinanceClass.GetBillComponent().GetPaymentsEndpoint();
+
         Toolbar toolbar = (Toolbar) findViewById(R.id.appToolbar);
         toolbar.setTitle("Edit Payment");
         toolbar.setSubtitle("Tick the fields you wish to edit");
@@ -213,9 +221,9 @@ public class EditPaymentActivity extends AppCompatActivity implements Communicat
                         editedPayment.put("Created", new SimpleDateFormat("yyyy-MM-dd").format(editedDate));
                     }
 
-                    WebHandler.Instance().EditItem(EditPaymentActivity.this, editedPayment, EditPaymentActivity.this, ItemType.PAYMENT);
-
-                } catch (Exception e)
+                    _paymentEndpoint.Patch(EditPaymentActivity.this, EditPaymentActivity.this, editedPayment);
+                }
+                catch (Exception e)
                 {
                     Snackbar.make(layout, "Failed to create JSON", Snackbar.LENGTH_LONG).show();
                 }

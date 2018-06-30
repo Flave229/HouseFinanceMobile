@@ -3,6 +3,8 @@ package hoppingvikings.housefinancemobile;
 import android.app.Application;
 import android.content.Intent;
 
+import hoppingvikings.housefinancemobile.Services.SaltVault.Bills.BillComponent;
+import hoppingvikings.housefinancemobile.Services.SaltVault.Bills.DaggerBillComponent;
 import hoppingvikings.housefinancemobile.Services.SaltVault.House.DaggerHouseholdComponent;
 import hoppingvikings.housefinancemobile.Services.SaltVault.House.HouseholdComponent;
 import hoppingvikings.housefinancemobile.Services.SaltVault.User.DaggerUserComponent;
@@ -11,7 +13,6 @@ import hoppingvikings.housefinancemobile.UserInterface.Activities.Main.DaggerNot
 import hoppingvikings.housefinancemobile.UserInterface.Activities.Main.DaggerSessionPersisterComponent;
 import hoppingvikings.housefinancemobile.UserInterface.Activities.Main.NotificationWrapperComponent;
 import hoppingvikings.housefinancemobile.UserInterface.Activities.Main.SessionPersisterComponent;
-import hoppingvikings.housefinancemobile.WebService.WebHandler;
 
 public class HouseFinanceClass extends Application implements AppServiceBinder.OnBindInterface
 {
@@ -19,6 +20,7 @@ public class HouseFinanceClass extends Application implements AppServiceBinder.O
     private static SessionPersisterComponent _sessionComponent;
     private static HouseholdComponent _householdComponent;
     private static UserComponent _userComponent;
+    private static BillComponent _billComponent;
 
     @Override
     public void OnBind()
@@ -38,6 +40,9 @@ public class HouseFinanceClass extends Application implements AppServiceBinder.O
                 .sessionPersisterComponent(_sessionComponent)
                 .build();
         _userComponent = DaggerUserComponent.builder()
+                .sessionPersisterComponent(_sessionComponent)
+                .build();
+        _billComponent = DaggerBillComponent.builder()
                 .sessionPersisterComponent(_sessionComponent)
                 .build();
 
@@ -71,6 +76,11 @@ public class HouseFinanceClass extends Application implements AppServiceBinder.O
     public static UserComponent GetUserComponent()
     {
         return _userComponent;
+    }
+
+    public static BillComponent GetBillComponent()
+    {
+        return _billComponent;
     }
 
     @Override

@@ -37,9 +37,11 @@ import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.Locale;
 
+import hoppingvikings.housefinancemobile.HouseFinanceClass;
 import hoppingvikings.housefinancemobile.ItemType;
 import hoppingvikings.housefinancemobile.Repositories.BillRepository;
 import hoppingvikings.housefinancemobile.R;
+import hoppingvikings.housefinancemobile.Services.SaltVault.Bills.BillEndpoint;
 import hoppingvikings.housefinancemobile.UserInterface.Items.BillListObject;
 import hoppingvikings.housefinancemobile.WebService.CommunicationCallback;
 import hoppingvikings.housefinancemobile.WebService.RequestType;
@@ -47,6 +49,8 @@ import hoppingvikings.housefinancemobile.WebService.WebHandler;
 
 public class EditBillDetailsActivity extends AppCompatActivity implements CommunicationCallback
 {
+    private BillEndpoint _billEndpoint;
+
     Button submitButton;
 
     CheckBox editName;
@@ -82,9 +86,12 @@ public class EditBillDetailsActivity extends AppCompatActivity implements Commun
     ArrayList<String> _selectedUserNames = new ArrayList<>();
 
     @Override
-    protected void onCreate(@Nullable Bundle savedInstanceState) {
+    protected void onCreate(@Nullable Bundle savedInstanceState)
+    {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_editbill);
+
+        _billEndpoint = HouseFinanceClass.GetBillComponent().GetBillEndpoint();
 
         if(getIntent() != null && getIntent().hasExtra("bill_id"))
         {
@@ -373,9 +380,9 @@ public class EditBillDetailsActivity extends AppCompatActivity implements Commun
                             editedBill.put("RecurringType", 0);
                     }
 
-                    WebHandler.Instance().EditItem(EditBillDetailsActivity.this, editedBill, EditBillDetailsActivity.this, ItemType.BILL);
-
-                } catch (Exception e)
+                    _billEndpoint.Patch(EditBillDetailsActivity.this, EditBillDetailsActivity.this, editedBill);
+                }
+                catch (Exception e)
                 {
                     Snackbar.make(layout, "Failed to create JSON", Snackbar.LENGTH_LONG).show();
                 }

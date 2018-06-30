@@ -1,18 +1,28 @@
-package hoppingvikings.housefinancemobile.Services.SaltVault;
+package hoppingvikings.housefinancemobile.Services.SaltVault.Bills;
 
 import android.util.Log;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import javax.inject.Inject;
+
 import hoppingvikings.housefinancemobile.ItemType;
 import hoppingvikings.housefinancemobile.WebService.CommunicationRequest;
 import hoppingvikings.housefinancemobile.WebService.CommunicationResponse;
 import hoppingvikings.housefinancemobile.WebService.HTTPHandler;
+import hoppingvikings.housefinancemobile.WebService.SessionPersister;
 
 public class PaymentsEndpoint extends HTTPHandler
 {
     private final String PAYMENT_ENDPOINT = "http://house.flave.co.uk/api/v2/Bills/Payments";
+    private final SessionPersister _session;
+
+    @Inject
+    public PaymentsEndpoint(SessionPersister session)
+    {
+        _session = session;
+    }
 
     @Override
     protected CommunicationRequest ConstructGet(String urlAdditions) throws UnsupportedOperationException
@@ -23,6 +33,7 @@ public class PaymentsEndpoint extends HTTPHandler
     @Override
     protected CommunicationRequest ConstructPost(final JSONObject postData)
     {
+        SetRequestProperty("Authorization", _session.GetSessionID());
         return new CommunicationRequest()
         {{
             ItemTypeData = ItemType.PAYMENT;
@@ -35,6 +46,7 @@ public class PaymentsEndpoint extends HTTPHandler
     @Override
     protected CommunicationRequest ConstructPatch(final JSONObject patchData)
     {
+        SetRequestProperty("Authorization", _session.GetSessionID());
         return new CommunicationRequest()
         {{
             ItemTypeData = ItemType.PAYMENT;
@@ -47,6 +59,7 @@ public class PaymentsEndpoint extends HTTPHandler
     @Override
     protected CommunicationRequest ConstructDelete(final JSONObject deleteData)
     {
+        SetRequestProperty("Authorization", _session.GetSessionID());
         return new CommunicationRequest()
         {{
             ItemTypeData = ItemType.PAYMENT;
