@@ -23,6 +23,7 @@ import hoppingvikings.housefinancemobile.ItemType;
 import hoppingvikings.housefinancemobile.Notifications.NotificationType;
 import hoppingvikings.housefinancemobile.NotificationWrapper;
 import hoppingvikings.housefinancemobile.R;
+import hoppingvikings.housefinancemobile.Services.SaltVault.Shopping.ShoppingEndpoint;
 import hoppingvikings.housefinancemobile.UserInterface.Items.ShoppingListObject;
 import hoppingvikings.housefinancemobile.WebService.CommunicationCallback;
 import hoppingvikings.housefinancemobile.WebService.RequestType;
@@ -35,6 +36,7 @@ public class ShoppingListAdapter extends RecyclerView.Adapter<ShoppingListAdapte
 {
     private static ShoppingItemClickedListener _listener;
     private final NotificationWrapper _notificationWrapper;
+    private final ShoppingEndpoint _shoppingEndpoint;
 
     public interface ShoppingItemClickedListener
     {
@@ -127,17 +129,19 @@ public class ShoppingListAdapter extends RecyclerView.Adapter<ShoppingListAdapte
     public void SetEditPressedCallback(EditPressedCallback owner)
     {_editCallback = owner;}
 
-    public ShoppingListAdapter(ArrayList<ShoppingListObject> items, Context context, NotificationWrapper notificationWrapper)
+    public ShoppingListAdapter(Context context, NotificationWrapper notificationWrapper, ShoppingEndpoint shoppingEndpoint, ArrayList<ShoppingListObject> items)
     {
-        _shoppingItems.addAll(items);
         _context = context;
+        _notificationWrapper = notificationWrapper;
+        _shoppingEndpoint = shoppingEndpoint;
+        _shoppingItems.addAll(items);
         long maxMem = (Runtime.getRuntime().maxMemory() / 1024 / 1024);
         imgCache = new BitmapCache((maxMem / 4L) * 1024L * 1024L, _context);
-        _notificationWrapper = notificationWrapper;
     }
 
     @Override
-    public int getItemCount() {
+    public int getItemCount()
+    {
         if (_shoppingItems != null)
             return _shoppingItems.size();
         else
@@ -145,7 +149,8 @@ public class ShoppingListAdapter extends RecyclerView.Adapter<ShoppingListAdapte
     }
 
     @Override
-    public CardViewHolder onCreateViewHolder(ViewGroup viewGroup, int i) {
+    public CardViewHolder onCreateViewHolder(ViewGroup viewGroup, int i)
+    {
         View v = LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.listitem_shopping, viewGroup, false);
         return new CardViewHolder(v);
     }
@@ -181,17 +186,21 @@ public class ShoppingListAdapter extends RecyclerView.Adapter<ShoppingListAdapte
         {
             imgCache.PutBitmap(_shoppingItems.get(cvh.getAdapterPosition()).AddedFor.get(0).ImageUrl, cvh.addedFor1);
 
-            if (_shoppingItems.get(cvh.getAdapterPosition()).AddedFor.size() < 2) {
+            if (_shoppingItems.get(cvh.getAdapterPosition()).AddedFor.size() < 2)
+            {
                 cvh.addedFor2.setVisibility(View.INVISIBLE);
-            } else
+            }
+            else
             {
                 cvh.addedFor2.setVisibility(View.VISIBLE);
                 imgCache.PutBitmap(_shoppingItems.get(cvh.getAdapterPosition()).AddedFor.get(1).ImageUrl, cvh.addedFor2);
             }
 
-            if (_shoppingItems.get(cvh.getAdapterPosition()).AddedFor.size() < 3) {
+            if (_shoppingItems.get(cvh.getAdapterPosition()).AddedFor.size() < 3)
+            {
                 cvh.addedFor3.setVisibility(View.INVISIBLE);
-            } else
+            }
+            else
             {
                 cvh.addedFor3.setVisibility(View.VISIBLE);
                 imgCache.PutBitmap(_shoppingItems.get(cvh.getAdapterPosition()).AddedFor.get(2).ImageUrl, cvh.addedFor3);
@@ -207,21 +216,27 @@ public class ShoppingListAdapter extends RecyclerView.Adapter<ShoppingListAdapte
 
                 imgCache.PutBitmap(_shoppingItems.get(cvh.getAdapterPosition()).AddedBy.ImageUrl, cvh.addedBy1);
 
-                cvh.editButton.setOnClickListener(new View.OnClickListener() {
+                cvh.editButton.setOnClickListener(new View.OnClickListener()
+                {
                     @Override
-                    public void onClick(View v) {
+                    public void onClick(View v)
+                    {
                         _editCallback.onEditPressed(_shoppingItems.get(cvh.getAdapterPosition()).Id);
                     }
                 });
 
-                cvh.deleteButton.setOnClickListener(new View.OnClickListener() {
+                cvh.deleteButton.setOnClickListener(new View.OnClickListener()
+                {
                     @Override
-                    public void onClick(View v) {
-                        try {
+                    public void onClick(View v)
+                    {
+                        try
+                        {
                             JSONObject itemJson = new JSONObject();
                             itemJson.put("ShoppingItemId", _shoppingItems.get(cvh.getAdapterPosition()).Id);
-                            WebHandler.Instance().DeleteItem(_context, ShoppingListAdapter.this, itemJson, ItemType.SHOPPING);
-                        } catch (Exception e)
+                            _shoppingEndpoint.Delete(_context, ShoppingListAdapter.this, itemJson);
+                        }
+                        catch (Exception e)
                         {
                             Toast.makeText(_context, "Failed to delete item", Toast.LENGTH_SHORT).show();
                         }
@@ -233,21 +248,26 @@ public class ShoppingListAdapter extends RecyclerView.Adapter<ShoppingListAdapte
                     }
                 });
 
-                cvh.completeButton.setOnClickListener(new View.OnClickListener() {
+                cvh.completeButton.setOnClickListener(new View.OnClickListener()
+                {
                     @Override
-                    public void onClick(View v) {
+                    public void onClick(View v)
+                    {
                         if(!completeAlreadyPressed)
                         {
                             completeAlreadyPressed = true;
                             selected = cvh.getAdapterPosition();
                             JSONObject editedItem = new JSONObject();
-                            try {
+                            try
+                            {
                                 editedItem.put("Id", _shoppingItems.get(cvh.getAdapterPosition()).Id);
                                 editedItem.put("Purchased", !_shoppingItems.get(cvh.getAdapterPosition()).Purchased);
-                                WebHandler.Instance().EditItem(_context, editedItem, ShoppingListAdapter.this, ItemType.SHOPPING);
+                                _shoppingEndpoint.Patch(_context, ShoppingListAdapter.this, editedItem);
+                                // TODO: Ask Josh what this Notification thing is. Should it be in the NotificationWrapper?
                                 NotificationManager man = (NotificationManager) _context.getSystemService(NOTIFICATION_SERVICE);
                                 man.cancel(_shoppingItems.get(cvh.getAdapterPosition()).Id);
-                            } catch (Exception e)
+                            }
+                            catch (Exception e)
                             {
                                 OnFail(RequestType.PATCH, "");
                             }
@@ -255,12 +275,14 @@ public class ShoppingListAdapter extends RecyclerView.Adapter<ShoppingListAdapte
                     }
                 });
 
-                if(_shoppingItems.get(cvh.getAdapterPosition()).Purchased) {
+                if(_shoppingItems.get(cvh.getAdapterPosition()).Purchased)
+                {
                     cvh.notifyButton.setVisibility(View.INVISIBLE);
                     cvh.completeButton.setImageResource(R.drawable.ic_undo_black_24dp);
                     cvh.editButton.setVisibility(View.GONE);
                 }
-                else {
+                else
+                    {
                     cvh.notifyButton.setVisibility(View.VISIBLE);
                     cvh.completeButton.setVisibility(View.VISIBLE);
                     cvh.completeButton.setImageResource(R.drawable.ic_done_black_24dp);

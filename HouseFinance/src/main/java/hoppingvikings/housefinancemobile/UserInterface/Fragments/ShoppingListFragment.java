@@ -16,6 +16,8 @@ import android.view.ViewGroup;
 import java.util.ArrayList;
 import java.util.Date;
 
+import hoppingvikings.housefinancemobile.HouseFinanceClass;
+import hoppingvikings.housefinancemobile.Services.SaltVault.Shopping.ShoppingEndpoint;
 import hoppingvikings.housefinancemobile.Services.SaltVault.Shopping.ShoppingRepository;
 import hoppingvikings.housefinancemobile.R;
 import hoppingvikings.housefinancemobile.UserInterface.Activities.EditShoppingItemActivity;
@@ -30,7 +32,9 @@ import static android.app.Activity.RESULT_CANCELED;
 import static android.app.Activity.RESULT_OK;
 
 public class ShoppingListFragment extends Fragment
-        implements CommunicationCallback, ShoppingListAdapter.DeleteCallback, ShoppingListAdapter.EditPressedCallback {
+        implements CommunicationCallback, ShoppingListAdapter.DeleteCallback, ShoppingListAdapter.EditPressedCallback
+{
+    private ShoppingEndpoint _shoppingEndpoint;
 
     CoordinatorLayout layout;
     Handler _handler;
@@ -44,18 +48,23 @@ public class ShoppingListFragment extends Fragment
 
     Date lastRefreshedTime = new Date();
 
-    private Runnable contactWebsite = new Runnable() {
+    private Runnable contactWebsite = new Runnable()
+    {
         @Override
-        public void run() {
-            WebHandler.Instance().GetShoppingItems(getContext(), ShoppingListFragment.this);
+        public void run()
+        {
+            _shoppingEndpoint.Get(getContext(), ShoppingListFragment.this);
         }
     };
 
-    private Runnable updateList = new Runnable() {
+    private Runnable updateList = new Runnable()
+    {
         @Override
-        public void run() {
+        public void run()
+        {
             ArrayList<ShoppingListObject> shoppingItems = ShoppingRepository.Instance().Get();
-            if (shoppingItems != null) {
+            if (shoppingItems != null)
+            {
                 if(items != null)
                     items.clear();
                 else
@@ -77,13 +86,15 @@ public class ShoppingListFragment extends Fragment
     };
 
     @Override
-    public void onItemDeleted() {
+    public void onItemDeleted()
+    {
         swipeRefreshLayout.setRefreshing(true);
         _handler.postDelayed(contactWebsite, 200);
     }
 
     @Override
-    public void onEditPressed(int itemid) {
+    public void onEditPressed(int itemid)
+    {
         Intent edititem = new Intent(getContext(), EditShoppingItemActivity.class);
         edititem.putExtra("id", itemid);
         startActivityForResult(edititem, 0);
@@ -95,7 +106,8 @@ public class ShoppingListFragment extends Fragment
     }
 
     @Override
-    public void onResume() {
+    public void onResume()
+    {
         super.onResume();
 
         Date onehour = new Date(System.currentTimeMillis() - 1000L*60L*60L);
@@ -111,6 +123,7 @@ public class ShoppingListFragment extends Fragment
     public void onCreate(Bundle savedInstanceState)
     {
         super.onCreate(savedInstanceState);
+        _shoppingEndpoint = HouseFinanceClass.GetShoppingComponent().GetShoppingEndpoint();
     }
 
     @Override
@@ -139,7 +152,7 @@ public class ShoppingListFragment extends Fragment
 
         if(rv != null)
         {
-            adapter = new ShoppingListAdapter(items, getActivity(), null);
+            adapter = new ShoppingListAdapter(getActivity(), null, _shoppingEndpoint, items);
             rv.setAdapter(adapter);
             rv.setLayoutManager(new LinearLayoutManager(getActivity()));
             //rv.addItemDecoration(new ListItemDivider(getContext()));

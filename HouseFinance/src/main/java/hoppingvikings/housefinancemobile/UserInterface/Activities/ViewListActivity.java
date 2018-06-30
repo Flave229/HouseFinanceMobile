@@ -26,6 +26,7 @@ import org.json.JSONObject;
 import java.util.ArrayList;
 
 import hoppingvikings.housefinancemobile.Services.SaltVault.Bills.BillEndpoint;
+import hoppingvikings.housefinancemobile.Services.SaltVault.Shopping.ShoppingEndpoint;
 import hoppingvikings.housefinancemobile.Services.SaltVault.User.LogInEndpoint;
 import hoppingvikings.housefinancemobile.HouseFinanceClass;
 import hoppingvikings.housefinancemobile.NotificationWrapper;
@@ -56,6 +57,7 @@ public class ViewListActivity extends AppCompatActivity
     private SessionPersister _session;
     private LogInEndpoint _logInEndpoint;
     private BillEndpoint _billEndpoint;
+    private ShoppingEndpoint _shoppingEndpoint;
 
     CoordinatorLayout _layout;
     RecyclerView _rv;
@@ -89,7 +91,7 @@ public class ViewListActivity extends AppCompatActivity
                     break;
 
                 case "SHOPPING":
-                    WebHandler.Instance().GetShoppingItems(ViewListActivity.this, ViewListActivity.this);
+                    _shoppingEndpoint.Get(ViewListActivity.this, ViewListActivity.this);
                     break;
 
                 case "TODO":
@@ -182,6 +184,7 @@ public class ViewListActivity extends AppCompatActivity
         _session = HouseFinanceClass.GetSessionPersisterComponent().GetSessionPersister();
         _logInEndpoint = HouseFinanceClass.GetUserComponent().GetLogInEndpoint();
         _billEndpoint = HouseFinanceClass.GetBillComponent().GetBillEndpoint();
+        _shoppingEndpoint = HouseFinanceClass.GetShoppingComponent().GetShoppingEndpoint();
 
         _toolbar = findViewById(R.id.appToolbar);
         _layout = findViewById(R.id.coordLayout);
@@ -242,7 +245,7 @@ public class ViewListActivity extends AppCompatActivity
                     if(ShoppingRepository.Instance().Get().size() > 0)
                         _shopping.addAll(ShoppingRepository.Instance().Get());
 
-                    _shoppingAdapter = new ShoppingListAdapter(_shopping, this, notificationWrapper);
+                    _shoppingAdapter = new ShoppingListAdapter(this, notificationWrapper, _shoppingEndpoint, _shopping);
                     _rv.setAdapter(_shoppingAdapter);
                     _rv.setLayoutManager(new LinearLayoutManager(this));
                     _rv.setItemViewCacheSize(20);

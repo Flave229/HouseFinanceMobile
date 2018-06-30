@@ -3,15 +3,12 @@ package hoppingvikings.housefinancemobile.UserInterface.Activities;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.os.AsyncTask;
 import android.os.Bundle;
-import android.os.SystemClock;
 import android.support.annotation.Nullable;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.Snackbar;
 import android.support.design.widget.TextInputEditText;
 import android.support.design.widget.TextInputLayout;
-import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
@@ -34,9 +31,9 @@ import org.json.JSONObject;
 
 import java.util.ArrayList;
 
+import hoppingvikings.housefinancemobile.Services.SaltVault.Shopping.ShoppingEndpoint;
 import hoppingvikings.housefinancemobile.Services.SaltVault.User.LogInEndpoint;
 import hoppingvikings.housefinancemobile.HouseFinanceClass;
-import hoppingvikings.housefinancemobile.ItemType;
 import hoppingvikings.housefinancemobile.R;
 import hoppingvikings.housefinancemobile.UserInterface.Items.ShoppingCartItem;
 import hoppingvikings.housefinancemobile.UserInterface.Lists.ShoppingCartList.ShoppingCartAdapter;
@@ -44,12 +41,12 @@ import hoppingvikings.housefinancemobile.UserInterface.SignInActivity;
 import hoppingvikings.housefinancemobile.WebService.CommunicationCallback;
 import hoppingvikings.housefinancemobile.WebService.RequestType;
 import hoppingvikings.housefinancemobile.WebService.SessionPersister;
-import hoppingvikings.housefinancemobile.WebService.WebHandler;
 
 public class AddNewShoppingItemActivity extends AppCompatActivity implements CommunicationCallback
 {
     private SessionPersister _session;
     private LogInEndpoint _logInEndpoint;
+    private ShoppingEndpoint _shoppingEndpoint;
 
     Button submitButton;
 
@@ -90,6 +87,7 @@ public class AddNewShoppingItemActivity extends AppCompatActivity implements Com
 
         _session = HouseFinanceClass.GetSessionPersisterComponent().GetSessionPersister();
         _logInEndpoint = HouseFinanceClass.GetUserComponent().GetLogInEndpoint();
+        _shoppingEndpoint = HouseFinanceClass.GetShoppingComponent().GetShoppingEndpoint();
 
         if(savedInstanceState != null)
         {
@@ -169,7 +167,7 @@ public class AddNewShoppingItemActivity extends AppCompatActivity implements Com
                     // Add the item to a file on the device
                     //GlobalObjects.WriteToFile(getContext(), newItem.toString());
 
-                    WebHandler.Instance().UploadNewItem(AddNewShoppingItemActivity.this, newItem, AddNewShoppingItemActivity.this, ItemType.SHOPPING);
+                    _shoppingEndpoint.Post(AddNewShoppingItemActivity.this, AddNewShoppingItemActivity.this, newItem);
                 } catch (JSONException je)
                 {
                     Snackbar.make(layout, "Failed to create Json", Snackbar.LENGTH_LONG).show();

@@ -25,7 +25,9 @@ import org.json.JSONObject;
 
 import java.util.ArrayList;
 
+import hoppingvikings.housefinancemobile.HouseFinanceClass;
 import hoppingvikings.housefinancemobile.ItemType;
+import hoppingvikings.housefinancemobile.Services.SaltVault.Shopping.ShoppingEndpoint;
 import hoppingvikings.housefinancemobile.Services.SaltVault.Shopping.ShoppingRepository;
 import hoppingvikings.housefinancemobile.R;
 import hoppingvikings.housefinancemobile.UserInterface.Items.ShoppingListObject;
@@ -33,7 +35,9 @@ import hoppingvikings.housefinancemobile.WebService.CommunicationCallback;
 import hoppingvikings.housefinancemobile.WebService.RequestType;
 import hoppingvikings.housefinancemobile.WebService.WebHandler;
 
-public class EditShoppingItemActivity extends AppCompatActivity implements CommunicationCallback {
+public class EditShoppingItemActivity extends AppCompatActivity implements CommunicationCallback
+{
+    private ShoppingEndpoint _shoppingEndpoint;
 
     Button submitButton;
 
@@ -56,9 +60,12 @@ public class EditShoppingItemActivity extends AppCompatActivity implements Commu
     ArrayList<String> _selectedUserNames = new ArrayList<>();
 
     @Override
-    protected void onCreate(@Nullable Bundle savedInstanceState) {
+    protected void onCreate(@Nullable Bundle savedInstanceState)
+    {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_editshoppingitem);
+
+        _shoppingEndpoint = HouseFinanceClass.GetShoppingComponent().GetShoppingEndpoint();
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.appToolbar);
         toolbar.setTitle("Edit Shopping item");
@@ -83,7 +90,8 @@ public class EditShoppingItemActivity extends AppCompatActivity implements Commu
 
         selectUsers = (TextView) findViewById(R.id.selectUsers);
         editPeople = (ImageButton) findViewById(R.id.editPeople);
-        editPeople.setOnClickListener(new View.OnClickListener() {
+        editPeople.setOnClickListener(new View.OnClickListener()
+        {
             @Override
             public void onClick(View v) {
                 Intent selectusers = new Intent(EditShoppingItemActivity.this, SelectUsersActivity.class);
@@ -114,9 +122,11 @@ public class EditShoppingItemActivity extends AppCompatActivity implements Commu
 
         SetEditCheckListeners();
 
-        submitButton.setOnClickListener(new View.OnClickListener() {
+        submitButton.setOnClickListener(new View.OnClickListener()
+        {
             @Override
-            public void onClick(View v) {
+            public void onClick(View v)
+            {
                 if(!editName.isChecked() && !editFor.isChecked() )
                 {
                     Snackbar.make(layout, "Please edit at least one field to submit", Snackbar.LENGTH_LONG).show();
@@ -130,9 +140,11 @@ public class EditShoppingItemActivity extends AppCompatActivity implements Commu
 
     private void SetEditCheckListeners()
     {
-        editName.setOnClickListener(new View.OnClickListener() {
+        editName.setOnClickListener(new View.OnClickListener()
+        {
             @Override
-            public void onClick(View v) {
+            public void onClick(View v)
+            {
                 if(editName.isChecked())
                 {
                     itemNameLayout.setEnabled(true);
@@ -147,9 +159,11 @@ public class EditShoppingItemActivity extends AppCompatActivity implements Commu
             }
         });
 
-        editFor.setOnClickListener(new View.OnClickListener() {
+        editFor.setOnClickListener(new View.OnClickListener()
+        {
             @Override
-            public void onClick(View v) {
+            public void onClick(View v)
+            {
                 if(editFor.isChecked())
                 {
                     editPeople.setEnabled(true);
@@ -167,9 +181,8 @@ public class EditShoppingItemActivity extends AppCompatActivity implements Commu
 
     private void SubmitEditedShoppingItem()
     {
-        if(!ValidateFields()) {
+        if(!ValidateFields())
             return;
-        }
 
         final AlertDialog confirmcancel = new AlertDialog.Builder(this).create();
         confirmcancel.setMessage("Submit edit? Check that all details are correct before submitting");
@@ -200,9 +213,9 @@ public class EditShoppingItemActivity extends AppCompatActivity implements Commu
                         editedBill.put("ItemFor", people);
                     }
 
-                    WebHandler.Instance().EditItem(EditShoppingItemActivity.this, editedBill, EditShoppingItemActivity.this, ItemType.SHOPPING);
-
-                } catch (Exception e)
+                    _shoppingEndpoint.Patch(EditShoppingItemActivity.this, EditShoppingItemActivity.this, editedBill);
+                }
+                catch (Exception e)
                 {
                     Snackbar.make(layout, "Failed to create JSON", Snackbar.LENGTH_LONG).show();
                 }

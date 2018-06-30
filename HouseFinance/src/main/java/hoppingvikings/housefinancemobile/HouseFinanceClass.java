@@ -8,6 +8,8 @@ import hoppingvikings.housefinancemobile.Services.SaltVault.Bills.BillComponent;
 import hoppingvikings.housefinancemobile.Services.SaltVault.Bills.DaggerBillComponent;
 import hoppingvikings.housefinancemobile.Services.SaltVault.House.DaggerHouseholdComponent;
 import hoppingvikings.housefinancemobile.Services.SaltVault.House.HouseholdComponent;
+import hoppingvikings.housefinancemobile.Services.SaltVault.Shopping.DaggerShoppingComponent;
+import hoppingvikings.housefinancemobile.Services.SaltVault.Shopping.ShoppingComponent;
 import hoppingvikings.housefinancemobile.Services.SaltVault.User.DaggerSessionPersisterComponent;
 import hoppingvikings.housefinancemobile.Services.SaltVault.User.DaggerUserComponent;
 import hoppingvikings.housefinancemobile.Services.SaltVault.User.UserComponent;
@@ -21,6 +23,7 @@ public class HouseFinanceClass extends Application implements AppServiceBinder.O
     private static HouseholdComponent _householdComponent;
     private static UserComponent _userComponent;
     private static BillComponent _billComponent;
+    private static ShoppingComponent _shoppingComponent;
 
     @Override
     public void OnBind()
@@ -43,6 +46,9 @@ public class HouseFinanceClass extends Application implements AppServiceBinder.O
                 .sessionPersisterComponent(_sessionComponent)
                 .build();
         _billComponent = DaggerBillComponent.builder()
+                .sessionPersisterComponent(_sessionComponent)
+                .build();
+        _shoppingComponent = DaggerShoppingComponent.builder()
                 .sessionPersisterComponent(_sessionComponent)
                 .build();
 
@@ -81,6 +87,11 @@ public class HouseFinanceClass extends Application implements AppServiceBinder.O
     public static BillComponent GetBillComponent()
     {
         return _billComponent;
+    }
+
+    public static ShoppingComponent GetShoppingComponent()
+    {
+        return _shoppingComponent;
     }
 
     @Override
