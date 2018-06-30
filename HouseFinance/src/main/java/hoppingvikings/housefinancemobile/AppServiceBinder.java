@@ -13,7 +13,8 @@ import static android.content.Context.BIND_IMPORTANT;
  * Created by iView on 14/07/2017.
  */
 
-public class AppServiceBinder {
+public class AppServiceBinder
+{
     public interface OnBindInterface
     {
         void OnBind();
