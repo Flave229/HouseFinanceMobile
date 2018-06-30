@@ -53,6 +53,7 @@ public class ViewListActivity extends AppCompatActivity
         ShoppingListAdapter.DeleteCallback, ShoppingListAdapter.EditPressedCallback,
         TodoListAdapter.DeleteCallback, TodoListAdapter.EditPressedCallback
 {
+    private SessionPersister _session;
     private LogInEndpoint _logInEndpoint;
     private BillEndpoint _billEndpoint;
 
@@ -178,7 +179,7 @@ public class ViewListActivity extends AppCompatActivity
         setContentView(R.layout.activity_viewlist);
 
         NotificationWrapper notificationWrapper = HouseFinanceClass.GetNotificationWrapperComponent().GetNotificationWrapper();
-        final SessionPersister sessionPersister = HouseFinanceClass.GetSessionPersisterComponent().GetSessionPersister();
+        _session = HouseFinanceClass.GetSessionPersisterComponent().GetSessionPersister();
         _logInEndpoint = HouseFinanceClass.GetUserComponent().GetLogInEndpoint();
         _billEndpoint = HouseFinanceClass.GetBillComponent().GetBillEndpoint();
 
@@ -225,7 +226,7 @@ public class ViewListActivity extends AppCompatActivity
                         @Override
                         public void onClick(View v) {
                             Intent addBill = new Intent(ViewListActivity.this, AddNewBillActivity.class);
-                            addBill.putExtra("SessionPersister", sessionPersister);
+                            addBill.putExtra("SessionPersister", _session);
                             startActivityForResult(addBill, 0);
                         }
                     });
@@ -437,7 +438,7 @@ public class ViewListActivity extends AppCompatActivity
     protected void onStart()
     {
         super.onStart();
-        if(WebHandler.Instance().GetSessionID().equals(""))
+        if(_session.HasSessionID() == false)
         {
             _obtainingSession = true;
             GoogleSignInAccount account = GoogleSignIn.getLastSignedInAccount(this);

@@ -1,6 +1,5 @@
 package hoppingvikings.housefinancemobile.UserInterface.Activities;
 
-import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.DatePickerDialog;
 import android.content.DialogInterface;
@@ -44,10 +43,12 @@ import hoppingvikings.housefinancemobile.R;
 import hoppingvikings.housefinancemobile.UserInterface.SignInActivity;
 import hoppingvikings.housefinancemobile.WebService.CommunicationCallback;
 import hoppingvikings.housefinancemobile.WebService.RequestType;
+import hoppingvikings.housefinancemobile.WebService.SessionPersister;
 import hoppingvikings.housefinancemobile.WebService.WebHandler;
 
 public class AddNewToDoActivity extends AppCompatActivity implements CommunicationCallback
 {
+    private SessionPersister _session;
     private LogInEndpoint _logInEndpoint;
 
     Button submitButton;
@@ -75,6 +76,7 @@ public class AddNewToDoActivity extends AppCompatActivity implements Communicati
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_addnewtask);
 
+        _session = HouseFinanceClass.GetSessionPersisterComponent().GetSessionPersister();
         _logInEndpoint = HouseFinanceClass.GetUserComponent().GetLogInEndpoint();
 
         Toolbar toolbar = findViewById(R.id.appToolbar);
@@ -349,7 +351,7 @@ public class AddNewToDoActivity extends AppCompatActivity implements Communicati
     protected void onStart()
     {
         super.onStart();
-        if(WebHandler.Instance().GetSessionID().equals(""))
+        if(_session.HasSessionID() == false)
         {
             _obtainingSession = true;
             GoogleSignInAccount account = GoogleSignIn.getLastSignedInAccount(this);

@@ -33,16 +33,6 @@ public class WebHandler
         return _instance;
     }
 
-    public void SetSessionID(String sessionID)
-    {
-        _session.SetSessionID(sessionID);
-    }
-
-    public String GetSessionID()
-    {
-        return _session.GetSessionID();
-    }
-
     public void GetShoppingItems(Context context, final CommunicationCallback callback)
     {
         _shoppingEndpoint.SetRequestProperty("Authorization", _session.GetSessionID());
@@ -101,10 +91,5 @@ public class WebHandler
             _toDoEndpoint.Delete(context, callback, itemJson);
             return;
         }
-    }
-
-    public void SetSessionPersister(SessionPersister session)
-    {
-        _session = session;
     }
 }

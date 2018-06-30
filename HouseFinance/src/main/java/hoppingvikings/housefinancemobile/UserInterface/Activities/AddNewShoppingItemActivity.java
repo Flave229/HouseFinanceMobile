@@ -43,10 +43,12 @@ import hoppingvikings.housefinancemobile.UserInterface.Lists.ShoppingCartList.Sh
 import hoppingvikings.housefinancemobile.UserInterface.SignInActivity;
 import hoppingvikings.housefinancemobile.WebService.CommunicationCallback;
 import hoppingvikings.housefinancemobile.WebService.RequestType;
+import hoppingvikings.housefinancemobile.WebService.SessionPersister;
 import hoppingvikings.housefinancemobile.WebService.WebHandler;
 
 public class AddNewShoppingItemActivity extends AppCompatActivity implements CommunicationCallback
 {
+    private SessionPersister _session;
     private LogInEndpoint _logInEndpoint;
 
     Button submitButton;
@@ -86,6 +88,7 @@ public class AddNewShoppingItemActivity extends AppCompatActivity implements Com
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_addnewshoppingitem);
 
+        _session = HouseFinanceClass.GetSessionPersisterComponent().GetSessionPersister();
         _logInEndpoint = HouseFinanceClass.GetUserComponent().GetLogInEndpoint();
 
         if(savedInstanceState != null)
@@ -214,9 +217,8 @@ public class AddNewShoppingItemActivity extends AppCompatActivity implements Com
     @Override
     public void onBackPressed()
     {
-
-        if(shoppingItemNameEntry.getText().length() == 0) {
-
+        if(shoppingItemNameEntry.getText().length() == 0)
+        {
             if(_totalAddedItems > 0)
                 setResult(RESULT_OK);
             else
@@ -363,7 +365,7 @@ public class AddNewShoppingItemActivity extends AppCompatActivity implements Com
     protected void onStart()
     {
         super.onStart();
-        if(WebHandler.Instance().GetSessionID().equals(""))
+        if(_session.HasSessionID() == false)
         {
             _obtainingSession = true;
             GoogleSignInAccount account = GoogleSignIn.getLastSignedInAccount(this);

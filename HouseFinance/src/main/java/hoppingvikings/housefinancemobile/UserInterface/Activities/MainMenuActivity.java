@@ -80,11 +80,11 @@ public class MainMenuActivity extends AppCompatActivity implements Communication
         _rv.setLayoutManager(new GridLayoutManager(this, 3));
         _rv.setItemViewCacheSize(10);
 
-        WebHandler.Instance().SetSessionPersister(_session);
-
-        _listAdapter.SetMainMenuItemClickedListener(new MainMenuListAdapter.MainMenuItemClickedListener() {
+        _listAdapter.SetMainMenuItemClickedListener(new MainMenuListAdapter.MainMenuItemClickedListener()
+        {
             @Override
-            public void onItemClicked(View itemView, int pos) {
+            public void onItemClicked(View itemView, int pos)
+            {
                 MainMenuItem selectedItem = _listAdapter.GetItem(pos);
 
                 if(selectedItem.menuItemType.equals("HOUSEHOLD"))
@@ -193,7 +193,6 @@ public class MainMenuActivity extends AppCompatActivity implements Communication
                     @Override
                     public void onComplete(@NonNull Task<Void> task)
                     {
-                        WebHandler.Instance().SetSessionID("");
                         _session.SetSessionID("");
                         FileIOHandler.Instance().WriteToFile("CurrentHousehold", new JSONObject().toString());
                         Intent signInScreen = new Intent(MainMenuActivity.this, SignInActivity.class);
