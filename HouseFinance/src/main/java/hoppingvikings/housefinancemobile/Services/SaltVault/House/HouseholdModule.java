@@ -1,4 +1,4 @@
-package hoppingvikings.housefinancemobile.Endpoints.SaltVault.House;
+package hoppingvikings.housefinancemobile.Services.SaltVault.House;
 
 import dagger.Module;
 import dagger.Provides;

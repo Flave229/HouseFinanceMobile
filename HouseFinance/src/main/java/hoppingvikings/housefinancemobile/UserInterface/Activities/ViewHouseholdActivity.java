@@ -23,8 +23,8 @@ import android.widget.Toast;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import hoppingvikings.housefinancemobile.Endpoints.SaltVault.House.HouseholdEndpoint;
-import hoppingvikings.housefinancemobile.Endpoints.SaltVault.House.HouseholdInviteEndpoint;
+import hoppingvikings.housefinancemobile.Services.SaltVault.House.HouseholdEndpoint;
+import hoppingvikings.housefinancemobile.Services.SaltVault.House.HouseholdInviteEndpoint;
 import hoppingvikings.housefinancemobile.FileIOHandler;
 import hoppingvikings.housefinancemobile.HouseFinanceClass;
 import hoppingvikings.housefinancemobile.ItemType;

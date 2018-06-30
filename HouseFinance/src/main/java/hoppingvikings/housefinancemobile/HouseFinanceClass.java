@@ -3,10 +3,10 @@ package hoppingvikings.housefinancemobile;
 import android.app.Application;
 import android.content.Intent;
 
-import hoppingvikings.housefinancemobile.Endpoints.SaltVault.House.DaggerHouseholdComponent;
-import hoppingvikings.housefinancemobile.Endpoints.SaltVault.House.HouseholdComponent;
-import hoppingvikings.housefinancemobile.Endpoints.SaltVault.User.DaggerUserComponent;
-import hoppingvikings.housefinancemobile.Endpoints.SaltVault.User.UserComponent;
+import hoppingvikings.housefinancemobile.Services.SaltVault.House.DaggerHouseholdComponent;
+import hoppingvikings.housefinancemobile.Services.SaltVault.House.HouseholdComponent;
+import hoppingvikings.housefinancemobile.Services.SaltVault.User.DaggerUserComponent;
+import hoppingvikings.housefinancemobile.Services.SaltVault.User.UserComponent;
 import hoppingvikings.housefinancemobile.UserInterface.Activities.Main.DaggerNotificationWrapperComponent;
 import hoppingvikings.housefinancemobile.UserInterface.Activities.Main.DaggerSessionPersisterComponent;
 import hoppingvikings.housefinancemobile.UserInterface.Activities.Main.NotificationWrapperComponent;

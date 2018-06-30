@@ -7,12 +7,12 @@ import org.json.JSONObject;
 import java.util.HashMap;
 import java.util.Map;
 
-import hoppingvikings.housefinancemobile.Endpoints.SaltVault.BillEndpoint;
-import hoppingvikings.housefinancemobile.Endpoints.SaltVault.User.LogInEndpoint;
-import hoppingvikings.housefinancemobile.Endpoints.SaltVault.PaymentsEndpoint;
-import hoppingvikings.housefinancemobile.Endpoints.SaltVault.ShoppingEndpoint;
-import hoppingvikings.housefinancemobile.Endpoints.SaltVault.ToDoEndpoint;
-import hoppingvikings.housefinancemobile.Endpoints.SaltVault.User.UserEndpoint;
+import hoppingvikings.housefinancemobile.Services.SaltVault.BillEndpoint;
+import hoppingvikings.housefinancemobile.Services.SaltVault.User.LogInEndpoint;
+import hoppingvikings.housefinancemobile.Services.SaltVault.PaymentsEndpoint;
+import hoppingvikings.housefinancemobile.Services.SaltVault.ShoppingEndpoint;
+import hoppingvikings.housefinancemobile.Services.SaltVault.ToDoEndpoint;
+import hoppingvikings.housefinancemobile.Services.SaltVault.User.UserEndpoint;
 import hoppingvikings.housefinancemobile.HouseFinanceClass;
 import hoppingvikings.housefinancemobile.ItemType;
 

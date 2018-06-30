@@ -17,7 +17,7 @@ import android.widget.TextView;
 import java.util.ArrayList;
 import java.util.HashMap;
 
-import hoppingvikings.housefinancemobile.Endpoints.SaltVault.User.UserEndpoint;
+import hoppingvikings.housefinancemobile.Services.SaltVault.User.UserEndpoint;
 import hoppingvikings.housefinancemobile.HouseFinanceClass;
 import hoppingvikings.housefinancemobile.Person;
 import hoppingvikings.housefinancemobile.R;

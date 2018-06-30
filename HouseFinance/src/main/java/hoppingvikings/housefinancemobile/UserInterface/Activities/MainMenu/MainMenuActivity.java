@@ -26,7 +26,7 @@ import org.json.JSONObject;
 import java.util.ArrayList;
 
 import hoppingvikings.housefinancemobile.ApiErrorCodes;
-import hoppingvikings.housefinancemobile.Endpoints.SaltVault.House.HouseholdEndpoint;
+import hoppingvikings.housefinancemobile.Services.SaltVault.House.HouseholdEndpoint;
 import hoppingvikings.housefinancemobile.FileIOHandler;
 import hoppingvikings.housefinancemobile.HouseFinanceClass;
 import hoppingvikings.housefinancemobile.ItemType;

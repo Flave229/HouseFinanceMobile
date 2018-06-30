@@ -1,4 +1,4 @@
-package hoppingvikings.housefinancemobile.Endpoints.SaltVault;
+package hoppingvikings.housefinancemobile.Services.SaltVault;
 
 import android.util.Log;
 

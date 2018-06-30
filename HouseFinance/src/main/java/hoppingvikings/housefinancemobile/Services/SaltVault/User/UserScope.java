@@ -1,4 +1,4 @@
-package hoppingvikings.housefinancemobile.Endpoints.SaltVault.User;
+package hoppingvikings.housefinancemobile.Services.SaltVault.User;
 
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;

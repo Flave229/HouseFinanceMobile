@@ -1,4 +1,4 @@
-package hoppingvikings.housefinancemobile.Endpoints.SaltVault.User;
+package hoppingvikings.housefinancemobile.Services.SaltVault.User;
 
 import dagger.Component;
 import hoppingvikings.housefinancemobile.UserInterface.Activities.Main.SessionPersisterComponent;

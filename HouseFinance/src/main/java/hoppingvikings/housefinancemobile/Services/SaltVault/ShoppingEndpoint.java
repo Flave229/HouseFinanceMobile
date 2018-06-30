@@ -1,72 +1,69 @@
-package hoppingvikings.housefinancemobile.Endpoints.SaltVault.House;
+package hoppingvikings.housefinancemobile.Services.SaltVault;
 
 import android.util.Log;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import javax.inject.Inject;
+import java.util.ArrayList;
 
-import hoppingvikings.housefinancemobile.FileIOHandler;
 import hoppingvikings.housefinancemobile.ItemType;
+import hoppingvikings.housefinancemobile.Repositories.ShoppingRepository;
+import hoppingvikings.housefinancemobile.UserInterface.Items.ShoppingListObject;
 import hoppingvikings.housefinancemobile.WebService.CommunicationRequest;
 import hoppingvikings.housefinancemobile.WebService.CommunicationResponse;
 import hoppingvikings.housefinancemobile.WebService.HTTPHandler;
 import hoppingvikings.housefinancemobile.WebService.RequestType;
-import hoppingvikings.housefinancemobile.WebService.SessionPersister;
 
-public class HouseholdEndpoint extends HTTPHandler
+public class ShoppingEndpoint extends HTTPHandler
 {
-    private final String HOUSEHOLD_ENDPOINT = "http://house.flave.co.uk/api/v2/Household";
-    private final SessionPersister _session;
-
-    @Inject
-    public HouseholdEndpoint(SessionPersister session)
-    {
-        _session = session;
-    }
+    private final String SHOPPING_ENDPOINT = "http://house.flave.co.uk/api/v2/Shopping";
 
     @Override
     protected CommunicationRequest ConstructGet(String urlAdditions)
     {
-        SetRequestProperty("Authorization", _session.GetSessionID());
         return new CommunicationRequest()
         {{
-            ItemTypeData = ItemType.HOUSEHOLD;
-            Endpoint = HOUSEHOLD_ENDPOINT;
-            OwnerV2 = HouseholdEndpoint.this;
+            ItemTypeData = ItemType.SHOPPING;
+            Endpoint = SHOPPING_ENDPOINT;
+            OwnerV2 = ShoppingEndpoint.this;
         }};
     }
 
     @Override
     protected CommunicationRequest ConstructPost(final JSONObject postData)
     {
-        SetRequestProperty("Authorization", _session.GetSessionID());
         return new CommunicationRequest()
         {{
-            ItemTypeData = ItemType.HOUSEHOLD;
-            Endpoint = HOUSEHOLD_ENDPOINT;
+            ItemTypeData = ItemType.SHOPPING;
+            Endpoint = SHOPPING_ENDPOINT;
             RequestBody = String.valueOf(postData);
-            OwnerV2 = HouseholdEndpoint.this;
+            OwnerV2 = ShoppingEndpoint.this;
         }};
     }
 
     @Override
-    protected CommunicationRequest ConstructPatch(JSONObject patchData) throws UnsupportedOperationException
+    protected CommunicationRequest ConstructPatch(final JSONObject patchData)
     {
-        throw new UnsupportedOperationException();
+        return new CommunicationRequest()
+        {{
+            ItemTypeData = ItemType.SHOPPING;
+            Endpoint = SHOPPING_ENDPOINT;
+            RequestBody = String.valueOf(patchData);
+            OwnerV2 = ShoppingEndpoint.this;
+        }};
     }
 
     @Override
     protected CommunicationRequest ConstructDelete(final JSONObject deleteData)
     {
-        SetRequestProperty("Authorization", _session.GetSessionID());
         return new CommunicationRequest()
         {{
-            ItemTypeData = ItemType.HOUSEHOLD;
-            Endpoint = HOUSEHOLD_ENDPOINT;
+            ItemTypeData = ItemType.SHOPPING;
+            Endpoint = SHOPPING_ENDPOINT;
             RequestBody = String.valueOf(deleteData);
-            OwnerV2 = HouseholdEndpoint.this;
+            OwnerV2 = ShoppingEndpoint.this;
         }};
     }
 
@@ -85,7 +82,7 @@ public class HouseholdEndpoint extends HTTPHandler
 
             if (result.RequestTypeData == RequestType.GET)
             {
-                HandleHouseholdResponse(result);
+                HandleShoppingListResponse(result);
             }
             else
                 result.Callback.OnSuccess(result.RequestTypeData, null);
@@ -101,30 +98,32 @@ public class HouseholdEndpoint extends HTTPHandler
         }
     }
 
-    private void HandleHouseholdResponse(CommunicationResponse result)
+    private void HandleShoppingListResponse(CommunicationResponse result)
     {
         try
         {
-            if (result.Response.has("house"))
-            {
-                JSONObject house = result.Response.getJSONObject("house");
+            JSONArray shoppingItems = result.Response.getJSONArray("shoppingList");
 
-                FileIOHandler.Instance().WriteToFile("CurrentHousehold", house.toString());
-                result.Callback.OnSuccess(result.RequestTypeData, house.getString("id"));
-            }
-            else
+            ArrayList<ShoppingListObject> items = new ArrayList<>();
+            for(int k = 0; k < shoppingItems.length(); k++)
             {
-                result.Callback.OnFail(result.RequestTypeData, "Could not obtain session");
+                JSONObject itemJson = shoppingItems.getJSONObject(k);
+                ShoppingListObject item = new ShoppingListObject(itemJson);
+                items.add(item);
             }
+
+            ShoppingRepository.Instance().Set(items);
+
+            result.Callback.OnSuccess(result.RequestTypeData, null);
         }
         catch (JSONException je)
         {
             je.printStackTrace();
-            result.Callback.OnFail(result.RequestTypeData, "Could not obtain session");
+            result.Callback.OnFail(result.RequestTypeData, "Could not obtain Shopping list");
         }
-        catch (Exception e)
+        catch(Exception e)
         {
-            result.Callback.OnFail(result.RequestTypeData, "Could not obtain session");
+            result.Callback.OnFail(result.RequestTypeData, "Could not obtain Shopping list");
         }
     }
 }

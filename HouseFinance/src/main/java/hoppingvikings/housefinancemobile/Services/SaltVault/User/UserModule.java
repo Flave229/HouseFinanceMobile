@@ -1,9 +1,9 @@
-package hoppingvikings.housefinancemobile.Endpoints.SaltVault.User;
+package hoppingvikings.housefinancemobile.Services.SaltVault.User;
 
 import dagger.Module;
 import dagger.Provides;
-import hoppingvikings.housefinancemobile.Endpoints.SaltVault.House.HouseholdEndpoint;
-import hoppingvikings.housefinancemobile.Endpoints.SaltVault.House.HouseholdInviteEndpoint;
+import hoppingvikings.housefinancemobile.Services.SaltVault.House.HouseholdEndpoint;
+import hoppingvikings.housefinancemobile.Services.SaltVault.House.HouseholdInviteEndpoint;
 import hoppingvikings.housefinancemobile.WebService.SessionPersister;
 
 @Module

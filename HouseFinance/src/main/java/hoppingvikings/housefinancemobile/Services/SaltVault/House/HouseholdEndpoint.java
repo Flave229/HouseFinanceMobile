@@ -1,30 +1,27 @@
-package hoppingvikings.housefinancemobile.Endpoints.SaltVault.User;
+package hoppingvikings.housefinancemobile.Services.SaltVault.House;
 
 import android.util.Log;
 
-import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.util.ArrayList;
-
 import javax.inject.Inject;
 
+import hoppingvikings.housefinancemobile.FileIOHandler;
 import hoppingvikings.housefinancemobile.ItemType;
-import hoppingvikings.housefinancemobile.Person;
 import hoppingvikings.housefinancemobile.WebService.CommunicationRequest;
 import hoppingvikings.housefinancemobile.WebService.CommunicationResponse;
 import hoppingvikings.housefinancemobile.WebService.HTTPHandler;
 import hoppingvikings.housefinancemobile.WebService.RequestType;
 import hoppingvikings.housefinancemobile.WebService.SessionPersister;
 
-public class UserEndpoint extends HTTPHandler
+public class HouseholdEndpoint extends HTTPHandler
 {
-    private final String USER_ENDPOINT = "http://house.flave.co.uk/api/v2/Users";
+    private final String HOUSEHOLD_ENDPOINT = "http://house.flave.co.uk/api/v2/Household";
     private final SessionPersister _session;
 
     @Inject
-    public UserEndpoint(SessionPersister session)
+    public HouseholdEndpoint(SessionPersister session)
     {
         _session = session;
     }
@@ -35,16 +32,23 @@ public class UserEndpoint extends HTTPHandler
         SetRequestProperty("Authorization", _session.GetSessionID());
         return new CommunicationRequest()
         {{
-            ItemTypeData = ItemType.PERSON;
-            Endpoint = USER_ENDPOINT;
-            OwnerV2 = UserEndpoint.this;
+            ItemTypeData = ItemType.HOUSEHOLD;
+            Endpoint = HOUSEHOLD_ENDPOINT;
+            OwnerV2 = HouseholdEndpoint.this;
         }};
     }
 
     @Override
-    protected CommunicationRequest ConstructPost(JSONObject postData) throws UnsupportedOperationException
+    protected CommunicationRequest ConstructPost(final JSONObject postData)
     {
-        throw new UnsupportedOperationException();
+        SetRequestProperty("Authorization", _session.GetSessionID());
+        return new CommunicationRequest()
+        {{
+            ItemTypeData = ItemType.HOUSEHOLD;
+            Endpoint = HOUSEHOLD_ENDPOINT;
+            RequestBody = String.valueOf(postData);
+            OwnerV2 = HouseholdEndpoint.this;
+        }};
     }
 
     @Override
@@ -54,9 +58,16 @@ public class UserEndpoint extends HTTPHandler
     }
 
     @Override
-    protected CommunicationRequest ConstructDelete(JSONObject deleteData) throws UnsupportedOperationException
+    protected CommunicationRequest ConstructDelete(final JSONObject deleteData)
     {
-        throw new UnsupportedOperationException();
+        SetRequestProperty("Authorization", _session.GetSessionID());
+        return new CommunicationRequest()
+        {{
+            ItemTypeData = ItemType.HOUSEHOLD;
+            Endpoint = HOUSEHOLD_ENDPOINT;
+            RequestBody = String.valueOf(deleteData);
+            OwnerV2 = HouseholdEndpoint.this;
+        }};
     }
 
     @Override
@@ -74,7 +85,7 @@ public class UserEndpoint extends HTTPHandler
 
             if (result.RequestTypeData == RequestType.GET)
             {
-                HandlePersonListResponse(result);
+                HandleHouseholdResponse(result);
             }
             else
                 result.Callback.OnSuccess(result.RequestTypeData, null);
@@ -90,36 +101,30 @@ public class UserEndpoint extends HTTPHandler
         }
     }
 
-    private void HandlePersonListResponse(CommunicationResponse result)
+    private void HandleHouseholdResponse(CommunicationResponse result)
     {
-        JSONArray returnedObject;
-        ArrayList<JSONObject> userObjects = new ArrayList<>();
-        ArrayList<Person> parsedUsers = new ArrayList<>();
-
         try
         {
-            returnedObject = result.Response.getJSONArray("people");
-
-            for(int i = 0; i < returnedObject.length(); i++)
+            if (result.Response.has("house"))
             {
-                userObjects.add(returnedObject.getJSONObject(i));
-            }
+                JSONObject house = result.Response.getJSONObject("house");
 
-            for (int j = 0; j < userObjects.size(); j++)
+                FileIOHandler.Instance().WriteToFile("CurrentHousehold", house.toString());
+                result.Callback.OnSuccess(result.RequestTypeData, house.getString("id"));
+            }
+            else
             {
-                parsedUsers.add(new Person(userObjects.get(j)));
+                result.Callback.OnFail(result.RequestTypeData, "Could not obtain session");
             }
-
-            result.Callback.OnSuccess(result.RequestTypeData, parsedUsers);
         }
         catch (JSONException je)
         {
             je.printStackTrace();
-            result.Callback.OnFail(result.RequestTypeData, "Could not obtain People");
+            result.Callback.OnFail(result.RequestTypeData, "Could not obtain session");
         }
-        catch(Exception e)
+        catch (Exception e)
         {
-            result.Callback.OnFail(result.RequestTypeData, "Could not obtain People");
+            result.Callback.OnFail(result.RequestTypeData, "Could not obtain session");
         }
     }
 }

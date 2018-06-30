@@ -1,4 +1,4 @@
-package hoppingvikings.housefinancemobile.Endpoints.SaltVault.House;
+package hoppingvikings.housefinancemobile.Services.SaltVault.User;
 
 import android.util.Log;
 
@@ -11,43 +11,34 @@ import hoppingvikings.housefinancemobile.ItemType;
 import hoppingvikings.housefinancemobile.WebService.CommunicationRequest;
 import hoppingvikings.housefinancemobile.WebService.CommunicationResponse;
 import hoppingvikings.housefinancemobile.WebService.HTTPHandler;
-import hoppingvikings.housefinancemobile.WebService.RequestType;
 import hoppingvikings.housefinancemobile.WebService.SessionPersister;
 
-public class HouseholdInviteEndpoint extends HTTPHandler
+public class LogInEndpoint extends HTTPHandler
 {
+    private final String LOG_IN_ENDPOINT = "http://house.flave.co.uk/api/v2/LogIn";
     private final SessionPersister _session;
 
-    private final String HOUSEHOLD_INVITE_ENDPOINT = "http://house.flave.co.uk/api/v2/Household/InviteLink";
-
     @Inject
-    public HouseholdInviteEndpoint(SessionPersister sessionPersister)
+    public LogInEndpoint(SessionPersister session)
     {
-        _session = sessionPersister;
+        _session = session;
     }
 
     @Override
-    protected CommunicationRequest ConstructGet(String urlAdditions)
+    protected CommunicationRequest ConstructGet(String urlAdditions) throws UnsupportedOperationException
     {
-        SetRequestProperty("Authorization", _session.GetSessionID());
-        return new CommunicationRequest()
-        {{
-            ItemTypeData = ItemType.HOUSEHOLD_INVITE;
-            Endpoint = HOUSEHOLD_INVITE_ENDPOINT;
-            OwnerV2 = HouseholdInviteEndpoint.this;
-        }};
+        throw new UnsupportedOperationException();
     }
 
     @Override
     protected CommunicationRequest ConstructPost(final JSONObject postData)
     {
-        SetRequestProperty("Authorization", _session.GetSessionID());
         return new CommunicationRequest()
         {{
-            ItemTypeData = ItemType.HOUSEHOLD_INVITE;
-            Endpoint = HOUSEHOLD_INVITE_ENDPOINT;
+            ItemTypeData = ItemType.LOG_IN;
+            Endpoint = LOG_IN_ENDPOINT;
             RequestBody = String.valueOf(postData);
-            OwnerV2 = HouseholdInviteEndpoint.this;
+            OwnerV2 = LogInEndpoint.this;
         }};
     }
 
@@ -76,12 +67,7 @@ public class HouseholdInviteEndpoint extends HTTPHandler
                 return;
             }
 
-            if (result.RequestTypeData == RequestType.GET)
-            {
-                HandleHouseholdInviteResponse(result);
-            }
-            else
-                result.Callback.OnSuccess(result.RequestTypeData, null);
+            HandleLogInResponse(result);
         }
         catch (JSONException je)
         {
@@ -94,25 +80,29 @@ public class HouseholdInviteEndpoint extends HTTPHandler
         }
     }
 
-    private void HandleHouseholdInviteResponse(CommunicationResponse result)
+    private void HandleLogInResponse(CommunicationResponse result)
     {
         try
         {
-            if(result.Response.has("inviteLink"))
+            if (result.Response.has("sessionId"))
             {
-                result.Callback.OnSuccess(result.RequestTypeData, result.Response.getString("inviteLink"));
-                return;
+                String sessionID = result.Response.getString("sessionId");
+                _session.SetSessionID(sessionID);
+                result.Callback.OnSuccess(result.RequestTypeData, sessionID);
             }
-
-            result.Callback.OnFail(result.RequestTypeData, "Failed to obtain invite link");
+            else
+            {
+                result.Callback.OnFail(result.RequestTypeData, "Could not obtain session");
+            }
         }
         catch (JSONException je)
         {
-            result.Callback.OnFail(result.RequestTypeData, "Failed to obtain invite link");
+            je.printStackTrace();
+            result.Callback.OnFail(result.RequestTypeData, "Could not obtain session");
         }
-        catch (Exception e)
+        catch(Exception e)
         {
-            result.Callback.OnFail(result.RequestTypeData, "Failed to obtain invite link");
+            result.Callback.OnFail(result.RequestTypeData, "Could not obtain session");
         }
     }
 }
