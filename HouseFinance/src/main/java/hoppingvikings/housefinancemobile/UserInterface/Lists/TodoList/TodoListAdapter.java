@@ -318,7 +318,7 @@ public class TodoListAdapter extends RecyclerView.Adapter<TodoListAdapter.CardVi
         {
             case PATCH:
                 _completeAlreadyPressed = false;
-                Toast.makeText(_context, "Failed to update shopping item.", Toast.LENGTH_SHORT).show();
+                Toast.makeText(_context, "Failed to update To Do Task item.", Toast.LENGTH_SHORT).show();
                 break;
             case DELETE:
                 Toast.makeText(_context, "Failed to delete", Toast.LENGTH_SHORT).show();
