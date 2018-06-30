@@ -22,6 +22,8 @@ import com.google.android.gms.tasks.Task;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import hoppingvikings.housefinancemobile.Endpoints.SaltVault.User.LogInEndpoint;
+import hoppingvikings.housefinancemobile.HouseFinanceClass;
 import hoppingvikings.housefinancemobile.R;
 import hoppingvikings.housefinancemobile.UserInterface.Activities.MainMenu.MainMenuActivity;
 import hoppingvikings.housefinancemobile.UserInterface.SignInActivity;
@@ -32,12 +34,15 @@ import hoppingvikings.housefinancemobile.WebService.WebHandler;
 
 public class MainActivity extends AppCompatActivity implements CommunicationCallback
 {
+    private LogInEndpoint _logInEndpoint;
     GoogleSignInClient _signInClient;
 
     @Override
     protected void onCreate(Bundle savedInstanceState)
     {
         super.onCreate(savedInstanceState);
+
+        _logInEndpoint = HouseFinanceClass.GetUserComponent().GetLogInEndpoint();
 
         GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
                 .requestIdToken(getString(R.string.backend_id))
@@ -85,22 +90,23 @@ public class MainActivity extends AppCompatActivity implements CommunicationCall
 
     private void HandleSignInResult(@NonNull Task<GoogleSignInAccount> completeTask)
     {
-        try {
+        try
+        {
             GoogleSignInAccount account = completeTask.getResult(ApiException.class);
             String idToken = account.getIdToken();
 
             JSONObject tokenJson = new JSONObject();
-            try {
-                tokenJson.put("Token", idToken);
-            } catch (JSONException e)
+            try
             {
-
+                tokenJson.put("Token", idToken);
             }
+            catch (JSONException e)
+            { }
 
-            WebHandler.Instance().GetSessionID(this, this, tokenJson);
-            // Send the token to dave to confirm
+            _logInEndpoint.Post(this,this, tokenJson);
             //GoToMainMenu();
-        } catch (ApiException e)
+        }
+        catch (ApiException e)
         {
             Log.e("Error: ", "signInResult:failed code=" + e.getStatusCode());
             GoToSignInPage();

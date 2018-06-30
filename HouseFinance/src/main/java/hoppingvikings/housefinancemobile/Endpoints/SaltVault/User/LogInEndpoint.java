@@ -1,19 +1,16 @@
-package hoppingvikings.housefinancemobile.Endpoints.SaltVault;
+package hoppingvikings.housefinancemobile.Endpoints.SaltVault.User;
 
 import android.util.Log;
 
-import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.util.ArrayList;
+import javax.inject.Inject;
 
 import hoppingvikings.housefinancemobile.ItemType;
-import hoppingvikings.housefinancemobile.Person;
 import hoppingvikings.housefinancemobile.WebService.CommunicationRequest;
 import hoppingvikings.housefinancemobile.WebService.CommunicationResponse;
 import hoppingvikings.housefinancemobile.WebService.HTTPHandler;
-import hoppingvikings.housefinancemobile.WebService.RequestType;
 import hoppingvikings.housefinancemobile.WebService.SessionPersister;
 
 public class LogInEndpoint extends HTTPHandler
@@ -21,6 +18,7 @@ public class LogInEndpoint extends HTTPHandler
     private final String LOG_IN_ENDPOINT = "http://house.flave.co.uk/api/v2/LogIn";
     private final SessionPersister _session;
 
+    @Inject
     public LogInEndpoint(SessionPersister session)
     {
         _session = session;

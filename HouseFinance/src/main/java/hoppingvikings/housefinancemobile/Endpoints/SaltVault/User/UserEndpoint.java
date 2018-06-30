@@ -1,4 +1,4 @@
-package hoppingvikings.housefinancemobile.Endpoints.SaltVault;
+package hoppingvikings.housefinancemobile.Endpoints.SaltVault.User;
 
 import android.util.Log;
 
@@ -8,20 +8,31 @@ import org.json.JSONObject;
 
 import java.util.ArrayList;
 
+import javax.inject.Inject;
+
 import hoppingvikings.housefinancemobile.ItemType;
 import hoppingvikings.housefinancemobile.Person;
 import hoppingvikings.housefinancemobile.WebService.CommunicationRequest;
 import hoppingvikings.housefinancemobile.WebService.CommunicationResponse;
 import hoppingvikings.housefinancemobile.WebService.HTTPHandler;
 import hoppingvikings.housefinancemobile.WebService.RequestType;
+import hoppingvikings.housefinancemobile.WebService.SessionPersister;
 
 public class UserEndpoint extends HTTPHandler
 {
     private final String USER_ENDPOINT = "http://house.flave.co.uk/api/v2/Users";
+    private final SessionPersister _session;
+
+    @Inject
+    public UserEndpoint(SessionPersister session)
+    {
+        _session = session;
+    }
 
     @Override
     protected CommunicationRequest ConstructGet(String urlAdditions)
     {
+        SetRequestProperty("Authorization", _session.GetSessionID());
         return new CommunicationRequest()
         {{
             ItemTypeData = ItemType.PERSON;

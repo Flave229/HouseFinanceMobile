@@ -37,6 +37,8 @@ import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.Locale;
 
+import hoppingvikings.housefinancemobile.Endpoints.SaltVault.User.LogInEndpoint;
+import hoppingvikings.housefinancemobile.HouseFinanceClass;
 import hoppingvikings.housefinancemobile.ItemType;
 import hoppingvikings.housefinancemobile.R;
 import hoppingvikings.housefinancemobile.UserInterface.SignInActivity;
@@ -44,7 +46,9 @@ import hoppingvikings.housefinancemobile.WebService.CommunicationCallback;
 import hoppingvikings.housefinancemobile.WebService.RequestType;
 import hoppingvikings.housefinancemobile.WebService.WebHandler;
 
-public class AddNewToDoActivity extends AppCompatActivity implements CommunicationCallback {
+public class AddNewToDoActivity extends AppCompatActivity implements CommunicationCallback
+{
+    private LogInEndpoint _logInEndpoint;
 
     Button submitButton;
     TextInputLayout taskTitleEntry;
@@ -66,9 +70,12 @@ public class AddNewToDoActivity extends AppCompatActivity implements Communicati
     boolean _obtainingSession = false;
 
     @Override
-    protected void onCreate(@Nullable Bundle savedInstanceState) {
+    protected void onCreate(@Nullable Bundle savedInstanceState)
+    {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_addnewtask);
+
+        _logInEndpoint = HouseFinanceClass.GetUserComponent().GetLogInEndpoint();
 
         Toolbar toolbar = findViewById(R.id.appToolbar);
         setSupportActionBar(toolbar);
@@ -180,14 +187,15 @@ public class AddNewToDoActivity extends AppCompatActivity implements Communicati
     }
 
     @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
+    public boolean onCreateOptionsMenu(Menu menu)
+    {
         getMenuInflater().inflate(R.menu.billentrytoolbar, menu);
         return super.onCreateOptionsMenu(menu);
     }
 
     @Override
-    public void onBackPressed() {
-
+    public void onBackPressed()
+    {
         if(taskTitleEntryText.getText().length() == 0
                 && taskDueDateEntryText.getText().length() == 0
                 && selectedPeopleIDs.size() == 0)
@@ -222,7 +230,8 @@ public class AddNewToDoActivity extends AppCompatActivity implements Communicati
     }
 
     @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
+    public boolean onOptionsItemSelected(MenuItem item)
+    {
         switch (item.getItemId())
         {
             case android.R.id.home:
@@ -259,9 +268,11 @@ public class AddNewToDoActivity extends AppCompatActivity implements Communicati
         // Date is optional. Don't break out of there is no date entered
         if(taskDueDateEntryText.getText().length() > 0)
         {
-            try {
+            try
+            {
                 taskDueDate = new SimpleDateFormat("dd-MM-yyyy").parse(taskDueDateEntryText.getText().toString());
-            } catch (ParseException pe)
+            }
+            catch (ParseException pe)
             {
                 taskDueDate = null;
             }
@@ -281,7 +292,8 @@ public class AddNewToDoActivity extends AppCompatActivity implements Communicati
     }
 
     @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+    protected void onActivityResult(int requestCode, int resultCode, Intent data)
+    {
         super.onActivityResult(requestCode, resultCode, data);
         switch (resultCode)
         {
@@ -313,7 +325,8 @@ public class AddNewToDoActivity extends AppCompatActivity implements Communicati
     }
 
     @Override
-    public void OnSuccess(RequestType requestType, Object o) {
+    public void OnSuccess(RequestType requestType, Object o)
+    {
         if(_obtainingSession)
         {
             _obtainingSession = false;
@@ -326,13 +339,15 @@ public class AddNewToDoActivity extends AppCompatActivity implements Communicati
     }
 
     @Override
-    public void OnFail(RequestType requestType, String message) {
+    public void OnFail(RequestType requestType, String message)
+    {
         Snackbar.make(layout, message, Snackbar.LENGTH_LONG).show();
         ReenableElements();
     }
 
     @Override
-    protected void onStart() {
+    protected void onStart()
+    {
         super.onStart();
         if(WebHandler.Instance().GetSessionID().equals(""))
         {
@@ -342,13 +357,14 @@ public class AddNewToDoActivity extends AppCompatActivity implements Communicati
             if(account != null)
             {
                 JSONObject tokenJson = new JSONObject();
-                try {
+                try
+                {
                     tokenJson.put("Token", account.getIdToken());
                 } catch (JSONException e)
                 {
 
                 }
-                WebHandler.Instance().GetSessionID(this, this, tokenJson);
+                _logInEndpoint.Post(this, this, tokenJson);
             }
             else
             {

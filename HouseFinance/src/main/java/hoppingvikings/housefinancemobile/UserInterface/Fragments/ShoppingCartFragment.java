@@ -18,7 +18,9 @@ import org.json.JSONObject;
 
 import java.util.ArrayList;
 
+import hoppingvikings.housefinancemobile.Endpoints.SaltVault.User.UserEndpoint;
 import hoppingvikings.housefinancemobile.FileName;
+import hoppingvikings.housefinancemobile.HouseFinanceClass;
 import hoppingvikings.housefinancemobile.ItemType;
 import hoppingvikings.housefinancemobile.Person;
 import hoppingvikings.housefinancemobile.R;
@@ -32,7 +34,8 @@ import hoppingvikings.housefinancemobile.WebService.RequestType;
 import hoppingvikings.housefinancemobile.WebService.WebHandler;
 
 public class ShoppingCartFragment extends Fragment
-        implements ButtonPressedCallback, CommunicationCallback<ArrayList<Person>> {
+        implements ButtonPressedCallback, CommunicationCallback<ArrayList<Person>>
+{
     View currentView;
     TextView cartEmptyText;
     CoordinatorLayout layout;
@@ -44,8 +47,10 @@ public class ShoppingCartFragment extends Fragment
 
     @Nullable
     @Override
-    public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        WebHandler.Instance().RequestUsers(getContext(), this);
+    public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState)
+    {
+        UserEndpoint userEndpoint = HouseFinanceClass.GetUserComponent().GetUserEndpoint();
+        userEndpoint.Get(getContext(), this);
         currentView = inflater.inflate(R.layout.fragment_shoppingcart, container, false);
         _activity = (AddNewShoppingItemActivity)getActivity();
         //_activity.SetCallbackOwner(this);
@@ -72,7 +77,8 @@ public class ShoppingCartFragment extends Fragment
     }
 
     @Override
-    public void AddToCartPressed() {
+    public void AddToCartPressed()
+    {
         final AlertDialog submitcheck = new AlertDialog.Builder(getContext()).create();
 
         submitcheck.setMessage("Please check all items are correct before submitting");

@@ -40,6 +40,7 @@ import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.Locale;
 
+import hoppingvikings.housefinancemobile.Endpoints.SaltVault.User.LogInEndpoint;
 import hoppingvikings.housefinancemobile.HouseFinanceClass;
 import hoppingvikings.housefinancemobile.ItemType;
 import hoppingvikings.housefinancemobile.R;
@@ -52,6 +53,7 @@ import hoppingvikings.housefinancemobile.WebService.WebHandler;
 public class AddNewBillActivity extends AppCompatActivity implements CommunicationCallback
 {
     private SessionPersister _session;
+    private LogInEndpoint _logInEndpoint;
 
     Button submitButton;
     TextInputLayout billNameEntry;
@@ -88,6 +90,7 @@ public class AddNewBillActivity extends AppCompatActivity implements Communicati
         setContentView(R.layout.activity_addnewbill);
 
         _session = HouseFinanceClass.GetSessionPersisterComponent().GetSessionPersister();
+        _logInEndpoint = HouseFinanceClass.GetUserComponent().GetLogInEndpoint();
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.appToolbar);
         setSupportActionBar(toolbar);
@@ -242,13 +245,15 @@ public class AddNewBillActivity extends AppCompatActivity implements Communicati
     }
 
     @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
+    public boolean onCreateOptionsMenu(Menu menu)
+    {
         getMenuInflater().inflate(R.menu.billentrytoolbar, menu);
         return super.onCreateOptionsMenu(menu);
     }
 
     @Override
-    public void onBackPressed() {
+    public void onBackPressed()
+    {
         if(billNameEntryText.getText().length() == 0
                 && billAmountEntryText.getText().length() == 0
                 && billDueDateEntryText.getText().length() == 0
@@ -283,8 +288,8 @@ public class AddNewBillActivity extends AppCompatActivity implements Communicati
     }
 
     @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-
+    public boolean onOptionsItemSelected(MenuItem item)
+    {
         switch (item.getItemId())
         {
             case android.R.id.home:
@@ -311,11 +316,13 @@ public class AddNewBillActivity extends AppCompatActivity implements Communicati
 
     private boolean ValidateFields()
     {
-        if(billNameEntryText.getText().length() > 0) {
+        if(billNameEntryText.getText().length() > 0)
+        {
             billName = billNameEntryText.getText().toString();
             billNameEntry.setError(null);
         }
-        else {
+        else
+            {
             billNameEntryText.requestFocus();
             billNameEntry.setError("Please enter a valid Bill name");
             return false;
@@ -326,7 +333,8 @@ public class AddNewBillActivity extends AppCompatActivity implements Communicati
                 billAmount = DecimalFormat.getInstance().parse(billAmountEntryText.getText().toString());
                 billAmountEntry.setError(null);
             }
-            else {
+            else
+                {
                 billAmountEntryText.requestFocus();
                 billAmountEntry.setError("Please enter a valid Bill remainingAmount");
                 return false;
@@ -360,7 +368,8 @@ public class AddNewBillActivity extends AppCompatActivity implements Communicati
     }
 
     @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+    protected void onActivityResult(int requestCode, int resultCode, Intent data)
+    {
         super.onActivityResult(requestCode, resultCode, data);
         switch (resultCode)
         {
@@ -422,13 +431,13 @@ public class AddNewBillActivity extends AppCompatActivity implements Communicati
             if(account != null)
             {
                 JSONObject tokenJson = new JSONObject();
-                try {
-                    tokenJson.put("Token", account.getIdToken());
-                } catch (JSONException e)
+                try
                 {
-
+                    tokenJson.put("Token", account.getIdToken());
                 }
-                WebHandler.Instance().GetSessionID(this, this, tokenJson);
+                catch (JSONException e)
+                { }
+                _logInEndpoint.Post(this, this, tokenJson);
             }
             else
             {

@@ -40,7 +40,9 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 
+import hoppingvikings.housefinancemobile.Endpoints.SaltVault.User.LogInEndpoint;
 import hoppingvikings.housefinancemobile.FileName;
+import hoppingvikings.housefinancemobile.HouseFinanceClass;
 import hoppingvikings.housefinancemobile.ItemType;
 import hoppingvikings.housefinancemobile.FileIOHandler;
 import hoppingvikings.housefinancemobile.R;
@@ -54,7 +56,9 @@ import hoppingvikings.housefinancemobile.WebService.CommunicationCallback;
 import hoppingvikings.housefinancemobile.WebService.RequestType;
 import hoppingvikings.housefinancemobile.WebService.WebHandler;
 
-public class AddNewShoppingItemActivity extends AppCompatActivity implements CommunicationCallback {
+public class AddNewShoppingItemActivity extends AppCompatActivity implements CommunicationCallback
+{
+    private LogInEndpoint _logInEndpoint;
 
     Button submitButton;
 
@@ -80,16 +84,20 @@ public class AddNewShoppingItemActivity extends AppCompatActivity implements Com
     boolean _obtainingSession = false;
 
     @Override
-    protected void onSaveInstanceState(Bundle outState) {
+    protected void onSaveInstanceState(Bundle outState)
+    {
         outState.putStringArrayList("user_names",_selectedUserNames);
         outState.putIntegerArrayList("user_ids", _selectedUserIds);
         super.onSaveInstanceState(outState);
     }
 
     @Override
-    protected void onCreate(@Nullable Bundle savedInstanceState) {
+    protected void onCreate(@Nullable Bundle savedInstanceState)
+    {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_addnewshoppingitem);
+
+        _logInEndpoint = HouseFinanceClass.GetUserComponent().GetLogInEndpoint();
 
         if(savedInstanceState != null)
         {
@@ -208,12 +216,15 @@ public class AddNewShoppingItemActivity extends AppCompatActivity implements Com
     }
 
     @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
+    public boolean onCreateOptionsMenu(Menu menu)
+    {
         getMenuInflater().inflate(R.menu.shopping_item_menu, menu);
         return super.onCreateOptionsMenu(menu);
     }
+
     @Override
-    public void onBackPressed() {
+    public void onBackPressed()
+    {
 
         if(shoppingItemNameEntry.getText().length() == 0) {
 
@@ -257,8 +268,8 @@ public class AddNewShoppingItemActivity extends AppCompatActivity implements Com
     }
 
     @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-
+    public boolean onOptionsItemSelected(MenuItem item)
+    {
         switch (item.getItemId())
         {
             case android.R.id.home:
@@ -321,7 +332,8 @@ public class AddNewShoppingItemActivity extends AppCompatActivity implements Com
     }
 
     @Override
-    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+    public void onActivityResult(int requestCode, int resultCode, Intent data)
+    {
         super.onActivityResult(requestCode, resultCode, data);
 
         switch (requestCode)
@@ -337,7 +349,8 @@ public class AddNewShoppingItemActivity extends AppCompatActivity implements Com
 
                             StringBuilder namesString = new StringBuilder();
                             int index = 0;
-                            for (String name:_selectedUserNames) {
+                            for (String name:_selectedUserNames)
+                            {
                                 if(index != _selectedUserNames.size() - 1)
                                     namesString.append(name).append(", ");
                                 else
@@ -358,7 +371,8 @@ public class AddNewShoppingItemActivity extends AppCompatActivity implements Com
     }
 
     @Override
-    protected void onStart() {
+    protected void onStart()
+    {
         super.onStart();
         if(WebHandler.Instance().GetSessionID().equals(""))
         {
@@ -368,13 +382,13 @@ public class AddNewShoppingItemActivity extends AppCompatActivity implements Com
             if(account != null)
             {
                 JSONObject tokenJson = new JSONObject();
-                try {
-                    tokenJson.put("Token", account.getIdToken());
-                } catch (JSONException e)
+                try
                 {
-
+                    tokenJson.put("Token", account.getIdToken());
                 }
-                WebHandler.Instance().GetSessionID(this, this, tokenJson);
+                catch (JSONException e)
+                { }
+                _logInEndpoint.Post(this, this, tokenJson);
             }
             else
             {

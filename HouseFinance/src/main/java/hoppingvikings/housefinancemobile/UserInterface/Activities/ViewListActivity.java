@@ -26,6 +26,7 @@ import org.json.JSONObject;
 import java.io.Serializable;
 import java.util.ArrayList;
 
+import hoppingvikings.housefinancemobile.Endpoints.SaltVault.User.LogInEndpoint;
 import hoppingvikings.housefinancemobile.HouseFinanceClass;
 import hoppingvikings.housefinancemobile.NotificationWrapper;
 import hoppingvikings.housefinancemobile.R;
@@ -52,6 +53,7 @@ public class ViewListActivity extends AppCompatActivity
         ShoppingListAdapter.DeleteCallback, ShoppingListAdapter.EditPressedCallback,
         TodoListAdapter.DeleteCallback, TodoListAdapter.EditPressedCallback
 {
+    private LogInEndpoint _logInEndpoint;
 
     CoordinatorLayout _layout;
     RecyclerView _rv;
@@ -174,6 +176,8 @@ public class ViewListActivity extends AppCompatActivity
 
         NotificationWrapper notificationWrapper = HouseFinanceClass.GetNotificationWrapperComponent().GetNotificationWrapper();
         final SessionPersister sessionPersister = HouseFinanceClass.GetSessionPersisterComponent().GetSessionPersister();
+        _logInEndpoint = HouseFinanceClass.GetUserComponent().GetLogInEndpoint();
+
         _toolbar = findViewById(R.id.appToolbar);
         _layout = findViewById(R.id.coordLayout);
         _fab = findViewById(R.id.addItem);
@@ -333,7 +337,8 @@ public class ViewListActivity extends AppCompatActivity
     }
 
     @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+    protected void onActivityResult(int requestCode, int resultCode, Intent data)
+    {
         super.onActivityResult(requestCode, resultCode, data);
 
         switch (resultCode)
@@ -351,18 +356,21 @@ public class ViewListActivity extends AppCompatActivity
     }
 
     @Override
-    public void onViewAllPressed(ArrayList<BillListObjectPeople> allPeople) {
+    public void onViewAllPressed(ArrayList<BillListObjectPeople> allPeople)
+    {
         _peopleListPopup.Show(allPeople);
     }
 
     @Override
-    public void onItemDeleted() {
+    public void onItemDeleted()
+    {
         _refreshLayout.setRefreshing(true);
         _handler.postDelayed(ConnectToApi, 200);
     }
 
     @Override
-    public void onEditPressed(int itemid) {
+    public void onEditPressed(int itemid)
+    {
         Intent edititem;
         switch (_currentType)
         {
@@ -381,7 +389,8 @@ public class ViewListActivity extends AppCompatActivity
     }
 
     @Override
-    public void OnSuccess(RequestType requestType, Object o) {
+    public void OnSuccess(RequestType requestType, Object o)
+    {
         if(_obtainingSession)
         {
             _handler.post(ConnectToApi);
@@ -392,20 +401,23 @@ public class ViewListActivity extends AppCompatActivity
     }
 
     @Override
-    public void OnFail(RequestType requestType, String message) {
+    public void OnFail(RequestType requestType, String message)
+    {
         _handler.removeCallbacksAndMessages(null);
         Snackbar.make(_layout, message, Snackbar.LENGTH_LONG).show();
         _refreshLayout.setRefreshing(false);
     }
 
     @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
+    public boolean onCreateOptionsMenu(Menu menu)
+    {
         getMenuInflater().inflate(R.menu.billentrytoolbar, menu);
         return super.onCreateOptionsMenu(menu);
     }
 
     @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
+    public boolean onOptionsItemSelected(MenuItem item)
+    {
         switch (item.getItemId())
         {
             case android.R.id.home:
@@ -418,7 +430,8 @@ public class ViewListActivity extends AppCompatActivity
     }
 
     @Override
-    protected void onStart() {
+    protected void onStart()
+    {
         super.onStart();
         if(WebHandler.Instance().GetSessionID().equals(""))
         {
@@ -428,13 +441,15 @@ public class ViewListActivity extends AppCompatActivity
             if(account != null)
             {
                 JSONObject tokenJson = new JSONObject();
-                try {
+                try
+                {
                     tokenJson.put("Token", account.getIdToken());
-                } catch (JSONException e)
+                }
+                catch (JSONException e)
                 {
 
                 }
-                WebHandler.Instance().GetSessionID(this, this, tokenJson);
+                _logInEndpoint.Post(this, this, tokenJson);
             }
             else
             {

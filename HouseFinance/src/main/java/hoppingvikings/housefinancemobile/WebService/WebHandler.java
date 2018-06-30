@@ -8,16 +8,13 @@ import java.util.HashMap;
 import java.util.Map;
 
 import hoppingvikings.housefinancemobile.Endpoints.SaltVault.BillEndpoint;
-import hoppingvikings.housefinancemobile.Endpoints.SaltVault.House.HouseholdInviteEndpoint;
-import hoppingvikings.housefinancemobile.Endpoints.SaltVault.House.HouseholdEndpoint;
-import hoppingvikings.housefinancemobile.Endpoints.SaltVault.LogInEndpoint;
+import hoppingvikings.housefinancemobile.Endpoints.SaltVault.User.LogInEndpoint;
 import hoppingvikings.housefinancemobile.Endpoints.SaltVault.PaymentsEndpoint;
 import hoppingvikings.housefinancemobile.Endpoints.SaltVault.ShoppingEndpoint;
 import hoppingvikings.housefinancemobile.Endpoints.SaltVault.ToDoEndpoint;
-import hoppingvikings.housefinancemobile.Endpoints.SaltVault.UserEndpoint;
+import hoppingvikings.housefinancemobile.Endpoints.SaltVault.User.UserEndpoint;
 import hoppingvikings.housefinancemobile.HouseFinanceClass;
 import hoppingvikings.housefinancemobile.ItemType;
-import hoppingvikings.housefinancemobile.R;
 
 public class WebHandler
 {
@@ -28,8 +25,6 @@ public class WebHandler
     private PaymentsEndpoint _paymentsEndpoint;
     private ShoppingEndpoint _shoppingEndpoint;
     private ToDoEndpoint _toDoEndpoint;
-    private UserEndpoint _userEndpoint;
-    private LogInEndpoint _logInEndpoint;
 
     private WebHandler()
     {
@@ -37,9 +32,7 @@ public class WebHandler
         _paymentsEndpoint = new PaymentsEndpoint();
         _shoppingEndpoint = new ShoppingEndpoint();
         _toDoEndpoint = new ToDoEndpoint();
-        _userEndpoint = new UserEndpoint();
         _session = HouseFinanceClass.GetSessionPersisterComponent().GetSessionPersister();
-        _logInEndpoint = new LogInEndpoint(_session);
     }
 
     public static WebHandler Instance()
@@ -59,11 +52,6 @@ public class WebHandler
     public String GetSessionID()
     {
         return _session.GetSessionID();
-    }
-
-    public void GetSessionID(Context context, final CommunicationCallback callback, final JSONObject idToken)
-    {
-        _logInEndpoint.Post(context, callback, idToken);
     }
 
     public void GetBills(Context context, final CommunicationCallback callback)
@@ -90,12 +78,6 @@ public class WebHandler
         Map<String, String> urlParameters = new HashMap<>();
         urlParameters.put("id", Integer.toString(billId));
         _billEndpoint.Get(context, callback, urlParameters);
-    }
-
-    public void RequestUsers(Context context, final CommunicationCallback callback)
-    {
-        _userEndpoint.SetRequestProperty("Authorization", _session.GetSessionID());
-        _userEndpoint.Get(context, callback);
     }
 
     public void UploadNewItem(Context context, final JSONObject newItem, final CommunicationCallback callback, final ItemType itemType)
