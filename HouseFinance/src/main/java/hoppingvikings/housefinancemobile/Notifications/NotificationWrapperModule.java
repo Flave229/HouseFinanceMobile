@@ -1,4 +1,4 @@
-package hoppingvikings.housefinancemobile.UserInterface.Activities.Main;
+package hoppingvikings.housefinancemobile.Notifications;
 
 import dagger.Module;
 import dagger.Provides;

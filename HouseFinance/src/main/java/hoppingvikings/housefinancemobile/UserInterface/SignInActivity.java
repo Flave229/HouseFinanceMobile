@@ -25,10 +25,9 @@ import org.json.JSONObject;
 import hoppingvikings.housefinancemobile.Services.SaltVault.User.LogInEndpoint;
 import hoppingvikings.housefinancemobile.HouseFinanceClass;
 import hoppingvikings.housefinancemobile.R;
-import hoppingvikings.housefinancemobile.UserInterface.Activities.MainMenu.MainMenuActivity;
+import hoppingvikings.housefinancemobile.UserInterface.Activities.MainMenuActivity;
 import hoppingvikings.housefinancemobile.WebService.CommunicationCallback;
 import hoppingvikings.housefinancemobile.WebService.RequestType;
-import hoppingvikings.housefinancemobile.WebService.WebHandler;
 
 public class SignInActivity extends AppCompatActivity implements CommunicationCallback
 {

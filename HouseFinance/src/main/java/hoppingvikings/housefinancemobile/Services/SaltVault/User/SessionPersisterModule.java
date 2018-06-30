@@ -1,4 +1,4 @@
-package hoppingvikings.housefinancemobile.UserInterface.Activities.Main;
+package hoppingvikings.housefinancemobile.Services.SaltVault.User;
 
 import dagger.Module;
 import dagger.Provides;

@@ -20,7 +20,7 @@ import hoppingvikings.housefinancemobile.Services.SaltVault.ToDo.TodoRepository;
 import hoppingvikings.housefinancemobile.UserInterface.Activities.EditTodoItemActivity;
 import hoppingvikings.housefinancemobile.UserInterface.Items.TodoListObject;
 import hoppingvikings.housefinancemobile.UserInterface.Lists.TodoList.TodoListAdapter;
-import hoppingvikings.housefinancemobile.UserInterface.Activities.MainMenu.MainMenuActivity;
+import hoppingvikings.housefinancemobile.UserInterface.Activities.MainMenuActivity;
 import hoppingvikings.housefinancemobile.WebService.CommunicationCallback;
 import hoppingvikings.housefinancemobile.WebService.RequestType;
 import hoppingvikings.housefinancemobile.WebService.WebHandler;

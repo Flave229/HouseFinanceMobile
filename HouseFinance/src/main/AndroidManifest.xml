@@ -19,7 +19,7 @@
         android:theme="@style/AppTheme"
         android:resizeableActivity="true">
 
-        <activity android:name="hoppingvikings.housefinancemobile.UserInterface.Activities.Main.MainActivity">
+        <activity android:name="hoppingvikings.housefinancemobile.UserInterface.Activities.MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
@@ -31,7 +31,7 @@
         <activity android:name=".UserInterface.SignInActivity"
             android:label="Sign In"/>
 
-        <activity android:name=".UserInterface.Activities.MainMenu.MainMenuActivity"
+        <activity android:name=".UserInterface.Activities.MainMenuActivity"
             android:label="Main Menu"/>
 
         <service android:name="hoppingvikings.housefinancemobile.BackgroundService"
@@ -39,7 +39,7 @@
             android:stopWithTask="false"/>
 
         <activity android:name=".UserInterface.Activities.ViewListActivity"
-            android:parentActivityName=".UserInterface.Activities.MainMenu.MainMenuActivity"
+            android:parentActivityName=".UserInterface.Activities.MainMenuActivity"
             android:label="List"/>
 
         <activity android:name=".UserInterface.Activities.AddNewBillActivity"

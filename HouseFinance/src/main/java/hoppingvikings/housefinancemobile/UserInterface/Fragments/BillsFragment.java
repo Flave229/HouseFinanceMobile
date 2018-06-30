@@ -23,7 +23,7 @@ import hoppingvikings.housefinancemobile.UserInterface.Lists.BillList.BillListAd
 import hoppingvikings.housefinancemobile.UserInterface.Items.BillListObject;
 import hoppingvikings.housefinancemobile.UserInterface.Lists.ListItemDivider;
 import hoppingvikings.housefinancemobile.UserInterface.Activities.ViewBillDetailsActivity;
-import hoppingvikings.housefinancemobile.UserInterface.Activities.MainMenu.MainMenuActivity;
+import hoppingvikings.housefinancemobile.UserInterface.Activities.MainMenuActivity;
 import hoppingvikings.housefinancemobile.UserInterface.PeoplePopup;
 import hoppingvikings.housefinancemobile.WebService.CommunicationCallback;
 import hoppingvikings.housefinancemobile.WebService.RequestType;

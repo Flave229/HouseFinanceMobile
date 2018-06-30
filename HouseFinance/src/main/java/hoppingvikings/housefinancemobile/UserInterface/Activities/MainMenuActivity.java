@@ -1,4 +1,4 @@
-package hoppingvikings.housefinancemobile.UserInterface.Activities.MainMenu;
+package hoppingvikings.housefinancemobile.UserInterface.Activities;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -32,8 +32,6 @@ import hoppingvikings.housefinancemobile.HouseFinanceClass;
 import hoppingvikings.housefinancemobile.ItemType;
 import hoppingvikings.housefinancemobile.NotificationWrapper;
 import hoppingvikings.housefinancemobile.R;
-import hoppingvikings.housefinancemobile.UserInterface.Activities.ViewHouseholdActivity;
-import hoppingvikings.housefinancemobile.UserInterface.Activities.ViewListActivity;
 import hoppingvikings.housefinancemobile.UserInterface.Items.MainMenuItem;
 import hoppingvikings.housefinancemobile.UserInterface.Lists.MainMenu.MainMenuListAdapter;
 import hoppingvikings.housefinancemobile.UserInterface.SignInActivity;

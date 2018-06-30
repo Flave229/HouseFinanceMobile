@@ -4,6 +4,8 @@ import java.io.Serializable;
 
 import javax.inject.Inject;
 
+import hoppingvikings.housefinancemobile.Notifications.NotificationType;
+
 public class NotificationWrapper implements Serializable
 {
     @Inject

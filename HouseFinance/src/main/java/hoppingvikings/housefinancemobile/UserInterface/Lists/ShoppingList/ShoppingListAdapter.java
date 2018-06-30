@@ -20,7 +20,7 @@ import java.util.ArrayList;
 
 import hoppingvikings.housefinancemobile.BitmapCache;
 import hoppingvikings.housefinancemobile.ItemType;
-import hoppingvikings.housefinancemobile.NotificationType;
+import hoppingvikings.housefinancemobile.Notifications.NotificationType;
 import hoppingvikings.housefinancemobile.NotificationWrapper;
 import hoppingvikings.housefinancemobile.R;
 import hoppingvikings.housefinancemobile.UserInterface.Items.ShoppingListObject;

@@ -3,9 +3,6 @@ package hoppingvikings.housefinancemobile.UserInterface.Lists.TodoList;
 import android.app.NotificationManager;
 import android.content.Context;
 import android.graphics.Color;
-import android.media.Image;
-import android.support.constraint.solver.ArrayLinkedVariables;
-import android.support.v7.graphics.drawable.DrawerArrowDrawable;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -23,7 +20,7 @@ import java.util.ArrayList;
 
 import hoppingvikings.housefinancemobile.BitmapCache;
 import hoppingvikings.housefinancemobile.ItemType;
-import hoppingvikings.housefinancemobile.NotificationType;
+import hoppingvikings.housefinancemobile.Notifications.NotificationType;
 import hoppingvikings.housefinancemobile.NotificationWrapper;
 import hoppingvikings.housefinancemobile.R;
 import hoppingvikings.housefinancemobile.UserInterface.Items.TodoListObject;

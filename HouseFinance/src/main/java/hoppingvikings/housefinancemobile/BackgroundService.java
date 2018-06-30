@@ -14,6 +14,7 @@ import android.support.v4.app.NotificationCompat;
 import android.support.v4.app.NotificationManagerCompat;
 import android.support.v4.content.ContextCompat;
 
+import hoppingvikings.housefinancemobile.Notifications.NotificationType;
 import hoppingvikings.housefinancemobile.UserInterface.Activities.ViewListActivity;
 
 /**

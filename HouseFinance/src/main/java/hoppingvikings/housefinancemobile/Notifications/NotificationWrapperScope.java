@@ -1,4 +1,4 @@
-package hoppingvikings.housefinancemobile.UserInterface.Activities.Main;
+package hoppingvikings.housefinancemobile.Notifications;
 
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
@@ -7,6 +7,6 @@ import javax.inject.Scope;
 
 @Scope
 @Retention(RetentionPolicy.CLASS)
-public @interface SessionPersisterScope
+public @interface NotificationWrapperScope
 {
 }
