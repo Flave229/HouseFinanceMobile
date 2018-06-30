@@ -340,7 +340,7 @@ public class ViewListActivity extends AppCompatActivity
                     android.R.color.holo_red_light);
 
             _refreshLayout.setRefreshing(true);
-            _handler.postDelayed(ConnectToApi, 200);
+            _handler.post(ConnectToApi);
         }
         else
         {
@@ -377,7 +377,7 @@ public class ViewListActivity extends AppCompatActivity
     public void onItemDeleted()
     {
         _refreshLayout.setRefreshing(true);
-        _handler.postDelayed(ConnectToApi, 200);
+        _handler.post(ConnectToApi);
     }
 
     @Override
@@ -409,7 +409,7 @@ public class ViewListActivity extends AppCompatActivity
             _obtainingSession = false;
             return;
         }
-        _handler.postDelayed(updateList, 1000);
+        _handler.post(updateList);
     }
 
     @Override

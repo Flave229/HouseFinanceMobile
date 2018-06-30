@@ -31,6 +31,7 @@ import org.json.JSONObject;
 
 import java.util.ArrayList;
 
+import hoppingvikings.housefinancemobile.FileIOHandler;
 import hoppingvikings.housefinancemobile.Services.SaltVault.Shopping.ShoppingEndpoint;
 import hoppingvikings.housefinancemobile.Services.SaltVault.User.LogInEndpoint;
 import hoppingvikings.housefinancemobile.HouseFinanceClass;
@@ -203,6 +204,31 @@ public class AddNewShoppingItemActivity extends AppCompatActivity implements Com
         _cartAdapter = new ShoppingCartAdapter(_addedItems, this);
         _addedItemsRV.setAdapter(_cartAdapter);
         _addedItemsRV.setLayoutManager(new LinearLayoutManager(this));
+
+        try {
+            JSONObject currentUser = new JSONObject(FileIOHandler.Instance().ReadFileAsString("CurrentUser"));
+            int userId = currentUser.getInt("id");
+            String username = currentUser.getString("firstName");
+
+            _selectedUserIds.add(userId);
+            _selectedUserNames.add(username);
+
+            StringBuilder namesString = new StringBuilder();
+            int index = 0;
+            for (String name:_selectedUserNames)
+            {
+                if(index != _selectedUserNames.size() - 1)
+                    namesString.append(name).append(", ");
+                else
+                    namesString.append(name);
+
+                index++;
+            }
+            selectUsers.setText(namesString);
+        } catch (JSONException je)
+        {
+
+        }
     }
 
     @Override

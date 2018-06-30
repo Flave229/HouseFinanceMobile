@@ -25,16 +25,31 @@
             android:id="@+id/houseNameText"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginEnd="16dp"
             android:layout_marginLeft="16dp"
-            android:layout_marginRight="16dp"
             android:layout_marginStart="16dp"
             android:layout_marginTop="16dp"
             android:text="House Name"
             android:textColor="#000"
             android:textSize="20sp"
-            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintEnd_toStartOf="@+id/editHouseName"
+            app:layout_constraintHorizontal_bias="0.5"
             app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <ImageButton
+            android:id="@+id/editHouseName"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="16dp"
+            android:layout_marginRight="16dp"
+            android:layout_marginTop="16dp"
+            android:src="@drawable/ic_create_black_24dp"
+            android:background="#fff"
+            android:padding="8dp"
+            app:layout_constraintBottom_toBottomOf="@+id/houseNameText"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.5"
+            app:layout_constraintStart_toEndOf="@+id/houseNameText"
             app:layout_constraintTop_toTopOf="parent" />
 
         <Button
@@ -68,16 +83,16 @@
             android:id="@+id/inviteLinkDesc"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginTop="16dp"
             android:layout_marginLeft="16dp"
             android:layout_marginRight="16dp"
+            android:layout_marginTop="16dp"
             android:gravity="center"
             android:text="Use this invite code to invite others to your house. They will need to enter it in the on-screen prompt when using the 'Join Household' button on this page.\nTap the code to copy to clipboard"
             android:textColor="#000"
             android:textSize="18sp"
-            app:layout_constraintTop_toBottomOf="@id/rightButton"
             app:layout_constraintLeft_toLeftOf="parent"
-            app:layout_constraintRight_toRightOf="parent" />
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/rightButton" />
 
         <android.support.v7.widget.CardView
             android:id="@+id/inviteCodeBackground"
@@ -101,8 +116,8 @@
                 android:padding="16dp"
                 android:text="Invite Code"
                 android:textColor="#000"
-                android:textSize="46sp"
                 android:textIsSelectable="true"
+                android:textSize="46sp"
                 app:layout_constraintLeft_toLeftOf="parent"
                 app:layout_constraintRight_toRightOf="parent" />
         </android.support.v7.widget.CardView>

@@ -23,6 +23,7 @@ import android.widget.ImageButton;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.text.DecimalFormat;
@@ -32,6 +33,7 @@ import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.Locale;
 
+import hoppingvikings.housefinancemobile.FileIOHandler;
 import hoppingvikings.housefinancemobile.HouseFinanceClass;
 import hoppingvikings.housefinancemobile.R;
 import hoppingvikings.housefinancemobile.Services.SaltVault.Bills.PaymentsEndpoint;
@@ -213,6 +215,20 @@ public class AddPaymentActivity extends AppCompatActivity implements Communicati
                 confirmCancel.show();
             }
         });
+
+        try {
+            JSONObject currentUser = new JSONObject(FileIOHandler.Instance().ReadFileAsString("CurrentUser"));
+            int userId = currentUser.getInt("id");
+            String username = currentUser.getString("firstName");
+
+            _selectedUserId = userId;
+            _selectedUserName = username;
+
+            selectUser.setText(_selectedUserName);
+        } catch (JSONException je)
+        {
+
+        }
     }
 
     private void ReenableElements()

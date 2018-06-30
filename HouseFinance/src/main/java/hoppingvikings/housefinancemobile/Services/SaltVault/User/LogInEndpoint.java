@@ -5,8 +5,11 @@ import android.util.Log;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.File;
+
 import javax.inject.Inject;
 
+import hoppingvikings.housefinancemobile.FileIOHandler;
 import hoppingvikings.housefinancemobile.ItemType;
 import hoppingvikings.housefinancemobile.WebService.CommunicationRequest;
 import hoppingvikings.housefinancemobile.WebService.CommunicationResponse;
@@ -84,6 +87,11 @@ public class LogInEndpoint extends HTTPHandler
     {
         try
         {
+            if(result.Response.has("user"))
+            {
+                FileIOHandler.Instance().WriteToFile("CurrentUser", result.Response.getJSONObject("user").toString());
+            }
+
             if (result.Response.has("sessionId"))
             {
                 String sessionID = result.Response.getString("sessionId");

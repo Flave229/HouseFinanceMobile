@@ -7,6 +7,7 @@ import org.json.JSONObject;
 
 import javax.inject.Inject;
 
+import hoppingvikings.housefinancemobile.ApiErrorCodes;
 import hoppingvikings.housefinancemobile.FileIOHandler;
 import hoppingvikings.housefinancemobile.ItemType;
 import hoppingvikings.housefinancemobile.WebService.CommunicationRequest;
@@ -52,9 +53,16 @@ public class HouseholdEndpoint extends HTTPHandler
     }
 
     @Override
-    protected CommunicationRequest ConstructPatch(JSONObject patchData) throws UnsupportedOperationException
+    protected CommunicationRequest ConstructPatch(final JSONObject patchData)
     {
-        throw new UnsupportedOperationException();
+        SetRequestProperty("Authorization", _session.GetSessionID());
+        return new CommunicationRequest()
+        {{
+            ItemTypeData = ItemType.HOUSEHOLD;
+            Endpoint = HOUSEHOLD_ENDPOINT;
+            RequestBody = String.valueOf(patchData);
+            OwnerV2 = HouseholdEndpoint.this;
+        }};
     }
 
     @Override
@@ -77,6 +85,13 @@ public class HouseholdEndpoint extends HTTPHandler
         {
             if(result.Response.has("hasError") && result.Response.getBoolean("hasError"))
             {
+                int errorCode = result.Response.getJSONObject("error").getInt("errorCode");
+                if(errorCode == ApiErrorCodes.USER_NOT_IN_HOUSEHOLD.getValue())
+                {
+                    result.Callback.OnFail(result.RequestTypeData, ApiErrorCodes.USER_NOT_IN_HOUSEHOLD.name());
+                    return;
+                }
+
                 String errorMessage = result.Response.getJSONObject("error").getString("message");
                 Log.e("Error", errorMessage);
                 result.Callback.OnFail(result.RequestTypeData, errorMessage);

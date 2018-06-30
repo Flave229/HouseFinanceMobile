@@ -40,6 +40,7 @@ import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.Locale;
 
+import hoppingvikings.housefinancemobile.FileIOHandler;
 import hoppingvikings.housefinancemobile.Services.SaltVault.Bills.BillEndpoint;
 import hoppingvikings.housefinancemobile.Services.SaltVault.User.LogInEndpoint;
 import hoppingvikings.housefinancemobile.HouseFinanceClass;
@@ -241,6 +242,31 @@ public class AddNewBillActivity extends AppCompatActivity implements Communicati
                 confirmCancel.show();
             }
         });
+
+        try {
+            JSONObject currentUser = new JSONObject(FileIOHandler.Instance().ReadFileAsString("CurrentUser"));
+            int userId = currentUser.getInt("id");
+            String username = currentUser.getString("firstName");
+
+            _selectedUserIds.add(userId);
+            _selectedUserNames.add(username);
+
+            StringBuilder namesString = new StringBuilder();
+            int index = 0;
+            for (String name:_selectedUserNames)
+            {
+                if(index != _selectedUserNames.size() - 1)
+                    namesString.append(name).append(", ");
+                else
+                    namesString.append(name);
+
+                index++;
+            }
+            selectUsers.setText(namesString);
+        } catch (JSONException je)
+        {
+
+        }
     }
 
     @Override
@@ -255,8 +281,7 @@ public class AddNewBillActivity extends AppCompatActivity implements Communicati
     {
         if(billNameEntryText.getText().length() == 0
                 && billAmountEntryText.getText().length() == 0
-                && billDueDateEntryText.getText().length() == 0
-                && _selectedUserIds.size() == 0)
+                && billDueDateEntryText.getText().length() == 0)
         {
             setResult(RESULT_CANCELED);
             super.onBackPressed();
