@@ -15,7 +15,7 @@ import android.view.ViewGroup;
 import java.util.ArrayList;
 
 import hoppingvikings.housefinancemobile.HouseFinanceClass;
-import hoppingvikings.housefinancemobile.Repositories.BillRepository;
+import hoppingvikings.housefinancemobile.Services.SaltVault.Bills.BillRepository;
 import hoppingvikings.housefinancemobile.R;
 import hoppingvikings.housefinancemobile.Services.SaltVault.Bills.BillEndpoint;
 import hoppingvikings.housefinancemobile.UserInterface.Items.BillListObjectPeople;
@@ -27,7 +27,6 @@ import hoppingvikings.housefinancemobile.UserInterface.Activities.MainMenu.MainM
 import hoppingvikings.housefinancemobile.UserInterface.PeoplePopup;
 import hoppingvikings.housefinancemobile.WebService.CommunicationCallback;
 import hoppingvikings.housefinancemobile.WebService.RequestType;
-import hoppingvikings.housefinancemobile.WebService.WebHandler;
 
 import static android.app.Activity.RESULT_CANCELED;
 import static android.app.Activity.RESULT_OK;

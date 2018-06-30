@@ -1,4 +1,4 @@
-package hoppingvikings.housefinancemobile.Services.SaltVault;
+package hoppingvikings.housefinancemobile.Services.SaltVault.Shopping;
 
 import android.util.Log;
 
@@ -9,7 +9,6 @@ import org.json.JSONObject;
 import java.util.ArrayList;
 
 import hoppingvikings.housefinancemobile.ItemType;
-import hoppingvikings.housefinancemobile.Repositories.ShoppingRepository;
 import hoppingvikings.housefinancemobile.UserInterface.Items.ShoppingListObject;
 import hoppingvikings.housefinancemobile.WebService.CommunicationRequest;
 import hoppingvikings.housefinancemobile.WebService.CommunicationResponse;

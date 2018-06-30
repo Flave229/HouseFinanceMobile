@@ -23,7 +23,6 @@ import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.io.Serializable;
 import java.util.ArrayList;
 
 import hoppingvikings.housefinancemobile.Services.SaltVault.Bills.BillEndpoint;
@@ -31,9 +30,9 @@ import hoppingvikings.housefinancemobile.Services.SaltVault.User.LogInEndpoint;
 import hoppingvikings.housefinancemobile.HouseFinanceClass;
 import hoppingvikings.housefinancemobile.NotificationWrapper;
 import hoppingvikings.housefinancemobile.R;
-import hoppingvikings.housefinancemobile.Repositories.BillRepository;
-import hoppingvikings.housefinancemobile.Repositories.ShoppingRepository;
-import hoppingvikings.housefinancemobile.Repositories.TodoRepository;
+import hoppingvikings.housefinancemobile.Services.SaltVault.Bills.BillRepository;
+import hoppingvikings.housefinancemobile.Services.SaltVault.Shopping.ShoppingRepository;
+import hoppingvikings.housefinancemobile.Services.SaltVault.ToDo.TodoRepository;
 import hoppingvikings.housefinancemobile.UserInterface.Items.BillListObject;
 import hoppingvikings.housefinancemobile.UserInterface.Items.BillListObjectPeople;
 import hoppingvikings.housefinancemobile.UserInterface.Items.ShoppingListObject;

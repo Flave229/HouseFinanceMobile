@@ -4,8 +4,8 @@ import android.content.Context;
 
 import org.json.JSONObject;
 
-import hoppingvikings.housefinancemobile.Services.SaltVault.ShoppingEndpoint;
-import hoppingvikings.housefinancemobile.Services.SaltVault.ToDoEndpoint;
+import hoppingvikings.housefinancemobile.Services.SaltVault.Shopping.ShoppingEndpoint;
+import hoppingvikings.housefinancemobile.Services.SaltVault.ToDo.ToDoEndpoint;
 import hoppingvikings.housefinancemobile.HouseFinanceClass;
 import hoppingvikings.housefinancemobile.ItemType;
 

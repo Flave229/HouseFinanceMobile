@@ -27,8 +27,7 @@ import java.util.Locale;
 import java.util.Map;
 
 import hoppingvikings.housefinancemobile.HouseFinanceClass;
-import hoppingvikings.housefinancemobile.ItemType;
-import hoppingvikings.housefinancemobile.Repositories.BillRepository;
+import hoppingvikings.housefinancemobile.Services.SaltVault.Bills.BillRepository;
 import hoppingvikings.housefinancemobile.R;
 import hoppingvikings.housefinancemobile.Services.SaltVault.Bills.BillEndpoint;
 import hoppingvikings.housefinancemobile.Services.SaltVault.Bills.PaymentsEndpoint;
@@ -38,7 +37,6 @@ import hoppingvikings.housefinancemobile.UserInterface.Items.BillPayment;
 import hoppingvikings.housefinancemobile.UserInterface.PaymentsListAdapter;
 import hoppingvikings.housefinancemobile.WebService.CommunicationCallback;
 import hoppingvikings.housefinancemobile.WebService.RequestType;
-import hoppingvikings.housefinancemobile.WebService.WebHandler;
 
 public class ViewBillDetailsActivity extends AppCompatActivity
         implements CommunicationCallback, PaymentsListAdapter.DeleteCallback, PaymentsListAdapter.EditPressedCallback

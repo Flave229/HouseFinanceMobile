@@ -35,7 +35,7 @@ import java.util.Locale;
 
 import hoppingvikings.housefinancemobile.ItemType;
 import hoppingvikings.housefinancemobile.R;
-import hoppingvikings.housefinancemobile.Repositories.TodoRepository;
+import hoppingvikings.housefinancemobile.Services.SaltVault.ToDo.TodoRepository;
 import hoppingvikings.housefinancemobile.UserInterface.Items.TodoListObject;
 import hoppingvikings.housefinancemobile.WebService.CommunicationCallback;
 import hoppingvikings.housefinancemobile.WebService.RequestType;

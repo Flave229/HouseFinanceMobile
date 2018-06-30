@@ -16,7 +16,7 @@ import android.view.ViewGroup;
 import java.util.ArrayList;
 import java.util.Date;
 
-import hoppingvikings.housefinancemobile.Repositories.ShoppingRepository;
+import hoppingvikings.housefinancemobile.Services.SaltVault.Shopping.ShoppingRepository;
 import hoppingvikings.housefinancemobile.R;
 import hoppingvikings.housefinancemobile.UserInterface.Activities.EditShoppingItemActivity;
 import hoppingvikings.housefinancemobile.UserInterface.Lists.ShoppingList.ShoppingListAdapter;

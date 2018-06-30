@@ -16,7 +16,7 @@ import android.view.ViewGroup;
 import java.util.ArrayList;
 
 import hoppingvikings.housefinancemobile.R;
-import hoppingvikings.housefinancemobile.Repositories.TodoRepository;
+import hoppingvikings.housefinancemobile.Services.SaltVault.ToDo.TodoRepository;
 import hoppingvikings.housefinancemobile.UserInterface.Activities.EditTodoItemActivity;
 import hoppingvikings.housefinancemobile.UserInterface.Items.TodoListObject;
 import hoppingvikings.housefinancemobile.UserInterface.Lists.TodoList.TodoListAdapter;
