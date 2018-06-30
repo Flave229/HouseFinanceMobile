@@ -36,6 +36,7 @@ import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.Locale;
 
+import hoppingvikings.housefinancemobile.Services.SaltVault.ToDo.ToDoEndpoint;
 import hoppingvikings.housefinancemobile.Services.SaltVault.User.LogInEndpoint;
 import hoppingvikings.housefinancemobile.HouseFinanceClass;
 import hoppingvikings.housefinancemobile.ItemType;
@@ -50,6 +51,7 @@ public class AddNewToDoActivity extends AppCompatActivity implements Communicati
 {
     private SessionPersister _session;
     private LogInEndpoint _logInEndpoint;
+    private ToDoEndpoint _toDoEndpoint;
 
     Button submitButton;
     TextInputLayout taskTitleEntry;
@@ -78,6 +80,7 @@ public class AddNewToDoActivity extends AppCompatActivity implements Communicati
 
         _session = HouseFinanceClass.GetSessionPersisterComponent().GetSessionPersister();
         _logInEndpoint = HouseFinanceClass.GetUserComponent().GetLogInEndpoint();
+        _toDoEndpoint = HouseFinanceClass.GetToDoComponent().GetToDoEndpoint();
 
         Toolbar toolbar = findViewById(R.id.appToolbar);
         setSupportActionBar(toolbar);
@@ -94,7 +97,8 @@ public class AddNewToDoActivity extends AppCompatActivity implements Communicati
 
         selectedPeople = findViewById(R.id.selectUsers);
         editPeople = findViewById(R.id.editPeople);
-        editPeople.setOnClickListener(new View.OnClickListener() {
+        editPeople.setOnClickListener(new View.OnClickListener()
+        {
             @Override
             public void onClick(View v) {
                 Intent selectPeople = new Intent(AddNewToDoActivity.this, SelectUsersActivity.class);
@@ -107,7 +111,8 @@ public class AddNewToDoActivity extends AppCompatActivity implements Communicati
         });
 
         final Calendar calendar = Calendar.getInstance(Locale.ENGLISH);
-        final DatePickerDialog.OnDateSetListener date = new DatePickerDialog.OnDateSetListener() {
+        final DatePickerDialog.OnDateSetListener date = new DatePickerDialog.OnDateSetListener()
+        {
             @Override
             public void onDateSet(DatePicker view, int year, int month, int dayOfMonth) {
                 GregorianCalendar gc = new GregorianCalendar();
@@ -123,9 +128,11 @@ public class AddNewToDoActivity extends AppCompatActivity implements Communicati
             }
         };
 
-        taskDueDateEntryText.setOnClickListener(new View.OnClickListener() {
+        taskDueDateEntryText.setOnClickListener(new View.OnClickListener()
+        {
             @Override
-            public void onClick(View v) {
+            public void onClick(View v)
+            {
                 new DatePickerDialog(AddNewToDoActivity.this, date,
                         calendar.get(Calendar.YEAR),
                         calendar.get(Calendar.MONTH),
@@ -133,9 +140,11 @@ public class AddNewToDoActivity extends AppCompatActivity implements Communicati
             }
         });
 
-        submitButton.setOnClickListener(new View.OnClickListener() {
+        submitButton.setOnClickListener(new View.OnClickListener()
+        {
             @Override
-            public void onClick(View v) {
+            public void onClick(View v)
+            {
                 if(!ValidateFields())
                     return;
 
@@ -143,7 +152,8 @@ public class AddNewToDoActivity extends AppCompatActivity implements Communicati
                 confirmCancel.setTitle("Submit new task?");
                 confirmCancel.setMessage("Please check that all details are correct");
 
-                confirmCancel.setButton(DialogInterface.BUTTON_POSITIVE, "Confirm", new DialogInterface.OnClickListener() {
+                confirmCancel.setButton(DialogInterface.BUTTON_POSITIVE, "Confirm", new DialogInterface.OnClickListener()
+                {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         confirmCancel.dismiss();
@@ -166,7 +176,7 @@ public class AddNewToDoActivity extends AppCompatActivity implements Communicati
 
                             newTask.put("PeopleIds", people);
 
-                            WebHandler.Instance().UploadNewItem(getApplicationContext(), newTask, AddNewToDoActivity.this, ItemType.TODO);
+                            _toDoEndpoint.Post(getApplicationContext(), AddNewToDoActivity.this, newTask);
 
                         } catch (JSONException je)
                         {

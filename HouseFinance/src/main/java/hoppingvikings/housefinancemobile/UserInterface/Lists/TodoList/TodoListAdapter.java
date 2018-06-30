@@ -23,6 +23,7 @@ import hoppingvikings.housefinancemobile.ItemType;
 import hoppingvikings.housefinancemobile.Notifications.NotificationType;
 import hoppingvikings.housefinancemobile.NotificationWrapper;
 import hoppingvikings.housefinancemobile.R;
+import hoppingvikings.housefinancemobile.Services.SaltVault.ToDo.ToDoEndpoint;
 import hoppingvikings.housefinancemobile.UserInterface.Items.TodoListObject;
 import hoppingvikings.housefinancemobile.WebService.CommunicationCallback;
 import hoppingvikings.housefinancemobile.WebService.RequestType;
@@ -39,6 +40,7 @@ public class TodoListAdapter extends RecyclerView.Adapter<TodoListAdapter.CardVi
 
     private static TodoItemClickedListener _listener;
     private final NotificationWrapper _notificationWrapper;
+    private final ToDoEndpoint _toDoEndpoint;
 
     public interface TodoItemClickedListener
     {
@@ -129,17 +131,19 @@ public class TodoListAdapter extends RecyclerView.Adapter<TodoListAdapter.CardVi
     public void SetEditPressedCallback(EditPressedCallback owner)
     {_editCallback = owner;}
 
-    public TodoListAdapter(ArrayList<TodoListObject> items, Context context, NotificationWrapper notificationWrapper)
+    public TodoListAdapter(Context context, NotificationWrapper notificationWrapper, ToDoEndpoint toDoEndpoint, ArrayList<TodoListObject> items)
     {
-        _todos.addAll(items);
         _context = context;
+        _notificationWrapper = notificationWrapper;
+        _toDoEndpoint = toDoEndpoint;
+        _todos.addAll(items);
         long maxMem = (Runtime.getRuntime().maxMemory() / 1024 / 1024);
         imgCache = new BitmapCache((maxMem / 4L) * 1024L * 1024L, _context);
-        _notificationWrapper = notificationWrapper;
     }
 
     @Override
-    public CardViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+    public CardViewHolder onCreateViewHolder(ViewGroup parent, int viewType)
+    {
         View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.listitem_todo, parent, false);
         return new CardViewHolder(v);
     }
@@ -170,25 +174,30 @@ public class TodoListAdapter extends RecyclerView.Adapter<TodoListAdapter.CardVi
             holder.todoFor.setTextColor(Color.BLACK);
         }
 
-        try {
-
+        try
+        {
             imgCache.PutBitmap(_todos.get(position).peopleForTask.get(0).ImageUrl, holder.todoPerson1);
-            if(_todos.get(holder.getAdapterPosition()).peopleForTask.size() < 2) {
+            if(_todos.get(holder.getAdapterPosition()).peopleForTask.size() < 2)
+            {
                 holder.todoPerson2.setVisibility(View.INVISIBLE);
             }
-            else {
+            else
+                {
                 holder.todoPerson2.setVisibility(View.VISIBLE);
                 imgCache.PutBitmap(_todos.get(position).peopleForTask.get(1).ImageUrl, holder.todoPerson2);
             }
 
-            if(_todos.get(holder.getAdapterPosition()).peopleForTask.size() < 3) {
+            if(_todos.get(holder.getAdapterPosition()).peopleForTask.size() < 3)
+            {
                 holder.todoPerson3.setVisibility(View.INVISIBLE);
             }
-            else {
+            else
+                {
                 holder.todoPerson3.setVisibility(View.VISIBLE);
                 imgCache.PutBitmap(_todos.get(position).peopleForTask.get(2).ImageUrl, holder.todoPerson3);
             }
-        } catch (Exception e)
+        }
+        catch (Exception e)
         {
             Log.v("Img Load Error: ", e.getMessage());
         }
@@ -205,14 +214,18 @@ public class TodoListAdapter extends RecyclerView.Adapter<TodoListAdapter.CardVi
                 }
             });
 
-            holder.deleteButton.setOnClickListener(new View.OnClickListener() {
+            holder.deleteButton.setOnClickListener(new View.OnClickListener()
+            {
                 @Override
-                public void onClick(View v) {
-                    try {
+                public void onClick(View v)
+                {
+                    try
+                    {
                         JSONObject taskJson = new JSONObject();
                         taskJson.put("Id", _todos.get(holder.getAdapterPosition()).id);
-                        WebHandler.Instance().DeleteItem(_context, TodoListAdapter.this, taskJson, ItemType.TODO);
-                    } catch (Exception e)
+                        _toDoEndpoint.Delete(_context, TodoListAdapter.this, taskJson);
+                    }
+                    catch (Exception e)
                     {
                         Toast.makeText(_context, "Failed to delete task", Toast.LENGTH_SHORT).show();
                     }
@@ -224,21 +237,25 @@ public class TodoListAdapter extends RecyclerView.Adapter<TodoListAdapter.CardVi
                 }
             });
 
-            holder.completeButton.setOnClickListener(new View.OnClickListener() {
+            holder.completeButton.setOnClickListener(new View.OnClickListener()
+            {
                 @Override
-                public void onClick(View v) {
+                public void onClick(View v)
+                {
                     if(!_completeAlreadyPressed)
                     {
                         _completeAlreadyPressed = true;
                         _selected = holder.getAdapterPosition();
                         JSONObject editedTask = new JSONObject();
-                        try {
+                        try
+                        {
                             editedTask.put("Id", _todos.get(holder.getAdapterPosition()).id);
                             editedTask.put("Complete", !_todos.get(holder.getAdapterPosition()).completed);
-                            WebHandler.Instance().EditItem(_context, editedTask, TodoListAdapter.this, ItemType.TODO);
+                            _toDoEndpoint.Patch(_context, TodoListAdapter.this, editedTask);
                             NotificationManager man = (NotificationManager) _context.getSystemService(NOTIFICATION_SERVICE);
                             man.cancel(_todos.get(holder.getAdapterPosition()).id);
-                        } catch (Exception e)
+                        }
+                        catch (Exception e)
                         {
                             OnFail(RequestType.PATCH, "");
                         }

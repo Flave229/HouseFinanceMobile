@@ -33,8 +33,10 @@ import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.Locale;
 
+import hoppingvikings.housefinancemobile.HouseFinanceClass;
 import hoppingvikings.housefinancemobile.ItemType;
 import hoppingvikings.housefinancemobile.R;
+import hoppingvikings.housefinancemobile.Services.SaltVault.ToDo.ToDoEndpoint;
 import hoppingvikings.housefinancemobile.Services.SaltVault.ToDo.TodoRepository;
 import hoppingvikings.housefinancemobile.UserInterface.Items.TodoListObject;
 import hoppingvikings.housefinancemobile.WebService.CommunicationCallback;
@@ -44,6 +46,7 @@ import hoppingvikings.housefinancemobile.WebService.WebHandler;
 public class EditTodoItemActivity extends AppCompatActivity
     implements CommunicationCallback
 {
+    private ToDoEndpoint _toDoEndpoint;
 
     Button submitButton;
     TextInputLayout taskTitleEntry;
@@ -69,9 +72,12 @@ public class EditTodoItemActivity extends AppCompatActivity
     TodoListObject task = null;
 
     @Override
-    protected void onCreate(@Nullable Bundle savedInstanceState) {
+    protected void onCreate(@Nullable Bundle savedInstanceState)
+    {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_edittodoitem);
+
+        _toDoEndpoint = HouseFinanceClass.GetToDoComponent().GetToDoEndpoint();
 
         Toolbar toolbar = findViewById(R.id.appToolbar);
         toolbar.setTitle("Edit Todo Task");
@@ -239,19 +245,24 @@ public class EditTodoItemActivity extends AppCompatActivity
 
         final AlertDialog confirmcancel = new AlertDialog.Builder(this).create();
         confirmcancel.setMessage("Submit edit? Check that all details are correct before submitting");
-        confirmcancel.setButton(DialogInterface.BUTTON_NEGATIVE, "Cancel", new DialogInterface.OnClickListener() {
+        confirmcancel.setButton(DialogInterface.BUTTON_NEGATIVE, "Cancel", new DialogInterface.OnClickListener()
+        {
             @Override
-            public void onClick(DialogInterface dialog, int which) {
+            public void onClick(DialogInterface dialog, int which)
+            {
                 confirmcancel.dismiss();
             }
         });
 
-        confirmcancel.setButton(DialogInterface.BUTTON_POSITIVE, "Submit", new DialogInterface.OnClickListener() {
+        confirmcancel.setButton(DialogInterface.BUTTON_POSITIVE, "Submit", new DialogInterface.OnClickListener()
+        {
             @Override
-            public void onClick(DialogInterface dialog, int which) {
+            public void onClick(DialogInterface dialog, int which)
+            {
                 confirmcancel.dismiss();
                 JSONObject editedTask = new JSONObject();
-                try {
+                try
+                {
                     editedTask.put("Id", task.id);
                     if(editTitle.isChecked())
                         editedTask.put("Title", taskTitle);
@@ -269,9 +280,9 @@ public class EditTodoItemActivity extends AppCompatActivity
                         editedTask.put("PeopleIds", people);
                     }
 
-                    WebHandler.Instance().EditItem(EditTodoItemActivity.this, editedTask, EditTodoItemActivity.this, ItemType.TODO);
-
-                } catch (Exception e)
+                    _toDoEndpoint.Patch(EditTodoItemActivity.this, EditTodoItemActivity.this, editedTask);
+                }
+                catch (Exception e)
                 {
                     Snackbar.make(layout, "Failed to create JSON", Snackbar.LENGTH_LONG).show();
                 }
@@ -282,11 +293,13 @@ public class EditTodoItemActivity extends AppCompatActivity
 
     private boolean ValidateFields()
     {
-        if(taskTitleEntryText.getText().length() > 0) {
+        if(taskTitleEntryText.getText().length() > 0)
+        {
             taskTitle = taskTitleEntryText.getText().toString();
             taskTitleEntry.setError(null);
         }
-        else {
+        else
+        {
             taskTitleEntryText.requestFocus();
             taskTitleEntry.setError("Please enter a valid Task title");
             return false;
@@ -294,10 +307,12 @@ public class EditTodoItemActivity extends AppCompatActivity
 
         if(editDueDate.isChecked() && taskDueDateEntryText.getText().length() > 0)
         {
-            try {
+            try
+            {
                 taskDueDate = new SimpleDateFormat("dd-MM-yyyy").parse(taskDueDateEntryText.getText().toString());
                 taskDueDateEntry.setError(null);
-            } catch (ParseException pe)
+            }
+            catch (ParseException pe)
             {
                 taskDueDate = null;
             }

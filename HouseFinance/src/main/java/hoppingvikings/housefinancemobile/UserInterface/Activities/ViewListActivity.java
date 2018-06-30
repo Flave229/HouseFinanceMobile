@@ -27,6 +27,7 @@ import java.util.ArrayList;
 
 import hoppingvikings.housefinancemobile.Services.SaltVault.Bills.BillEndpoint;
 import hoppingvikings.housefinancemobile.Services.SaltVault.Shopping.ShoppingEndpoint;
+import hoppingvikings.housefinancemobile.Services.SaltVault.ToDo.ToDoEndpoint;
 import hoppingvikings.housefinancemobile.Services.SaltVault.User.LogInEndpoint;
 import hoppingvikings.housefinancemobile.HouseFinanceClass;
 import hoppingvikings.housefinancemobile.NotificationWrapper;
@@ -58,6 +59,7 @@ public class ViewListActivity extends AppCompatActivity
     private LogInEndpoint _logInEndpoint;
     private BillEndpoint _billEndpoint;
     private ShoppingEndpoint _shoppingEndpoint;
+    private ToDoEndpoint _toDoEndpoint;
 
     CoordinatorLayout _layout;
     RecyclerView _rv;
@@ -81,9 +83,11 @@ public class ViewListActivity extends AppCompatActivity
 
     boolean _obtainingSession = false;
 
-    private Runnable ConnectToApi = new Runnable() {
+    private Runnable ConnectToApi = new Runnable()
+    {
         @Override
-        public void run() {
+        public void run()
+        {
             switch (_currentType)
             {
                 case "BILL":
@@ -95,7 +99,7 @@ public class ViewListActivity extends AppCompatActivity
                     break;
 
                 case "TODO":
-                    WebHandler.Instance().GetToDoItems(ViewListActivity.this, ViewListActivity.this);
+                    _toDoEndpoint.Get(ViewListActivity.this, ViewListActivity.this);
                     break;
             }
         }
@@ -185,6 +189,7 @@ public class ViewListActivity extends AppCompatActivity
         _logInEndpoint = HouseFinanceClass.GetUserComponent().GetLogInEndpoint();
         _billEndpoint = HouseFinanceClass.GetBillComponent().GetBillEndpoint();
         _shoppingEndpoint = HouseFinanceClass.GetShoppingComponent().GetShoppingEndpoint();
+        _toDoEndpoint = HouseFinanceClass.GetToDoComponent().GetToDoEndpoint();
 
         _toolbar = findViewById(R.id.appToolbar);
         _layout = findViewById(R.id.coordLayout);
@@ -283,7 +288,7 @@ public class ViewListActivity extends AppCompatActivity
                     if(TodoRepository.Instance().Get().size() > 0)
                         _tasks.addAll(TodoRepository.Instance().Get());
 
-                    _todoAdapter = new TodoListAdapter(_tasks, this, notificationWrapper);
+                    _todoAdapter = new TodoListAdapter(this, notificationWrapper, _toDoEndpoint, _tasks);
                     _rv.setAdapter(_todoAdapter);
                     _rv.setLayoutManager(new LinearLayoutManager(this));
                     _rv.setItemViewCacheSize(20);
