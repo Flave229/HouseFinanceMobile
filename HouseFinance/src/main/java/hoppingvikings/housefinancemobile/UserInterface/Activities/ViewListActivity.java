@@ -19,12 +19,14 @@ import android.view.ViewGroup;
 
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
+import com.google.android.gms.common.api.Api;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
 
+import hoppingvikings.housefinancemobile.ApiErrorCodes;
 import hoppingvikings.housefinancemobile.Services.SaltVault.Bills.BillEndpoint;
 import hoppingvikings.housefinancemobile.Services.SaltVault.Shopping.ShoppingEndpoint;
 import hoppingvikings.housefinancemobile.Services.SaltVault.ToDo.ToDoEndpoint;
@@ -364,6 +366,11 @@ public class ViewListActivity extends AppCompatActivity
             case RESULT_CANCELED:
 
                 break;
+
+            case 100:
+                _refreshLayout.setRefreshing(true);
+                _handler.post(ConnectToApi);
+                break;
         }
     }
 
@@ -415,8 +422,30 @@ public class ViewListActivity extends AppCompatActivity
     @Override
     public void OnFail(RequestType requestType, String message)
     {
+        try {
+            ApiErrorCodes errorCode = ApiErrorCodes.get(Integer.parseInt(message));
+
+            if(errorCode == ApiErrorCodes.SESSION_EXPIRED || errorCode == ApiErrorCodes.SESSION_INVALID)
+            {
+                String sessionMessage = "Your session has expired";
+                Snackbar.make(_layout, sessionMessage, Snackbar.LENGTH_INDEFINITE)
+                        .setAction("Refresh", new View.OnClickListener() {
+                            @Override
+                            public void onClick(View v) {
+                                Intent signInRefresh = new Intent(ViewListActivity.this, SignInActivity.class);
+                                signInRefresh.putExtra("Refresh", true);
+                                startActivityForResult(signInRefresh, 0);
+                            }
+                        })
+                        .show();
+            }
+        } catch (Exception e)
+        {
+            // Not an API error
+            Snackbar.make(_layout, message, Snackbar.LENGTH_LONG).show();
+        }
+
         _handler.removeCallbacksAndMessages(null);
-        Snackbar.make(_layout, message, Snackbar.LENGTH_LONG).show();
         _refreshLayout.setRefreshing(false);
     }
 

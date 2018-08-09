@@ -92,7 +92,15 @@ public class BillEndpoint extends HTTPHandler
                 ApiErrorCodes errorCode = ApiErrorCodes.get(result.Response.getJSONObject("error").getInt("errorCode"));
                 String errorMessage = result.Response.getJSONObject("error").getString("message");
                 Log.e("Error", errorMessage);
-                result.Callback.OnFail(result.RequestTypeData, errorMessage);
+
+                if(errorCode == ApiErrorCodes.SESSION_INVALID || errorCode == ApiErrorCodes.SESSION_EXPIRED)
+                {
+                    result.Callback.OnFail(result.RequestTypeData, String.valueOf(errorCode.getValue()));
+                }
+                else
+                {
+                    result.Callback.OnFail(result.RequestTypeData, errorMessage);
+                }
                 return;
             }
 

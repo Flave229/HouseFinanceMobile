@@ -9,6 +9,7 @@ import java.io.File;
 
 import javax.inject.Inject;
 
+import hoppingvikings.housefinancemobile.ApiErrorCodes;
 import hoppingvikings.housefinancemobile.FileIOHandler;
 import hoppingvikings.housefinancemobile.ItemType;
 import hoppingvikings.housefinancemobile.WebService.CommunicationRequest;
@@ -64,9 +65,15 @@ public class LogInEndpoint extends HTTPHandler
         {
             if(result.Response.has("hasError") && result.Response.getBoolean("hasError"))
             {
-                String errorMessage = result.Response.getJSONObject("error").getString("message");
-                Log.e("Error", errorMessage);
-                result.Callback.OnFail(result.RequestTypeData, errorMessage);
+                ApiErrorCodes errorCode = ApiErrorCodes.get(result.Response.getJSONObject("error").getInt("errorCode"));
+                if(errorCode == ApiErrorCodes.SESSION_EXPIRED || errorCode == ApiErrorCodes.SESSION_INVALID) {
+                    result.Callback.OnFail(result.RequestTypeData, String.valueOf(errorCode.getValue()));
+                }
+                else
+                {
+                    String errorMessage = result.Response.getJSONObject("error").getString("message");
+                    result.Callback.OnFail(result.RequestTypeData, errorMessage);
+                }
                 return;
             }
 

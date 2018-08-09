@@ -85,17 +85,21 @@ public class HouseholdEndpoint extends HTTPHandler
         {
             if(result.Response.has("hasError") && result.Response.getBoolean("hasError"))
             {
-                int errorCode = result.Response.getJSONObject("error").getInt("errorCode");
-                if(errorCode == ApiErrorCodes.USER_NOT_IN_HOUSEHOLD.getValue())
+                ApiErrorCodes errorCode = ApiErrorCodes.get(result.Response.getJSONObject("error").getInt("errorCode"));
+                if(errorCode == ApiErrorCodes.USER_NOT_IN_HOUSEHOLD)
                 {
                     result.Callback.OnFail(result.RequestTypeData, ApiErrorCodes.USER_NOT_IN_HOUSEHOLD.name());
                     return;
                 }
-
-                String errorMessage = result.Response.getJSONObject("error").getString("message");
-                Log.e("Error", errorMessage);
-                result.Callback.OnFail(result.RequestTypeData, errorMessage);
-                return;
+                else if(errorCode == ApiErrorCodes.SESSION_EXPIRED || errorCode == ApiErrorCodes.SESSION_INVALID) {
+                    result.Callback.OnFail(result.RequestTypeData, String.valueOf(errorCode.getValue()));
+                    return;
+                }
+                else
+                {
+                    String errorMessage = result.Response.getJSONObject("error").getString("message");
+                    result.Callback.OnFail(result.RequestTypeData, errorMessage);
+                }
             }
 
             if (result.RequestTypeData == RequestType.GET)

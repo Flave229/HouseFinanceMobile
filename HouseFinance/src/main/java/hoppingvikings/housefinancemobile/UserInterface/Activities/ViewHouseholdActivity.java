@@ -4,6 +4,7 @@ import android.content.ClipData;
 import android.content.ClipboardManager;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.CoordinatorLayout;
@@ -31,6 +32,7 @@ import hoppingvikings.housefinancemobile.Services.SaltVault.House.HouseholdInvit
 import hoppingvikings.housefinancemobile.FileIOHandler;
 import hoppingvikings.housefinancemobile.HouseFinanceClass;
 import hoppingvikings.housefinancemobile.R;
+import hoppingvikings.housefinancemobile.UserInterface.SignInActivity;
 import hoppingvikings.housefinancemobile.WebService.CommunicationCallback;
 import hoppingvikings.housefinancemobile.WebService.RequestType;
 
@@ -426,6 +428,27 @@ public class ViewHouseholdActivity extends AppCompatActivity implements Communic
 
     @Override
     public void OnFail(RequestType requestType, String message) {
-        Snackbar.make(_layout, message, Snackbar.LENGTH_LONG).show();
+        try {
+            ApiErrorCodes errorCode = ApiErrorCodes.get(Integer.parseInt(message));
+
+            if(errorCode == ApiErrorCodes.SESSION_EXPIRED || errorCode == ApiErrorCodes.SESSION_INVALID)
+            {
+                String sessionMessage = "Your session has expired";
+                Snackbar.make(_layout, sessionMessage, Snackbar.LENGTH_INDEFINITE)
+                        .setAction("Refresh", new View.OnClickListener() {
+                            @Override
+                            public void onClick(View v) {
+                                Intent signInRefresh = new Intent(ViewHouseholdActivity.this, SignInActivity.class);
+                                signInRefresh.putExtra("Refresh", true);
+                                startActivityForResult(signInRefresh, 0);
+                            }
+                        })
+                        .show();
+            }
+        } catch (Exception e)
+        {
+            // Not an API error
+            Snackbar.make(_layout, message, Snackbar.LENGTH_LONG).show();
+        }
     }
 }

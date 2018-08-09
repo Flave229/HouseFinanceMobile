@@ -5,6 +5,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.support.annotation.Nullable;
 import android.support.design.widget.CoordinatorLayout;
+import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -17,12 +18,14 @@ import android.widget.TextView;
 import java.util.ArrayList;
 import java.util.HashMap;
 
+import hoppingvikings.housefinancemobile.ApiErrorCodes;
 import hoppingvikings.housefinancemobile.Services.SaltVault.User.UserEndpoint;
 import hoppingvikings.housefinancemobile.HouseFinanceClass;
 import hoppingvikings.housefinancemobile.Person;
 import hoppingvikings.housefinancemobile.R;
 import hoppingvikings.housefinancemobile.UserInterface.Lists.UserSelectList.IUserClickedListener;
 import hoppingvikings.housefinancemobile.UserInterface.Lists.UserSelectList.UserSelectAdapter;
+import hoppingvikings.housefinancemobile.UserInterface.SignInActivity;
 import hoppingvikings.housefinancemobile.WebService.CommunicationCallback;
 import hoppingvikings.housefinancemobile.WebService.RequestType;
 
@@ -254,6 +257,29 @@ public class SelectUsersActivity extends AppCompatActivity implements Communicat
     @Override
     public void OnFail(RequestType requestType, String message)
     {
+        try {
+            ApiErrorCodes errorCode = ApiErrorCodes.get(Integer.parseInt(message));
+
+            if(errorCode == ApiErrorCodes.SESSION_EXPIRED || errorCode == ApiErrorCodes.SESSION_INVALID)
+            {
+                String sessionMessage = "Your session has expired";
+                Snackbar.make(_layout, sessionMessage, Snackbar.LENGTH_INDEFINITE)
+                        .setAction("Refresh", new View.OnClickListener() {
+                            @Override
+                            public void onClick(View v) {
+                                Intent signInRefresh = new Intent(SelectUsersActivity.this, SignInActivity.class);
+                                signInRefresh.putExtra("Refresh", true);
+                                startActivityForResult(signInRefresh, 0);
+                            }
+                        })
+                        .show();
+            }
+        } catch (Exception e)
+        {
+            // Not an API error
+            Snackbar.make(_layout, message, Snackbar.LENGTH_LONG).show();
+        }
+
         _failedToGetUsers.setVisibility(View.VISIBLE);
     }
 }

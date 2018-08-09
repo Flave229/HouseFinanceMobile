@@ -40,11 +40,20 @@ public class SignInActivity extends AppCompatActivity implements CommunicationCa
 
     GoogleSignInClient _signInClient;
 
+    private boolean _loginRefresh = false;
+
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState)
     {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_signin);
+
+        Intent intent = getIntent();
+
+        if(intent.hasExtra("Refresh"))
+        {
+            _loginRefresh = intent.getBooleanExtra("Refresh", false);
+        }
 
         _logInEndpoint = HouseFinanceClass.GetUserComponent().GetLogInEndpoint();
 
@@ -99,6 +108,11 @@ public class SignInActivity extends AppCompatActivity implements CommunicationCa
 
     private void HandleAccount()
     {
+        if(_loginRefresh)
+        {
+            setResult(100);
+        }
+
         if(!getIntent().hasExtra("IrregularStart"))
         {
             Intent goToMainMenu = new Intent(this, MainMenuActivity.class);

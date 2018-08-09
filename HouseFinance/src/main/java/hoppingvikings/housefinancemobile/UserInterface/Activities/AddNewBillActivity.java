@@ -40,6 +40,7 @@ import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.Locale;
 
+import hoppingvikings.housefinancemobile.ApiErrorCodes;
 import hoppingvikings.housefinancemobile.FileIOHandler;
 import hoppingvikings.housefinancemobile.Services.SaltVault.Bills.BillEndpoint;
 import hoppingvikings.housefinancemobile.Services.SaltVault.User.LogInEndpoint;
@@ -439,7 +440,29 @@ public class AddNewBillActivity extends AppCompatActivity implements Communicati
     @Override
     public void OnFail(RequestType requestType, String message)
     {
-        Snackbar.make(layout, message, Snackbar.LENGTH_LONG).show();
+        try {
+            ApiErrorCodes errorCode = ApiErrorCodes.get(Integer.parseInt(message));
+
+            if(errorCode == ApiErrorCodes.SESSION_EXPIRED || errorCode == ApiErrorCodes.SESSION_INVALID)
+            {
+                String sessionMessage = "Your session has expired";
+                Snackbar.make(layout, sessionMessage, Snackbar.LENGTH_INDEFINITE)
+                        .setAction("Refresh", new View.OnClickListener() {
+                            @Override
+                            public void onClick(View v) {
+                                Intent signInRefresh = new Intent(AddNewBillActivity.this, SignInActivity.class);
+                                signInRefresh.putExtra("Refresh", true);
+                                startActivityForResult(signInRefresh, 0);
+                            }
+                        })
+                        .show();
+            }
+        } catch (Exception e)
+        {
+            // Not an API error
+            Snackbar.make(layout, message, Snackbar.LENGTH_LONG).show();
+        }
+
         ReenableElements();
     }
 

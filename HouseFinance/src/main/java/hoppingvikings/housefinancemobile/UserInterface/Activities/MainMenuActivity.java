@@ -23,6 +23,7 @@ import com.google.android.gms.tasks.Task;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.text.ParseException;
 import java.util.ArrayList;
 
 import hoppingvikings.housefinancemobile.ApiErrorCodes;
@@ -212,15 +213,39 @@ public class MainMenuActivity extends AppCompatActivity implements Communication
     @Override
     public void OnFail(RequestType requestType, String message)
     {
-        if(message.equals(ApiErrorCodes.USER_NOT_IN_HOUSEHOLD.name()))
+        try {
+            ApiErrorCodes errorCode = ApiErrorCodes.get(Integer.parseInt(message));
+
+            if(errorCode == ApiErrorCodes.USER_NOT_IN_HOUSEHOLD)
+            {
+                MainMenuItem house = new MainMenuItem("Household", R.drawable.baseline_home_black_36, ItemType.HOUSEHOLD.name());
+                _mainMenuItems.add(house);
+                _listAdapter.AddAll(_mainMenuItems);
+            }
+            else
+            {
+                if(errorCode == ApiErrorCodes.SESSION_EXPIRED || errorCode == ApiErrorCodes.SESSION_INVALID)
+                {
+                    String sessionMessage = "Your session has expired";
+                    Snackbar.make(_layout, sessionMessage, Snackbar.LENGTH_INDEFINITE)
+                            .setAction("Refresh", new View.OnClickListener() {
+                                @Override
+                                public void onClick(View v) {
+                                    Intent signInRefresh = new Intent(MainMenuActivity.this, SignInActivity.class);
+                                    signInRefresh.putExtra("Refresh", true);
+                                    startActivity(signInRefresh);
+                                }
+                            })
+                            .show();
+                    return;
+                }
+
+                Snackbar.make(_layout, "Failed to obtain the household ID", Snackbar.LENGTH_LONG).show();
+            }
+        } catch (Exception e)
         {
-            MainMenuItem house = new MainMenuItem("Household", R.drawable.baseline_home_black_36, ItemType.HOUSEHOLD.name());
-            _mainMenuItems.add(house);
-            _listAdapter.AddAll(_mainMenuItems);
-        }
-        else
-        {
-            Snackbar.make(_layout, "Failed to obtain the household ID", Snackbar.LENGTH_LONG).show();
+            // Not an API error code
+            Snackbar.make(_layout, message, Snackbar.LENGTH_LONG).show();
         }
     }
 
